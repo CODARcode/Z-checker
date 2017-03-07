@@ -1,0 +1,476 @@
+/**
+ *  @file rw.c
+ *  @author Sheng Di
+ *  @date April, 2015
+ *  @brief io interface for fortrance
+ *  (C) 2015 by Mathematics and Computer Science (MCS), Argonne National Laboratory.
+ *      See COPYRIGHT in top-level directory.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "rw.h"
+#include "zc.h"
+
+int ZC_checkExtension(char* str, char* extension)
+{
+	char* l = strrchr(str, '.');
+	if(l==NULL)
+		return 0;
+	if(strcmp(l+1,extension)==0)
+		return 1;
+	else
+		return 0;
+}
+
+char** ZC_getFileNames(char* dir, char* extension, int *fileCount)
+{
+	int i;
+	char** fileNames = (char**)malloc(1000*sizeof(char*)); //at most 1000 files, each of which has 500 chars.
+	for(i=0;i<1000;i++)
+		fileNames[i] = (char*)malloc(500);
+	DIR *dir_;
+	struct dirent *ptr;
+	dir_ = opendir(dir);
+	i = 0;
+	while((ptr=readdir(dir_))!=NULL)
+	{
+		if(i==1000)
+		{
+			printf("Real fileCount >=1000, but we can only read the first 1000 files.\n");
+			break;
+		}
+		if(ZC_checkExtension(ptr->d_name, extension))
+		{
+			memcpy(fileNames[i], ptr->d_name, strlen(ptr->d_name)+1);
+			i++;
+		}
+	}
+	*fileCount = i;
+	return fileNames;
+}
+
+
+void ZC_symTransform_8bytes(unsigned char data[8])
+{
+	unsigned char tmp = data[0];
+	data[0] = data[7];
+	data[7] = tmp;
+
+	tmp = data[1];
+	data[1] = data[6];
+	data[6] = tmp;
+
+	tmp = data[2];
+	data[2] = data[5];
+	data[5] = tmp;
+
+	tmp = data[3];
+	data[3] = data[4];
+	data[4] = tmp;
+}
+
+void ZC_symTransform_2bytes(unsigned char data[2])
+{
+	unsigned char tmp = data[0];
+	data[0] = data[1];
+	data[1] = tmp;
+}
+
+void ZC_symTransform_4bytes(unsigned char data[4])
+{
+	unsigned char tmp = data[0];
+	data[0] = data[3];
+	data[3] = tmp;
+
+	tmp = data[1];
+	data[1] = data[2];
+	data[2] = tmp;
+}
+
+int ZC_checkFileSize(char *srcFilePath)
+{
+	int filesize;
+	FILE *pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+	{
+		printf("Failed to open input file. 1\n");
+		exit(1);
+	}
+	fseek(pFile, 0, SEEK_END);
+    filesize = (int)ftell(pFile);
+    fclose(pFile);
+    return filesize;
+}
+
+unsigned char *ZC_readByteData(char *srcFilePath, int *byteLength)
+{
+	FILE *pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 1\n");
+        exit(1);
+    }
+	fseek(pFile, 0, SEEK_END);
+    *byteLength = (int)ftell(pFile);
+    fclose(pFile);
+    
+    unsigned char *byteBuf = ( unsigned char *)malloc((*byteLength)*sizeof(unsigned char)); //sizeof(char)==1
+    
+    pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 2\n");
+        exit(1);
+    }
+    fread(byteBuf, 1, *byteLength, pFile);
+    fclose(pFile);
+    return byteBuf;
+}
+
+double *ZC_readDoubleData(char *srcFilePath, int *nbEle)
+{
+	if(dataEndianType==sysEndianType)
+	{
+		double *daBuf = ZC_readDoubleData_systemEndian(srcFilePath, nbEle);
+		return daBuf;
+	}
+	else
+	{
+		int i,j;
+		
+		int byteLength;
+		unsigned char* bytes = ZC_readByteData(srcFilePath, &byteLength);
+		double *daBuf = (double *)malloc(byteLength);
+		*nbEle = byteLength/8;
+		
+		ecldouble buf;
+		for(i = 0;i<*nbEle;i++)
+		{
+			j = i*8;
+			memcpy(buf.byte, bytes+j, 8);
+			ZC_symTransform_8bytes(buf.byte);
+			daBuf[i] = buf.value;
+		}
+		free(bytes);
+		return daBuf;
+	}
+}
+
+float *ZC_readFloatData(char *srcFilePath, int *nbEle)
+{
+	if(dataEndianType==sysEndianType)
+	{
+		float *daBuf = ZC_readFloatData_systemEndian(srcFilePath, nbEle);
+		return daBuf;
+	}
+	else
+	{
+		int i,j;
+		
+		int byteLength;
+		unsigned char* bytes = ZC_readByteData(srcFilePath, &byteLength);
+		float *daBuf = (float *)malloc(byteLength);
+		*nbEle = byteLength/4;
+		
+		eclfloat buf;
+		for(i = 0;i<*nbEle;i++)
+		{
+			j = i*4;
+			memcpy(buf.byte, bytes+j, 4);
+			ZC_symTransform_4bytes(buf.byte);
+			daBuf[i] = buf.value;
+		}
+		free(bytes);
+		return daBuf;
+	}
+}
+
+double *ZC_readDoubleData_systemEndian(char *srcFilePath, int *nbEle)
+{
+	int inSize;
+	FILE *pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 1\n");
+        exit(1);
+    }
+	fseek(pFile, 0, SEEK_END);
+    inSize = ftell(pFile);
+    *nbEle = (int)inSize/8; //only support double in this version
+    fclose(pFile);
+    
+    double *daBuf = (double *)malloc(inSize);
+    
+    pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 2\n");
+        exit(1);
+    }
+    fread(daBuf, 8, *nbEle, pFile);
+    fclose(pFile);
+    return daBuf;
+}
+
+float *ZC_readFloatData_systemEndian(char *srcFilePath, int *nbEle)
+{
+	int inSize;
+	FILE *pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 1\n");
+        exit(1);
+    }
+	fseek(pFile, 0, SEEK_END);
+    inSize = ftell(pFile);
+    *nbEle = (int)inSize/4; 
+    fclose(pFile);
+    
+    if(inSize<=0)
+    {
+		printf("Error: input file is wrong!\n");
+		exit(0);
+	}
+    
+    float *daBuf = (float *)malloc(inSize);
+    
+    pFile = fopen(srcFilePath, "rb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 2\n");
+        exit(1);
+    }
+    fread(daBuf, 4, *nbEle, pFile);
+    fclose(pFile);
+    return daBuf;
+}
+
+void ZC_writeByteData(unsigned char *bytes, int byteLength, char *tgtFilePath)
+{
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+		exit(0);
+    }
+    
+    fwrite(bytes, 1, byteLength, pFile); //write outSize bytes
+    fclose(pFile);
+}
+
+void ZC_writeDoubleData(double *data, int nbEle, char *tgtFilePath)
+{
+	int i = 0;
+	char s[64];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+    
+    for(i = 0;i<nbEle;i++)
+	{
+		//sprintf(s,"%.20G\n",data[i]);
+		sprintf(s, "%f", data[i]);
+		fputs(s, pFile);
+	}
+    
+    fclose(pFile);
+}
+
+void ZC_writeFloatData(float *data, int nbEle, char *tgtFilePath)
+{
+	int i = 0;
+	char s[64];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+   
+    for(i = 0;i<nbEle;i++)
+	{
+		//printf("i=%d\n",i);
+		//printf("data[i]=%f\n",data[i]);
+		sprintf(s, "%f", data[i]);
+		fputs(s, pFile);
+	}
+    
+    fclose(pFile);
+}
+
+void ZC_writeData(void *data, int dataType, int nbEle, char *tgtFilePath)
+{
+	if(dataType == ZC_FLOAT)
+	{
+		float* dataArray = (float *)data;
+		ZC_writeFloatData(dataArray, nbEle, tgtFilePath);
+	}
+	else if(dataType == ZC_DOUBLE)
+	{
+		double* dataArray = (double *)data;
+		ZC_writeDoubleData(dataArray, nbEle, tgtFilePath);
+	}
+	else
+	{
+		printf("Error: data type cannot be the types other than ZC_FLOAT or ZC_DOUBLE\n");
+		exit(0);	
+	}
+}
+
+/**
+ * 
+ * @return the real number of elements
+ * */
+int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
+{
+	int i = 0;
+	char s[ZC_BUFS];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+   
+    for(i = 0;i<string_size;i++)
+	{
+		if(string[i]==0)
+			break;
+		fputs(string[i], pFile);
+	}
+    
+    fclose(pFile);
+    return i;	
+}
+
+/**
+ * 
+ * Don't forget to free the new string later on.
+ * @param strbuf the original message
+ * @param sstr the source match string to be replaced
+ * @param dstr the target string that replaces sstr
+ * @return the new string
+ */
+char *ZC_replacestr(char *strbuf, char *sstr, char *dstr)
+{       
+	char *p,*p1;
+	int len;
+
+	if ((strbuf == NULL)||(sstr == NULL)||(dstr == NULL))
+		return NULL;
+
+	p = strstr(strbuf, sstr);       //Return the address that appears first time, or return NULL otherwise
+	if (p == NULL)  /*not found*/
+		return NULL;
+
+	len = strlen(strbuf) + strlen(dstr) - strlen(sstr);
+	p1 = (char*)malloc(len);
+	bzero(p1, len);
+	strncpy(p1, strbuf, p-strbuf);
+	strcat(p1, dstr);
+	p += strlen(sstr);
+	strcat(p1, p);
+	return p1;
+}
+
+char** ZC_readLines(char* filePath, int *lineCount)
+{
+	char* buf;
+	//char buf[500] = {0};
+	int len = 0;
+
+	FILE *fp = fopen(filePath, "r");
+	if(NULL == fp)
+	{
+		printf("failed to open dos.txt\n");
+		exit(0);
+	}
+
+	char** lines = (char**)malloc(200*sizeof(char*));
+	
+	int i = 0;
+	fp = fopen(filePath, "r");
+	while(!feof(fp))
+	{
+		if(i==200)
+		{
+			printf("Error: It can only read maximum 200 lines.\n");
+			break; 
+		}
+		buf = (char*)malloc(500);
+		memset(buf, 0, 500);
+		fgets(buf, sizeof(buf) - 1, fp); // already including \n
+		lines[i++] = buf;
+		//printf("%s", szTest);
+	}
+	
+	*lineCount = i;
+
+	fclose(fp);	
+	return lines;
+}
+
+void ZC_freeLines(char** lines, int lineNum)
+{
+	int i = 0;
+	for(;i<lineNum;i++)
+		free(lines[i]);
+	free(lines);
+}
+
+char* rmFileExtension(char* fullFileName)
+{
+	char* s = (char*)malloc(100);
+	sprintf(s, "%s", fullFileName);
+	char* b = strrchr(s, '.');
+	b[0] = '\0';
+	return s;
+}
+
+void ZC_writeFloatData_inBytes(float *data, int nbEle, char* tgtFilePath)
+{
+	int i = 0;
+	eclfloat buf;
+	unsigned char* bytes = (unsigned char*)malloc(nbEle*sizeof(float));
+	for(i=0;i<nbEle;i++)
+	{
+		buf.value = data[i];
+		bytes[i*4+0] = buf.byte[0];
+		bytes[i*4+1] = buf.byte[1];
+		bytes[i*4+2] = buf.byte[2];
+		bytes[i*4+3] = buf.byte[3];					
+	}
+
+	int byteLength = nbEle*sizeof(float);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_writeDoubleData_inBytes(double *data, int nbEle, char* tgtFilePath)
+{
+	int i = 0, index = 0;
+	ecldouble buf;
+	unsigned char* bytes = (unsigned char*)malloc(nbEle*sizeof(double));
+	for(i=0;i<nbEle;i++)
+	{
+		index = i*8;
+		buf.value = data[i];
+		bytes[index+0] = buf.byte[0];
+		bytes[index+1] = buf.byte[1];
+		bytes[index+2] = buf.byte[2];
+		bytes[index+3] = buf.byte[3];
+		bytes[index+4] = buf.byte[4];
+		bytes[index+5] = buf.byte[5];
+		bytes[index+6] = buf.byte[6];
+		bytes[index+7] = buf.byte[7];
+	}
+
+	int byteLength = nbEle*sizeof(double);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}

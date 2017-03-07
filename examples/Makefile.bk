@@ -1,0 +1,37 @@
+## * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+##   Makefile to test SZ library.
+
+##   PLEASE SET THIS VARIABLE BEFORE COMPILING
+ZCPATH		= /home/fti/z-checker-0.1-install
+##   COMPILERS
+CC		= gcc
+FT		= gfortran
+MPICC 		= mpicc
+MPIRUN 		= mpirun
+
+##   FLAGS
+# Compiling using shared library
+#ZCFLAG 	= -I$(ZCPATH)/include -L$(ZCPATH)/lib -lzc
+# Compiling using static library
+ZCFLAG 	= -I$(ZCPATH)/include $(ZCPATH)/lib/libzc.a -lm
+
+##   TARGETS
+all: 		analyzeDataProperty compareDataSets generateGNUPlot testRscript_float testRscript_double
+
+analyzeDataProperty:	analyzeDataProperty.c
+	$(CC) -g -o analyzeDataProperty analyzeDataProperty.c $(ZCFLAG)
+
+compareDataSets:	compareDataSets.c
+	$(CC) -g -O0 -o compareDataSets compareDataSets.c $(ZCFLAG) 
+
+generateGNUPlot:	generateGNUPlot.c
+	$(CC) -g -O0 -o generateGNUPlot generateGNUPlot.c $(ZCFLAG)
+
+testRscript_float:	testRscript_float.c
+	$(CC) -g -O0 -o testRscript_float testRscript_float.c $(ZCFLAG)
+
+testRscript_double:	testRscript_double.c
+	$(CC) -g -O0 -o testRscript_double testRscript_double.c $(ZCFLAG)
+clean:
+	rm -f analyzeDataProperty compareDataSets generateGNUPlot
+

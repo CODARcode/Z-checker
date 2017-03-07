@@ -1,0 +1,25 @@
+--------Z-Checker (version 0.1)--------
+ (C) 2016 by Mathematics and Computer Science (MCS), Argonne National Laboratory.
+       See COPYRIGHT in top-level directory.
+
+***Authors: Sheng Di, Dingwen Tao ***
+***Supervisor: Franck Cappello ***
+
+=================================
+This document simply introduces how to install and use the SZ compressor. More details can be found in doc/userguide.pdf.
+
+===========Installation==========
+---------------------------------
+configure --prefix=[INSTALL_DIR]
+
+make
+
+make install
+
+Then, you'll find all the executables in [INSTALL_DIR]/bin and .a and .so libraries in [INSTALL_DIR]/lib
+
+===========Testing Example============
+--------------------------------------
+
+Examples can be found in the [ZC_PACKAGE]/examples
+
