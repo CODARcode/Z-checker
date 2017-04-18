@@ -61,7 +61,6 @@ int main(int argc, char * argv[])
     unsigned char *bytes = SZ_compress_args(SZ_FLOAT, data, &outSize, ABS, absErrBound, 0.01, r5, r4, r3, r2, r1);
     //unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
     ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, outSize);
-    printf("timecost=%f\n",totalCost); 
     writeByteData(bytes, outSize, outputFilePath, &status);
    
     ZC_startDec();
@@ -69,6 +68,11 @@ int main(int argc, char * argv[])
     ZC_endDec(compareResult, solName, decData);
     //ZC_endDec(compareResult, "sz(1E-7)", decData);
  
+    freeDataProperty(dataProperty);
+    freeCompareResult(compareResult);
+    free(data);
+    free(bytes);
+    free(decData);
     printf("done\n");
     
     SZ_Finalize();
