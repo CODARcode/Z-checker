@@ -39,10 +39,10 @@ extern "C" {
 #define PI 3.14159265358979323846264338327950288
 #endif
 
-#define ZC_SCES 0  //successful
-#define ZC_NSCS -1 // not successful
-#define ZC_CMDE -2 //command execution error
-#define ZC_FOPF -3 //Failed to open input file
+#define ZC_SCES 0  /*successful*/
+#define ZC_NSCS -1 /* not successful*/
+#define ZC_CMDE -2 /*command execution error*/
+#define ZC_FOPF -3 /*Failed to open input file*/
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) < (b) ? (a) : (b))
@@ -69,7 +69,7 @@ extern "C" {
 #define ZC_DOUBLE 1
 
 #define LITTLE_ENDIAN_DATA 0
-#define BIG_ENDIAN_DATA 1 //big_endian (ppc, max, etc.) ; little_endian (x86, x64, etc.)
+#define BIG_ENDIAN_DATA 1 /*big_endian (ppc, max, etc.) ; little_endian (x86, x64, etc.)*/
 
 #define LITTLE_ENDIAN_SYSTEM 0
 #define BIG_ENDIAN_SYSTEM 1
@@ -81,12 +81,17 @@ extern "C" {
 #define CMD_OUTPUT_BUF 200
 #define DynamicArrayInitLength 1024
 
-extern int sysEndianType; //endian type of the system
-extern int dataEndianType; //endian type of the data
+#define PROBE 0
+#define ANALYZER 1
+
+extern int sysEndianType; /*endian type of the system*/
+extern int dataEndianType; /*endian type of the data*/
+
+extern int checkingStatus;
 
 extern char *zc_cfgFile;
 
-//extern char* ZC_workspaceDir;
+/*extern char* ZC_workspaceDir;*/
 
 extern int errorBoundMode;
 extern double absErrBound;
@@ -178,11 +183,11 @@ double cost_EndCmpr();
 void cost_startDec();
 double cost_endDec();
 
-//conf.c
+/*conf.c*/
 int ZC_ReadConf();
 int ZC_LoadConf();
 
-//ByteToolkit.c
+/*ByteToolkit.c*/
 int ZC_bytesToInt_bigEndian(unsigned char* bytes);
 void ZC_intToBytes_bigEndian(unsigned char *b, unsigned int num);
 long ZC_bytesToLong_bigEndian(unsigned char* b);
@@ -198,17 +203,17 @@ void ZC_floatToBytes(unsigned char *b, float num);
 double ZC_bytesToDouble(unsigned char* bytes);
 void ZC_doubleToBytes(unsigned char *b, double num);
 
-//gnuplot.c
+/*gnuplot.c*/
 char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel, long maxYValue);
 char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 
-//quicksort.c
+/*quicksort.c*/
 int ZC_divide(RateDistElem* list,int start,int end);
 void ZC_quick_sort(RateDistElem* list,int start,int end);
 
-//ec.h
+/*ec.h*/
 int ZC_Init(char *configFilePath);
 int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1);
 

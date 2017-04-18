@@ -7,6 +7,15 @@
 #include "zc.h"
 #include "iniparser.h"
 
+void freeCompareResult(ZC_CompareData* compareData)
+{
+	//free(compareData->property);
+	free(compareData->autoCorrAbsErr);
+	free(compareData->absErrPDF);
+	free(compareData->fftCoeff);
+	free(compareData);
+}
+
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 int compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double pearsonCorr, 
@@ -125,6 +134,8 @@ int r5, int r4, int r3, int r2, int r1)
 			{
 				diff = data2[i] - data1[i];
 				index = (int)((diff-minDiff)/interval);
+				if(index==PDF_INTERVALS)
+					index = PDF_INTERVALS-1;
 				absErrPDF[index] += 1;
 			}
 
@@ -138,7 +149,7 @@ int r5, int r4, int r3, int r2, int r1)
 
 	if (autoCorrAbsErrFlag)
 	{
-		double *autoCorrAbsErr = (double*)malloc(AUTOCORR_SIZE*sizeof(double));
+		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 		double *absDiff = (double*)malloc(numOfElem*sizeof(double));
 
 		double covDiff = 0;
@@ -150,7 +161,7 @@ int r5, int r4, int r3, int r2, int r1)
 
 		covDiff = covDiff/numOfElem;
 		int delta;
-		for (delta = 0; delta <= AUTOCORR_SIZE; delta++)
+		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
 			double sum = 0;
 
@@ -162,7 +173,9 @@ int r5, int r4, int r3, int r2, int r1)
 			autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
 		}
 
+		autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
+		free(absDiff);
 	}
 
 	if (pearsonCorrFlag)
@@ -307,7 +320,7 @@ int r5, int r4, int r3, int r2, int r1)
 
 	if (autoCorrAbsErrFlag)
 	{
-		double *autoCorrAbsErr = (double*)malloc(AUTOCORR_SIZE*sizeof(double));
+		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 		double *absDiff = (double*)malloc(numOfElem*sizeof(double));
 
 		double covDiff = 0;
@@ -319,7 +332,7 @@ int r5, int r4, int r3, int r2, int r1)
 
 		covDiff = covDiff/numOfElem;
 		int delta;
-		for (delta = 0; delta <= AUTOCORR_SIZE; delta++)
+		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
 			double sum = 0;
 
@@ -330,7 +343,8 @@ int r5, int r4, int r3, int r2, int r1)
 
 			autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
 		}
-
+		
+		autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
 	}
 
@@ -516,7 +530,8 @@ void ZC_writeCompareResult(ZC_CompareData* compareResult, char* solution, char* 
 {
 	char** s = constructCompareDataString(compareResult);
 	
-	if(opendir(tgtWorkspaceDir)==NULL)
+	DIR *dir = opendir(tgtWorkspaceDir);
+	if(dir==NULL)
 		mkdir(tgtWorkspaceDir,0775);
 	
 	char tgtFilePath[ZC_BUFS_LONG];
@@ -562,21 +577,23 @@ void ZC_writeCompareResult(ZC_CompareData* compareResult, char* solution, char* 
 	}	
 
 	//write auto-correlation coefficients
-	char *autocorr[AUTOCORR_SIZE];
-	for (i = 0; i < AUTOCORR_SIZE; i++)
+	char *autocorr[AUTOCORR_SIZE+1];
+	for (i = 0; i < AUTOCORR_SIZE+1; i++)
 	{
 		autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
 		sprintf(autocorr[i], "%i %.10G\n", i, (compareResult->autoCorrAbsErr)[i]);
 	}
 	memset(tgtFilePath, 0, ZC_BUFS_LONG);
 	sprintf(tgtFilePath, "%s/%s:%s.autocorr", tgtWorkspaceDir, solution, varName);
-	ZC_writeStrings(AUTOCORR_SIZE, autocorr, tgtFilePath);
-	for (i = 0; i < AUTOCORR_SIZE; i++)
+	ZC_writeStrings(AUTOCORR_SIZE+1, autocorr, tgtFilePath);
+	for (i = 0; i < AUTOCORR_SIZE+1; i++)
 		free(autocorr[i]);
 		
 	char buf[ZC_BUFS];	
 	sprintf(buf, "%s:%s", solution, varName);
 	ZC_writeFFTResults(buf, compareResult->fftCoeff, tgtWorkspaceDir);
+	if(dir!=NULL)
+		closedir(dir);
 }
 
 ZC_CompareData* ZC_loadCompareResult(char* cmpResultFile)

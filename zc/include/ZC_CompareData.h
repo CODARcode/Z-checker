@@ -23,8 +23,8 @@ typedef struct ZC_CompareData
 	double compressTime;
 	double compressRate;
 	int compressSize;
-	double compressRatio; //compression factor = orig_size/compressed_size
-	double rate; //# bits to be represented for each data point
+	double compressRatio; /*compression factor = orig_size/compressed_size*/
+	double rate; /*# bits to be represented for each data point*/
 	
 	double decompressTime;
 	double decompressRate;
@@ -33,7 +33,7 @@ typedef struct ZC_CompareData
 	double avgAbsErr;
 	double maxAbsErr;
 	double* autoCorrAbsErr;
-	double* absErrPDF; //keep the distribution of errors (1000 elements)
+	double* absErrPDF; /*keep the distribution of errors (1000 elements)*/
 	double err_interval;
 	double err_minValue;
 	
@@ -51,6 +51,7 @@ typedef struct ZC_CompareData
 	complex *fftCoeff;	
 } ZC_CompareData;
 
+void freeCompareResult(ZC_CompareData* compareData);
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 int compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double pearsonCorr, 

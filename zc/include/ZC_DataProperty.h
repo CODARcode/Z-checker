@@ -28,7 +28,7 @@ typedef struct{real Re; real Im;} complex;
 typedef struct ZC_DataProperty
 {
 	char* varName;
-	int dataType; //ZC_DOUBLE or ZC_FLOAT
+	int dataType; /*ZC_DOUBLE or ZC_FLOAT*/
 	int r5;
 	int r4;
 	int r3;
@@ -44,8 +44,8 @@ typedef struct ZC_DataProperty
 	double avgValue;
 	double entropy;
 	double zeromean_variance;
-	double* autocorr; //array of autocorrelation coefficients
-	complex* fftCoeff; //array of fft coefficients
+	double* autocorr; /*array of autocorrelation coefficients*/
+	complex* fftCoeff; /*array of fft coefficients*/
 	double* lap;
 } ZC_DataProperty;
 
@@ -58,6 +58,7 @@ void ifft(complex *v, int n, complex *tmp);
 
 void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r1);
 
+void freeDataProperty(ZC_DataProperty* dataProperty);
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, int r5, int r4, int r3, int r2, int r1, 
 int numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
 double entropy, double* autocorr, complex* fftCoeff);

@@ -20,6 +20,7 @@
 int sysEndianType; //endian type of the system
 int dataEndianType; //endian type of the data
 
+int checkingStatus; //0 refers to probe and 1 refers to analysis
 //char *ZC_workspaceDir;
 
 int errorBoundMode; //ABS, REL, ABS_AND_REL, or ABS_OR_REL

@@ -125,7 +125,7 @@ void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r
 			}
 		}
 	}
-	else if (r4 == 0)	//computer Laplacian of 3D data
+	else if (r4 == 0)	/*computer Laplacian of 3D data*/
 	{
 		int x, y, z;
 		for (z = 0; z < r3; z++) {
@@ -149,9 +149,18 @@ void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r
 			}
 		}
 	}
-	// TODO: computer Laplacian of 4D and 5D data
+	/* TODO: computer Laplacian of 4D and 5D data*/
 
 	return;
+}
+
+void freeDataProperty(ZC_DataProperty* dataProperty)
+{
+	//free(dataProperty->varName);
+	free(dataProperty->autocorr);
+	free(dataProperty->fftCoeff);
+	free(dataProperty->lap);
+	free(dataProperty);
 }
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, int r5, int r4, int r3, int r2, int r1, 
@@ -253,7 +262,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 
 	if(entropyFlag)
 	{
-		double absErr = 1E-3; //TODO change fixed value to user input
+		double absErr = 1E-3; /*TODO change fixed value to user input*/
 		double entVal = 0.0;
 		int table_size = numOfElem;
 		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
@@ -270,11 +279,12 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 			}
 
 		property->entropy = entVal;
+		free(table);
 	}
 	
 	if(autocorrFlag)
 	{
-		double *autocorr = (double*)malloc(AUTOCORR_SIZE*sizeof(double));
+		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
 		double cov = 0;
 		for (i = 0; i < numOfElem; i++)
@@ -282,7 +292,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 
 		cov = cov/numOfElem;
 		int delta;
-		for (delta = 0; delta <= AUTOCORR_SIZE; delta++)
+		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
 			double sum = 0;
 
@@ -292,6 +302,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 			autocorr[delta] = sum/(numOfElem-delta)/cov;
 		}
 
+		autocorr[0] = 1;
 		property->autocorr = autocorr;
 	}
 	
@@ -360,7 +371,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 	if(entropyFlag)
 	{
-		double absErr = 1E-3; //TODO change fixed value to user input
+		double absErr = 1E-3; /*TODO change fixed value to user input*/
 		double entVal = 0.0;
 		int table_size = numOfElem;
 		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
@@ -381,7 +392,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 	if(autocorrFlag)
 	{
-		double *autocorr = (double*)malloc(AUTOCORR_SIZE*sizeof(double));
+		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
 		double cov = 0;
 		for (i = 0; i < numOfElem; i++)
@@ -389,7 +400,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 		cov = cov/numOfElem;
 		int delta = 0;
-		for(delta = 0; delta <= AUTOCORR_SIZE; delta++)
+		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
 			double sum = 0;
 
@@ -399,6 +410,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 			autocorr[delta] = sum/(numOfElem-delta)/cov;
 		}
 
+		autocorr[0] = 1;
 		property->autocorr = autocorr;
 	}
 
@@ -549,7 +561,8 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 {
 	char** s = constructDataPropertyString(property);
 	
-	if(opendir(tgtWorkspaceDir)==NULL)
+	DIR *dir = opendir(tgtWorkspaceDir);
+	if(dir==NULL)
 		mkdir(tgtWorkspaceDir,0775);
 	
 	char tgtFilePath[ZC_BUFS];
@@ -561,10 +574,10 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 		free(s[i]);
 	free(s);
 
-	//write the fft coefficients and amplitudes
+	/*write the fft coefficients and amplitudes*/
 	ZC_writeFFTResults(property->varName, property->fftCoeff, tgtWorkspaceDir);
 
-	//write auto-correlation coefficients
+	/*write auto-correlation coefficients*/
 	if(property->autocorr!=NULL)
 	{
 		char *autocorr[AUTOCORR_SIZE];
@@ -580,7 +593,7 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 			free(autocorr[i]);
 	}
 
-	//write Laplacian
+	/*write Laplacian*/
 	if(property->lap!=NULL)
 	{
 		char **lap = (char**)malloc(property->numOfElem*sizeof(char*));
@@ -597,14 +610,16 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 			free(lap[i]);
 		free(lap);
 	}
+	if(dir!=NULL)
+		closedir(dir);
 }
 
 ZC_DataProperty* ZC_loadDataProperty(char* propResultFile)
 {
-	//TODO put the information into the hashtable, named ecPropertyTable
+	/*TODO put the information into the hashtable, named ecPropertyTable*/
 	dictionary *ini;
 	char* par;
-    //printf("[ZC] Reading propResultFile (%s) ...\n", propResultFile);
+    /*printf("[ZC] Reading propResultFile (%s) ...\n", propResultFile);*/
     if (access(propResultFile, F_OK) != 0)
     {
         printf("[ZC] propResultFile: %s NOT accessible.\n", propResultFile);
@@ -633,11 +648,11 @@ ZC_DataProperty* ZC_loadDataProperty(char* propResultFile)
 	double valueRange = (double)iniparser_getdouble(ini, "PROPERTY:valueRange", 0);
 	double avgValue = (double)iniparser_getdouble(ini, "PROPERTY:avgValue", 0);
 	double entropy = (double)iniparser_getdouble(ini, "PROPERTY:entropy", 0);
-	//double autocorr = (double)iniparser_getdouble(ini, "PROPERTY:autocorr", 0); //1-step
-	//TODO: Read more autocorr. coefficients (Read file) and put them in autocorr_array
+	/*double autocorr = (double)iniparser_getdouble(ini, "PROPERTY:autocorr", 0); //1-step*/
+	/*TODO: Read more autocorr. coefficients (Read file) and put them in autocorr_array*/
 	double* autocorr_array = NULL;
 	
-	//TODO: Read fft coefficients... (Read file)
+	/*TODO: Read fft coefficients... (Read file)*/
 	complex* fftCoeff = NULL;
 	
 	ZC_DataProperty* property = ZC_constructDataProperty(var, dataType, r5, r4, r3, r2, r1, numOfElem, minValue, maxValue, 

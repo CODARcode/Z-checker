@@ -16,7 +16,7 @@ extern "C" {
 
 typedef struct DynamicIntArray
 {	
-	unsigned char* array; //char* (one byte) is enough, don't have to be int*
+	unsigned char* array; /*char* (one byte) is enough, don't have to be int**/
 	int size;
 	int capacity;
 } DynamicIntArray;

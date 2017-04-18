@@ -21,6 +21,7 @@ int ZC_ReadConf() {
     char *modeBuf;
     char *errBoundMode;
     char *endianTypeString;
+    char *checkingStatusString;
     dictionary *ini;
     char *par;
     printf("[ZC] Reading ZC configuration file (%s) ...\n", zc_cfgFile);
@@ -46,6 +47,19 @@ int ZC_ReadConf() {
 		printf("Error: Wrong dataEndianType: please set it correctly in ec.config.\n");
 		exit(0);
 	}
+
+	checkingStatusString = iniparser_getstring(ini, "ENV:checkingStatus", NULL);
+	if(strcmp(checkingStatusString, "PROBE")==0 || strcmp(checkingStatusString, "probe")==0)
+		checkingStatus = PROBE;
+	else if(strcmp(checkingStatusString, "ANALYZER")==0 || strcmp(checkingStatusString, "analyzer")==0)
+		checkingStatus = ANALYZER;
+	else
+	{
+		checkingStatus = -1;
+		printf("Error: Wrong checking status in the configuration setting. \n");
+		printf("Example: checkingStatus = PROBE or ANALYZER\n");
+		exit(0);
+	}	
 
 	char *y = (char*)&x;
 	
@@ -87,16 +101,17 @@ int ZC_ReadConf() {
 	snrFlag = (int)iniparser_getint(ini, "COMPARE:snr", 0);
 	psnrFlag = (int)iniparser_getint(ini, "COMPARE:psnr", 0);
 	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
-	
-	plotAbsErrPDFFlag = (int)iniparser_getint(ini, "PLOT:plotAbsErrPDF", 0);
-	plotAutoCorrFlag = 	(int)iniparser_getint(ini, "PLOT:plotAutoCorr", 0);
-	plotFFTAmpFlag = (int)iniparser_getint(ini, "PLOT:plotFFTAmp", 0);
-	plotEntropyFlag = (int)iniparser_getint(ini, "PLOT:plotEntropy", 0);
-	
-	checkCompressorsFlag = (int)iniparser_getint(ini, "PLOT:plotCompressionResults", 0);
 			
-	if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
-	{
+	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
+	if(checkingStatus==1)
+	{		
+		plotAbsErrPDFFlag = (int)iniparser_getint(ini, "PLOT:plotAbsErrPDF", 0);
+		plotAutoCorrFlag = 	(int)iniparser_getint(ini, "PLOT:plotAutoCorr", 0);
+		plotFFTAmpFlag = (int)iniparser_getint(ini, "PLOT:plotFFTAmp", 0);
+		plotEntropyFlag = (int)iniparser_getint(ini, "PLOT:plotEntropy", 0);
+		
+		checkCompressorsFlag = (int)iniparser_getint(ini, "PLOT:plotCompressionResults", 0);
+				
 		//TODO: check if the "dataProperties" directory exists in the current directory.
 		//TODO: If not, create one dir named dataProperties, and softlinks will be created under it later.		
 		if(access("dataProperties", F_OK)!=0)
