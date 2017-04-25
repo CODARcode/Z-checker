@@ -59,7 +59,8 @@ int r5, int r4, int r3, int r2, int r1)
 	double maxErr = minErr;
 	double sum1 = 0, sum2 = 0, sumDiff = 0, sumErr = 0, sumErrSqr = 0;
 	
-	int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	//int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	int numOfElem = compareResult->property->numOfElem;
 	double sumOfDiffSquare = 0;
 
 	for (i = 0; i < numOfElem; i++)
@@ -234,7 +235,8 @@ int r5, int r4, int r3, int r2, int r1)
 	double maxVal = minVal;
 	double sum1 = 0, sum2 = 0, sumDiff = 0, sumErr = 0, sumErrSqr = 0;
 
-	int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	//int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	int numOfElem = compareResult->property->numOfElem;
 
 	for (i = 0; i < numOfElem; i++)
 	{
@@ -410,7 +412,6 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	{
 		float* data1 = (float*)oriData;
 		float* data2 = (float*)decData;
-		
 		compareResult->fftCoeff = ZC_computeFFT(data2, ZC_FLOAT);
 		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
 	}

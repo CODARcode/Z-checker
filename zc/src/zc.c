@@ -152,6 +152,67 @@ int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1)
 
 ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1)
 {
+	int i;
+	double min,max,valueRange,sum = 0,avg;
+	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
+	memset(property, 0, sizeof(ZC_DataProperty));
+	
+	property->varName = varName;
+	property->numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
+	property->dataType = dataType;
+	property->data = oriData;
+	property->r5 = r5;
+	property->r4 = r4;
+	property->r3 = r3;
+	property->r2 = r2;
+	property->r1 = r1;
+	
+	if(dataType == ZC_FLOAT)
+	{
+		float* data = (float*)oriData;
+		min = data[0];
+		max = data[0];
+		for(i=0;i<property->numOfElem;i++)
+		{
+			if(min>data[i]) min = data[i];
+			if(max<data[i]) max = data[i];
+			sum += data[i];
+		}
+		double med = min+(max-min)/2;
+		double sum_of_square = 0;
+		for(i=0;i<property->numOfElem;i++)
+			sum_of_square += (data[i] - med)*(data[i] - med);
+		property->zeromean_variance = sum_of_square/property->numOfElem;		
+	}
+	else
+	{
+		double* data = (double*)oriData;
+		min = data[0];
+		max = data[0];
+		for(i=0;i<property->numOfElem;i++)
+		{
+			if(min>data[i]) min = data[i];
+			if(max<data[i]) max = data[i];
+			sum += data[i];
+		}			
+		double med = min+(max-min)/2;
+		double sum_of_square = 0;
+		for(i=0;i<property->numOfElem;i++)
+			sum_of_square += (data[i] - med)*(data[i] - med);
+		property->zeromean_variance = sum_of_square/property->numOfElem;			
+	}
+	property->minValue = min;
+	property->maxValue = max;
+	property->valueRange = max - min;
+	property->avgValue = sum/property->numOfElem;
+	
+	if(compressTimeFlag)
+		cost_startCmpr();
+	return property;
+}
+
+ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1)
+{
 	ZC_DataProperty* property = ZC_genProperties(varName, dataType, oriData, r5, r4, r3, r2, r1);
 	char tgtWorkspaceDir[ZC_BUFS];
 	sprintf(tgtWorkspaceDir, "dataProperties");
@@ -192,7 +253,6 @@ ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize)
 
 void ZC_startDec()
 {
-	
 	if(decompressTimeFlag)
 		cost_startDec();
 }

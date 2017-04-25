@@ -157,9 +157,12 @@ void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r
 void freeDataProperty(ZC_DataProperty* dataProperty)
 {
 	//free(dataProperty->varName);
-	free(dataProperty->autocorr);
-	free(dataProperty->fftCoeff);
-	free(dataProperty->lap);
+	if(dataProperty->autocorr!=NULL)
+		free(dataProperty->autocorr);
+	if(dataProperty->fftCoeff!=NULL)
+		free(dataProperty->fftCoeff);
+	if(dataProperty->lap!=NULL)
+		free(dataProperty->lap);
 	free(dataProperty);
 }
 
