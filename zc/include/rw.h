@@ -11,7 +11,6 @@
 #define _IO_H
 
 #include <stdio.h>
-#include <stdio.h>
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
