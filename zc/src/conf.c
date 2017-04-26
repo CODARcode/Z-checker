@@ -55,6 +55,7 @@ int ZC_ReadConf() {
 		checkingStatus = ANALYZE_DATA;
 	else if(strcmp(checkingStatusString, "COMPARE_COMPRESSOR")==0 || strcmp(checkingStatusString, "compare_compressor")==0)
 		checkingStatus = COMPARE_COMPRESSOR;
+	else
 	{
 		checkingStatus = -1;
 		printf("Error: Wrong checking status in the configuration setting. \n");
