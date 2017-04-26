@@ -2,7 +2,7 @@
 
 if [[ $# < 2 ]]; then
 	echo Usage: $0 [data directory] [dimension sizes....] 
-	echo Example: $0 /home/shdi/CESM-testdata/x1800x3600 3600 1800
+	echo Example: $0 /home/shdi/CESM-testdata/1800x3600 3600 1800
 	exit
 fi
 
