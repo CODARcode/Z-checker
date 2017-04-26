@@ -24,8 +24,8 @@ int main(int argc, char * argv[])
     
     ZC_plotAutoCorr_DataProperty();
     ZC_plotAutoCorr_CompressError();
-	ZC_plotFFTAmplitude_OriginalData();
-	ZC_plotFFTAmplitude_DecompressData();
+    ZC_plotFFTAmplitude_OriginalData();
+    ZC_plotFFTAmplitude_DecompressData();
     
     ZC_plotErrDistribtion();
     printf("done\n");
