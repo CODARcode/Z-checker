@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "rw.h"
 #include "zc.h"
 
@@ -32,6 +33,13 @@ char** ZC_getFileNames(char* dir, char* extension, int *fileCount)
 		fileNames[i] = (char*)malloc(500);
 	DIR *dir_;
 	struct dirent *ptr;
+	
+	if(!access(dir,0))
+	{
+		*fileCount = 0;
+		return NULL;
+	}
+	
 	dir_ = opendir(dir);
 	i = 0;
 	while((ptr=readdir(dir_))!=NULL)
