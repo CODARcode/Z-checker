@@ -53,7 +53,7 @@ extern "C" {
 #define ZC_VERNUM 0x0010
 #define ZC_VER_MAJOR 0
 #define ZC_VER_MINOR 1
-#define ZC_VER_REVISION 0
+#define ZC_VER_REVISION 1
 
 #define PDF_INTERVALS 1000
 #define AUTOCORR_SIZE 100
@@ -67,6 +67,9 @@ extern "C" {
 
 #define ZC_FLOAT 0
 #define ZC_DOUBLE 1
+#define ZC_INT32 2 //only used in ZC_DataSet to represent the analysis results instead of the original data
+#define ZC_INT16 3 
+#define ZC_INT8 4
 
 #define LITTLE_ENDIAN_DATA 0
 #define BIG_ENDIAN_DATA 1 /*big_endian (ppc, max, etc.) ; little_endian (x86, x64, etc.)*/
@@ -81,8 +84,9 @@ extern "C" {
 #define CMD_OUTPUT_BUF 200
 #define DynamicArrayInitLength 1024
 
-#define PROBE 0
-#define ANALYZER 1
+#define PROBE_COMPRESSOR 0
+#define ANALYZE_DATA 1
+#define COMPARE_COMPRESSOR 2
 
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
@@ -217,7 +221,9 @@ void ZC_quick_sort(RateDistElem* list,int start,int end);
 int ZC_Init(char *configFilePath);
 int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1);
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);
+
+ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, int r5, int r4, int r3, int r2, int r1);
+ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);
 ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize);
 void ZC_startDec();
 void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData);

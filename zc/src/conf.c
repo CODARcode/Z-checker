@@ -49,15 +49,16 @@ int ZC_ReadConf() {
 	}
 
 	checkingStatusString = iniparser_getstring(ini, "ENV:checkingStatus", NULL);
-	if(strcmp(checkingStatusString, "PROBE")==0 || strcmp(checkingStatusString, "probe")==0)
-		checkingStatus = PROBE;
-	else if(strcmp(checkingStatusString, "ANALYZER")==0 || strcmp(checkingStatusString, "analyzer")==0)
-		checkingStatus = ANALYZER;
-	else
+	if(strcmp(checkingStatusString, "PROBE_COMPRESSOR")==0 || strcmp(checkingStatusString, "probe_compressor")==0)
+		checkingStatus = PROBE_COMPRESSOR;
+	else if(strcmp(checkingStatusString, "ANALYZE_DATA")==0 || strcmp(checkingStatusString, "analyze_data")==0)
+		checkingStatus = ANALYZE_DATA;
+	else if(strcmp(checkingStatusString, "COMPARE_COMPRESSOR")==0 || strcmp(checkingStatusString, "compare_compressor")==0)
+		checkingStatus = COMPARE_COMPRESSOR;
 	{
 		checkingStatus = -1;
 		printf("Error: Wrong checking status in the configuration setting. \n");
-		printf("Example: checkingStatus = PROBE or ANALYZER\n");
+		printf("Example: checkingStatus = PROBE_COMPRESSOR, ANALYZE_DATA, COMPARE_COMPRESSOR\n");
 		exit(0);
 	}	
 
@@ -103,7 +104,7 @@ int ZC_ReadConf() {
 	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
 			
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
-	if(checkingStatus==1)
+	if(checkingStatus==COMPARE_COMPRESSOR)
 	{		
 		plotAbsErrPDFFlag = (int)iniparser_getint(ini, "PLOT:plotAbsErrPDF", 0);
 		plotAutoCorrFlag = 	(int)iniparser_getint(ini, "PLOT:plotAutoCorr", 0);
