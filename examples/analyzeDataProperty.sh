@@ -16,6 +16,6 @@ fileList=`cd "$dataDir";ls *.dat`
 
 for file in $fileList
 do
-	echo ./analyzeDataProperty zc.config "$dataDir/$file" $dim1 $dim2 $dim3 $dim4
-	./analyzeDataProperty zc.config "$dataDir/$file" $dim1 $dim2 $dim3 $dim4
+	echo ./analyzeDataProperty zc.config "$dataDir" "$file" $dim1 $dim2 $dim3 $dim4
+	./analyzeDataProperty zc.config "$dataDir" "$file" $dim1 $dim2 $dim3 $dim4
 done
