@@ -7,10 +7,64 @@
  *      See COPYRIGHT in top-level directory.
  */
 
-#include "string.h"
+#include <stdio.h>
+#include <string.h>
 #include "zc.h"
 #include "iniparser.h"
 #include "rw.h"
+#include "ZC_DataProperty.h"
+
+void loadProperty(char* property_dir, char* fileName)
+{
+	char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS_LONG], linkCmd[ZC_BUFS_LONG];
+	
+	char* propertyVarName = rmFileExtension(fileName);
+	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, propertyVarName);
+	if(p==NULL)
+	{
+		//todo: deal with full path
+		sprintf(tmpPathBuf, "%s/%s", property_dir, fileName);
+		//free(compResultCaseName);
+		ZC_DataProperty* property = ZC_loadDataProperty(tmpPathBuf);
+		ht_set(ecPropertyTable, propertyVarName, property);
+		
+		sprintf(softLinkPath, "dataProperties/%s", fileName);					
+		if (access(softLinkPath, F_OK) != 0)
+		{
+			updateLinkFullPath(tmpPathBuf, fullPathBuf);
+			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+			system(linkCmd);				
+		}
+
+		sprintf(softLinkPath, "dataProperties/%s.autocorr", propertyVarName);					
+		if (access(softLinkPath, F_OK) != 0)
+		{
+			sprintf(tmpPathBuf, "%s/%s.autocorr", property_dir, propertyVarName);
+			updateLinkFullPath(tmpPathBuf, fullPathBuf);
+			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+			system(linkCmd);
+		}
+
+		sprintf(softLinkPath, "dataProperties/%s.fft", propertyVarName);
+		if (access(softLinkPath, F_OK) != 0)
+		{					
+			sprintf(tmpPathBuf, "%s/%s.fft", property_dir, propertyVarName);
+			updateLinkFullPath(tmpPathBuf, fullPathBuf);
+			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+			system(linkCmd);								
+		}
+		
+		sprintf(softLinkPath, "dataProperties/%s.fft.amp", propertyVarName);
+		if (access(softLinkPath, F_OK) != 0)
+		{
+			sprintf(tmpPathBuf, "%s/%s.fft.amp", property_dir, propertyVarName);
+			updateLinkFullPath(tmpPathBuf, fullPathBuf);
+			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+			system(linkCmd);
+		}
+	}	
+	free(propertyVarName);
+}
 
  
 /*-------------------------------------------------------------------------*/
@@ -124,7 +178,7 @@ int ZC_ReadConf() {
 		{
 			system("mkdir compareResults");
 		}
-		char fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS], linkCmd[ZC_BUFS_LONG];
+		char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS], linkCmd[ZC_BUFS_LONG];
 		char* propertyExtension = iniparser_getstring(ini, "PLOT:propertyExtension", NULL);		
 		char* compressorsString = iniparser_getstring(ini, "PLOT:compressors", NULL);
 		char* cmpResultFileExtension = iniparser_getstring(ini, "PLOT:cmpResultFileExtension", NULL);
@@ -160,75 +214,46 @@ int ZC_ReadConf() {
 
 		//load property data first
 		ecPropertyTable = ht_create( HASHTABLE_SIZE );
+		char* property_dir = NULL;
+				
+		char** fileNames = (char**)malloc(1000*sizeof(char*)); //at most 1000 files, each of which has 500 chars.
+		for(i=0;i<1000;i++)
+			fileNames[i] = (char*)malloc(500);		
+		//load property info from current directory (in Z-checker)
+		int count;
+		property_dir = "dataProperties";
+		ZC_getFileNames(property_dir, propertyExtension, &count, fileNames);
+		for(j=0;j<count;j++)
+			loadProperty(property_dir, fileNames[j]);
+		
+		//load property info from compressor-directories
 		for(i=0;i<compressors_count;i++)
 		{
 			char* compressor = compressors[i];
 			printf("Loading property data for %s...\n", compressor);																																													
-			char* property_dir = properties_dir[i];
-			int count;
-			char** fileNames = ZC_getFileNames(property_dir, propertyExtension, &count);
+			property_dir = properties_dir[i];
+			ZC_getFileNames(property_dir, propertyExtension, &count, fileNames);
 			//TODO: update the data structure  ZC_CompareData
 			for(j=0;j<count;j++)
-			{
-				char* propertyVarName = rmFileExtension(fileNames[j]);
-				ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, propertyVarName);
-				if(p==NULL)
-				{
-					//todo: deal with full path
-					sprintf(fullPathBuf, "%s/%s", property_dir, fileNames[j]);
-					//free(compResultCaseName);
-					ZC_DataProperty* property = ZC_loadDataProperty(fullPathBuf);
-					ht_set(ecPropertyTable, propertyVarName, property);
-					
-					sprintf(softLinkPath, "dataProperties/%s", fileNames[j]);					
-					if (access(softLinkPath, F_OK) != 0)
-					{
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);				
-					}
-
-					sprintf(softLinkPath, "dataProperties/%s.autocorr", propertyVarName);					
-					if (access(softLinkPath, F_OK) != 0)
-					{
-						sprintf(fullPathBuf, "%s/%s.autocorr", property_dir, propertyVarName);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
-					}
-
-					sprintf(softLinkPath, "dataProperties/%s.fft", propertyVarName);
-					if (access(softLinkPath, F_OK) != 0)
-					{					
-						sprintf(fullPathBuf, "%s/%s.fft", property_dir, propertyVarName);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);								
-					}
-					
-					sprintf(softLinkPath, "dataProperties/%s.fft.amp", propertyVarName);
-					if (access(softLinkPath, F_OK) != 0)
-					{
-						sprintf(fullPathBuf, "%s/%s.fft.amp", property_dir, propertyVarName);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
-					}												
-				}
-				free(propertyVarName);
-			}
-			
-			for(j=0;j<1000;j++)
-				free(fileNames[j]);
-			free(fileNames);
+				loadProperty(property_dir, fileNames[j]);
 		}
-		
+			
+		int propVarCount = ht_getElemCount(ecPropertyTable);		
+		if(propVarCount==0)
+		{
+			printf("Error: No property values are detected.\nPlease run analyzeDataProperty.sh (i.e., analyzeDataProperty.c) to generate the data perperties first.\n");
+			exit;
+		}
+
+		//and then load comparison results....
+				
 		char* buf = iniparser_getstring(ini, "PLOT:comparisonCases", NULL);
 		comparisonCases = (char*)malloc(strlen(buf)+1);
 		sprintf(comparisonCases, "%s", buf);
 		
 		cmpResultFileExtension = iniparser_getstring(ini, "PLOT:cmpResultFileExtension", NULL);	
 		
-		//and then load comparison results....
 		ecCompareDataTable = ht_create(HASHTABLE_SIZE);
-	
-		/*ht_set( hashtable, "key1", compare);*/
 		
 		for(i=0;i<compressors_count;i++)
 		{
@@ -236,7 +261,7 @@ int ZC_ReadConf() {
 			printf("Reading compression results for %s\n", compressor);																																													
 			char* compare_dir = compareData_dir[i];
 			int count;
-			char** fileNames = ZC_getFileNames(compare_dir, cmpResultFileExtension, &count);
+			ZC_getFileNames(compare_dir, cmpResultFileExtension, &count, fileNames);
 			//TODO: update the data structure  ZC_CompareData
 			for(j=0;j<count;j++)
 			{
@@ -245,15 +270,24 @@ int ZC_ReadConf() {
 				if(p==NULL)
 				{				
 					//todo: deal with full path
-					sprintf(fullPathBuf, "%s/%s", compare_dir, fileNames[j]);				
+					sprintf(tmpPathBuf, "%s/%s", compare_dir, fileNames[j]);				
 					//free(compResultCaseName);
-					ZC_CompareData* compare = ZC_loadCompareResult(fullPathBuf);
+					ZC_CompareData* compare = ZC_loadCompareResult(tmpPathBuf);
 					ht_set(ecCompareDataTable, compResultCaseName, compare);
+					
+					sprintf(softLinkPath, "compareResults/%s", fileNames[j]);					
+					if (access(softLinkPath, F_OK) != 0)
+					{
+						updateLinkFullPath(tmpPathBuf, fullPathBuf);
+						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+						system(linkCmd);				
+					}					
 					
 					sprintf(softLinkPath, "compareResults/%s.dis", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
-						sprintf(fullPathBuf, "%s/%s.dis", compare_dir, compResultCaseName);
+						sprintf(tmpPathBuf, "%s/%s.dis", compare_dir, compResultCaseName);
+						updateLinkFullPath(tmpPathBuf, fullPathBuf);
 						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
 						system(linkCmd);
 					}
@@ -261,7 +295,8 @@ int ZC_ReadConf() {
 					sprintf(softLinkPath, "compareResults/%s.autocorr", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
-						sprintf(fullPathBuf, "%s/%s.autocorr", compare_dir, compResultCaseName);
+						sprintf(tmpPathBuf, "%s/%s.autocorr", compare_dir, compResultCaseName);
+						updateLinkFullPath(tmpPathBuf, fullPathBuf);
 						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
 						system(linkCmd);
 					}
@@ -269,7 +304,8 @@ int ZC_ReadConf() {
 					sprintf(softLinkPath, "compareResults/%s.fft", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
-						sprintf(fullPathBuf, "%s/%s.fft", compare_dir, compResultCaseName);
+						sprintf(tmpPathBuf, "%s/%s.fft", compare_dir, compResultCaseName);
+						updateLinkFullPath(tmpPathBuf, fullPathBuf);
 						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
 						system(linkCmd);
 					}			
@@ -277,18 +313,21 @@ int ZC_ReadConf() {
 					sprintf(softLinkPath, "compareResults/%s.fft.amp", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
-						sprintf(fullPathBuf, "%s/%s.fft.amp", compare_dir, compResultCaseName);
+						sprintf(tmpPathBuf, "%s/%s.fft.amp", compare_dir, compResultCaseName);
+						updateLinkFullPath(tmpPathBuf, fullPathBuf);
 						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
 						system(linkCmd);
 					}											
 				}
 				free(compResultCaseName);
-			}
-			for(j=0;j<1000;j++)
-				free(fileNames[j]);
-			free(fileNames);			
+			}	
 		}
+		for(j=0;j<1000;j++)
+			free(fileNames[j]);
+		free(fileNames);					
 	}																																																																																																													
+
+	
 	
 	ZC_versionNumber[0] = ZC_VER_MAJOR; //0
 	ZC_versionNumber[1] = ZC_VER_MINOR; //5

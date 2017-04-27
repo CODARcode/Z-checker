@@ -36,7 +36,9 @@ entry_t *ht_newpair( char *key, void *value );
 void ht_set( hashtable_t *hashtable, char *key, void *value );
 void *ht_get( hashtable_t *hashtable, char *key );
 void ht_freeTable( hashtable_t *hashtable);
+
 char** ht_getAllKeys(hashtable_t *hashtable);
+int ht_getElemCount(hashtable_t *hashtable);
 
 #ifdef __cplusplus
 }

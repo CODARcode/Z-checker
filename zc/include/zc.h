@@ -188,6 +188,7 @@ void cost_startDec();
 double cost_endDec();
 
 /*conf.c*/
+void loadProperty(char* property_dir, char* propertyVarName);
 int ZC_ReadConf();
 int ZC_LoadConf();
 

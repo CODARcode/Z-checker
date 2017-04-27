@@ -177,3 +177,8 @@ char** ht_getAllKeys(hashtable_t *hashtable)
 	}
 	return result;
 }
+
+int ht_getElemCount(hashtable_t *hashtable)
+{
+	return hashtable->count;
+}

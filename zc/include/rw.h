@@ -22,8 +22,9 @@
 extern "C" {
 #endif
 
+void updateLinkFullPath(char* oriPath, char* finalPath);
 int ZC_checkExtension(char* str, char* extension);
-char** ZC_getFileNames(char* dir, char* extension, int *fileCount);
+void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames);
 
 void ZC_symTransform_8bytes(unsigned char data[8]);
 void ZC_symTransform_2bytes(unsigned char data[2]);

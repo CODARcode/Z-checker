@@ -14,6 +14,14 @@
 #include "rw.h"
 #include "zc.h"
 
+void updateLinkFullPath(char* oriPath, char* finalPath)
+{
+	if(oriPath[0]=='/') //full path
+		finalPath = oriPath;
+	else
+		sprintf(finalPath, "../%s", oriPath);
+}
+
 int ZC_checkExtension(char* str, char* extension)
 {
 	char* l = strrchr(str, '.');
@@ -25,20 +33,18 @@ int ZC_checkExtension(char* str, char* extension)
 		return 0;
 }
 
-char** ZC_getFileNames(char* dir, char* extension, int *fileCount)
+void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames)
 {
 	int i;
-	char** fileNames = (char**)malloc(1000*sizeof(char*)); //at most 1000 files, each of which has 500 chars.
-	for(i=0;i<1000;i++)
-		fileNames[i] = (char*)malloc(500);
-	DIR *dir_;
-	struct dirent *ptr;
 	
-	if(!access(dir,0))
+	if(access(dir,0)!=0)
 	{
 		*fileCount = 0;
-		return NULL;
+		return;
 	}
+		
+	DIR *dir_;
+	struct dirent *ptr;
 	
 	dir_ = opendir(dir);
 	i = 0;
@@ -46,7 +52,7 @@ char** ZC_getFileNames(char* dir, char* extension, int *fileCount)
 	{
 		if(i==1000)
 		{
-			printf("Real fileCount >=1000, but we can only read the first 1000 files.\n");
+			printf("Error: File Count >=1000, but we can only read the first 1000 files.\n");
 			break;
 		}
 		if(ZC_checkExtension(ptr->d_name, extension))
@@ -56,7 +62,6 @@ char** ZC_getFileNames(char* dir, char* extension, int *fileCount)
 		}
 	}
 	*fileCount = i;
-	return fileNames;
 }
 
 
