@@ -45,9 +45,9 @@ int main(int argc, char * argv[])
 
     ZC_CompareData* compareResult = ZC_compareData("testVar1", ZC_FLOAT, data1, data2, r5, r4, r3, r2, r1);
 	
-    ZC_printCompareResult(compareResult);
+    ZC_printCompressionResult(compareResult);
     
-    ZC_writeCompareResult(compareResult, "sz", "test1", "compareResults");
+    ZC_writeCompressionResult(compareResult, "sz", "test1", "compressionResults");
 	
     printf("done\n");
     return 0;
