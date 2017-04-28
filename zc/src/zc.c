@@ -410,19 +410,19 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	ZC_writeStrings(count+1, psnrLines, psnrDataFile);
 		
 	//generate GNUPLOT scripts, and plot the data by running the scripts
-	char** scriptLines = genGnuplotScript_histogram(cmpRatioKey, "txt", 26, 1+cmpCount, "Variables", "Compression Ratio", (long)(maxCR*1.3));
+	char** scriptLines = genGnuplotScript_histogram(cmpRatioKey, "txt", 26, 1+cmpCount, "Variables", "Compression Ratio", (long)(maxCR*1.3)+1);
 	ZC_writeStrings(18, scriptLines, cmpRatioPlotFile);
 	system(cmpRatioCmd);
 	
-	scriptLines = genGnuplotScript_histogram(cmpRateKey, "txt", 26, 1+cmpCount, "Variables", "Compression Rate", (long)(maxCRT*1.3));
+	scriptLines = genGnuplotScript_histogram(cmpRateKey, "txt", 26, 1+cmpCount, "Variables", "Compression Rate", (long)(maxCRT*1.3)+1);
 	ZC_writeStrings(18, scriptLines, cmpRatePlotFile);
 	system(cmpRateCmd);
 
-	scriptLines = genGnuplotScript_histogram(dcmpRateKey, "txt", 26, 1+cmpCount, "Variables", "Decompression Rate", (long)(maxDCRT*1.3));
+	scriptLines = genGnuplotScript_histogram(dcmpRateKey, "txt", 26, 1+cmpCount, "Variables", "Decompression Rate", (long)(maxDCRT*1.3)+1);
 	ZC_writeStrings(18, scriptLines, dcmpRatePlotFile);
 	system(dcmpRateCmd);
 	
-	scriptLines = genGnuplotScript_histogram(psnrKey, "txt", 26, 1+cmpCount, "Variables", "PSNR", (long)(maxPSNR*1.3));
+	scriptLines = genGnuplotScript_histogram(psnrKey, "txt", 26, 1+cmpCount, "Variables", "PSNR", (long)(maxPSNR*1.3)+1);
 	ZC_writeStrings(18, scriptLines, psnrPlotFile);
 	system(psnrCmd);	
 	
