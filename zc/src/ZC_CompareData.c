@@ -461,7 +461,7 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 	return compareResult;
 }
 
-void ZC_printCompareResult(ZC_CompareData* compareResult)
+void ZC_printCompressionResult(ZC_CompareData* compareResult)
 {
 	printf("minAbsErr: %f\n", compareResult->minAbsErr);
 	printf("avgAbsErr: %f\n", compareResult->avgAbsErr);
@@ -527,7 +527,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	return s;
 }
 
-void ZC_writeCompareResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir)
+void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir)
 {
 	char** s = constructCompareDataString(compareResult);
 	
@@ -597,7 +597,7 @@ void ZC_writeCompareResult(ZC_CompareData* compareResult, char* solution, char* 
 		closedir(dir);
 }
 
-ZC_CompareData* ZC_loadCompareResult(char* cmpResultFile)
+ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 {
 	//TODO put the information into the hashtable, named ecPropertyTable
 	dictionary *ini;

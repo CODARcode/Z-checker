@@ -269,11 +269,11 @@ void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
 	}
 	if(compareResult==NULL)
 	{
-		printf("Error: compareResult==NULL. \nPlease construct ZC_CompareData* compareResult using ZC_compareData() or ZC_endCmpr().\n");
+		printf("Error: compressionResults==NULL. \nPlease construct ZC_CompareData* compareResult using ZC_compareData() or ZC_endCmpr().\n");
 		exit(0);
 	}
 	ZC_compareData_dec(compareResult, decData);
-	ZC_writeCompareResult(compareResult, solution, compareResult->property->varName, "compareResults");
+	ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
 }
 
 void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
@@ -760,10 +760,10 @@ void ZC_plotAutoCorr_CompressError()
 	{
 		sprintf(acFileName, "%s", allCampCaseNames[i]);
 		char** scriptLines = genGnuplotScript_fillsteps(acFileName, "autocorr", 26, 2, "Lags", "ACF");
-		sprintf(acPlotFile, "compareResults/%s-autocorr.p", acFileName);
+		sprintf(acPlotFile, "compressionResults/%s-autocorr.p", acFileName);
 		ZC_writeStrings(19, scriptLines, acPlotFile);
 		//execute .p files using system().
-		sprintf(acCmd, "cd compareResults;gnuplot \"%s-autocorr.p\";mv \"%s.autocorr.eps\" \"%s-autocorr.eps\"", acFileName, acFileName, acFileName);
+		sprintf(acCmd, "cd compressionResults;gnuplot \"%s-autocorr.p\";mv \"%s.autocorr.eps\" \"%s-autocorr.eps\"", acFileName, acFileName, acFileName);
 		system(acCmd);	
 		for(j=0;j<19;j++)
 			free(scriptLines[j]);
@@ -819,11 +819,11 @@ void ZC_plotFFTAmplitude_DecompressData()
 	for(i=0;i<ecCompareDataTable->count;i++)
 	{
 		sprintf(ampFileName, "%s.fft", allVarNames[i]);
-		sprintf(ampPlotFile, "compareResults/%s-fft-amp.p", allVarNames[i]);
+		sprintf(ampPlotFile, "compressionResults/%s-fft-amp.p", allVarNames[i]);
 		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", 26, 2, "frequency", "amplitude");
 		ZC_writeStrings(19, scriptLines, ampPlotFile);
 		//execute .p files using system().
-		sprintf(ampCmd, "cd compareResults;gnuplot \"%s-fft-amp.p\";mv \"%s.fft.amp.eps\" \"%s-fft-amp.eps\"", allVarNames[i],allVarNames[i], allVarNames[i]);
+		sprintf(ampCmd, "cd compressionResults;gnuplot \"%s-fft-amp.p\";mv \"%s.fft.amp.eps\" \"%s-fft-amp.eps\"", allVarNames[i],allVarNames[i], allVarNames[i]);
 		system(ampCmd);
 		for(j=0;j<19;j++)
 			free(scriptLines[j]);
@@ -839,11 +839,11 @@ void ZC_plotErrDistribtion()
 	for(i=0;i<ecCompareDataTable->count;i++)
 	{
 		sprintf(disFileName, "%s", allVarNames[i]);
-		sprintf(disPlotFile, "compareResults/%s-dis.p", allVarNames[i]);
+		sprintf(disPlotFile, "compressionResults/%s-dis.p", allVarNames[i]);
 		char** scriptLines = genGnuplotScript_fillsteps(disFileName, "dis", 26, 2, "Error", "PDF");
 		ZC_writeStrings(19, scriptLines, disPlotFile);
 		//execute .p files using system().
-		sprintf(disCmd, "cd compareResults;gnuplot \"%s-dis.p\";mv \"%s.dis.eps\" \"%s-dis.eps\"", disFileName,disFileName, disFileName);
+		sprintf(disCmd, "cd compressionResults;gnuplot \"%s-dis.p\";mv \"%s.dis.eps\" \"%s-dis.eps\"", disFileName,disFileName, disFileName);
 		system(disCmd);
 		for(j=0;j<19;j++)
 			free(scriptLines[j]);

@@ -174,9 +174,9 @@ int ZC_ReadConf() {
 		{
 			system("mkdir dataProperties");
 		}
-		if(access("compareResults", F_OK)!=0)
+		if(access("compressionResults", F_OK)!=0)
 		{
-			system("mkdir compareResults");
+			system("mkdir compressionResults");
 		}
 		char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS], linkCmd[ZC_BUFS_LONG];
 		char* propertyExtension = iniparser_getstring(ini, "PLOT:propertyExtension", NULL);		
@@ -209,7 +209,7 @@ int ZC_ReadConf() {
 			properties_dir[i] = (char*)malloc(strlen(cmprsorDir)+20);
 			sprintf(properties_dir[i], "%s/dataProperties", compressors_dir[i]);
 			compareData_dir[i] = (char*)malloc(strlen(cmprsorDir)+20);
-			sprintf(compareData_dir[i], "%s/compareResults", compressors_dir[i]);
+			sprintf(compareData_dir[i], "%s/compressionResults", compressors_dir[i]);
 		}
 
 		//load property data first
@@ -272,10 +272,10 @@ int ZC_ReadConf() {
 					//todo: deal with full path
 					sprintf(tmpPathBuf, "%s/%s", compare_dir, fileNames[j]);				
 					//free(compResultCaseName);
-					ZC_CompareData* compare = ZC_loadCompareResult(tmpPathBuf);
+					ZC_CompareData* compare = ZC_loadCompressionResult(tmpPathBuf);
 					ht_set(ecCompareDataTable, compResultCaseName, compare);
 					
-					sprintf(softLinkPath, "compareResults/%s", fileNames[j]);					
+					sprintf(softLinkPath, "compressionResults/%s", fileNames[j]);					
 					if (access(softLinkPath, F_OK) != 0)
 					{
 						updateLinkFullPath(tmpPathBuf, fullPathBuf);
@@ -283,7 +283,7 @@ int ZC_ReadConf() {
 						system(linkCmd);				
 					}					
 					
-					sprintf(softLinkPath, "compareResults/%s.dis", compResultCaseName);
+					sprintf(softLinkPath, "compressionResults/%s.dis", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
 						sprintf(tmpPathBuf, "%s/%s.dis", compare_dir, compResultCaseName);
@@ -292,7 +292,7 @@ int ZC_ReadConf() {
 						system(linkCmd);
 					}
 					
-					sprintf(softLinkPath, "compareResults/%s.autocorr", compResultCaseName);
+					sprintf(softLinkPath, "compressionResults/%s.autocorr", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
 						sprintf(tmpPathBuf, "%s/%s.autocorr", compare_dir, compResultCaseName);
@@ -301,7 +301,7 @@ int ZC_ReadConf() {
 						system(linkCmd);
 					}
 		
-					sprintf(softLinkPath, "compareResults/%s.fft", compResultCaseName);
+					sprintf(softLinkPath, "compressionResults/%s.fft", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
 						sprintf(tmpPathBuf, "%s/%s.fft", compare_dir, compResultCaseName);
@@ -310,7 +310,7 @@ int ZC_ReadConf() {
 						system(linkCmd);
 					}			
 					
-					sprintf(softLinkPath, "compareResults/%s.fft.amp", compResultCaseName);
+					sprintf(softLinkPath, "compressionResults/%s.fft.amp", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
 						sprintf(tmpPathBuf, "%s/%s.fft.amp", compare_dir, compResultCaseName);

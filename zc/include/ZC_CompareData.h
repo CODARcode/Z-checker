@@ -63,10 +63,10 @@ void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double*
 int r5, int r4, int r3, int r2, int r1);
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData);
 ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, int r5, int r4, int r3, int r2, int r1);
-void ZC_printCompareResult(ZC_CompareData* compareResult);
+void ZC_printCompressionResult(ZC_CompareData* compareResult);
 char** constructCompareDataString(ZC_CompareData* compareResult);
-void ZC_writeCompareResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir);
-ZC_CompareData* ZC_loadCompareResult(char* cmpResultFile);
+void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir);
+ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile);
 
 #ifdef __cplusplus
 }
