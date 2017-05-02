@@ -326,9 +326,13 @@ int ZC_ReadConf() {
 			free(fileNames[j]);
 		free(fileNames);					
 	
-		generateReportFlag = (int)iniparser_getint(ini, "DATA:generateReport", 0);
+		generateReportFlag = (int)iniparser_getint(ini, "REPORT:generateReport", 0);
 		if(generateReportFlag==1)
-			reportTemplateFile = iniparser_getstring(ini, "ENV:reportTemplateFile", NULL);
+		{
+			char *reportTemplateFileString = iniparser_getstring(ini, "REPORT:reportTemplateFile", NULL);
+			reportTemplateFile = (char*)malloc(sizeof(char)*(strlen(reportTemplateFileString)+1));
+			sprintf(reportTemplateFile, "%s", reportTemplateFileString);
+		}
 		else
 			reportTemplateFile = NULL;
 	}																																																																																																													

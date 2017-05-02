@@ -19,7 +19,7 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 		lines[i] = (char*)malloc(250);
 		memset(lines[i], 0, 250);
 	}
-	sprintf(lines[0], "set term post eps enh \"Arial\" 26 color\n");
+	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", dataFileName); //the file name is without extension here
 	sprintf(lines[2], "set datafile missing \"-\"\n");
 	sprintf(lines[3], "set key inside top left Left reverse\n");
@@ -70,7 +70,7 @@ char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontS
 		lines[i] = (char*)malloc(250);
 		memset(lines[i], 0, 250);
 	}
-	sprintf(lines[0], "set term post eps enh \"Arial\" 26 color\n");
+	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", dataFileName); //the file name is without extension here
 	sprintf(lines[2], "set datafile missing \"-\"\n");
 	sprintf(lines[3], "set key inside top left Left reverse\n");
@@ -115,7 +115,7 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 		lines[i] = (char*)malloc(250);
 		memset(lines[i], 0, 250);
 	}
-	sprintf(lines[0], "set term post eps enh \"Arial\" 26 color\n");
+	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", dataFileName); //the file name is without extension here
 	sprintf(lines[2], "set datafile missing \"-\"\n");
 	sprintf(lines[3], "set key inside top left Left reverse\n");
@@ -167,7 +167,7 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 		lines[i] = (char*)malloc(250);
 		memset(lines[i], 0, 250);
 	}
-	sprintf(lines[0], "set term post eps enh \"Arial\" 26 color\n");
+	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.%s.eps\"\n", dataFileName, extension); //the file name is without extension here
 	sprintf(lines[2], "set datafile missing \"-\"\n");
 	sprintf(lines[3], "set key inside top left Left reverse\n");

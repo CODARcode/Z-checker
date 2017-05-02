@@ -24,6 +24,7 @@
 #include "DynamicDoubleArray.h"
 #include "DynamicIntArray.h"
 #include "ZC_util.h"
+#include "ZC_ReportGenerator.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'

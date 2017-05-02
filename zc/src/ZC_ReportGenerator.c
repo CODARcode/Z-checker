@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include "ZC_ReportGenerator.h"
 #include "zc.h"
 
@@ -46,6 +47,13 @@ void ZC_generateSpectrumDistortionReport()
 
 void ZC_generateOverallReport()
 {
+	if(reportTemplateFile==NULL)
+	{
+		printf("Error: reportTemplateFile==NULL\n");
+		printf("You need to set the template file path in zc.config.\n");
+		exit(0);
+	}
+	
 	ZC_generateCompressionRateReport();
 	ZC_generateDecompressionRateReport();
 	ZC_generatePSNRReport();
@@ -56,6 +64,9 @@ void ZC_generateOverallReport()
 	ZC_generateSpectrumDistortionReport();
 	
 	//Perform generating pdf file based on latex command
-	//system();
+	char genReportCmd[ZC_BUFS_LONG];
+	sprintf(genReportCmd, "if [ -d report ];then rm -rf report;fi; cp -r \"%s\" report;cd report;make", reportTemplateFile);
+	printf("%s\n", genReportCmd);
+	system(genReportCmd);
 }
 

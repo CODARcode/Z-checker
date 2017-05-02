@@ -68,7 +68,7 @@ int plotEntropyFlag = 1;
 int checkCompressorsFlag = 1; //corresponding to plotCompressionResult flag in ec.config
 
 int generateReportFlag = 1;
-char* reportTemplateFile = NULL;
+char *reportTemplateFile;
 
 int ZC_versionNumber[3];
 
@@ -861,9 +861,9 @@ void ZC_plotErrDistribtion()
 
 int ZC_analyze_and_generateReport()
 {
-	if(generateReportFlag==0 || reportTemplateFile == NULL)
+	if(generateReportFlag==0)
 	{
-		printf("Error: You want to generate the report but generateReportFlag==1 or reportTemplateFile==NULL\n");
+		printf("Error: You want to generate the report but generateReportFlag==0\n");
 		printf("Solution: Set generateReportFlag to 1 in the zc.config or in the initialization step.\n");
 		exit(0);
 	}
@@ -889,5 +889,7 @@ void ZC_Finalize()
 		ht_freeTable(ecPropertyTable);
 	if(ecCompareDataTable!=NULL)
 		ht_freeTable(ecCompareDataTable);
+	if(reportTemplateFile!=NULL)
+		free(reportTemplateFile);
     return ;
 }
