@@ -325,9 +325,13 @@ int ZC_ReadConf() {
 		for(j=0;j<1000;j++)
 			free(fileNames[j]);
 		free(fileNames);					
-	}																																																																																																													
-
 	
+		generateReportFlag = (int)iniparser_getint(ini, "DATA:generateReport", 0);
+		if(generateReportFlag==1)
+			reportTemplateFile = iniparser_getstring(ini, "ENV:reportTemplateFile", NULL);
+		else
+			reportTemplateFile = NULL;
+	}																																																																																																													
 	
 	ZC_versionNumber[0] = ZC_VER_MAJOR; //0
 	ZC_versionNumber[1] = ZC_VER_MINOR; //5

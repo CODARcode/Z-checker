@@ -294,3 +294,39 @@ int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data)
 	pclose(fp);
 	return status;
 }
+
+int ZC_ReplaceStr(char *sSrc, char *sMatchStr, char *sReplaceStr)
+{
+	int  StringLen;
+	char caNewString[MAX_MSG_LENGTH];
+
+	char *FindPos = strstr(sSrc, sMatchStr);
+	if( (!FindPos) || (!sMatchStr) )
+		return -1;
+
+	while( FindPos )
+	{
+		memset(caNewString, 0, sizeof(caNewString));
+		StringLen = FindPos - sSrc;
+		strncpy(caNewString, sSrc, StringLen);
+		strcat(caNewString, sReplaceStr);
+		strcat(caNewString, FindPos + strlen(sMatchStr));
+		strcpy(sSrc, caNewString);
+
+		FindPos = strstr(sSrc, sMatchStr);
+	}
+
+	return 0;
+}
+
+/**
+ * 
+ * This function is used to deal with the case that sMatchStr overlaps with sReplaceStr.
+ * For example, ZC_ReplaceStr2("test_1", "_", "\\\\_");
+ * Note: the sSrc, sMatchStr, and SReplaceStr should not contain "!".
+ * */
+int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr)
+{
+	ZC_ReplaceStr(sSrc, sMatchStr, "!");
+	ZC_ReplaceStr(sSrc, "!", sReplaceStr);	
+}

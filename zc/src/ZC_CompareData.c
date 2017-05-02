@@ -530,7 +530,9 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir)
 {
 	char** s = constructCompareDataString(compareResult);
-	
+	char varName_[ZC_BUFS];
+	strcpy(varName_, varName);
+	ZC_ReplaceStr2(varName_, "_", "\\\\_");
 	DIR *dir = opendir(tgtWorkspaceDir);
 	if(dir==NULL)
 		mkdir(tgtWorkspaceDir,0775);
@@ -555,7 +557,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	{
 		char *ss[2];
 		ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(ss[0], "x %s:%s-PDF\n", solution, varName);				
+		sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
 		ss[1] = "0 1\n";
 		ZC_writeStrings(2, ss, tgtFilePath);
 		free(ss[0]);	
@@ -564,7 +566,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	{
 		char *ss[PDF_INTERVALS+1];		
 		ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(ss[0], "x %s:%s-PDF\n", solution, varName);		
+		sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);		
 		for(i=0;i<PDF_INTERVALS;i++)
 		{
 			ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
@@ -578,19 +580,21 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	}	
 
 	//write auto-correlation coefficients
-	char *autocorr[AUTOCORR_SIZE+1];
-	for (i = 0; i < AUTOCORR_SIZE+1; i++)
+	char *autocorr[AUTOCORR_SIZE+2];
+	autocorr[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	sprintf(autocorr[0], "x \"\"\n");
+	for (i = 1; i < AUTOCORR_SIZE+2; i++)
 	{
 		autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(autocorr[i], "%i %.10G\n", i, (compareResult->autoCorrAbsErr)[i]);
+		sprintf(autocorr[i], "%i %.10G\n", i-1, (compareResult->autoCorrAbsErr)[i-1]);
 	}
 	memset(tgtFilePath, 0, ZC_BUFS_LONG);
 	sprintf(tgtFilePath, "%s/%s:%s.autocorr", tgtWorkspaceDir, solution, varName);
-	ZC_writeStrings(AUTOCORR_SIZE+1, autocorr, tgtFilePath);
-	for (i = 0; i < AUTOCORR_SIZE+1; i++)
+	ZC_writeStrings(AUTOCORR_SIZE+2, autocorr, tgtFilePath);
+	for (i = 0; i < AUTOCORR_SIZE+2; i++)
 		free(autocorr[i]);
 		
-	char buf[ZC_BUFS];	
+	char buf[ZC_BUFS];
 	sprintf(buf, "%s:%s", solution, varName);
 	ZC_writeFFTResults(buf, compareResult->fftCoeff, tgtWorkspaceDir);
 	if(dir!=NULL)

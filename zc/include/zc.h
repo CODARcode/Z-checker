@@ -79,6 +79,8 @@ extern "C" {
 
 #define DynArrayInitLen 1024
 
+#define MAX_MSG_LENGTH 1024
+
 #define HASHTABLE_SIZE 65536
 
 #define CMD_OUTPUT_BUF 200
@@ -87,6 +89,8 @@ extern "C" {
 #define PROBE_COMPRESSOR 0
 #define ANALYZE_DATA 1
 #define COMPARE_COMPRESSOR 2
+
+#define GNUPLOT_FONT 22
 
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
@@ -136,6 +140,9 @@ extern int plotFFTAmpFlag;
 extern int plotEntropyFlag;
 
 extern int checkCompressorsFlag;
+
+extern int generateReportFlag;
+extern char* reportTemplateFile;
 
 extern int ZC_versionNumber[3];
 

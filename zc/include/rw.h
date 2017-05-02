@@ -22,6 +22,12 @@
 extern "C" {
 #endif
 
+typedef struct StringLine
+{
+	char* str;
+	struct StringLine* next; 
+} StringLine;
+
 void updateLinkFullPath(char* oriPath, char* finalPath);
 int ZC_checkExtension(char* str, char* extension);
 void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames);
@@ -43,9 +49,15 @@ void ZC_writeData(void *data, int dataType, int nbEle, char *tgtFilePath);
 
 int ZC_writeStrings(int string_size, char **string, char *tgtFilePath);
 
-char *ZC_replacestr(char *strbuf, char *sstr, char *dstr);
-char** ZC_readLines(char* filePath, int *lineCount);
-void ZC_freeLines(char** lines, int lineNum);
+StringLine* createStringLineHeader();
+StringLine* appendOneLine(StringLine* tail, char* str);
+StringLine* ZC_readLines(char* filePath, int *lineCount);
+int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath);
+int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader);
+
+
+void ZC_freeLines(StringLine* header);
+void ZC_freeCharArrayLines(char** lines, int lineNum);
 
 char* rmFileExtension(char* fullFileName);
 

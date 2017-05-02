@@ -16,6 +16,7 @@
 #include "zc.h"
 #include "rw.h"
 #include "ZC_Hashtable.h"
+#include "ZC_ReportGenerator.h"
 
 int sysEndianType; //endian type of the system
 int dataEndianType; //endian type of the data
@@ -65,6 +66,9 @@ int plotFFTAmpFlag = 1;
 int plotEntropyFlag = 1;
 
 int checkCompressorsFlag = 1; //corresponding to plotCompressionResult flag in ec.config
+
+int generateReportFlag = 1;
+char* reportTemplateFile = NULL;
 
 int ZC_versionNumber[3];
 
@@ -319,16 +323,20 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	for(i=0;i<count;i++)
 	{
 		char* key = keys[i];
+		char key_[ZC_BUFS];
+		strcpy(key_, key);
+		ZC_ReplaceStr2(key_, "_", "\\\\_");
+		
 		char* line1 = (char*)malloc(10*ZC_BUFS); //suppose there are 10 compressors
 		char* line2 = (char*)malloc(10*ZC_BUFS); //suppose there are 10 compressors
 		char* line3 = (char*)malloc(10*ZC_BUFS); //suppose there are 10 compressors
 		char* line4 = (char*)malloc(10*ZC_BUFS); //suppose there are 10 compressors		
 		char* compVarCase = (char*)malloc(ZC_BUFS);
 		sprintf(compVarCase, "%s", key);
-		sprintf(line1, "%s", key);
-		sprintf(line2, "%s", key);
-		sprintf(line3, "%s", key);
-		sprintf(line4, "%s", key);		
+		sprintf(line1, "%s", key_);
+		sprintf(line2, "%s", key_);
+		sprintf(line3, "%s", key_);
+		sprintf(line4, "%s", key_);		
 		
 		for(j=0;j<cmpCount;j++)
 		{
@@ -410,19 +418,19 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	ZC_writeStrings(count+1, psnrLines, psnrDataFile);
 		
 	//generate GNUPLOT scripts, and plot the data by running the scripts
-	char** scriptLines = genGnuplotScript_histogram(cmpRatioKey, "txt", 26, 1+cmpCount, "Variables", "Compression Ratio", (long)(maxCR*1.3)+1);
+	char** scriptLines = genGnuplotScript_histogram(cmpRatioKey, "txt", GNUPLOT_FONT, 1+cmpCount, "Variables", "Compression Ratio", (long)(maxCR*1.3)+1);
 	ZC_writeStrings(18, scriptLines, cmpRatioPlotFile);
 	system(cmpRatioCmd);
 	
-	scriptLines = genGnuplotScript_histogram(cmpRateKey, "txt", 26, 1+cmpCount, "Variables", "Compression Rate", (long)(maxCRT*1.3)+1);
+	scriptLines = genGnuplotScript_histogram(cmpRateKey, "txt", GNUPLOT_FONT, 1+cmpCount, "Variables", "Compression Rate", (long)(maxCRT*1.3)+1);
 	ZC_writeStrings(18, scriptLines, cmpRatePlotFile);
 	system(cmpRateCmd);
 
-	scriptLines = genGnuplotScript_histogram(dcmpRateKey, "txt", 26, 1+cmpCount, "Variables", "Decompression Rate", (long)(maxDCRT*1.3)+1);
+	scriptLines = genGnuplotScript_histogram(dcmpRateKey, "txt", GNUPLOT_FONT, 1+cmpCount, "Variables", "Decompression Rate", (long)(maxDCRT*1.3)+1);
 	ZC_writeStrings(18, scriptLines, dcmpRatePlotFile);
 	system(dcmpRateCmd);
 	
-	scriptLines = genGnuplotScript_histogram(psnrKey, "txt", 26, 1+cmpCount, "Variables", "PSNR", (long)(maxPSNR*1.3)+1);
+	scriptLines = genGnuplotScript_histogram(psnrKey, "txt", GNUPLOT_FONT, 1+cmpCount, "Variables", "PSNR", (long)(maxPSNR*1.3)+1);
 	ZC_writeStrings(18, scriptLines, psnrPlotFile);
 	system(psnrCmd);	
 	
@@ -522,7 +530,7 @@ void ZC_plotCompressionRatio()
 	ZC_writeStrings(count+1, dataLines, "compressionRatio.txt");
 	
 	//TODO: generate the GNUPLOT script.
-	char** scriptLines = genGnuplotScript_histogram("compressionRatio", "txt", 26, 1+compressors_count, "Variables", "Compression Ratio", (long)(maxCR*1.3));
+	char** scriptLines = genGnuplotScript_histogram("compressionRatio", "txt", GNUPLOT_FONT, 1+compressors_count, "Variables", "Compression Ratio", (long)(maxCR*1.3));
 	ZC_writeStrings(18, scriptLines, "compressionRatio.p");
 	system("gnuplot compressionRatio.p");
 }
@@ -551,7 +559,7 @@ void ZC_plotRateDistortion()
 			
 			//TODO: generate the GNUPLOT script.
 			sprintf(fileName, "rate-distortion_psnr_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", 26, 1+compressors_count, "Rate", "Distortion");
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Distortion");
 			sprintf(fileName, "rate-distortion_psnr_%s.p", variables[i]);
 			ZC_writeStrings(24, scriptLines, fileName);
 			char cmd[ZC_BUFS];
@@ -571,7 +579,7 @@ void ZC_plotRateDistortion()
 			
 			//TODO: generate the GNUPLOT script.
 			sprintf(fileName, "rate-distortion_snr_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", 26, 1+compressors_count, "Rate", "Distortion");
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Distortion");
 			sprintf(fileName, "rate-distortion_snr_%s.p", variables[i]);
 			ZC_writeStrings(24, scriptLines, fileName);
 			char cmd[ZC_BUFS];
@@ -759,7 +767,7 @@ void ZC_plotAutoCorr_CompressError()
 	for(i=0;i<ecCompareDataTable->count;i++)
 	{
 		sprintf(acFileName, "%s", allCampCaseNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(acFileName, "autocorr", 26, 2, "Lags", "ACF");
+		char** scriptLines = genGnuplotScript_fillsteps(acFileName, "autocorr", GNUPLOT_FONT, 2, "Lags", "ACF");
 		sprintf(acPlotFile, "compressionResults/%s-autocorr.p", acFileName);
 		ZC_writeStrings(19, scriptLines, acPlotFile);
 		//execute .p files using system().
@@ -779,7 +787,7 @@ void ZC_plotAutoCorr_DataProperty()
 	for(i=0;i<ecPropertyTable->count;i++)
 	{
 		sprintf(acFileName, "%s", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(acFileName, "autocorr", 26, 2, "Lags", "ACF");
+		char** scriptLines = genGnuplotScript_fillsteps(acFileName, "autocorr", GNUPLOT_FONT, 2, "Lags", "ACF");
 		sprintf(acPlotFile, "dataProperties/%s-autocorr.p", acFileName);		
 		ZC_writeStrings(19, scriptLines, acPlotFile);
 		//execute .p files using system().
@@ -800,7 +808,7 @@ void ZC_plotFFTAmplitude_OriginalData()
 	{
 		sprintf(ampFileName, "%s.fft", allVarNames[i]);
 		sprintf(ampPlotFile, "dataProperties/%s-fft-amp.p", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", 26, 2, "frequency", "amplitude");
+		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", GNUPLOT_FONT, 2, "frequency", "amplitude");
 		ZC_writeStrings(19, scriptLines, ampPlotFile);
 		//execute .p files using system().
 		sprintf(ampCmd, "cd dataProperties;gnuplot \"%s-fft-amp.p\";mv \"%s.fft.amp.eps\" \"%s-fft-amp.eps\"", allVarNames[i],allVarNames[i], allVarNames[i]);
@@ -820,7 +828,7 @@ void ZC_plotFFTAmplitude_DecompressData()
 	{
 		sprintf(ampFileName, "%s.fft", allVarNames[i]);
 		sprintf(ampPlotFile, "compressionResults/%s-fft-amp.p", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", 26, 2, "frequency", "amplitude");
+		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", GNUPLOT_FONT, 2, "frequency", "amplitude");
 		ZC_writeStrings(19, scriptLines, ampPlotFile);
 		//execute .p files using system().
 		sprintf(ampCmd, "cd compressionResults;gnuplot \"%s-fft-amp.p\";mv \"%s.fft.amp.eps\" \"%s-fft-amp.eps\"", allVarNames[i],allVarNames[i], allVarNames[i]);
@@ -840,7 +848,7 @@ void ZC_plotErrDistribtion()
 	{
 		sprintf(disFileName, "%s", allVarNames[i]);
 		sprintf(disPlotFile, "compressionResults/%s-dis.p", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(disFileName, "dis", 26, 2, "Error", "PDF");
+		char** scriptLines = genGnuplotScript_fillsteps(disFileName, "dis", GNUPLOT_FONT, 2, "Error", "PDF");
 		ZC_writeStrings(19, scriptLines, disPlotFile);
 		//execute .p files using system().
 		sprintf(disCmd, "cd compressionResults;gnuplot \"%s-dis.p\";mv \"%s.dis.eps\" \"%s-dis.eps\"", disFileName,disFileName, disFileName);
@@ -849,6 +857,28 @@ void ZC_plotErrDistribtion()
 			free(scriptLines[j]);
 		free(scriptLines);	
 	}
+}
+
+int ZC_analyze_and_generateReport()
+{
+	if(generateReportFlag==0 || reportTemplateFile == NULL)
+	{
+		printf("Error: You want to generate the report but generateReportFlag==1 or reportTemplateFile==NULL\n");
+		printf("Solution: Set generateReportFlag to 1 in the zc.config or in the initialization step.\n");
+		exit(0);
+	}
+	
+    ZC_plotComparisonCases();
+    ZC_plotRateDistortion();
+
+    ZC_plotAutoCorr_DataProperty();
+    ZC_plotAutoCorr_CompressError();
+    ZC_plotFFTAmplitude_OriginalData();
+    ZC_plotFFTAmplitude_DecompressData();
+
+    ZC_plotErrDistribtion();	
+    
+    ZC_generateOverallReport();
 }
 
 

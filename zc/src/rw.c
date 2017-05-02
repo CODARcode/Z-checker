@@ -361,37 +361,23 @@ int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
     return i;	
 }
 
-/**
- * 
- * Don't forget to free the new string later on.
- * @param strbuf the original message
- * @param sstr the source match string to be replaced
- * @param dstr the target string that replaces sstr
- * @return the new string
- */
-char *ZC_replacestr(char *strbuf, char *sstr, char *dstr)
-{       
-	char *p,*p1;
-	int len;
-
-	if ((strbuf == NULL)||(sstr == NULL)||(dstr == NULL))
-		return NULL;
-
-	p = strstr(strbuf, sstr);       //Return the address that appears first time, or return NULL otherwise
-	if (p == NULL)  /*not found*/
-		return NULL;
-
-	len = strlen(strbuf) + strlen(dstr) - strlen(sstr);
-	p1 = (char*)malloc(len);
-	bzero(p1, len);
-	strncpy(p1, strbuf, p-strbuf);
-	strcat(p1, dstr);
-	p += strlen(sstr);
-	strcat(p1, p);
-	return p1;
+StringLine* createStringLineHeader()
+{
+	StringLine* header = (StringLine*)malloc(sizeof(StringLine));
+	header->str = NULL;
+	header->next = NULL;
 }
 
-char** ZC_readLines(char* filePath, int *lineCount)
+StringLine* appendOneLine(StringLine* tail, char* str)
+{
+	StringLine* newLine = (StringLine*)malloc(sizeof(StringLine));
+	newLine->str = str;
+	tail->next = newLine;
+	newLine->next = NULL;
+	return newLine;
+}
+
+StringLine* ZC_readLines(char* filePath, int *lineCount)
 {
 	char* buf;
 	//char buf[500] = {0};
@@ -404,31 +390,100 @@ char** ZC_readLines(char* filePath, int *lineCount)
 		exit(0);
 	}
 
-	char** lines = (char**)malloc(200*sizeof(char*));
+	StringLine *header = createStringLineHeader();
+	StringLine *tail; //the last element
 	
 	int i = 0;
 	fp = fopen(filePath, "r");
 	while(!feof(fp))
 	{
-		if(i==200)
-		{
-			printf("Error: It can only read maximum 200 lines.\n");
-			break; 
-		}
-		buf = (char*)malloc(500);
-		memset(buf, 0, 500);
+		buf = (char*)malloc(MAX_MSG_LENGTH);
+		memset(buf, 0, MAX_MSG_LENGTH);
 		fgets(buf, sizeof(buf) - 1, fp); // already including \n
-		lines[i++] = buf;
+		tail = appendOneLine(tail, buf);
+		i++;
+		//lines[i++] = buf;
 		//printf("%s", szTest);
 	}
 	
 	*lineCount = i;
 
 	fclose(fp);	
-	return lines;
+	return header;
 }
 
-void ZC_freeLines(char** lines, int lineNum)
+/**
+ * 
+ * @return the final number of lines
+ * */
+int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
+{
+	int i = 0;
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+   
+    StringLine* p = lineHeader;
+    for(i = 0;p->next!=NULL;i++)
+	{
+		p = p->next;
+		fputs(p->str, pFile);
+	}
+    
+    fclose(pFile);
+    return i;	
+}
+
+
+int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
+{
+	if(toAddLineHeader==NULL)
+	{
+		printf("Error: toAddLineHeader cannot be NULL\n");
+		exit(0);
+	}
+	
+	if(toAddLineHeader->next==NULL)
+		return 0;
+	
+	StringLine* p = globalLineHeader->next, *q;
+	int count = 0;
+	while(p!=NULL)
+	{
+		if(strcmp(keyAnnotationLine, p->str)==0)
+		{
+			q = p->next;
+			p->next = toAddLineHeader->next;
+			while(p->next!=NULL)
+			{
+				p = p->next;
+				count++;
+			}
+			p->next = q;
+			break;
+		}
+		else
+			p = p->next;
+	}
+	return count;
+}
+
+void ZC_freeLines(StringLine* header)
+{
+	StringLine *p = header, *q;
+	while(p!=NULL)
+	{
+		free(p->str);
+		q = p->next;
+		free(p);
+		p = q;
+	}
+}
+
+void ZC_freeCharArrayLines(char** lines, int lineNum)
 {
 	int i = 0;
 	for(;i<lineNum;i++)

@@ -18,6 +18,9 @@ int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data);
 int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
 int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
 
+int ZC_ReplaceStr(char *sSrc, char *sMatchStr, char *sReplaceStr);
+int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr);
+
 #ifdef __cplusplus
 }
 #endif

@@ -583,16 +583,18 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 	/*write auto-correlation coefficients*/
 	if(property->autocorr!=NULL)
 	{
-		char *autocorr[AUTOCORR_SIZE];
-		for (i = 0; i < AUTOCORR_SIZE; i++)
+		char *autocorr[AUTOCORR_SIZE+2];
+		autocorr[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+		sprintf(autocorr[0], "- \"\"\n");
+		for (i = 1; i < AUTOCORR_SIZE+2; i++)
 		{
 			autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-			sprintf(autocorr[i], "%d %.10G\n", i, (property->autocorr)[i]);
+			sprintf(autocorr[i], "%d %.10G\n", i-1, (property->autocorr)[i-1]);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.autocorr", tgtWorkspaceDir, property->varName);
 		ZC_writeStrings(AUTOCORR_SIZE, autocorr, tgtFilePath);
-		for (i = 0; i < AUTOCORR_SIZE; i++)
+		for (i = 0; i < AUTOCORR_SIZE+2; i++)
 			free(autocorr[i]);
 	}
 
