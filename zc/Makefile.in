@@ -128,8 +128,9 @@ am_libzc_la_OBJECTS = libzc_la-ByteToolkit.lo libzc_la-gnuplot.lo \
 	libzc_la-ZC_DataProperty.lo libzc_la-ZC_CompareData.lo \
 	libzc_la-DynamicIntArray.lo libzc_la-DynamicFloatArray.lo \
 	libzc_la-DynamicDoubleArray.lo libzc_la-DynamicByteArray.lo \
-	libzc_la-quicksort.lo libzc_la-rw.lo libzc_la-conf.lo \
-	libzc_la-dictionary.lo libzc_la-ZC_util.lo libzc_la-zc.lo
+	libzc_la-ZC_ReportGenerator.lo libzc_la-quicksort.lo \
+	libzc_la-rw.lo libzc_la-conf.lo libzc_la-dictionary.lo \
+	libzc_la-ZC_util.lo libzc_la-zc.lo
 libzc_la_OBJECTS = $(am_libzc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -317,14 +318,14 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 include_HEADERS = include/rw.h include/ZC_Hashtable.h include/ZC_DataProperty.h include/ZC_CompareData.h\
 		include/DynamicIntArray.h include/DynamicFloatArray.h include/DynamicDoubleArray.h include/DynamicByteArray.h\
-		include/dictionary.h include/zc.h include/iniparser.h include/ZC_util.h
+		include/dictionary.h include/zc.h include/iniparser.h include/ZC_util.h include/ZC_ReportGenerator.h
 
 lib_LTLIBRARIES = libzc.la
 libzc_la_CFLAGS = -g -I./include
 libzc_la_LDFLAGS = -version-info  0:1:0
 #libsz_la_LIDADD=../zlib/.libs/libzlib.a
 libzc_la_SOURCES = src/ByteToolkit.c src/gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty.c src/ZC_CompareData.c\
-		src/DynamicIntArray.c src/DynamicFloatArray.c src/DynamicDoubleArray.c src/DynamicByteArray.c\
+		src/DynamicIntArray.c src/DynamicFloatArray.c src/DynamicDoubleArray.c src/DynamicByteArray.c src/ZC_ReportGenerator.c\
 		src/quicksort.c src/rw.c src/conf.c src/dictionary.c src/ZC_util.c src/zc.c
 
 all: all-am
@@ -414,6 +415,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-ZC_CompareData.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-ZC_DataProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-ZC_Hashtable.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-ZC_ReportGenerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-ZC_util.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-conf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzc_la-dictionary.Plo@am__quote@
@@ -513,6 +515,13 @@ libzc_la-DynamicByteArray.lo: src/DynamicByteArray.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/DynamicByteArray.c' object='libzc_la-DynamicByteArray.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o libzc_la-DynamicByteArray.lo `test -f 'src/DynamicByteArray.c' || echo '$(srcdir)/'`src/DynamicByteArray.c
+
+libzc_la-ZC_ReportGenerator.lo: src/ZC_ReportGenerator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT libzc_la-ZC_ReportGenerator.lo -MD -MP -MF $(DEPDIR)/libzc_la-ZC_ReportGenerator.Tpo -c -o libzc_la-ZC_ReportGenerator.lo `test -f 'src/ZC_ReportGenerator.c' || echo '$(srcdir)/'`src/ZC_ReportGenerator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libzc_la-ZC_ReportGenerator.Tpo $(DEPDIR)/libzc_la-ZC_ReportGenerator.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_ReportGenerator.c' object='libzc_la-ZC_ReportGenerator.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o libzc_la-ZC_ReportGenerator.lo `test -f 'src/ZC_ReportGenerator.c' || echo '$(srcdir)/'`src/ZC_ReportGenerator.c
 
 libzc_la-quicksort.lo: src/quicksort.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT libzc_la-quicksort.lo -MD -MP -MF $(DEPDIR)/libzc_la-quicksort.Tpo -c -o libzc_la-quicksort.lo `test -f 'src/quicksort.c' || echo '$(srcdir)/'`src/quicksort.c
