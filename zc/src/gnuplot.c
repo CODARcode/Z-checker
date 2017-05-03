@@ -12,6 +12,7 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 	}
 	
 	char** lines = (char**)malloc(24*sizeof(char*));
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	int i = 0;
 	for(i=0;i<24;i++)
@@ -49,8 +50,12 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 	sprintf(lines[23], "plot '%s.%s' using 1:2 ti col ls 1", dataFileName, extension);
 	
 	for(i=3;i<=columns;i++)
-		sprintf(lines[23], "%s, '' u 1:%d ti col ls %d", lines[23], i, i-1);
-	sprintf(lines[23], "%s\n", lines[23]);
+	{
+		sprintf(stringBuffer, "%s, '' u 1:%d ti col ls %d", lines[23], i, i-1);
+		strcpy(lines[23], stringBuffer);
+	}
+	sprintf(stringBuffer, "%s\n", lines[23]);
+	strcpy(lines[23], stringBuffer);
 	return lines;
 }
 
@@ -63,6 +68,7 @@ char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontS
 	}
 	
 	char** lines = (char**)malloc(18*sizeof(char*));
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	int i = 0;
 	for(i=0;i<18;i++)
@@ -94,8 +100,13 @@ char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontS
 	sprintf(lines[17], "plot '%s.%s' using 2:xtic(1) ti col", dataFileName, extension);
 	
 	for(i=3;i<=columns;i++)
-		sprintf(lines[17], "%s, '' u %d ti col", lines[17], i);
-	sprintf(lines[17], "%s\n", lines[17]);
+	{	
+		sprintf(stringBuffer, "%s, '' u %d ti col", lines[17], i);
+		strcpy(lines[17], stringBuffer);
+	}
+	
+	sprintf(stringBuffer, "%s\n", lines[17]);
+	strcpy(lines[17], stringBuffer);
 	return lines;
 }
 
@@ -108,6 +119,7 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 	}
 	
 	char** lines = (char**)malloc(24*sizeof(char*));
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	int i = 0;
 	for(i=0;i<24;i++)
@@ -145,8 +157,11 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 	sprintf(lines[23], "plot '%s.%s' using 1:2 ti col ls 1", dataFileName, extension);
 	
 	for(i=3;i<=columns;i++)
-		sprintf(lines[23], "%s, '' u 1:%d ti col ls %d", lines[23], i, i-1);
-	sprintf(lines[23], "%s\n", lines[23]);
+	{
+		sprintf(stringBuffer, "%s, '' u 1:%d ti col ls %d", lines[23], i, i-1);
+		strcpy(lines[23], stringBuffer);
+	}
+	strcat(lines[23], "\n");
 	return lines;
 }
 
@@ -160,6 +175,7 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 	}
 	
 	char** lines = (char**)malloc(19*sizeof(char*));
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	int i = 0;
 	for(i=0;i<19;i++)
@@ -189,7 +205,10 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 	sprintf(lines[18], "plot '%s.%s' using 1:2 ti col ls 1", dataFileName, extension);
 	
 	for(i=3;i<=columns;i++)
-		sprintf(lines[18], "%s, '' u 1:%d ti col ls %d", lines[18], i, i-1);
-	sprintf(lines[18], "%s\n", lines[18]);
+	{
+		sprintf(stringBuffer, "%s, '' u 1:%d ti col ls %d", lines[18], i, i-1);
+		strcpy(lines[18], stringBuffer);
+	}
+	strcat(lines[18], "\n");
 	return lines;
 }

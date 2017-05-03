@@ -25,6 +25,7 @@
 #include "DynamicIntArray.h"
 #include "ZC_util.h"
 #include "ZC_ReportGenerator.h"
+#include "rw.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -143,7 +144,7 @@ extern int plotEntropyFlag;
 extern int checkCompressorsFlag;
 
 extern int generateReportFlag;
-extern char* reportTemplateFile;
+extern char* reportTemplateDir;
 
 extern int ZC_versionNumber[3];
 
@@ -239,6 +240,8 @@ void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData);
 
 void ZC_plotCompressionRatio();
 void ZC_plotHistogramResults(int cmpCount, char** compressorCases);
+
+int getComparisonCases(char* cases[]);
 void ZC_plotComparisonCases();
 
 char** getCompResKeyList(char* var, int* count);

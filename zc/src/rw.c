@@ -368,6 +368,13 @@ StringLine* createStringLineHeader()
 	header->next = NULL;
 }
 
+StringLine* createOneStringLine(char* lineContent)
+{
+	StringLine* header = createStringLineHeader();
+	 appendOneLine(header, lineContent);
+	 return header;
+}
+
 StringLine* appendOneLine(StringLine* tail, char* str)
 {
 	StringLine* newLine = (StringLine*)malloc(sizeof(StringLine));
@@ -384,22 +391,21 @@ StringLine* ZC_readLines(char* filePath, int *lineCount)
 	int len = 0;
 
 	FILE *fp = fopen(filePath, "r");
-	if(NULL == fp)
+	if(fp == NULL)
 	{
-		printf("failed to open dos.txt\n");
+		printf("failed to open the file %s\n", filePath);
 		exit(0);
 	}
 
 	StringLine *header = createStringLineHeader();
-	StringLine *tail; //the last element
+	StringLine *tail = header; //the last element
 	
 	int i = 0;
-	fp = fopen(filePath, "r");
 	while(!feof(fp))
 	{
 		buf = (char*)malloc(MAX_MSG_LENGTH);
 		memset(buf, 0, MAX_MSG_LENGTH);
-		fgets(buf, sizeof(buf) - 1, fp); // already including \n
+		fgets(buf, MAX_MSG_LENGTH, fp); // already including \n
 		tail = appendOneLine(tail, buf);
 		i++;
 		//lines[i++] = buf;
@@ -436,7 +442,6 @@ int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
     fclose(pFile);
     return i;	
 }
-
 
 int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
@@ -476,7 +481,8 @@ void ZC_freeLines(StringLine* header)
 	StringLine *p = header, *q;
 	while(p!=NULL)
 	{
-		free(p->str);
+		if(p->str!=NULL)
+			free(p->str);
 		q = p->next;
 		free(p);
 		p = q;

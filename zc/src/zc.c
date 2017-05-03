@@ -68,7 +68,7 @@ int plotEntropyFlag = 1;
 int checkCompressorsFlag = 1; //corresponding to plotCompressionResult flag in ec.config
 
 int generateReportFlag = 1;
-char *reportTemplateFile;
+char *reportTemplateDir;
 
 int ZC_versionNumber[3];
 
@@ -289,6 +289,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 		exit(0);
 	}
 	int i, j, count = ecPropertyTable->count;
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	char** keys = ht_getAllKeys(ecPropertyTable);
 	char* cmprRatioLines[count+1];
@@ -307,15 +308,21 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	sprintf(psnrLines[0], "%s", "psnr");
 	for(i=0;i<cmpCount;i++)
 	{
-		sprintf(cmprRatioLines[0], "%s %s", cmprRatioLines[0],compressorCases[i]);
-		sprintf(cmprRateLines[0], "%s %s", cmprRateLines[0], compressorCases[i]);
-		sprintf(dcmprRateLines[0], "%s %s", dcmprRateLines[0], compressorCases[i]);		
-		sprintf(psnrLines[0], "%s %s", psnrLines[0], compressorCases[i]);
+		
+		sprintf(stringBuffer, "%s %s", cmprRatioLines[0],compressorCases[i]);
+		strcpy(cmprRatioLines[0], stringBuffer);
+		sprintf(stringBuffer, "%s %s", cmprRateLines[0], compressorCases[i]);
+		strcpy(cmprRateLines[0], stringBuffer);
+		sprintf(stringBuffer, "%s %s", dcmprRateLines[0], compressorCases[i]);	
+		strcpy(dcmprRateLines[0], stringBuffer);	
+		sprintf(stringBuffer, "%s %s", psnrLines[0], compressorCases[i]);
+		strcpy(psnrLines[0], stringBuffer);
 	}
-	sprintf(cmprRatioLines[0], "%s\n", cmprRatioLines[0]);
-	sprintf(cmprRateLines[0], "%s\n", cmprRateLines[0]);
-	sprintf(dcmprRateLines[0], "%s\n", dcmprRateLines[0]);		
-	sprintf(psnrLines[0], "%s\n", psnrLines[0]);	
+	
+	strcat(cmprRatioLines[0], "\n");
+	strcat(cmprRateLines[0], "\n");
+	strcat(dcmprRateLines[0], "\n");
+	strcat(psnrLines[0], "\n");	
 
 	double maxCR = 0, maxCRT = 0, maxDCRT = 0, maxPSNR = 0;
 
@@ -346,38 +353,42 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 			if(compressResult==NULL)
 			{
 				printf("Error: compressResult==NULL. %s cannot be found in compression result\n", compVarCase);
-				sprintf(line1, "%s -", line1);
-				sprintf(line2, "%s -", line2);
-				sprintf(line3, "%s -", line3);
-				sprintf(line4, "%s -", line4);				
+				strcat(line1, " -");
+				strcat(line2, " -");
+				strcat(line3, " -");
+				strcat(line4, " -");				
 			}
 			else
 			{
 				double cr = compressResult->compressRatio;
 				if(maxCR<cr)
 					maxCR = cr;
-				sprintf(line1, "%s %f", line1, cr);
+				sprintf(stringBuffer, "%s %f", line1, cr);
+				strcpy(line1, stringBuffer);
 				double crt = compressResult->compressRate;
 				if(maxCRT<crt)
 					maxCRT = crt;
-				sprintf(line2, "%s %f", line2, crt);
+				sprintf(stringBuffer, "%s %f", line2, crt);
+				strcpy(line2, stringBuffer);
 				double dcrt = compressResult->decompressRate;
 				if(maxDCRT<dcrt)
 					maxDCRT = dcrt;
-				sprintf(line3, "%s %f", line3, dcrt);				
+				sprintf(stringBuffer, "%s %f", line3, dcrt);				
+				strcpy(line3, stringBuffer);
 				double psnr = compressResult->psnr;
 				if(maxPSNR<psnr)
 					maxPSNR = psnr;
-				sprintf(line4, "%s %f", line4, psnr);
+				sprintf(stringBuffer, "%s %f", line4, psnr);
+				strcpy(line4, stringBuffer);
 			}			
 		}
-		sprintf(line1, "%s\n", line1);
+		strcat(line1, "\n");
 		cmprRatioLines[i+1] = line1;
-		sprintf(line2, "%s\n", line2);
+		strcat(line2, "\n");
 		cmprRateLines[i+1] = line2;
-		sprintf(line3, "%s\n", line3);
+		strcat(line3, "\n");
 		dcmprRateLines[i+1] = line3;
-		sprintf(line4, "%s\n", line4);
+		strcat(line4, "\n");
 		psnrLines[i+1] = line4;				
 		free(compVarCase);
 	}
@@ -444,11 +455,12 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	}
 }
 
-void ZC_plotComparisonCases()
+int getComparisonCases(char* cases[])
 {
-	int i=0,n,j;
-	char* cases[ZC_BUFS]; //100 cases at most
-	char* ccase = strtok(comparisonCases, " ");
+	int i;
+	char copyCompCases[ZC_BUFS_LONG];
+	strcpy(copyCompCases, comparisonCases);
+	char* ccase = strtok(copyCompCases, " ");
 	for(i=0;ccase!=NULL;i++)
 	{
 		if(i>ZC_BUFS) 
@@ -456,21 +468,34 @@ void ZC_plotComparisonCases()
 			printf("Error: # comparison cases cannot be greater than %d\n", ZC_BUFS);
 			exit(0);
 		}
-		cases[i] = ccase;
+		cases[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+		sprintf(cases[i], "%s", ccase);
 		ccase = strtok(NULL, " ");
 	}
-	n = i;
+	return i;
+}
+
+void ZC_plotComparisonCases()
+{
+	int i=0,n,j;
+	char* cases[ZC_BUFS]; //100 cases at most
+	n = getComparisonCases(cases);
+	
 	for(i=0;i<n;i++)
 	{
 		char* cmprssors[ZC_BUFS]; 
 		char* cmprsor = strtok(cases[i], ",");
 		for(j=0;cmprsor!=NULL;j++)
 		{
-			cmprssors[j] = cmprsor; 
+			cmprssors[j] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			sprintf(cmprssors[j], "%s", cmprsor); 
 			cmprsor = strtok(NULL, ",");
 		}
 		int m = j;
 		ZC_plotHistogramResults(m, cmprssors);
+		for(j=0;j<m;j++)
+			free(cmprssors[j]);
+		free(cases[i]);
 	}
 }
 
@@ -616,6 +641,7 @@ char** getCompResKeyList(char* var, int* count)
 char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validLineNum)
 {
 	int i, j, p, k, q = 1, t = 0;
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	if(totalCount==0)
 		return NULL;
@@ -627,8 +653,12 @@ char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validL
 	
 	sprintf(dataLines[0], "ratedistortion");
 	for(i=0;i<compressors_count;i++)
-		sprintf(dataLines[0], "%s %s", dataLines[0], compressors[i]);
-	sprintf(dataLines[0], "%s\n", dataLines[0]);
+	{
+		sprintf(stringBuffer, "%s %s", dataLines[0], compressors[i]);
+		strcpy(dataLines[0], stringBuffer);
+	}
+	sprintf(stringBuffer, "%s\n", dataLines[0]);
+	strcpy(dataLines[0], stringBuffer);
 	
 	RateDistElem* rdList = (RateDistElem*)malloc(totalCount*sizeof(RateDistElem));
 	
@@ -667,12 +697,13 @@ char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validL
 			{
 				if(k==i && e->maxAbsErr!=0)
 				{
-					sprintf(l, "%s %f", l, e->psnr);
+					sprintf(stringBuffer, "%s %f", l, e->psnr);
+					strcpy(l, stringBuffer);
 				}
 				else
-					sprintf(l, "%s -", l); 
+					strcat(l, " -");
 			}
-			sprintf(l, "%s\n", l);
+			strcat(l, "\n");
 			dataLines[q++] = l;
 		}
 		
@@ -689,6 +720,7 @@ char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validL
 char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLineNum)
 {
 	int i, j, p, k, q = 1, t = 0;
+	char stringBuffer[ZC_BUFS_LONG];
 	
 	if(totalCount==0)
 		return NULL;
@@ -700,8 +732,12 @@ char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLi
 	
 	sprintf(dataLines[0], "ratedistortion");
 	for(i=0;i<compressors_count;i++)
-		sprintf(dataLines[0], "%s %s", dataLines[0], compressors[i]);
-	sprintf(dataLines[0], "%s\n", dataLines[0]);
+	{
+		sprintf(stringBuffer, "%s %s", dataLines[0], compressors[i]);
+		strcpy(dataLines[0], stringBuffer);
+	}
+	sprintf(stringBuffer, "%s\n", dataLines[0]);
+	strcpy(dataLines[0], stringBuffer);
 	
 	RateDistElem* rdList = (RateDistElem*)malloc(totalCount*sizeof(RateDistElem));
 	
@@ -740,12 +776,13 @@ char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLi
 			{
 				if(k==i && e->maxAbsErr!=0)
 				{
-					sprintf(l, "%s %f", l, e->psnr);
+					sprintf(stringBuffer, "%s %f", l, e->psnr);
+					strcpy(l, stringBuffer);
 				}
 				else
-					sprintf(l, "%s -", l); 
+					strcat(l, " -");
 			}
-			sprintf(l, "%s\n", l);
+			strcat(l, "\n");
 			dataLines[q++] = l;
 		}
 		
@@ -859,7 +896,7 @@ void ZC_plotErrDistribtion()
 	}
 }
 
-int ZC_analyze_and_generateReport()
+int ZC_analyze_and_generateReport(char* dataSetName)
 {
 	if(generateReportFlag==0)
 	{
@@ -878,7 +915,7 @@ int ZC_analyze_and_generateReport()
 
     ZC_plotErrDistribtion();	
     
-    ZC_generateOverallReport();
+    ZC_generateOverallReport(dataSetName);
 }
 
 
@@ -889,7 +926,7 @@ void ZC_Finalize()
 		ht_freeTable(ecPropertyTable);
 	if(ecCompareDataTable!=NULL)
 		ht_freeTable(ecCompareDataTable);
-	if(reportTemplateFile!=NULL)
-		free(reportTemplateFile);
+	if(reportTemplateDir!=NULL)
+		free(reportTemplateDir);
     return ;
 }

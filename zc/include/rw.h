@@ -50,11 +50,11 @@ void ZC_writeData(void *data, int dataType, int nbEle, char *tgtFilePath);
 int ZC_writeStrings(int string_size, char **string, char *tgtFilePath);
 
 StringLine* createStringLineHeader();
+StringLine* createOneStringLine(char* lineContent);
 StringLine* appendOneLine(StringLine* tail, char* str);
 StringLine* ZC_readLines(char* filePath, int *lineCount);
 int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath);
 int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader);
-
 
 void ZC_freeLines(StringLine* header);
 void ZC_freeCharArrayLines(char** lines, int lineNum);

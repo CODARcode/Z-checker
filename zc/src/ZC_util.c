@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include "zc.h"
 
+char* createLine(char* str)
+{
+	char* line = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
+	strcpy(line, str);
+	return line;
+}
+
 void ltrim(char *s)
 {
 	char *p;
@@ -329,4 +336,16 @@ int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr)
 {
 	ZC_ReplaceStr(sSrc, sMatchStr, "!");
 	ZC_ReplaceStr(sSrc, "!", sReplaceStr);	
+}
+
+char* strcat_new(char *s1, char *s2)
+{
+    char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
+    //in real code you would check for errors in malloc here
+    if (result == NULL) exit (1);
+
+    strcpy(result, s1);
+    strcat(result, s2);
+
+    return result;
 }

@@ -1,2 +1,12 @@
 \subsection{Distortion (PSNR) of Data}
 %distortion of data
+
+Peask Signal-to-Noise Ratio (PSNR) is a common metric used in graphics domain to evaluate the overall statistical distortion between the original data and the reconstructed/decompressed data. It is defined as follows. 
+\begin{equation}
+PSNR = 20\cdot \log_{10}{(value\_range)} - 10\cdot \log_{10}{(MSE)}. 
+\end{equation}  
+where value\_range and MSE refer to data value range and the mean squared compression error respectively.
+
+The compression factor in the rate-distortion is evaluated by \emph{bit rate}, i.e., the number of bits used to represent a data point on average after the compression. Bit rate is equal to the number of full bits used to represent each original data point divided by the overall compression factor, for example, $bit rate = \frac{64}{compression factor}$ for double-precision data.
+
+%plot psnr

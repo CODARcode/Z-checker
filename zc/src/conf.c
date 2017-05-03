@@ -329,12 +329,12 @@ int ZC_ReadConf() {
 		generateReportFlag = (int)iniparser_getint(ini, "REPORT:generateReport", 0);
 		if(generateReportFlag==1)
 		{
-			char *reportTemplateFileString = iniparser_getstring(ini, "REPORT:reportTemplateFile", NULL);
-			reportTemplateFile = (char*)malloc(sizeof(char)*(strlen(reportTemplateFileString)+1));
-			sprintf(reportTemplateFile, "%s", reportTemplateFileString);
+			char *reportTemplateDirString = iniparser_getstring(ini, "REPORT:reportTemplateDir", NULL);
+			reportTemplateDir = (char*)malloc(sizeof(char)*(strlen(reportTemplateDirString)+1));
+			sprintf(reportTemplateDir, "%s", reportTemplateDirString);
 		}
 		else
-			reportTemplateFile = NULL;
+			reportTemplateDir = NULL;
 	}																																																																																																													
 	
 	ZC_versionNumber[0] = ZC_VER_MAJOR; //0

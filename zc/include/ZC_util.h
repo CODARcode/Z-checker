@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+char* createLine(char* str);
+
 void ltrim(char *s);
 void rtrim(char *s);
 void trim(char *s);
@@ -21,6 +23,7 @@ int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
 int ZC_ReplaceStr(char *sSrc, char *sMatchStr, char *sReplaceStr);
 int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr);
 
+char* strcat_new(char *s1, char *s2);
 #ifdef __cplusplus
 }
 #endif
