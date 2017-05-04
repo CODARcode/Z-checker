@@ -29,7 +29,7 @@ void ZC_generateCompressionRateReport()
 	StringLine* figLines =  ZC_generateCompressionRateFigure();
 	int lineNumInsted = ZC_insertLines("%plot compression rate\n", texLines, figLines);
 	ZC_writeLines(texLines, compressionRateTexFile);
-	ZC_freeLines(texLines);	
+	ZC_freeLines(texLines);
 }
 
 StringLine* ZC_generateDecompressionRateFigure()
@@ -166,9 +166,7 @@ void ZC_generateOverallReport(char* dataSetName)
 	ZC_generateRateDistortionReport();		
 	ZC_generateSpectrumDistortionReport();
 	ZC_generateCompressionFactorReport();
-	
 	ZC_updateZCRootTexFile(dataSetName);
-	
 	sprintf(cmd, "cd report;make");
 	printf("%s\n", cmd);
 	system(cmd);

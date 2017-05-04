@@ -366,6 +366,7 @@ StringLine* createStringLineHeader()
 	StringLine* header = (StringLine*)malloc(sizeof(StringLine));
 	header->str = NULL;
 	header->next = NULL;
+	return header;
 }
 
 StringLine* createOneStringLine(char* lineContent)
@@ -411,7 +412,6 @@ StringLine* ZC_readLines(char* filePath, int *lineCount)
 		//lines[i++] = buf;
 		//printf("%s", szTest);
 	}
-	
 	*lineCount = i;
 
 	fclose(fp);	
