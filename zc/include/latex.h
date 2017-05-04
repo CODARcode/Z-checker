@@ -10,6 +10,7 @@
 #ifndef _LATEX_H
 #define _LATEX_H
 
+#include "ZC_rw.h"
 #include "zc.h"
 
 #ifdef __cplusplus

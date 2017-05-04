@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "rw.h"
+#include "ZC_rw.h"
 #include "zc.h"
 
 void updateLinkFullPath(char* oriPath, char* finalPath)

@@ -5,6 +5,7 @@
 #include "latex.h"
 #include "ZC_ReportGenerator.h"
 #include "zc.h"
+#include "ZC_rw.h"
 
 StringLine* ZC_generateCompressionRateFigure()
 {

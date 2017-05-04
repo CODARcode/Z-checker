@@ -11,7 +11,7 @@
 #include <string.h>
 #include "zc.h"
 #include "iniparser.h"
-#include "rw.h"
+#include "ZC_rw.h"
 #include "ZC_DataProperty.h"
 
 void loadProperty(char* property_dir, char* fileName)

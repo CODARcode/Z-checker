@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <math.h>
 #include "zc.h"
-#include "rw.h"
+#include "ZC_rw.h"
 #include "ZC_Hashtable.h"
 #include "ZC_ReportGenerator.h"
 

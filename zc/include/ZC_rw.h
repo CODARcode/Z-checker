@@ -7,8 +7,8 @@
  *      See COPYRIGHT in top-level directory.
  */
 
-#ifndef _IO_H
-#define _IO_H
+#ifndef _ZC_IO_H
+#define _ZC_IO_H
 
 #include <stdio.h>
 
@@ -68,4 +68,4 @@ void ZC_writeDoubleData_inBytes(double *data, int nbEle, char* tgtFilePath);
 }
 #endif
 
-#endif /* ----- #ifndef _IO_H  ----- */
+#endif /* ----- #ifndef _ZC_IO_H  ----- */

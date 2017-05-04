@@ -10,7 +10,7 @@
 #ifndef _ReportGenerator_H
 #define _ReportGenerator_H
 
-#include "rw.h"
+#include "ZC_rw.h"
 #include "latex.h"
 
 #ifdef __cplusplus
