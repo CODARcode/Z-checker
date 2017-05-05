@@ -1,2 +1,40 @@
-\section{Description of The Data}
-%description of data
+\section{Description of The Compressors}
+%description of compressors
+
+This report involves two state-of-the-art lossy compressors, ZFP \cite{lindstrom} and SZ \cite{di,tao}.
+Both of them are available to download from Github or their own website. 
+\begin{itemize}
+\item \emph{ZFP}: https://computation.llnl.gov/projects/floating-point-compression
+\item \emph{SZ}: https://collab.cels.anl.gov/display/ESR/SZ
+\end{itemize}
+
+\subsection{Compression Principle of ZFP}
+
+There are five steps in the ZFP compression \cite{lindstrom}, as listed below.
+\begin{itemize}
+\item Align the values in a block to a common exponent. 
+\item Convert the floating-point values to a fixed-point representation.
+\item Apply an orthogonal block transform to decorrelate the values.
+\item Order the transform coefficients by expected magnitude.
+\item Encode the resulting coefficients one ``bit-plane'' at a time.
+\end{itemize}
+
+ZFP supports multiple compression modes, including error-bound based compression, fixed-rate based compression, and so on. 
+
+\subsection{Compression Principle of SZ}
+
+There are four major steps in the SZ compression \cite{di,tao}, as listed below.
+\begin{itemize}
+\item Predict every data value through a multilayer prediction model.
+\item Adopt an error-controlled quantization encoder with an adaptive number of intervals.
+\item Perform a variable-length encoding technique based on the uneven distributed quantization codes.
+\item (Optional) Perform extra lossless compression techniques (such as deflate/Gzip).
+\end{itemize}
+
+There are multiple parameters to tune in SZ and users can get various compression qualities on demand by modifying the configuration file (sz.config). Two most important parameters include:
+\begin{itemize}
+\item \emph{max\_quant\_intervals}: It indicates the maximum number of quantization bins. The compressor will optimize the number of quantization bins in the compression based on this setting. In general, as for a relatively large data set with a high-precision demand, the higher the max\_quant\_intervals is, the higher compression ability (better compression ratio) SZ will have. 
+\item \emph{szMode}: There are three options: SZ\_BEST\_SPEED, SZ\_DEFAULT\_COMPRESSION, and SZ\_BEST\_COMPRESSION. SZ\_BEST\_SPEED leads to the best compression speed (compression rate, and SZ\_BEST\_COMPRESSION will get higher compression factor.
+
+The best compression ratio is reached when setting szMode to SZ\_BEST\_COMPRESSION and gzipMode to Gzip\_BEST\_COMPRESSION meanwhile. 
+\end{itemize}
