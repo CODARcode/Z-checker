@@ -79,8 +79,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = analyzeDataProperty$(EXEEXT) compareDataSets$(EXEEXT) \
-	generateGNUPlot$(EXEEXT) testRscript_float$(EXEEXT) \
-	testRscript_double$(EXEEXT)
+	generateGNUPlot$(EXEEXT) generateReport$(EXEEXT) \
+	testRscript_float$(EXEEXT) testRscript_double$(EXEEXT)
 subdir = examples
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp README
@@ -107,6 +107,9 @@ compareDataSets_DEPENDENCIES = ../zc/.libs/libzc.a
 am_generateGNUPlot_OBJECTS = generateGNUPlot.$(OBJEXT)
 generateGNUPlot_OBJECTS = $(am_generateGNUPlot_OBJECTS)
 generateGNUPlot_DEPENDENCIES = ../zc/.libs/libzc.a
+am_generateReport_OBJECTS = generateReport.$(OBJEXT)
+generateReport_OBJECTS = $(am_generateReport_OBJECTS)
+generateReport_DEPENDENCIES = ../zc/.libs/libzc.a
 am_testRscript_double_OBJECTS = testRscript_double.$(OBJEXT)
 testRscript_double_OBJECTS = $(am_testRscript_double_OBJECTS)
 testRscript_double_DEPENDENCIES = ../zc/.libs/libzc.a
@@ -148,11 +151,12 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(analyzeDataProperty_SOURCES) $(compareDataSets_SOURCES) \
-	$(generateGNUPlot_SOURCES) $(testRscript_double_SOURCES) \
-	$(testRscript_float_SOURCES)
+	$(generateGNUPlot_SOURCES) $(generateReport_SOURCES) \
+	$(testRscript_double_SOURCES) $(testRscript_float_SOURCES)
 DIST_SOURCES = $(analyzeDataProperty_SOURCES) \
 	$(compareDataSets_SOURCES) $(generateGNUPlot_SOURCES) \
-	$(testRscript_double_SOURCES) $(testRscript_float_SOURCES)
+	$(generateReport_SOURCES) $(testRscript_double_SOURCES) \
+	$(testRscript_float_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -300,6 +304,8 @@ compareDataSets_SOURCES = compareDataSets.c
 compareDataSets_LDADD = ../zc/.libs/libzc.a
 generateGNUPlot_SOURCES = generateGNUPlot.c
 generateGNUPlot_LDADD = ../zc/.libs/libzc.a
+generateReport_SOURCES = generateReport.c
+generateReport_LDADD = ../zc/.libs/libzc.a
 testRscript_float_SOURCES = testRscript_float.c
 testRscript_float_LDADD = ../zc/.libs/libzc.a
 testRscript_double_SOURCES = testRscript_double.c
@@ -400,6 +406,10 @@ generateGNUPlot$(EXEEXT): $(generateGNUPlot_OBJECTS) $(generateGNUPlot_DEPENDENC
 	@rm -f generateGNUPlot$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(generateGNUPlot_OBJECTS) $(generateGNUPlot_LDADD) $(LIBS)
 
+generateReport$(EXEEXT): $(generateReport_OBJECTS) $(generateReport_DEPENDENCIES) $(EXTRA_generateReport_DEPENDENCIES) 
+	@rm -f generateReport$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(generateReport_OBJECTS) $(generateReport_LDADD) $(LIBS)
+
 testRscript_double$(EXEEXT): $(testRscript_double_OBJECTS) $(testRscript_double_DEPENDENCIES) $(EXTRA_testRscript_double_DEPENDENCIES) 
 	@rm -f testRscript_double$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(testRscript_double_OBJECTS) $(testRscript_double_LDADD) $(LIBS)
@@ -417,6 +427,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/analyzeDataProperty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compareDataSets.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateGNUPlot.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateReport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testRscript_double.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testRscript_float.Po@am__quote@
 
