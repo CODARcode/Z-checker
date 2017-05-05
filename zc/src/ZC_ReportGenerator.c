@@ -23,8 +23,8 @@ void ZC_generateCompressionRateReport()
 	int lineCount;
 	char compressionRateTexFile[ZC_BUFS];
 	sprintf(compressionRateTexFile, "report/tex/resultsTex/compressionRate.tex");
-	printf("%s\n", reportTemplateDir);
-	printf("%s\n", compressionRateTexFile);
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", compressionRateTexFile);
 	StringLine* texLines = ZC_readLines(compressionRateTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateCompressionRateFigure();
 	int lineNumInsted = ZC_insertLines("%plot compression rate\n", texLines, figLines);
@@ -48,8 +48,8 @@ void ZC_generateDecompressionRateReport()
 	int lineCount;
 	char decompressionRateTexFile[ZC_BUFS];
 	sprintf(decompressionRateTexFile, "report/tex/resultsTex/decompressionRate.tex");
-	printf("%s\n", reportTemplateDir);
-	printf("%s\n", decompressionRateTexFile);
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", decompressionRateTexFile);
 	StringLine* texLines = ZC_readLines(decompressionRateTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateDecompressionRateFigure();
 	int lineNumInsted = ZC_insertLines("%plot decompression rate\n", texLines, figLines);
@@ -73,8 +73,8 @@ void ZC_generatePSNRReport()
 	int lineCount;
 	char psnrTexFile[ZC_BUFS];
 	sprintf(psnrTexFile, "report/tex/resultsTex/psnr.tex");
-	printf("%s\n", reportTemplateDir);
-	printf("%s\n", psnrTexFile);
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", psnrTexFile);
 	StringLine* texLines = ZC_readLines(psnrTexFile, &lineCount);
 	StringLine* figLines =  ZC_generatePSNRFigure();
 	int lineNumInsted = ZC_insertLines("%plot psnr\n", texLines, figLines);
@@ -92,9 +92,43 @@ void ZC_generateErrAutoCorrReport()
 	
 }
 
+StringLine* ZC_generateRateDistortionFigure()
+{
+	int i, varCount;
+	char* varFiles[ZC_BUFS];
+	char* fileName;
+	char rateDisFile[ZC_BUFS];
+	
+	for(i=0;i<ZC_BUFS;i++)
+		varFiles[i] = (char*)malloc(sizeof(char)*500);
+	ZC_getFileNames("dataProperties", "prop", &varCount, varFiles);
+	for(i = 0;i<varCount;i++)
+	{
+		fileName = rmFileExtension(varFiles[i]);
+		strcpy(varFiles[i], fileName);
+		free(fileName);
+	}
+	StringLine* header = ZC_generateFigureTexLines(varCount, varFiles, 
+	"compareCompressors", "rate-distortion_psnr", "Rate Distortion (PSNR vs. Bit-rate)");
+	
+	for(i=0;i<varCount;i++)
+		free(varFiles[i]);
+	
+	return header;
+}
+
 void ZC_generateRateDistortionReport()
 {
-	
+	int lineCount;
+	char rateDisTexFile[ZC_BUFS];
+	sprintf(rateDisTexFile, "report/tex/resultsTex/rateDistortion.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", rateDisTexFile);
+	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
+	StringLine* figLines =  ZC_generateRateDistortionFigure();
+	int lineNumInsted = ZC_insertLines("%plot rate distortion\n", texLines, figLines);
+	ZC_writeLines(texLines, rateDisTexFile);
+	ZC_freeLines(texLines);	
 }
 
 StringLine* ZC_generateCompressionFactorFigure()
@@ -113,8 +147,8 @@ void ZC_generateCompressionFactorReport()
 	int lineCount;
 	char compressionFactorTexFile[ZC_BUFS];
 	sprintf(compressionFactorTexFile, "report/tex/resultsTex/compressionFactor.tex");
-	printf("%s\n", reportTemplateDir);
-	printf("%s\n", compressionFactorTexFile);
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", compressionFactorTexFile);
 	StringLine* texLines = ZC_readLines(compressionFactorTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateCompressionFactorFigure();
 	int lineNumInsted = ZC_insertLines("%plot compression factor\n", texLines, figLines);
@@ -130,14 +164,15 @@ void ZC_generateSpectrumDistortionReport()
 void ZC_updateZCRootTexFile(char* dataSetName)
 {
 	int lineCount;
-	char rootTexFile[ZC_BUFS], titleLineString[ZC_BUFS];
+	char rootTexFile[ZC_BUFS];
+	char* titleLineString = (char*)malloc(sizeof(char)*ZC_BUFS);
 	sprintf(rootTexFile, "report/z-checker-report.tex");	
 	StringLine* texLines = ZC_readLines(rootTexFile, &lineCount);
 	sprintf(titleLineString, "\\title{Compression Assessment Report for %s}", dataSetName);
 	StringLine* titleLine = createOneStringLine(titleLineString);
 	int lineNumInsted = ZC_insertLines("%title_of_report\n", texLines, titleLine);
 	ZC_writeLines(texLines, rootTexFile);
-	ZC_freeLines(texLines);;
+	ZC_freeLines(texLines);
 }
 
 void ZC_generateOverallReport(char* dataSetName)

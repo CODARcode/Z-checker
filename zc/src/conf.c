@@ -216,8 +216,8 @@ int ZC_ReadConf() {
 		ecPropertyTable = ht_create( HASHTABLE_SIZE );
 		char* property_dir = NULL;
 				
-		char** fileNames = (char**)malloc(1000*sizeof(char*)); //at most 1000 files, each of which has 500 chars.
-		for(i=0;i<1000;i++)
+		char** fileNames = (char**)malloc(ZC_BUFS_LONG*sizeof(char*)); //at most 1000 files, each of which has 500 chars.
+		for(i=0;i<ZC_BUFS_LONG;i++)
 			fileNames[i] = (char*)malloc(500);		
 		//load property info from current directory (in Z-checker)
 		int count;
@@ -322,7 +322,7 @@ int ZC_ReadConf() {
 				free(compResultCaseName);
 			}	
 		}
-		for(j=0;j<1000;j++)
+		for(j=0;j<ZC_BUFS_LONG;j++)
 			free(fileNames[j]);
 		free(fileNames);					
 	

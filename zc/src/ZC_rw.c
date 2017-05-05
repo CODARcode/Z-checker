@@ -33,6 +33,10 @@ int ZC_checkExtension(char* str, char* extension)
 		return 0;
 }
 
+/**
+ * 
+ * Note: char** fileNames should be allocated beforehand before calling this function.
+ * */
 void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames)
 {
 	int i;
@@ -372,8 +376,8 @@ StringLine* createStringLineHeader()
 StringLine* createOneStringLine(char* lineContent)
 {
 	StringLine* header = createStringLineHeader();
-	 appendOneLine(header, lineContent);
-	 return header;
+	appendOneLine(header, lineContent);
+	return header;
 }
 
 StringLine* appendOneLine(StringLine* tail, char* str)
@@ -482,7 +486,9 @@ void ZC_freeLines(StringLine* header)
 	while(p!=NULL)
 	{
 		if(p->str!=NULL)
+		{
 			free(p->str);
+		}
 		q = p->next;
 		free(p);
 		p = q;
@@ -499,7 +505,7 @@ void ZC_freeCharArrayLines(char** lines, int lineNum)
 
 char* rmFileExtension(char* fullFileName)
 {
-	char* s = (char*)malloc(100);
+	char* s = (char*)malloc(ZC_BUFS);
 	sprintf(s, "%s", fullFileName);
 	char* b = strrchr(s, '.');
 	b[0] = '\0';
