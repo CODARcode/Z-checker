@@ -14,6 +14,8 @@ AM_PROG_AR
 AC_PROG_LIBTOOL
 #m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
+AM_MAINTAINER_MODE([disable])
+
 # Checks for libraries.
 
 # Checks for header files.
