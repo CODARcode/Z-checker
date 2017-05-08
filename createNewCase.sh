@@ -34,4 +34,4 @@ cp examples/testRscript* $caseName
 cp examples/zc.config $caseName
 cp examples/README $caseName
 
-echo A new workspace directory '$caseName' has been created.
+echo A new workspace directory $caseName has been created in Z-checker.
