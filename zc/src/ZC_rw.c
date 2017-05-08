@@ -59,8 +59,10 @@ void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileName
 			printf("Error: File Count >=1000, but we can only read the first 1000 files.\n");
 			break;
 		}
+		printf("ptr->d_name=%s\n", ptr->d_name);
 		if(ZC_checkExtension(ptr->d_name, extension))
 		{
+			printf("in i=%d, ptr->length=%d\n", i, strlen(ptr->d_name)+1);
 			memcpy(fileNames[i], ptr->d_name, strlen(ptr->d_name)+1);
 			i++;
 		}

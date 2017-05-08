@@ -49,7 +49,7 @@ extern "C" {
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
 #define ZC_BUFS 100
-#define ZC_BUFS_LONG 500
+#define ZC_BUFS_LONG 1024
 
 #define ZC_VERNUM 0x0010
 #define ZC_VER_MAJOR 0

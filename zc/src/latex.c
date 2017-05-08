@@ -80,6 +80,7 @@ StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* su
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
+	ZC_ReplaceStr2(caption, "_", "\\_");
 	sprintf(tmpLine, "\\caption{%s}\n", caption);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	sprintf(tmpLine, "\\label{fig:%s}\n", prefix);
@@ -110,6 +111,7 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
+	ZC_ReplaceStr2(caption, "_", "\\_");
 	sprintf(tmpLine, "\\caption{%s}\n", caption);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	sprintf(tmpLine, "\\label{fig:%s}\n", figLabel);

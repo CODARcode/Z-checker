@@ -338,8 +338,8 @@ void ZC_generateOverallReport(char* dataSetName)
 	ZC_generateRateDistortionReport();		
 
 	int i, n = 0, selectedErrorBoundCount;
-	char* caseFiles[ZC_BUFS];
-	for(i=0;i<ZC_BUFS;i++)
+	char* caseFiles[ZC_BUFS_LONG];
+	for(i=0;i<ZC_BUFS_LONG;i++)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
 	ZC_getFileNames("compressionResults", "dis", &n, caseFiles);
 	ZC_extractCompressorAndErrorBounds(caseFiles, n);
