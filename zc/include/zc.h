@@ -214,6 +214,7 @@ double cost_endDec();
 void loadProperty(char* property_dir, char* propertyVarName);
 int ZC_ReadConf();
 int ZC_LoadConf();
+int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue);
 
 /*ByteToolkit.c*/
 int ZC_bytesToInt_bigEndian(unsigned char* bytes);

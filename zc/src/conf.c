@@ -365,3 +365,29 @@ int ZC_LoadConf() {
     }
     return 1;
 }
+
+int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue)
+{
+	char* line, *attr; 
+	char tmp[ZC_BUFS_LONG];
+	int i = 0;
+	StringLine* p = confLinesHeader;
+	while(p->next!=NULL)
+	{
+		strcpy(tmp, p->next->str);
+		attr = strtok(tmp,"=");
+		if(attr==NULL)
+		{
+			p=p->next;
+			continue;
+		}
+		trim(attr);
+		if(strcmp(attr, targetAttribute)==0)
+		{
+			sprintf(p->next->str, "%s = %s", targetAttribute, newStringValue);
+			return ZC_SCES;
+		}
+		p=p->next;
+	}
+	return ZC_NSCS;
+}

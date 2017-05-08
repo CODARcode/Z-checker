@@ -13,6 +13,8 @@ void ltrim(char *s)
 {
 	char *p;
 	p = s;
+	if(p==NULL)
+		return;
 	while(*p == ' ' || *p == '\t')
 	{
 		p++;
@@ -24,7 +26,8 @@ void ltrim(char *s)
 void rtrim(char *s)
 {
 	int i;
-
+	if(s==NULL)
+		return;
 	i = strlen(s)-1;
 	while((s[i] == ' ' || s[i] == '\t') && i >= 0){i--;};
 	s[i+1] = '\0';
