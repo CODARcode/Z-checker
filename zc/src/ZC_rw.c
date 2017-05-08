@@ -466,6 +466,8 @@ int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, String
 		{
 			q = p->next;
 			p->next = toAddLineHeader->next;
+			free(toAddLineHeader);
+			
 			while(p->next!=NULL)
 			{
 				p = p->next;
@@ -478,6 +480,26 @@ int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, String
 			p = p->next;
 	}
 	return count;
+}
+
+void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader)
+{
+	if(toAddLineHeader==NULL)
+	{
+		printf("Error: toAddLineHeader cannot be NULL\n");
+		exit(0);
+	}
+	
+	if(toAddLineHeader->next==NULL)
+		return;
+	
+	StringLine* p = globalLineHeader, *q;
+	int count = 0;
+	while(p->next!=NULL)
+		p = p->next;
+	
+	p->next = toAddLineHeader->next;	
+	free(toAddLineHeader);
 }
 
 void ZC_freeLines(StringLine* header)

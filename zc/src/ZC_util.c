@@ -36,6 +36,17 @@ void trim(char *s)
 	rtrim(s);
 }
 
+char* rtrim_C(char *s, char c)
+{
+	int len = strlen(s);
+	char* result = (char*)malloc(len+1);
+	strcpy(result, s);
+	if(result[len-1]==c)
+		result[len-1] = '\0';
+	return result;
+}
+
+
 int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data)
 {
 	FILE *fp;
@@ -348,4 +359,24 @@ char* strcat_new(char *s1, char *s2)
     strcat(result, s2);
 
     return result;
+}
+
+void checkAndAddStringToList(char** strList, int* num, char* targetStr)
+{
+	int i = 0, mark = 0;
+	for(i=0;i<*num;i++)
+	{
+		if(strcmp(strList[i], targetStr)==0)
+		{
+			mark = 1;
+			break;
+		}
+	}
+	if(mark==0)
+	{
+		char* tmp = (char*)malloc(strlen(targetStr)+1);
+		strcpy(tmp, targetStr);
+		strList[*num] = tmp;
+		(*num)++;
+	}
 }

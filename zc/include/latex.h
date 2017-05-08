@@ -18,7 +18,9 @@ extern "C" {
 #endif
 
 char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix);
-StringLine* ZC_generateFigureTexLines(int caseNum, char** cases, char* subDir, char* prefix, char* caption);
+char* gen_includegraphicsLine2(char* epsFileName, char* subDir);
+StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* subDir, char* prefix, char* caption);
+StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, char* subDir, char* caption, char* figLabel);
 
 #ifdef __cplusplus
 }

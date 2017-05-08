@@ -87,6 +87,15 @@ char* properties_dir[20];
 
 char* comparisonCases;
 
+int numOfErrorBoundCases;
+
+int allCompressorCount = 0;
+char* allCompressors[20];
+int allErrorBoundCount = 0;
+char* allErrorBounds[20];
+int allVarCaseCount = 0;
+char* allVarCases[20];
+
 void cost_startCmpr()
 {
 	gettimeofday(&startCmprTime, NULL);

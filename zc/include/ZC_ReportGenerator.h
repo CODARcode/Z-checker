@@ -10,12 +10,16 @@
 #ifndef _ReportGenerator_H
 #define _ReportGenerator_H
 
+#include "zc.h"
 #include "ZC_rw.h"
 #include "latex.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount);
+void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int *selectedErrorBoundCount);
 
 StringLine* ZC_generateCompressionRateFigure();
 void ZC_generateCompressionRateReport();
@@ -26,15 +30,16 @@ void ZC_generateDecompressionRateReport();
 StringLine* ZC_generatePSNRFigure();
 void ZC_generatePSNRReport();
 
-void ZC_generateErrDistributionReport();
-
-void ZC_generateErrAutoCorrReport();
-void ZC_generateRateDistortionReport();
-
 StringLine* ZC_generateCompressionFactorFigure();
 void ZC_generateCompressionFactorReport();
 
-void ZC_generateSpectrumDistortionReport();
+void ZC_generateRateDistortionReport();
+
+StringLine* ZC_generateStaticAnalysisFigures(char* metricType, StringElem* selectedErrorBounds, int selectedErrorBoundCount);
+
+void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);
+void ZC_generateErrAutoCorrReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);
+void ZC_generateSpectrumDistortionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);
 
 void ZC_updateZCRootTexFile(char* dataSetName);
 void ZC_generateOverallReport(char* dataSetName);

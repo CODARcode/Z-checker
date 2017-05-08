@@ -24,7 +24,6 @@
 #include "DynamicDoubleArray.h"
 #include "DynamicIntArray.h"
 #include "ZC_util.h"
-#include "ZC_ReportGenerator.h"
 #include "ZC_rw.h"
 
 #ifdef _WIN32
@@ -155,13 +154,22 @@ extern struct timeval endDecTime;
 extern double totalCmprCost;
 extern double totalDecCost;
 
-extern int compressors_count;
+extern int compressors_count; //this compressors_count is the number of compressors to be compared, set by zc.config
 extern char* compressors[20];
 extern char* compressors_dir[20];
 extern char* compareData_dir[20];
 extern char* properties_dir[20];
 
 extern char* comparisonCases;
+
+extern int numOfErrorBoundCases;
+
+extern int allCompressorCount;
+extern char* allCompressors[20];
+extern int allErrorBoundCount;
+extern char* allErrorBounds[20];
+extern int allVarCaseCount;
+extern char* allVarCases[20];
 
 typedef union eclshort
 {
@@ -190,6 +198,12 @@ typedef struct RateDistElem_t
 	double maxAbsErr;
 	double compressRate;
 } *RateDistElem;
+
+typedef struct StringElem_t
+{
+	char* str;
+	double value;
+} *StringElem;
 
 void cost_startCmpr();
 double cost_EndCmpr();
@@ -226,11 +240,12 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 /*quicksort.c*/
 int ZC_divide(RateDistElem* list,int start,int end);
 void ZC_quick_sort(RateDistElem* list,int start,int end);
+int ZC_divide2(StringElem* list,int start,int end);
+void ZC_quick_sort2(StringElem* list,int start,int end);
 
 /*ec.h*/
 int ZC_Init(char *configFilePath);
 int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1);
-
 
 ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, int r5, int r4, int r3, int r2, int r1);
 ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);

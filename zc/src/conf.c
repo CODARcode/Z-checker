@@ -332,6 +332,7 @@ int ZC_ReadConf() {
 			char *reportTemplateDirString = iniparser_getstring(ini, "REPORT:reportTemplateDir", NULL);
 			reportTemplateDir = (char*)malloc(sizeof(char)*(strlen(reportTemplateDirString)+1));
 			sprintf(reportTemplateDir, "%s", reportTemplateDirString);
+			numOfErrorBoundCases = (int)iniparser_getint(ini, "REPORT:numOfErrorBoundCases", 1);
 		}
 		else
 			reportTemplateDir = NULL;

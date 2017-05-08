@@ -17,11 +17,21 @@ then
 fi 
 
 mkdir $caseName
-cp examples/*.c $caseName
-cp -r examples/.deps $caseName
-cp examples/Makefile* $caseName
-cp examples/zc.config $caseName
-cp examples/*.sh $caseName
+#cp examples/*.c $caseName
+#cp -r examples/.deps $caseName
+#cp examples/Makefile* $caseName
+#cp examples/zc.config $caseName
+#cp examples/*.sh $caseName
 
-cd $caseName
-make
+#cd $caseName
+#make
+
+cp examples/*.sh $caseName
+cp examples/analyzeDataProperty $caseName
+cp examples/generateGNUPlot $caseName
+cp examples/generateReport $caseName
+cp examples/testRscript* $caseName
+cp examples/zc.config $caseName
+cp examples/README $caseName
+
+echo A new workspace directory '$caseName' has been created.

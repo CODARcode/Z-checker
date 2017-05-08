@@ -4,14 +4,77 @@
 #include <unistd.h>
 #include "latex.h"
 #include "ZC_ReportGenerator.h"
+#include "ZC_util.h"
 #include "zc.h"
 #include "ZC_rw.h"
+
+void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount)
+{
+	int i = 0, j = 0, mark = 0;
+	int compressorNum = 0, errorBoundNum = 0;
+	char *cmpCaseFile, *cmpCase, *varCase, *varName, *compressor, *errBound, *tmpErrBoundString;
+	for(i=0;i<caseCount;i++)
+	{
+		cmpCaseFile = compressionCaseFiles[i];
+        cmpCase = strtok(cmpCaseFile,":"); //there should be only one ":"
+        varCase = strtok(NULL,":");
+       
+        compressor = strtok(cmpCase, "(");
+        tmpErrBoundString = strtok(NULL,"(");
+        errBound = rtrim_C(tmpErrBoundString, ')');
+        varName = strtok(varCase, ".dat.dis");
+		
+		checkAndAddStringToList(allCompressors, &allCompressorCount, compressor);//e.g., compressor=sz
+		checkAndAddStringToList(allErrorBounds, &allErrorBoundCount, errBound); //e.g., errBound=1E-3
+		checkAndAddStringToList(allVarCases, &allVarCaseCount, varName); //e.g., varName=FLDSC_1_1800_3600
+	}
+}
+
+void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int *selectedErrorBoundCount)
+{
+	int errorBoundInterval = 0, i, j;
+	int errBoundCount = 0;
+	StringElem sortedErrorBounds[ZC_BUFS];
+	for(i=0;i<ZC_BUFS;i++)
+		sortedErrorBounds[i] = (StringElem)malloc(sizeof(struct StringElem_t));
+	//select error bounds based on errorBoundCases setting
+	if(allErrorBoundCount%numOfErrorBoundCases==0)
+		errorBoundInterval = allErrorBoundCount/numOfErrorBoundCases;
+	else
+		errorBoundInterval = allErrorBoundCount/numOfErrorBoundCases+1;
+
+	for(i=0;i<allErrorBoundCount;i++)
+	{
+		sortedErrorBounds[i]->str = allErrorBounds[i];
+		sortedErrorBounds[i]->value = atof(allErrorBounds[i]);
+	}
+	
+	//sort error bounds
+	ZC_quick_sort2(sortedErrorBounds,0,allErrorBoundCount-1);	
+	
+	for(i=0;i<allErrorBoundCount;i++)
+	{
+		if(i%errorBoundInterval==0)
+		{
+			selectedErrorBounds[errBoundCount]->str = sortedErrorBounds[i]->str;
+			selectedErrorBounds[errBoundCount]->value = atof(sortedErrorBounds[i]->str);
+			errBoundCount++;
+		}
+	}
+	
+	for(i=0;i<ZC_BUFS;i++)
+		free(sortedErrorBounds[i]);
+	
+	*selectedErrorBoundCount = errBoundCount;
+	//no need to sort varCases, because it's fine as long as a particular order of 
+	//presenting all varCases is chosen and it's consistent.
+}
 
 StringLine* ZC_generateCompressionRateFigure()
 {
 	char* cases[ZC_BUFS];
 	int i, n = getComparisonCases(cases);
-	StringLine* header = ZC_generateFigureTexLines(n, cases, "compareCompressors", "crate", "Compression Rate (in B/s)");
+	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "crate", "Compression Rate (in B/s)");
 
 	for(i=0;i<n;i++)
 		free(cases[i]);
@@ -36,7 +99,7 @@ StringLine* ZC_generateDecompressionRateFigure()
 {
 	char* cases[ZC_BUFS];
 	int i, n = getComparisonCases(cases);
-	StringLine* header = ZC_generateFigureTexLines(n, cases, "compareCompressors", "drate", "Decompression Rate (in B/s)");
+	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "drate", "Decompression Rate (in B/s)");
 	for(i=0;i<n;i++)
 		free(cases[i]);
 		
@@ -61,7 +124,7 @@ StringLine* ZC_generatePSNRFigure()
 {
 	char* cases[ZC_BUFS];
 	int i, n = getComparisonCases(cases);
-	StringLine* header = ZC_generateFigureTexLines(n, cases, "compareCompressors", "psnr", "Peak Signal-to-Noise Ratio (PSNR)");
+	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "psnr", "Peak Signal-to-Noise Ratio (PSNR)");
 	for(i=0;i<n;i++)
 		free(cases[i]);
 		
@@ -82,14 +145,49 @@ void ZC_generatePSNRReport()
 	ZC_freeLines(texLines);	
 }
 
-void ZC_generateErrDistributionReport()
+StringLine* ZC_generateStaticAnalysisFigures(char* metricType, 
+StringElem* selectedErrorBounds, int selectedErrorBoundCount)
 {
+	int i, j, k, n = 0;// n: numOfEpsFiles
+	char* selectedEpsFiles[ZC_BUFS];
+	for(i=0;i<ZC_BUFS;i++)
+		selectedEpsFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	char* selectedErrorBound, *varCase, *compressor;
 	
-}
+	StringLine* totalHeader = createStringLineHeader();
+	StringLine* figHeader;
+	char caption[ZC_BUFS], figLabel[ZC_BUFS];
+	
+	//construct the selected cases (eps files) based on compressors
+	for(i=0;i<allCompressorCount;i++)
+	{		
+		compressor = allCompressors[i];
+		//construct figure tex lines
+		for(j=0;j<selectedErrorBoundCount;j++)
+		{
+			selectedErrorBound = selectedErrorBounds[j]->str;
+			for(k=0;k<allVarCaseCount;k++)
+			{
+				varCase = allVarCases[k];
+				
+				//construct varFiles
+				sprintf(selectedEpsFiles[n++], "%s(%s):%s.dat-%s", compressor, selectedErrorBound, varCase, metricType);
+			}
+			//generate figure tex lines	
+			//TODO
+			sprintf(caption, "%s: compressor=%s, err bound=%s", metricType, compressor, selectedErrorBound);
+			sprintf(figLabel, "%s-%s-%s", metricType, compressor, selectedErrorBound);
+			figHeader = ZC_generateVarStatFigTexLines(n, selectedEpsFiles, "compressionResults", caption, figLabel);		
+			ZC_appendLines(totalHeader, figHeader);
+			
+			n = 0;
+		}
+	}
 
-void ZC_generateErrAutoCorrReport()
-{
-	
+	for(j=0;j<ZC_BUFS;j++)
+		free(selectedEpsFiles[j]);
+		
+	return totalHeader;	
 }
 
 StringLine* ZC_generateRateDistortionFigure()
@@ -108,7 +206,7 @@ StringLine* ZC_generateRateDistortionFigure()
 		strcpy(varFiles[i], fileName);
 		free(fileName);
 	}
-	StringLine* header = ZC_generateFigureTexLines(varCount, varFiles, 
+	StringLine* header = ZC_generateComparisonFigTexLines(varCount, varFiles, 
 	"compareCompressors", "rate-distortion_psnr", "Rate Distortion (PSNR vs. Bit-rate)");
 	
 	for(i=0;i<varCount;i++)
@@ -135,7 +233,7 @@ StringLine* ZC_generateCompressionFactorFigure()
 {
 	char* cases[ZC_BUFS];
 	int i, n = getComparisonCases(cases);
-	StringLine* header = ZC_generateFigureTexLines(n, cases, "compareCompressors", "cratio", "Compression Factor (i.e., Compression Ratio)");
+	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "cratio", "Compression Factor (i.e., Compression Ratio)");
 	for(i=0;i<n;i++)
 		free(cases[i]);
 		
@@ -156,9 +254,49 @@ void ZC_generateCompressionFactorReport()
 	ZC_freeLines(texLines);
 }
 
-void ZC_generateSpectrumDistortionReport()
+void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount)
 {
+	int lineCount;
+	char texFile[ZC_BUFS];
+	sprintf(texFile, "report/tex/resultsTex/errDistribution.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", texFile);
+	StringLine* texLines = ZC_readLines(texFile, &lineCount);
+	StringLine* figLines =  ZC_generateStaticAnalysisFigures("dis", selectedErrorBounds, selectedErrorBoundCount);
+	int lineNumInsted = ZC_insertLines("%plot error distribution\n", texLines, figLines);
 	
+	ZC_writeLines(texLines, texFile);
+	ZC_freeLines(texLines);
+}
+
+void ZC_generateErrAutoCorrReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount)
+{
+	int lineCount;
+	char texFile[ZC_BUFS];
+	sprintf(texFile, "report/tex/resultsTex/errAutoCorr.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", texFile);
+	StringLine* texLines = ZC_readLines(texFile, &lineCount);
+	StringLine* figLines =  ZC_generateStaticAnalysisFigures("autocorr", selectedErrorBounds, selectedErrorBoundCount);
+	int lineNumInsted = ZC_insertLines("%plot error auto correlation\n", texLines, figLines);
+	
+	ZC_writeLines(texLines, texFile);
+	ZC_freeLines(texLines);	
+}
+
+void ZC_generateSpectrumDistortionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount)
+{
+	int lineCount;
+	char texFile[ZC_BUFS];
+	sprintf(texFile, "report/tex/resultsTex/specDistortion.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", texFile);
+	StringLine* texLines = ZC_readLines(texFile, &lineCount);
+	StringLine* figLines =  ZC_generateStaticAnalysisFigures("fft-amp", selectedErrorBounds, selectedErrorBoundCount);
+	int lineNumInsted = ZC_insertLines("%plot spectrum distortion\n", texLines, figLines);
+	
+	ZC_writeLines(texLines, texFile);
+	ZC_freeLines(texLines);		
 }
 
 void ZC_updateZCRootTexFile(char* dataSetName)
@@ -190,17 +328,33 @@ void ZC_generateOverallReport(char* dataSetName)
 	printf("%s\n", cmd);
 	system(cmd);	
 	
-	sprintf(cmd, "ln -s \"../../compareCompressors\" report/figs/compareCompressors");  
+	sprintf(cmd, "ln -s \"../../compareCompressors\" report/figs/compareCompressors;ln -s \"../../compressionResults\" report/figs/compressionResults");  
 	system(cmd);	
 	
+	ZC_generateCompressionFactorReport();	
 	ZC_generateCompressionRateReport();
 	ZC_generateDecompressionRateReport();
 	ZC_generatePSNRReport();
-	ZC_generateErrDistributionReport();
-	ZC_generateErrAutoCorrReport();
 	ZC_generateRateDistortionReport();		
-	ZC_generateSpectrumDistortionReport();
-	ZC_generateCompressionFactorReport();
+
+	int i, n = 0, selectedErrorBoundCount;
+	char* caseFiles[ZC_BUFS];
+	for(i=0;i<ZC_BUFS;i++)
+		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	ZC_getFileNames("compressionResults", "dis", &n, caseFiles);
+	ZC_extractCompressorAndErrorBounds(caseFiles, n);
+	for(i=0;i<ZC_BUFS;i++)
+		free(caseFiles[i]);
+	
+	StringElem selectedErrorBounds[ZC_BUFS];
+	for(i=0;i<ZC_BUFS;i++)
+		selectedErrorBounds[i] = (StringElem)malloc(sizeof(struct StringElem_t));
+	ZC_constructSortedSelectedErrorBounds(selectedErrorBounds, &selectedErrorBoundCount);
+	
+	ZC_generateErrDistributionReport(selectedErrorBounds, selectedErrorBoundCount);
+	ZC_generateErrAutoCorrReport(selectedErrorBounds, selectedErrorBoundCount);	
+	ZC_generateSpectrumDistortionReport(selectedErrorBounds, selectedErrorBoundCount);
+	
 	ZC_updateZCRootTexFile(dataSetName);
 	sprintf(cmd, "cd report;make");
 	printf("%s\n", cmd);
