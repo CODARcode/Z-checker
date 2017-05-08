@@ -583,10 +583,12 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	char *autocorr[AUTOCORR_SIZE+2];
 	autocorr[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
 	sprintf(autocorr[0], "x \"\"\n");
-	for (i = 1; i < AUTOCORR_SIZE+2; i++)
+	autocorr[1] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	sprintf(autocorr[1], "#%d %.10G\n", 0, (compareResult->autoCorrAbsErr)[0]);	 //don't present autocorr[1] (i.e., x=0), because it's always 1.
+	for (i = 2; i < AUTOCORR_SIZE+2; i++)
 	{
 		autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(autocorr[i], "%i %.10G\n", i-1, (compareResult->autoCorrAbsErr)[i-1]);
+		sprintf(autocorr[i], "%d %.10G\n", i-1, (compareResult->autoCorrAbsErr)[i-1]);
 	}
 	memset(tgtFilePath, 0, ZC_BUFS_LONG);
 	sprintf(tgtFilePath, "%s/%s:%s.autocorr", tgtWorkspaceDir, solution, varName);
