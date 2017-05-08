@@ -27,6 +27,7 @@ mkdir $caseName
 #make
 
 cp examples/*.sh $caseName
+cp examples/modifyZCConfig $caseName
 cp examples/analyzeDataProperty $caseName
 cp examples/generateGNUPlot $caseName
 cp examples/generateReport $caseName
