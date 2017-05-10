@@ -235,7 +235,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	property->numOfElem = numOfElem;
 	double min=data[0],max=data[0],sum=0,avg,valueRange;
 
-	for(i=0;i<numOfElem;i++)
+    for(i=0;i<numOfElem;i++)
 	{
 		if(min>data[i]) min = data[i];
 		if(max<data[i]) max = data[i];
@@ -262,7 +262,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	
 	if (valueRangeFlag)
 		property->valueRange = valueRange;
-
+    
 	if(entropyFlag)
 	{
 		double absErr = 1E-3; /*TODO change fixed value to user input*/
@@ -272,8 +272,8 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 		hash_init(table,table_size);
 
 		for (i = 0; i < numOfElem; i++)
-			hash_put(table, (unsigned long)(data[i]/absErr), table_size);
-
+ 			hash_put(table, (unsigned long)((data[i]-min)/absErr), table_size);
+ 
 		for (i = 0; i<table_size; i++)
 			if (table[i].flag != 0)
 			{
