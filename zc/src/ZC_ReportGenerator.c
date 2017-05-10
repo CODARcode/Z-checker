@@ -10,7 +10,8 @@
 
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount)
 {
-	int i = 0, j = 0, mark = 0;
+	int i = 0, j = 0, mark = 0, len = 0;
+    //char buff[ZC_BUFS];
 	int compressorNum = 0, errorBoundNum = 0;
 	char *cmpCaseFile, *cmpCase, *varCase, *varName, *compressor, *errBound, *tmpErrBoundString;
 	for(i=0;i<caseCount;i++)
@@ -22,8 +23,10 @@ void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCou
         compressor = strtok(cmpCase, "(");
         tmpErrBoundString = strtok(NULL,"(");
         errBound = rtrim_C(tmpErrBoundString, ')');
-        varName = strtok(varCase, ".dat.dis");
-		
+        len = strlen(varCase);
+        varCase[len-8]='\0';
+        varName = varCase;
+        
 		checkAndAddStringToList(allCompressors, &allCompressorCount, compressor);//e.g., compressor=sz
 		checkAndAddStringToList(allErrorBounds, &allErrorBoundCount, errBound); //e.g., errBound=1E-3
 		checkAndAddStringToList(allVarCases, &allVarCaseCount, varName); //e.g., varName=FLDSC_1_1800_3600
