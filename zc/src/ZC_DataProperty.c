@@ -381,7 +381,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 		hash_init(table,table_size);
 
 		for (i = 0; i < numOfElem; i++)
-			hash_put(table, (unsigned long)(data[i]/absErr), table_size);
+			hash_put(table, (unsigned long)((data[i]-min)/absErr), table_size);
 
 		for (i = 0; i<table_size; i++)
 			if (table[i].flag != 0)
