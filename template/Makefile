@@ -1,7 +1,8 @@
 all:		z-checker-report.pdf
 
 z-checker-report.pdf:	z-checker-report.tex
-		latexmk -pdf z-checker-report
+		latexmk -ps z-checker-report
+		ps2pdf z-checker-report.ps
 
 again:		distclean
 		@make all
