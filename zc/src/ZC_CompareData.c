@@ -452,9 +452,21 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	{
 		double* data1 = (double*)oriData;
 		double* data2 = (double*)decData;
-		
-		compareResult->fftCoeff = ZC_computeFFT(data2, ZC_DOUBLE);
-		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);		
+        complex* fftCoeff1 = ZC_computeFFT(data1, ZC_DOUBLE);
+        complex* fftCoeff2 = ZC_computeFFT(data2, ZC_DOUBLE);
+        complex* fftCoeffDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
+        
+        int i;
+        for (i = 0; i < FFT_SIZE; i++)
+        {
+            fftCoeffDiff[i].Re = fftCoeff2[i].Re - fftCoeff1[i].Re;
+            fftCoeffDiff[i].Im = fftCoeff2[i].Im - fftCoeff2[i].Im;
+        }
+        
+        compareResult->fftCoeff = fftCoeffDiff;
+		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
+        free(fftCoeff1);
+        free(fftCoeff2);
 	}
 	else
 	{
