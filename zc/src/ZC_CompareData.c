@@ -161,20 +161,30 @@ int r5, int r4, int r3, int r2, int r1)
 		}
 
 		covDiff = covDiff/numOfElem;
-		int delta;
-		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-		{
-			double sum = 0;
-
-			for (i = 0; i < numOfElem-delta; i++)
-			{
-				sum += (absDiff[i]-avgDiff)*(absDiff[i+delta]-avgDiff);
-			}
-
-			autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
-		}
-
-		autoCorrAbsErr[0] = 1;
+        
+        if (covDiff == 0)
+        {
+            int delta;
+            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+                autoCorrAbsErr[delta] = 0;
+        }
+        else
+        {
+            int delta;
+            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+            {
+                double sum = 0;
+            
+                for (i = 0; i < numOfElem-delta; i++)
+                {
+                    sum += (absDiff[i]-avgDiff)*(absDiff[i+delta]-avgDiff);
+                }
+                
+                autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
+            }
+        }
+        
+        autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
 		free(absDiff);
 	}
@@ -333,18 +343,28 @@ int r5, int r4, int r3, int r2, int r1)
 		}
 
 		covDiff = covDiff/numOfElem;
-		int delta;
-		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-		{
-			double sum = 0;
+		
+        if (covDiff == 0)
+        {
+            int delta;
+            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+                autoCorrAbsErr[delta] = 0;
+        }
+        else
+        {
+            int delta;
+            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+            {
+                double sum = 0;
+                
+                for (i = 0; i < numOfElem-delta; i++)
+                {
+                    sum += (absDiff[i]-avgDiff)*(absDiff[i+delta]-avgDiff);
+                }
 
-			for (i = 0; i < numOfElem-delta; i++)
-			{
-				sum += (absDiff[i]-avgDiff)*(absDiff[i+delta]-avgDiff);
-			}
-
-			autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
-		}
+                autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
+            }
+        }
 		
 		autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
