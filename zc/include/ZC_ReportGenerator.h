@@ -21,6 +21,9 @@ extern "C" {
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount);
 void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int *selectedErrorBoundCount);
 
+StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNameCount);
+void ZC_generateDataPropertyAnalysisReport();
+
 StringLine* ZC_generateCompressionRateFigure();
 void ZC_generateCompressionRateReport();
 

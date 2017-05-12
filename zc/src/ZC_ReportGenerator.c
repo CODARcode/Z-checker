@@ -73,6 +73,61 @@ void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int 
 	//presenting all varCases is chosen and it's consistent.
 }
 
+StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNameCount)
+{	
+	StringLine* figHeader = NULL, *figHeader2 = NULL;
+	char caption[ZC_BUFS], figLabel[ZC_BUFS];
+	int i, n = 0;
+	char** caseFiles = (char**)malloc(sizeof(char*)*caseNameCount);
+	for(i=0;i<caseNameCount;i++)
+		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			
+	for(i=0;i<caseNameCount;i++)
+		sprintf(caseFiles[i], "%s-autocorr", caseNames[i]);
+	strcpy(caption, "Auto-correlation of the data");
+	strcpy(figLabel, "fig:dp-autocorr");
+	figHeader = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
+	
+	for(i=0;i<caseNameCount;i++)
+		sprintf(caseFiles[i], "%s-fft-amp", caseNames[i]);
+	strcpy(caption, "Amplitude of FFT Coefficients of the data");
+	strcpy(figLabel, "fig:dp-fft-amp");
+	figHeader2 = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
+	
+	ZC_appendLines(figHeader, figHeader2);
+	for(i=0;i<caseNameCount;i++)
+		free(caseFiles[i]);
+	free(caseFiles);
+	return figHeader;
+}
+
+void ZC_generateDataPropertyAnalysisReport()
+{
+	int lineCount;
+	char texFile[ZC_BUFS];
+	sprintf(texFile, "report/tex/property.tex");
+	printf("Processing %s\n", texFile);
+	StringLine* texLines = ZC_readLines(texFile, &lineCount);
+	
+	int i, n = 0, len = 0;
+	char* caseFiles[ZC_BUFS_LONG];
+	for(i=0;i<ZC_BUFS_LONG;i++)
+		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	ZC_getFileNames("dataProperties", "autocorr", &n, caseFiles);	
+	for(i=0;i<n;i++)
+	{
+		len = strlen(caseFiles[i]);
+		len = len - 9; //remove the extension autocorr
+		caseFiles[i][len] = '\0';
+	}
+	
+	StringLine* figLines =  ZC_generateDataPropertyAnalysisFigures(caseFiles, n);
+	int lineNumInsted = ZC_insertLines("%plot data properties\n", texLines, figLines);
+	
+	ZC_writeLines(texLines, texFile);
+	ZC_freeLines(texLines);	
+}
+
 StringLine* ZC_generateCompressionRateFigure()
 {
 	char* cases[ZC_BUFS];
@@ -331,8 +386,10 @@ void ZC_generateOverallReport(char* dataSetName)
 	printf("%s\n", cmd);
 	system(cmd);	
 	
-	sprintf(cmd, "ln -s \"../../compareCompressors\" report/figs/compareCompressors;ln -s \"../../compressionResults\" report/figs/compressionResults");  
+	sprintf(cmd, "ln -s \"../../compareCompressors\" report/figs/compareCompressors;ln -s \"../../compressionResults\" report/figs/compressionResults;ln -s \"../../dataProperties\" report/figs/dataProperties");  
 	system(cmd);	
+	
+	ZC_generateDataPropertyAnalysisReport();
 	
 	ZC_generateCompressionFactorReport();	
 	ZC_generateCompressionRateReport();

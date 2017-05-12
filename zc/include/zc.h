@@ -48,7 +48,7 @@ extern "C" {
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define min(a,b) ((a) < (b) ? (a) : (b))
 
-#define ZC_BUFS 100
+#define ZC_BUFS 128
 #define ZC_BUFS_LONG 1024
 
 #define ZC_VERNUM 0x0010
