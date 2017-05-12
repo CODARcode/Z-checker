@@ -359,7 +359,7 @@ void ZC_generateOverallReport(char* dataSetName)
 	ZC_generateSpectrumDistortionReport(selectedErrorBounds, selectedErrorBoundCount);
 	
 	ZC_updateZCRootTexFile(dataSetName);
-	sprintf(cmd, "cd report;make");
+	sprintf(cmd, "cd report;make clean;make");
 	printf("%s\n", cmd);
 	system(cmd);
 }
