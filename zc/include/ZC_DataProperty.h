@@ -16,14 +16,14 @@ extern "C" {
 
 struct HashEntry_s{
 	int flag;
-	unsigned long key;
+    unsigned long key;
 	int num;
 };
 
 typedef struct HashEntry_s HashEntry;
 
 typedef double real;
-typedef struct{real Re; real Im;} complex;
+typedef struct{real Re; real Im; real Amp;} complex;
 
 typedef struct ZC_DataProperty
 {
@@ -63,7 +63,7 @@ ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, int r5, i
 int numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
 double entropy, double* autocorr, complex* fftCoeff);
 
-complex* ZC_computeFFT(void* data, int dataType);
+complex* ZC_computeFFT(void* data, int n, int dataType);
 ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfElem, int r5, int r4, int r3, int r2, int r1);
 ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfElem, int r5, int r4, int r3, int r2, int r1);
 ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);

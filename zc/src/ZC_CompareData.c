@@ -426,24 +426,31 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	int r4 = compareResult->property->r4;
 	int r3 = compareResult->property->r3;
 	int r2 = compareResult->property->r2;
-	int r1 = compareResult->property->r1;				
+	int r1 = compareResult->property->r1;
+    int numOfElem = compareResult->property->numOfElem;
 
 	if(dataType==ZC_FLOAT)
 	{
 		float* data1 = (float*)oriData;
 		float* data2 = (float*)decData;
-        complex* fftCoeff1 = ZC_computeFFT(data1, ZC_FLOAT);
-        complex* fftCoeff2 = ZC_computeFFT(data2, ZC_FLOAT);
-        complex* fftCoeffDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
+        int fft_size = pow(2,(int)log2(numOfElem));
+        complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_FLOAT);
+        complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_FLOAT);
+        complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
         
         int i;
-        for (i = 0; i < FFT_SIZE; i++)
+        fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
+        fftCoeffRelDiff[0].Im = 0;
+        fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
+        
+        for (i = 1; i < FFT_SIZE; i++)
         {
-            fftCoeffDiff[i].Re = fftCoeff2[i].Re - fftCoeff1[i].Re;
-            fftCoeffDiff[i].Im = fftCoeff2[i].Im - fftCoeff2[i].Im;
+            fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
+            fftCoeffRelDiff[i].Im = fabs((fftCoeff2[i].Im - fftCoeff1[i].Im)/fftCoeff1[i].Im);
+            fftCoeffRelDiff[i].Amp= fabs((fftCoeff2[i].Amp - fftCoeff1[i].Amp)/fftCoeff1[i].Amp);
         }
         
-        compareResult->fftCoeff = fftCoeffDiff;
+        compareResult->fftCoeff = fftCoeffRelDiff;
 		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
         free(fftCoeff1);
         free(fftCoeff2);
@@ -452,18 +459,24 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	{
 		double* data1 = (double*)oriData;
 		double* data2 = (double*)decData;
-        complex* fftCoeff1 = ZC_computeFFT(data1, ZC_DOUBLE);
-        complex* fftCoeff2 = ZC_computeFFT(data2, ZC_DOUBLE);
-        complex* fftCoeffDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
+        int fft_size = pow(2,(int)log2(numOfElem));
+        complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_DOUBLE);
+        complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_DOUBLE);
+        complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
         
         int i;
-        for (i = 0; i < FFT_SIZE; i++)
+        fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
+        fftCoeffRelDiff[0].Im = 0;
+        fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
+        
+        for (i = 1; i < FFT_SIZE; i++)
         {
-            fftCoeffDiff[i].Re = fftCoeff2[i].Re - fftCoeff1[i].Re;
-            fftCoeffDiff[i].Im = fftCoeff2[i].Im - fftCoeff2[i].Im;
+            fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
+            fftCoeffRelDiff[i].Im = fabs((fftCoeff2[i].Im - fftCoeff1[i].Im)/fftCoeff1[i].Im);
+            fftCoeffRelDiff[i].Amp= fabs((fftCoeff2[i].Amp - fftCoeff1[i].Amp)/fftCoeff1[i].Amp);
         }
         
-        compareResult->fftCoeff = fftCoeffDiff;
+        compareResult->fftCoeff = fftCoeffRelDiff;
 		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
         free(fftCoeff1);
         free(fftCoeff2);

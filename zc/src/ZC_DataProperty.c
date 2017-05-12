@@ -189,15 +189,16 @@ double entropy, double* autocorr, complex* fftCoeff)
 	return this;
 }
 
-complex* ZC_computeFFT(void* data, int dataType)
+complex* ZC_computeFFT(void* data, int n, int dataType)
 {
 	int i;
-	complex *fftCoeff = (complex*)malloc(FFT_SIZE*sizeof(complex));
-	complex scratch[FFT_SIZE];	
+	complex *fftCoeff = (complex*)malloc(n*sizeof(complex));
+    complex *scratch  = (complex*)malloc(n*sizeof(complex));
+
 	if(dataType==ZC_FLOAT)
 	{
 		float* data_ = (float*)data;
-		for (i = 0; i < FFT_SIZE; i++)
+		for (i = 0; i < n; i++)
 		{
 			fftCoeff[i].Re = data_[i];
 			fftCoeff[i].Im = 0;
@@ -206,7 +207,7 @@ complex* ZC_computeFFT(void* data, int dataType)
 	else if(dataType==ZC_DOUBLE)
 	{
 		double* data_ = (double*)data;
-		for (i = 0; i < FFT_SIZE; i++)
+		for (i = 0; i < n; i++)
 		{
 			fftCoeff[i].Re = data_[i];
 			fftCoeff[i].Im = 0;
@@ -218,8 +219,16 @@ complex* ZC_computeFFT(void* data, int dataType)
 		exit(0);
 	}
 
-	fft(fftCoeff, FFT_SIZE, scratch);
-	return fftCoeff;	
+	fft(fftCoeff, n, scratch);
+    
+    for (i = 0; i < n; i++)
+    {
+        fftCoeff[i].Amp = sqrt(fftCoeff[i].Re*fftCoeff[i].Re + fftCoeff[i].Im*fftCoeff[i].Im);
+    }
+    
+    free(scratch);
+    
+	return fftCoeff;
 }
 
 ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfElem, int r5, int r4, int r3, int r2, int r1)
@@ -311,16 +320,28 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	
 	if(fftFlag)
 	{
-		complex *fftCoeff = (complex*)malloc(FFT_SIZE*sizeof(complex));
-		complex scratch[FFT_SIZE];
-
-		for (i = 0; i < FFT_SIZE; i++)
-		{
-			fftCoeff[i].Re = data[i];
-			fftCoeff[i].Im = 0;
-		}
-		fft(fftCoeff, FFT_SIZE, scratch);
-		property->fftCoeff = fftCoeff;
+//        int fft_size = pow(2, (int)log2(numOfElem));
+//        complex *fftCoeff = (complex*)malloc(fft_size*sizeof(complex));
+//        complex *scratch  = (complex*)malloc(fft_size*sizeof(complex));
+//
+//		for (i = 0; i < fft_size; i++)
+//		{
+//			fftCoeff[i].Re = data[i];
+//			fftCoeff[i].Im = 0;
+//		}
+//		
+//        fft(fftCoeff, fft_size, scratch);
+//        
+//        for (i = 0; i < n; i++)
+//        {
+//            fftCoeff[i].Amp = sqrt(fftCoeff[i].Re*fftCoeff[i].Re + fftCoeff[i].Im*fftCoeff[i].Im);
+//        }
+//        
+//        free(scratch);
+//		property->fftCoeff = fftCoeff;
+        
+        int fft_size = pow(2, (int)log2(numOfElem));
+        property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_FLOAT);
 	}
 	
 	if (lapFlag)
@@ -419,16 +440,28 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 	if(fftFlag)
 	{
-		complex *fftCoeff = (complex*)malloc(FFT_SIZE*sizeof(complex));
-		complex scratch[FFT_SIZE];
-
-		for (i = 0; i < FFT_SIZE; i++)
-		{
-			fftCoeff[i].Re = data[i];
-			fftCoeff[i].Im = 0;
-		}
-		fft(fftCoeff, FFT_SIZE, scratch);
-		property->fftCoeff = fftCoeff;
+//        int fft_size = pow(2, (int)log2(numOfElem));
+//        complex *fftCoeff = (complex*)malloc(fft_size*sizeof(complex));
+//        complex *scratch  = (complex*)malloc(fft_size*sizeof(complex));
+//        
+//        for (i = 0; i < fft_size; i++)
+//        {
+//            fftCoeff[i].Re = data[i];
+//            fftCoeff[i].Im = 0;
+//        }
+//        
+//        fft(fftCoeff, fft_size, scratch);
+//        
+//        for (i = 0; i < n; i++)
+//        {
+//            fftCoeff[i].Amp = sqrt(fftCoeff[i].Re*fftCoeff[i].Re + fftCoeff[i].Im*fftCoeff[i].Im);
+//        }
+//        
+//        free(scratch);
+//        property->fftCoeff = fftCoeff;
+        
+        int fft_size = pow(2, (int)log2(numOfElem));
+        property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_DOUBLE);
 	}
 
 	if (lapFlag)
@@ -546,10 +579,10 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 		sprintf(ss[0], "#Frequency Amplitude\n");
 		for(i=0;i<FFT_SIZE;i++)
 		{
-			double Re = fftCoeff[i].Re;
-			double Im = fftCoeff[i].Im;
-			double amplitude = sqrt(Re*Re+Im*Im);
-			sprintf(ss[i+1], "%d/%d %f\n", i, FFT_SIZE, amplitude);
+//			double Re = fftCoeff[i].Re;
+//			double Im = fftCoeff[i].Im;
+//			double amplitude = sqrt(Re*Re+Im*Im);
+			sprintf(ss[i+1], "%d/%d %f\n", i, FFT_SIZE, fftCoeff[i].Amp);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.fft.amp", tgtWorkspaceDir, varName);
