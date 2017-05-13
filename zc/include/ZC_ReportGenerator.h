@@ -18,6 +18,8 @@
 extern "C" {
 #endif
 
+StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount);
+
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount);
 void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int *selectedErrorBoundCount);
 

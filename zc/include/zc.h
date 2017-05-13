@@ -50,6 +50,7 @@ extern "C" {
 
 #define ZC_BUFS 128
 #define ZC_BUFS_LONG 1024
+#define ZC_BUFS_SUPER_LONG 131072
 
 #define ZC_VERNUM 0x0010
 #define ZC_VER_MAJOR 0

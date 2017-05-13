@@ -54,6 +54,7 @@ StringLine* createOneStringLine(char* lineContent);
 StringLine* appendOneLine(StringLine* tail, char* str);
 StringLine* ZC_readLines(char* filePath, int *lineCount);
 int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath);
+void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replaceString);
 int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader);
 void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader);
 

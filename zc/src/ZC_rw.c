@@ -447,6 +447,16 @@ int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
     return i;	
 }
 
+void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replaceString)
+{
+	StringLine* p = originalLines;
+	while(p->next!=NULL)
+	{
+		ZC_ReplaceStr2(p->next->str, matchKeyword, replaceString);
+		p = p->next;
+	}
+}
+
 int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
 	if(toAddLineHeader==NULL)

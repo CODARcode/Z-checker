@@ -8,6 +8,89 @@
 #include "zc.h"
 #include "ZC_rw.h"
 
+StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
+{
+	int numOfElem = 0, dataType = 0;
+	float size_inMB = 0;
+	char* minValue, *avgValue, *maxValue, *valueRange, *entropy;	
+	//char rowTexLine[ZC_BUFS_LONG];
+	
+	dictionary *ini;
+	int i = 0, j = 0;
+	char varPropFile[ZC_BUFS];
+	int rows = varCaseCount, columns = 7;
+	char** keys = (char**)malloc(sizeof(char*)*columns);
+	for(i=0;i<columns;i++)
+		keys[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	strcpy(keys[0], "numOfElem");
+	strcpy(keys[1], "size(MB)");
+	strcpy(keys[2], "minValue");
+	strcpy(keys[3], "avgValue");
+	strcpy(keys[4], "maxValue");
+	strcpy(keys[5], "valueRange");
+	strcpy(keys[6], "entropy");
+	
+	char*** cells = (char***)malloc(sizeof(char**)*varCaseCount);
+	for(i=0;i<varCaseCount;i++)
+	{
+		cells[i] = (char**)malloc(sizeof(char*)*columns);
+		for(j=0;j<columns;j++)
+			cells[i][j] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	}
+	
+	for(i=0;i<varCaseCount;i++)
+	{
+		sprintf(varPropFile, "dataProperties/%s.prop", varCases[i]);
+		ini = iniparser_load(varPropFile);
+		if (ini == NULL)
+		{
+			printf("[ZC] Iniparser failed to parse the dataProperties/%s file.\n", varCases[i]);
+			exit(0);
+		}
+		numOfElem = iniparser_getint(ini, "PROPERTY:numOfElem", 0);
+		if(dataType == ZC_FLOAT)
+			size_inMB = ((float)numOfElem)*4/1024/1024;
+		else if(dataType == ZC_DOUBLE)
+			size_inMB = ((float)numOfElem)*8/1024/1024;
+		else
+		{
+			printf("Error: support only float or double but doesn't support other types\n");
+			exit(0);
+		}
+		minValue = iniparser_getstring(ini, "PROPERTY:minValue", "0");
+		avgValue = iniparser_getstring(ini, "PROPERTY:avgValue", "0");
+		maxValue = iniparser_getstring(ini, "PROPERTY:maxValue", "0");
+		valueRange = iniparser_getstring(ini, "PROPERTY:valueRange", "0");
+		entropy = iniparser_getstring(ini, "PROPERTY:entropy", "0");
+		
+		//sprintf(rowTexLine, "\\hline %d & %f & %s & %s & %s & %s & %s \\\\", numOfElem, size_inMB, minValue, avgValue, maxValue, valueRange, entropy);
+		sprintf(cells[i][0], "%d", numOfElem);
+		sprintf(cells[i][1], "%f", size_inMB);
+		strcpy(cells[i][2], minValue);
+		strcpy(cells[i][3], avgValue);
+		strcpy(cells[i][4], maxValue);
+		strcpy(cells[i][5], valueRange);
+		strcpy(cells[i][6], entropy);
+	}
+	
+	StringLine* header = ZC_generateSimpleTableTexLines(rows, columns, 
+	varCases, keys, cells, "Properties of Original Data", "tab:propAnalysis");
+	
+	for(i=0;i<varCaseCount;i++)
+	{
+		for(j=0;j<columns;j++)
+			free(cells[i][j]);
+		free(cells[i]);
+	}
+	free(cells);
+	for(i=0;i<varCaseCount;i++)
+		free(keys[i]);
+	free(keys);
+	
+	iniparser_freedict(ini);	
+	return header;
+}
+
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount)
 {
 	int i = 0, j = 0, mark = 0, len = 0;
@@ -81,18 +164,24 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 	char** caseFiles = (char**)malloc(sizeof(char*)*caseNameCount);
 	for(i=0;i<caseNameCount;i++)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-			
-	for(i=0;i<caseNameCount;i++)
-		sprintf(caseFiles[i], "%s-autocorr", caseNames[i]);
-	strcpy(caption, "Auto-correlation of the data");
-	strcpy(figLabel, "fig:dp-autocorr");
-	figHeader = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
 	
-	for(i=0;i<caseNameCount;i++)
-		sprintf(caseFiles[i], "%s-fft-amp", caseNames[i]);
-	strcpy(caption, "Amplitude of FFT Coefficients of the data");
-	strcpy(figLabel, "fig:dp-fft-amp");
-	figHeader2 = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
+	if(autocorrFlag)
+	{
+		for(i=0;i<caseNameCount;i++)
+			sprintf(caseFiles[i], "%s-autocorr", caseNames[i]);
+		strcpy(caption, "Auto-correlation of the data");
+		strcpy(figLabel, "dp-autocorr");
+		figHeader = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
+	}		
+		
+	if(fftFlag)
+	{
+		for(i=0;i<caseNameCount;i++)
+			sprintf(caseFiles[i], "%s-fft-amp", caseNames[i]);
+		strcpy(caption, "Amplitude of FFT Coefficients of the data");
+		strcpy(figLabel, "dp-fft-amp");
+		figHeader2 = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);			
+	}	
 	
 	ZC_appendLines(figHeader, figHeader2);
 	for(i=0;i<caseNameCount;i++)
@@ -104,7 +193,8 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 void ZC_generateDataPropertyAnalysisReport()
 {
 	int lineCount;
-	char texFile[ZC_BUFS];
+	char texFile[ZC_BUFS], varCountString[ZC_BUFS], varListString[ZC_BUFS_SUPER_LONG], buf[ZC_BUFS_SUPER_LONG];
+	memset(varListString, 0, ZC_BUFS_SUPER_LONG);
 	sprintf(texFile, "report/tex/property.tex");
 	printf("Processing %s\n", texFile);
 	StringLine* texLines = ZC_readLines(texFile, &lineCount);
@@ -113,16 +203,32 @@ void ZC_generateDataPropertyAnalysisReport()
 	char* caseFiles[ZC_BUFS_LONG];
 	for(i=0;i<ZC_BUFS_LONG;i++)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-	ZC_getFileNames("dataProperties", "autocorr", &n, caseFiles);	
-	for(i=0;i<n;i++)
+	ZC_getFileNames("dataProperties", "prop", &n, caseFiles);
+	
+	len = strlen(caseFiles[0]);
+	len = len - 5;
+	caseFiles[0][len] = '\0';	
+	strcpy(varListString, caseFiles[0]);
+		
+	for(i=1;i<n;i++)
 	{
 		len = strlen(caseFiles[i]);
-		len = len - 9; //remove the extension autocorr
+		len = len - 5; //remove the extension prop
 		caseFiles[i][len] = '\0';
+		sprintf(buf, "%s, %s", varListString, caseFiles[i]);
+		strcpy(varListString, buf);
 	}
 	
+	sprintf(varCountString, "%d", n);
+	ZC_replaceLines(texLines, "ZC_VARNUM", varCountString);
+	ZC_ReplaceStr2(varListString, "_", "\\_");
+	ZC_replaceLines(texLines, "ZC_VARLIST", varListString);
+	
+	StringLine* tabLines = ZC_generatePropertyAnalysisTable(caseFiles, n);
+	int lineNumInsted = ZC_insertLines("%create property table\n", texLines, tabLines);
+	
 	StringLine* figLines =  ZC_generateDataPropertyAnalysisFigures(caseFiles, n);
-	int lineNumInsted = ZC_insertLines("%plot data properties\n", texLines, figLines);
+	lineNumInsted = ZC_insertLines("%plot data properties\n", texLines, figLines);
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);	
@@ -418,6 +524,6 @@ void ZC_generateOverallReport(char* dataSetName)
 	ZC_updateZCRootTexFile(dataSetName);
 	sprintf(cmd, "cd report;make clean;make");
 	printf("%s\n", cmd);
-	system(cmd);
+	//system(cmd);
 }
 

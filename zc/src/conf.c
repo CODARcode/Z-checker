@@ -82,13 +82,13 @@ int ZC_ReadConf() {
     if (access(zc_cfgFile, F_OK) != 0)
     {
         printf("[ZC] Configuration file NOT accessible.\n");
-        return 1;
+        return ZC_NSCS;
     }
     ini = iniparser_load(zc_cfgFile);
     if (ini == NULL)
     {
         printf("[ZC] Iniparser failed to parse the conf. file.\n");
-        return 1;
+        return ZC_NSCS;
     }
 
 	endianTypeString = iniparser_getstring(ini, "ENV:dataEndianType", NULL);
@@ -343,7 +343,7 @@ int ZC_ReadConf() {
 	ZC_versionNumber[2] = ZC_VER_REVISION; //15
     
     iniparser_freedict(ini);
-    return 1;
+    return ZC_SCES;
 }
 
 /*-------------------------------------------------------------------------*/
@@ -358,12 +358,12 @@ int ZC_ReadConf() {
 /*-------------------------------------------------------------------------*/
 int ZC_LoadConf() {
     int res = ZC_ReadConf();
-    if (res == 0)
+    if (res == ZC_NSCS)
     {
         printf("[ZC] ERROR: Impossible to read configuration.\n");
         return 0;
     }
-    return 1;
+    return res;
 }
 
 int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue)

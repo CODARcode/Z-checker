@@ -121,3 +121,52 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	
 	return header;
 }
+
+StringLine* ZC_generateSimpleTableTexLines(int rows, int columns, char** cases, char** keys, char*** cells, char* caption, char* tabLabel)
+{
+	int i = 0, j = 0;
+	char tmpLine[MAX_MSG_LENGTH], buf[MAX_MSG_LENGTH], caseName[MAX_MSG_LENGTH];	
+	StringLine* header = createStringLineHeader();
+	StringLine* p = header;
+	char* line = createLine("\\begin{table*}[ht]\n"); p = appendOneLine(p, line);
+	sprintf(tmpLine, "\\caption{%s} \\centering\n", caption);
+	line = createLine(tmpLine); p = appendOneLine(p, line);
+	line = createLine("\\scriptsize\n"); p = appendOneLine(p, line);
+	strcpy(tmpLine, "\\begin{tabular}{|c");
+	for(i=0;i<columns;i++)
+		strcat(tmpLine, "|c");
+	strcat(tmpLine, "|}\n");
+	line = createLine(tmpLine); p = appendOneLine(p, line);
+	
+	sprintf(tmpLine, "\\hline & \\textbf{%s}", keys[0]);	
+	for(i=1;i<columns;i++)
+	{
+		sprintf(buf, "%s & \\textbf{%s}", tmpLine, keys[i]);
+		strcpy(tmpLine, buf);
+	}
+	strcat(tmpLine, "\\\\ \n");
+	line = createLine(tmpLine); p = appendOneLine(p, line);
+	
+	for(i=0;i<rows;i++)
+	{
+		strcpy(caseName, cases[i]);
+		ZC_ReplaceStr2(caseName, "_", "\\_");
+		sprintf(tmpLine, "\\hline %s & %s", caseName, cells[i][0]);
+		for(j=1;j<columns;j++)
+		{
+			sprintf(buf, "%s & %s", tmpLine, cells[i][j]);
+			strcpy(tmpLine, buf);
+		}
+		strcat(tmpLine, " \\\\\n");
+		line = createLine(tmpLine); 
+		p = appendOneLine(p, line);
+	}
+	
+	line = createLine("\\hline\n"); p = appendOneLine(p, line);
+	line = createLine("\\end{tabular}\n"); p = appendOneLine(p, line);
+	sprintf(tmpLine, "\\label{%s}\n", tabLabel); 
+	line = createLine(tmpLine);p = appendOneLine(p, line);
+	line = createLine("\\end{table*}\n"); p = appendOneLine(p, line);
+	
+	return header;
+}

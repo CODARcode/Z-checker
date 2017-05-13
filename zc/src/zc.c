@@ -127,10 +127,10 @@ int ZC_Init(char *configFilePath)
 	char str[512]="", str2[512]="", str3[512]="";
 	zc_cfgFile = configFilePath;
 	int loadFileResult = ZC_LoadConf();
-	if(loadFileResult==0)
+	if(loadFileResult==ZC_NSCS)
 		exit(0);
 	
-	return 0;
+	return ZC_SCES;
 }
 
 int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1)
