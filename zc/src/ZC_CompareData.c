@@ -230,7 +230,6 @@ int r5, int r4, int r3, int r2, int r1)
 		double psnr = -20.0*log10(sqrt(mse)/valRange);
 		compareResult->psnr = psnr;
 	}
-	
 }
 
 void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
@@ -499,7 +498,8 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 		float* data2 = (float*)decData;
 		
 		int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
-		compareResult->property = ZC_genProperties_float(varName, data1, numOfElem, r5, r4, r3, r2, r1);
+		//compareResult->property = ZC_genProperties_float(varName, data1, numOfElem, r5, r4, r3, r2, r1);
+		compareResult->property = ZC_startCmpr(varName, ZC_FLOAT, data1, r5, r4, r3, r2, r1);
 		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
 	}
 	else if(dataType==ZC_DOUBLE)
@@ -508,7 +508,8 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 		double* data2 = (double*)decData;
 		
 		int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
-		compareResult->property = ZC_genProperties_double(varName, data1, numOfElem, r5, r4, r3, r2, r1);		
+		//compareResult->property = ZC_genProperties_double(varName, data1, numOfElem, r5, r4, r3, r2, r1);		
+		compareResult->property = ZC_startCmpr(varName, ZC_DOUBLE, data1, r5, r4, r3, r2, r1);
 		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);		
 	}
 	else
