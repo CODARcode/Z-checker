@@ -471,7 +471,7 @@ void ZC_updateZCRootTexFile(char* dataSetName)
 	sprintf(rootTexFile, "report/z-checker-report.tex");	
 	StringLine* texLines = ZC_readLines(rootTexFile, &lineCount);
 	strcpy(dsName, dataSetName);
-	ZC_ReplaceStr2(dsName, "_", "\\\\_");
+	ZC_ReplaceStr2(dsName, "_", "\\_");
 	sprintf(titleLineString, "\\title{Compression Assessment Report for %s}", dsName);
 	StringLine* titleLine = createOneStringLine(titleLineString);
 	int lineNumInsted = ZC_insertLines("%title_of_report\n", texLines, titleLine);
