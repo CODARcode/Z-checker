@@ -466,11 +466,13 @@ void ZC_generateSpectrumDistortionReport(StringElem* selectedErrorBounds, int se
 void ZC_updateZCRootTexFile(char* dataSetName)
 {
 	int lineCount;
-	char rootTexFile[ZC_BUFS];
+	char rootTexFile[ZC_BUFS], dsName[ZC_BUFS];
 	char* titleLineString = (char*)malloc(sizeof(char)*ZC_BUFS);
 	sprintf(rootTexFile, "report/z-checker-report.tex");	
 	StringLine* texLines = ZC_readLines(rootTexFile, &lineCount);
-	sprintf(titleLineString, "\\title{Compression Assessment Report for %s}", dataSetName);
+	strcpy(dsName, dataSetName);
+	ZC_ReplaceStr2(dsName, "_", "\\\\_");
+	sprintf(titleLineString, "\\title{Compression Assessment Report for %s}", dsName);
 	StringLine* titleLine = createOneStringLine(titleLineString);
 	int lineNumInsted = ZC_insertLines("%title_of_report\n", texLines, titleLine);
 	ZC_writeLines(texLines, rootTexFile);
