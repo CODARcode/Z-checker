@@ -38,6 +38,20 @@ mv *.p compareCompressors/gnuplot_scripts
 echo ./generateReport zc.config $dataSetName
 ./generateReport zc.config $dataSetName
 
+cd report
+if [ -f z-checker-report.pdf ]; then
+	make clean
+fi
+make
+cd ..
+
 if [ ! -f ../../zc-patches/zc-compare.config.patch ]; then
 	patch -RE -p0 < ../../zc-patches/zc-compare.config.patch
+fi
+
+if [ ! -f report/z-checker-report.pdf ]; then
+	echo "Noice: Your local latexmk cannot generate the report successfully."
+	echo "In this situation, you can upload the source code (called report.zip) of the report we generated to Overleaf instead, for generating the pdf report online."
+	echo "Overleaf: https://www.overleaf.com/"
+	exit
 fi
