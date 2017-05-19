@@ -50,8 +50,12 @@ if [ -f ../../zc-patches/zc-compare.config.patch ]; then
 fi
 
 if [ ! -f report/z-checker-report.pdf ]; then
-	echo "Noice: Your local latexmk cannot generate the report successfully."
-	echo "In this situation, you can upload the source code (called report.zip) of the report we generated to Overleaf instead, for generating the pdf report online."
-	echo "Overleaf: https://www.overleaf.com/"
+	zip -r report.zip report
+	echo "Notice: Your local latexmk cannot generate the report successfully."
+	echo "In this situation, you should install some dependencies such as latex to resolve the latexmk compilation issue. "
+	echo "Alternatively, you can also upload the source code (called report.zip) of the report we generated to Overleaf instead."
+	echo "Note: The total number of files is greater than 60, so you need to upgrade your Overleaf-account to Pro (\$12/month) if you want to generate a complete pdf report online there. "
+	echo "Overleaf website: https://www.overleaf.com/"
+	echo "How to upload zip file to create a new project in overleaf: https://www.youtube.com/watch?v=i22sF369bqA"
 	exit
 fi
