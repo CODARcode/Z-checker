@@ -45,7 +45,7 @@ fi
 make
 cd ..
 
-if [ ! -f ../../zc-patches/zc-compare.config.patch ]; then
+if [ -f ../../zc-patches/zc-compare.config.patch ]; then
 	patch -RE -p0 < ../../zc-patches/zc-compare.config.patch
 fi
 
