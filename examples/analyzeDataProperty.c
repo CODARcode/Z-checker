@@ -41,15 +41,12 @@ int main(int argc, char * argv[])
     {
 	float *data = ZC_readFloatData(oriFilePath, &nbEle);
 	property = ZC_genProperties(dataFile, ZC_FLOAT, data, r5, r4, r3, r2, r1);
-	property = ZC_genProperties(dataFile, ZC_FLOAT, data, r5, r4, r3, r2, r1);
     }
     else if(strcmp(datatype, "-d")==0)
     {
 	double *data = ZC_readDoubleData(oriFilePath, &nbEle);
 	property = ZC_genProperties(dataFile, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
-	property = ZC_genProperties(dataFile, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
     }
-
 	
     ZC_printDataProperty(property);
 	
