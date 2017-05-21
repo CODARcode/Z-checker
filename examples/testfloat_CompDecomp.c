@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
     unsigned char *bytes = SZ_compress_args(SZ_FLOAT, data, &outSize, ABS, absErrBound, 0.01, r5, r4, r3, r2, r1);
     //unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
     ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, outSize);
-    writeByteData(bytes, outSize, outputFilePath, &status);
+    //writeByteData(bytes, outSize, outputFilePath, &status);
    
     ZC_startDec();
     float *decData = SZ_decompress(SZ_FLOAT, bytes, outSize, r5, r4, r3, r2, r1);
