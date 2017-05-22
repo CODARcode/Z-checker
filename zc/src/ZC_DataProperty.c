@@ -274,7 +274,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
     
 	if(entropyFlag)
 	{
-		double absErr = 1E-3; /*TODO change fixed value to user input*/
+		double absErr = 1E-3 * valueRange; /*TODO change fixed value to user input*/
 		double entVal = 0.0;
 		int table_size;
 		if (valueRange/absErr > numOfElem)
@@ -379,13 +379,14 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 	if(entropyFlag)
 	{
-		double absErr = 1E-3; /*TODO change fixed value to user input*/
+		double absErr = 1E-3 * valueRange; /*TODO change fixed value to user input*/
 		double entVal = 0.0;
 		int table_size;
 		if (valueRange/absErr > numOfElem)
 			table_size = (int)(valueRange/absErr);
 		else
 			table_size = numOfElem;
+		printf ("value range = %lf, table_size = %d\n", valueRange, table_size);
 		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
 		hash_init(table,table_size);
 
@@ -430,26 +431,6 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 	if(fftFlag)
 	{
-//        int fft_size = pow(2, (int)log2(numOfElem));
-//        complex *fftCoeff = (complex*)malloc(fft_size*sizeof(complex));
-//        complex *scratch  = (complex*)malloc(fft_size*sizeof(complex));
-//        
-//        for (i = 0; i < fft_size; i++)
-//        {
-//            fftCoeff[i].Re = data[i];
-//            fftCoeff[i].Im = 0;
-//        }
-//        
-//        fft(fftCoeff, fft_size, scratch);
-//        
-//        for (i = 0; i < n; i++)
-//        {
-//            fftCoeff[i].Amp = sqrt(fftCoeff[i].Re*fftCoeff[i].Re + fftCoeff[i].Im*fftCoeff[i].Im);
-//        }
-//        
-//        free(scratch);
-//        property->fftCoeff = fftCoeff;
-        
         int fft_size = pow(2, (int)log2(numOfElem));
         property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_DOUBLE);
 	}
@@ -556,9 +537,10 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 		char *ss[FFT_SIZE+1];
 		ss[0] = (char*)malloc(sizeof(char)*50);
 		sprintf(ss[0], "#Frequency Real Imag\n");
+
 		for(i=0;i<FFT_SIZE;i++)
 		{
-			ss[i+1] = (char*)malloc(sizeof(char)*50);
+			ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
 			sprintf(ss[i+1], "%d/%d %f %f\n", i, FFT_SIZE, fftCoeff[i].Re, fftCoeff[i].Im);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
@@ -590,7 +572,7 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 	DIR *dir = opendir(tgtWorkspaceDir);
 	if(dir==NULL)
 		mkdir(tgtWorkspaceDir,0775);
-	
+
 	char tgtFilePath[ZC_BUFS];
 	sprintf(tgtFilePath, "%s/%s.prop", tgtWorkspaceDir, property->varName); 
 	ZC_writeStrings(15, s, tgtFilePath);
