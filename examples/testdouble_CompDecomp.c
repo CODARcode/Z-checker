@@ -56,10 +56,10 @@ int main(int argc, char * argv[])
     double *data = readDoubleData(oriFilePath, &nbEle, &status);
    
     int outSize; 
-    ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_FLOAT, data, r5, r4, r3, r2, r1);
+    ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
     
-    unsigned char *bytes = SZ_compress_args(SZ_FLOAT, data, &outSize, ABS, absErrBound, 0.01, r5, r4, r3, r2, r1);
-    //unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
+    unsigned char *bytes = SZ_compress_args(SZ_DOUBLE, data, &outSize, ABS, absErrBound, 0.01, r5, r4, r3, r2, r1);
+    //unsigned char *bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
     ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, outSize);
     //writeByteData(bytes, outSize, outputFilePath, &status);
    
