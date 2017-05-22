@@ -276,7 +276,11 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	{
 		double absErr = 1E-3; /*TODO change fixed value to user input*/
 		double entVal = 0.0;
-		int table_size = numOfElem;
+		int table_size;
+		if (valueRange/absErr > numOfElem)
+			table_size = (int)(valueRange/absErr);
+		else
+			table_size = numOfElem;
 		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
 		hash_init(table,table_size);
 
@@ -320,26 +324,6 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	
 	if(fftFlag)
 	{
-//        int fft_size = pow(2, (int)log2(numOfElem));
-//        complex *fftCoeff = (complex*)malloc(fft_size*sizeof(complex));
-//        complex *scratch  = (complex*)malloc(fft_size*sizeof(complex));
-//
-//		for (i = 0; i < fft_size; i++)
-//		{
-//			fftCoeff[i].Re = data[i];
-//			fftCoeff[i].Im = 0;
-//		}
-//		
-//        fft(fftCoeff, fft_size, scratch);
-//        
-//        for (i = 0; i < n; i++)
-//        {
-//            fftCoeff[i].Amp = sqrt(fftCoeff[i].Re*fftCoeff[i].Re + fftCoeff[i].Im*fftCoeff[i].Im);
-//        }
-//        
-//        free(scratch);
-//		property->fftCoeff = fftCoeff;
-        
         int fft_size = pow(2, (int)log2(numOfElem));
         property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_FLOAT);
 	}
@@ -397,12 +381,18 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 	{
 		double absErr = 1E-3; /*TODO change fixed value to user input*/
 		double entVal = 0.0;
-		int table_size = numOfElem;
+		int table_size;
+		if (valueRange/absErr > numOfElem)
+			table_size = (int)(valueRange/absErr);
+		else
+			table_size = numOfElem;
 		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
 		hash_init(table,table_size);
 
 		for (i = 0; i < numOfElem; i++)
+		{
 			hash_put(table, (unsigned long)((data[i]-min)/absErr), table_size);
+		}
 
 		for (i = 0; i<table_size; i++)
 			if (table[i].flag != 0)

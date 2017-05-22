@@ -10,13 +10,18 @@
 #ifndef _ReportGenerator_H
 #define _ReportGenerator_H
 
-#include "zc.h"
 #include "ZC_rw.h"
 #include "latex.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct StringElem_t
+{
+	char* str;
+	double value;
+} *StringElem;
 
 StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount);
 

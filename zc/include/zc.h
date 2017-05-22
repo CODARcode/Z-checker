@@ -25,6 +25,8 @@
 #include "DynamicIntArray.h"
 #include "ZC_util.h"
 #include "ZC_rw.h"
+#include "ZC_ReportGenerator.h"
+
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -199,12 +201,6 @@ typedef struct RateDistElem_t
 	double maxAbsErr;
 	double compressRate;
 } *RateDistElem;
-
-typedef struct StringElem_t
-{
-	char* str;
-	double value;
-} *StringElem;
 
 void cost_startCmpr();
 double cost_EndCmpr();

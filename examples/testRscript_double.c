@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "zc.h"
-void main()
+int main()
 {
 	int count, i , j;
 	char* cmd = "cat R2.txt"; //this line is to simulate the R command with vector as output
@@ -34,4 +34,5 @@ void main()
 			printf("%f ", data2[i*n+j]);
 		printf("\n");
 	}
+	return 0;
 }

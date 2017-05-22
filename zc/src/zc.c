@@ -925,6 +925,8 @@ int ZC_analyze_and_generateReport(char* dataSetName)
     ZC_plotErrDistribtion();	
     
     ZC_generateOverallReport(dataSetName);
+
+    return ZC_SCES;
 }
 
 
