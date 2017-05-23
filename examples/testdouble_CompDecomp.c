@@ -18,31 +18,51 @@ int main(int argc, char * argv[])
 {
     int r5=0,r4=0,r3=0,r2=0,r1=0;
     char outDir[640], oriFilePath[640], outputFilePath[640];
-    char *cfgFile, *zcFile, *solName, *varName;
+    char *cfgFile, *zcFile, *solName, *varName, *errBoundMode;
     double absErrBound;
-    if(argc < 8)
+    int errboundmode;
+    if(argc < 9)
     {
-	printf("Test case: testdouble_CompDecomp [config_file] [zc.config] [solName] [varName] [errBoundMode] [absErrBound] [relErrBound] [srcFilePath] [dimension sizes...]\n");
-	printf("Example: testdouble_CompDecomp sz.config zc.config sz(1E-6) testdouble ABS 1E-6 0 testdata/x86/testdouble_8_8_128.dat 8 8 128\n");
-	exit(0);
+        printf("Test case: testfloat_CompDecomp [config_file] [zc.config] [solName] [varName] [errBoundMode] [absErrBound] [relErrBound] [srcFilePath] [dimension sizes...]\n");
+        printf("Example: testfloat_CompDecomp sz.config zc.config sz(1E-6) testfloat ABS 1E-6 0 testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
+        exit(0);
     }
-   
+
     cfgFile=argv[1];
     zcFile=argv[2];
     solName=argv[3];
     varName=argv[4];
-    absErrBound=atof(argv[5]);
-    sprintf(oriFilePath, "%s", argv[6]);
-    if(argc>=8)
-	r1 = atoi(argv[7]); //8
+    errBoundMode=argv[5];
+    if(strcmp(errBoundMode, "PW_REL")==0)
+    {
+        errboundmode = PW_REL;
+    }
+    else if(strcmp(errBoundMode, "ABS")==0)
+    {
+        errboundmode = ABS;
+    }
+    else if(strcmp(errBoundMode, "REL")==0)
+    {
+        errboundmode = REL;
+    }
+    else
+    {
+        echo "Error: Z-checker checking doesn't support this error bound mode: %s, but only ABS, REL, and PW_REL.\n", errBoundMode);
+        exit(0);
+    }
+
+    absErrBound=atof(argv[6]);
+    sprintf(oriFilePath, "%s", argv[7]);
     if(argc>=9)
-	r2 = atoi(argv[8]); //8
+	r1 = atoi(argv[8]); //8
     if(argc>=10)
-	r3 = atoi(argv[9]); //128
+	r2 = atoi(argv[9]); //8
     if(argc>=11)
-        r4 = atoi(argv[10]);
+	r3 = atoi(argv[10]); //128
     if(argc>=12)
-        r5 = atoi(argv[11]);
+        r4 = atoi(argv[11]);
+    if(argc>=13)
+        r5 = atoi(argv[12]);
    
     printf("cfgFile=%s\n", cfgFile); 
     SZ_Init(cfgFile);
@@ -57,8 +77,8 @@ int main(int argc, char * argv[])
    
     int outSize; 
     ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
-    
-    unsigned char *bytes = SZ_compress_args(SZ_DOUBLE, data, &outSize, ABS, absErrBound, 0.01, r5, r4, r3, r2, r1);
+   
+    unsigned char *bytes = SZ_compress_args(SZ_DOUBLE, data, &outSize, errboundmode, absErrBound, absErrBound, r5, r4, r3, r2, r1);
     //unsigned char *bytes = SZ_compress(SZ_DOUBLE, data, &outSize, r5, r4, r3, r2, r1);
     ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, outSize);
     //writeByteData(bytes, outSize, outputFilePath, &status);
