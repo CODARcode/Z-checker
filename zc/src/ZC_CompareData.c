@@ -12,6 +12,7 @@ void freeCompareResult(ZC_CompareData* compareData)
 	//free(compareData->property);
 	free(compareData->autoCorrAbsErr);
 	free(compareData->absErrPDF);
+	free(compareData->pwrErrPDF);
 	free(compareData->fftCoeff);
 	free(compareData);
 }
@@ -59,27 +60,52 @@ int r5, int r4, int r3, int r2, int r1)
 	double maxErr = minErr;
 	double sum1 = 0, sum2 = 0, sumDiff = 0, sumErr = 0, sumErrSqr = 0;
 	
+	double minDiff_rel = 1E100;
+	double maxDiff_rel = -1E100;
+	double minErr_rel = 1E100;
+	double maxErr_rel = 0;
+	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
+	
+	double err;
+	
 	//int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
 	int numOfElem = compareResult->property->numOfElem;
-	double sumOfDiffSquare = 0;
+	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
+	double diff, relDiff;
+	int numOfElem_ = 0;
 
 	for (i = 0; i < numOfElem; i++)
 	{
 		sum1 += data1[i];
 		sum2 += data2[i];
 		
-		double diff = data2[i]-data1[i];
+		diff = data2[i]-data1[i];
 		if(minDiff > diff) minDiff = diff;
 		if(maxDiff < diff) maxDiff = diff;
 		sumDiff += diff;
 		sumOfDiffSquare += diff*diff;
-
-		double err = fabs(diff);
+				
+		err = fabs(diff);
 		if(minErr>err) minErr = err;
 		if(maxErr<err) maxErr = err;
 		sumErr += err;
-
 		sumErrSqr += err*err; //used for mse, nrmse, psnr
+	
+		if(data1[i]!=0)
+		{
+			numOfElem_ ++;
+			relDiff = diff/data1[i];
+			if(minDiff_rel > relDiff) minDiff_rel = relDiff;
+			if(maxDiff_rel < relDiff); maxDiff_rel = relDiff;
+			sumDiff_rel += relDiff;
+			sumOfDiffSquare_rel += diff*diff;
+			
+			err = fabs(relDiff);
+			if(minErr_rel>err) minErr_rel = err;
+			if(maxErr_rel<err) maxErr_rel = err;
+			sumErr_rel += err;
+			sumErrSqr_rel += err*err;
+		}	
 	}
 	
 	ZC_DataProperty* property = compareResult->property;
@@ -96,7 +122,11 @@ int r5, int r4, int r3, int r2, int r1)
 	double avgErr = sumErr/numOfElem;
 	double diffRange = maxDiff - minDiff;
 	double mse = sumErrSqr/numOfElem;
-	double diff; 
+	
+	double avgErr_rel = sumErr_rel/numOfElem;
+	double diffRange_rel = maxDiff_rel - minDiff_rel;
+	double mse_ = sumErrSqr_rel/numOfElem;
+	
 	int index;
 	
 	if (minAbsErrFlag)
@@ -116,6 +146,10 @@ int r5, int r4, int r3, int r2, int r1)
 
 	if (avgRelErrFlag)
 		compareResult->avgRelErr = avgErr/valRange;
+		
+	compareResult->minPWRErr = minErr_rel;
+	compareResult->maxPWRErr = maxErr_rel;
+	compareResult->avgPWRErr = sumErr_rel/numOfElem_;
 
 	if (absErrPDFFlag)
 	{
@@ -123,7 +157,7 @@ int r5, int r4, int r3, int r2, int r1)
 		double *absErrPDF = NULL;
 		if(interval==0)
 		{
-			double* absErrPDF = (double*)malloc(sizeof(double));
+			absErrPDF = (double*)malloc(sizeof(double));
 			*absErrPDF = 0;
 		}
 		else
@@ -146,6 +180,40 @@ int r5, int r4, int r3, int r2, int r1)
 		compareResult->absErrPDF = absErrPDF;
 		compareResult->err_interval = interval;
 		compareResult->err_minValue = minDiff;		
+	}
+
+	if (pwrErrPDFFlag)
+	{
+		double interval = diffRange_rel/PDF_INTERVALS;
+		double *relErrPDF = NULL;
+		if(interval==0)
+		{
+			relErrPDF = (double*)malloc(sizeof(double));
+			*relErrPDF = 0;
+		}
+		else
+		{
+			relErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS);
+			memset(relErrPDF, 0, PDF_INTERVALS*sizeof(double));
+
+			for (i = 0; i < numOfElem; i++)
+			{
+				if(data1[i]!=0)
+				{
+					diff = (data2[i] - data1[i])/data1[i];
+					index = (int)((diff-minDiff_rel)/interval);
+					if(index==PDF_INTERVALS)
+						index = PDF_INTERVALS-1;
+					relErrPDF[index] += 1;					
+				}
+			}
+
+			for (i = 0; i < PDF_INTERVALS; i++)
+				relErrPDF[i]/=numOfElem_;			
+		}
+		compareResult->pwrErrPDF = relErrPDF;
+		compareResult->err_interval_rel = interval;
+		compareResult->err_minValue_rel = minDiff_rel;		
 	}
 
 	if (autoCorrAbsErrFlag)
@@ -529,7 +597,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult)
 {
-	char** s = (char**)malloc(21*sizeof(char*));
+	char** s = (char**)malloc(24*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -573,15 +641,22 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	sprintf(s[15], "maxRelErr = %.10G\n", compareResult->maxRelErr);
 
 	s[16] = (char*)malloc(100*sizeof(char));
-	sprintf(s[16], "rmse = %.10G\n", compareResult->rmse);
+	sprintf(s[16], "minPWRErr = %.10G\n", compareResult->minPWRErr);
 	s[17] = (char*)malloc(100*sizeof(char));
-	sprintf(s[17], "nrmse = %.10G\n", compareResult->nrmse);
+	sprintf(s[17], "avgPWRErr = %.10G\n", compareResult->avgPWRErr);
 	s[18] = (char*)malloc(100*sizeof(char));
-	sprintf(s[18], "psnr = %.10G\n", compareResult->psnr);
+	sprintf(s[18], "maxPWRErr = %.10G\n", compareResult->maxPWRErr);	
+
 	s[19] = (char*)malloc(100*sizeof(char));
-	sprintf(s[19], "snr = %.10G\n", compareResult->snr);	
+	sprintf(s[19], "rmse = %.10G\n", compareResult->rmse);
 	s[20] = (char*)malloc(100*sizeof(char));
-	sprintf(s[20], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
+	sprintf(s[20], "nrmse = %.10G\n", compareResult->nrmse);
+	s[21] = (char*)malloc(100*sizeof(char));
+	sprintf(s[21], "psnr = %.10G\n", compareResult->psnr);
+	s[22] = (char*)malloc(100*sizeof(char));
+	sprintf(s[22], "snr = %.10G\n", compareResult->snr);	
+	s[23] = (char*)malloc(100*sizeof(char));
+	sprintf(s[23], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
 	
 	return s;
 }
@@ -598,66 +673,112 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(21, s, tgtFilePath);
+	ZC_writeStrings(24, s, tgtFilePath);
 	
 	int i;
-	for(i=0;i<21;i++)
+	for(i=0;i<24;i++)
 		free(s[i]);
 	free(s);
 	
 	//write the pdf
-	double err_interval = compareResult->err_interval;
-	double err_minValue = compareResult->err_minValue;
 	
-	memset(tgtFilePath, 0, ZC_BUFS_LONG);
-	sprintf(tgtFilePath, "%s/%s:%s.dis", tgtWorkspaceDir, solution, varName);
-		
-	if(err_interval==0)
+	if(absErrPDFFlag)
 	{
-		char *ss[2];
-		ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
-		ss[1] = "0 1\n";
-		ZC_writeStrings(2, ss, tgtFilePath);
-		free(ss[0]);	
-	}
-	else
-	{
-		char *ss[PDF_INTERVALS+1];		
-		ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);		
-		for(i=0;i<PDF_INTERVALS;i++)
+		double err_interval = compareResult->err_interval;
+		double err_minValue = compareResult->err_minValue;		
+		memset(tgtFilePath, 0, ZC_BUFS_LONG);
+		sprintf(tgtFilePath, "%s/%s:%s.dis", tgtWorkspaceDir, solution, varName);
+			
+		if(err_interval==0)
 		{
-			ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
-			double x = err_minValue+i*err_interval;
-			sprintf(ss[i+1], "%.10G %.10G\n", x, compareResult->absErrPDF[i]); 
+			char *ss[2];
+			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
+			ss[1] = "0 1\n";
+			ZC_writeStrings(2, ss, tgtFilePath);
+			free(ss[0]);	
 		}
+		else
+		{
+			char *ss[PDF_INTERVALS+1];		
+			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);		
+			for(i=0;i<PDF_INTERVALS;i++)
+			{
+				ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
+				double x = err_minValue+i*err_interval;
+				sprintf(ss[i+1], "%.10G %.10G\n", x, compareResult->absErrPDF[i]); 
+			}
+			
+			ZC_writeStrings(PDF_INTERVALS+1, ss, tgtFilePath);
+			for(i=0;i<PDF_INTERVALS+1;i++)
+				free(ss[i]);			
+		}	
+	}
+	
+	if(pwrErrPDFFlag)
+	{
+		double err_interval = compareResult->err_interval_rel;
+		double err_minValue = compareResult->err_minValue_rel;		
 		
-		ZC_writeStrings(PDF_INTERVALS+1, ss, tgtFilePath);
-		for(i=0;i<PDF_INTERVALS+1;i++)
-			free(ss[i]);			
+		memset(tgtFilePath, 0, ZC_BUFS_LONG);
+		sprintf(tgtFilePath, "%s/%s:%s.pds", tgtWorkspaceDir, solution, varName);
+			
+		if(err_interval==0)
+		{
+			char *ss[2];
+			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
+			ss[1] = "0 1\n";
+			ZC_writeStrings(2, ss, tgtFilePath);
+			free(ss[0]);	
+		}
+		else
+		{
+			char *ss[PDF_INTERVALS+1];		
+			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);		
+			for(i=0;i<PDF_INTERVALS;i++)
+			{
+				ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
+				double x = err_minValue+i*err_interval;
+				sprintf(ss[i+1], "%.10G %.10G\n", x, compareResult->pwrErrPDF[i]); 
+			}
+			
+			ZC_writeStrings(PDF_INTERVALS+1, ss, tgtFilePath);
+			for(i=0;i<PDF_INTERVALS+1;i++)
+				free(ss[i]);		
+		}	
 	}	
 
-	//write auto-correlation coefficients
-	char *autocorr[AUTOCORR_SIZE+2];
-	autocorr[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
-	sprintf(autocorr[0], "x \"\"\n");
-	autocorr[1] = (char*)malloc(sizeof(char)*ZC_BUFS);
-	sprintf(autocorr[1], "## %d %.10G\n", 0, (compareResult->autoCorrAbsErr)[0]);	 //don't present autocorr[1] (i.e., x=0), because it's always 1.
-	for (i = 2; i < AUTOCORR_SIZE+2; i++)
+		//write auto-correlation coefficients
+	if(autoCorrAbsErrFlag)
 	{
-		autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-		sprintf(autocorr[i], "%d %.10G\n", i-1, (compareResult->autoCorrAbsErr)[i-1]);
-	}
-	memset(tgtFilePath, 0, ZC_BUFS_LONG);
-	sprintf(tgtFilePath, "%s/%s:%s.autocorr", tgtWorkspaceDir, solution, varName);
-	ZC_writeStrings(AUTOCORR_SIZE+2, autocorr, tgtFilePath);
-	for (i = 0; i < AUTOCORR_SIZE+2; i++)
-		free(autocorr[i]);
+		char *autocorr[AUTOCORR_SIZE+2];
+		autocorr[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
+		sprintf(autocorr[0], "x \"\"\n");
+		autocorr[1] = (char*)malloc(sizeof(char)*ZC_BUFS);
+		sprintf(autocorr[1], "## %d %.10G\n", 0, (compareResult->autoCorrAbsErr)[0]);	 //don't present autocorr[1] (i.e., x=0), because it's always 1.
+		for (i = 2; i < AUTOCORR_SIZE+2; i++)
+		{
+			autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+			sprintf(autocorr[i], "%d %.10G\n", i-1, (compareResult->autoCorrAbsErr)[i-1]);
+		}
+		memset(tgtFilePath, 0, ZC_BUFS_LONG);
+		sprintf(tgtFilePath, "%s/%s:%s.autocorr", tgtWorkspaceDir, solution, varName);
+		ZC_writeStrings(AUTOCORR_SIZE+2, autocorr, tgtFilePath);
+		for (i = 0; i < AUTOCORR_SIZE+2; i++)
+			free(autocorr[i]);		
 		
-	char buf[ZC_BUFS];
-	sprintf(buf, "%s:%s", solution, varName);
-	ZC_writeFFTResults(buf, compareResult->fftCoeff, tgtWorkspaceDir);
+	}
+	
+	if(fftFlag)
+	{
+		char buf[ZC_BUFS];
+		sprintf(buf, "%s:%s", solution, varName);
+		ZC_writeFFTResults(buf, compareResult->fftCoeff, tgtWorkspaceDir);		
+	}	
+
 	if(dir!=NULL)
 		closedir(dir);
 }

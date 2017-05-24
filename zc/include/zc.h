@@ -127,6 +127,7 @@ extern int avgAbsErrFlag;
 extern int maxAbsErrFlag;
 extern int autoCorrAbsErrFlag;
 extern int absErrPDFFlag;
+extern int pwrErrPDFFlag;
 
 extern int minRelErrFlag;
 extern int avgRelErrFlag;

@@ -49,6 +49,7 @@ int avgAbsErrFlag = 1;
 int maxAbsErrFlag = 1;
 int autoCorrAbsErrFlag = 1;
 int absErrPDFFlag = 1;
+int pwrErrPDFFlag = 1;
 
 int minRelErrFlag = 1;
 int avgRelErrFlag = 1;

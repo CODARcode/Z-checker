@@ -34,12 +34,19 @@ typedef struct ZC_CompareData
 	double maxAbsErr;
 	double* autoCorrAbsErr;
 	double* absErrPDF; /*keep the distribution of errors (1000 elements)*/
+	double* pwrErrPDF;
 	double err_interval;
+	double err_interval_rel;
 	double err_minValue;
+	double err_minValue_rel;
 	
 	double minRelErr;
 	double avgRelErr;
 	double maxRelErr;
+	
+	double minPWRErr;
+	double avgPWRErr;
+	double maxPWRErr;
 
 	double snr;
 

@@ -147,6 +147,7 @@ int ZC_ReadConf() {
 	maxAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:maxAbsErr", 0);
 	autoCorrAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:autoCorrAbsErr", 0);
 	absErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:absErrPDF", 0);
+	pwrErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:pwrErrPDF", 0);
 	
 	minRelErrFlag = (int)iniparser_getint(ini, "COMPARE:minRelErr", 0);
 	avgRelErrFlag = (int)iniparser_getint(ini, "COMPARE:avgRelErr", 0);
