@@ -59,7 +59,8 @@ extern "C" {
 #define ZC_VER_MINOR 1
 #define ZC_VER_REVISION 1
 
-#define PDF_INTERVALS 1000
+#define PDF_INTERVALS 2000
+#define PDF_INTERVALS_REL 50000
 #define AUTOCORR_SIZE 100
 #define FFT_SIZE 128
 #define ENTROPY_BLOCK_SIZE 100
@@ -93,6 +94,8 @@ extern "C" {
 #define PROBE_COMPRESSOR 0
 #define ANALYZE_DATA 1
 #define COMPARE_COMPRESSOR 2
+
+#define PWR_DIS_RNG_BOUND 1000 /*the upper bound of the value range for computing the distribution of pwr error*/
 
 #define GNUPLOT_FONT 22
 

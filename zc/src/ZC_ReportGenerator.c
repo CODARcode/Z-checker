@@ -425,11 +425,22 @@ void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selec
 	sprintf(texFile, "report/tex/resultsTex/errDistribution.tex");
 	//printf("%s\n", reportTemplateDir);
 	printf("Processing %s\n", texFile);
-	StringLine* texLines = ZC_readLines(texFile, &lineCount);
-	StringLine* figLines =  ZC_generateStaticAnalysisFigures("dis", selectedErrorBounds, selectedErrorBoundCount);
-	int lineNumInsted = ZC_insertLines("%plot error distribution\n", texLines, figLines);
 	
-	ZC_writeLines(texLines, texFile);
+	StringLine* texLines = ZC_readLines(texFile, &lineCount);
+	
+	if(absErrPDFFlag)
+	{
+		StringLine* figLines =  ZC_generateStaticAnalysisFigures("dis", selectedErrorBounds, selectedErrorBoundCount);
+		int lineNumInsted = ZC_insertLines("%plot error distribution\n", texLines, figLines);		
+	}
+
+	if(pwrErrPDFFlag)
+	{
+		StringLine* figLines2 = ZC_generateStaticAnalysisFigures("pds", selectedErrorBounds, selectedErrorBoundCount);
+		int lineNumInsted = ZC_insertLines("%plot point-wise relative error distribution\n", texLines, figLines2);		
+	}
+	if(absErrPDFFlag || pwrErrPDFFlag)
+		ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);
 }
 
