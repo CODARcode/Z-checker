@@ -58,4 +58,7 @@ if [ ! -f report/z-checker-report.pdf ]; then
 	echo "Overleaf website: https://www.overleaf.com/"
 	echo "How to upload zip file to create a new project in overleaf: https://www.youtube.com/watch?v=i22sF369bqA"
 	exit
+else
+	echo "The report is generated successfully."
+	echo "Here it is: `pwd`/report/z-checker-report.pdf"
 fi
