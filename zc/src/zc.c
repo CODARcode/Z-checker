@@ -912,7 +912,7 @@ void ZC_plotErrDistribtion()
 		char** scriptLines = genGnuplotScript_fillsteps(disFileName, "pds", GNUPLOT_FONT, 2, "Error", "PDF");
 		ZC_writeStrings(19, scriptLines, disPlotFile);
 		//execute .p files using system().
-		sprintf(disCmd, "cd compressionResults;gnuplot \"%s-pds.p\";mv \"%s.dps.eps\" \"%s-pds.eps\"", disFileName,disFileName, disFileName);
+		sprintf(disCmd, "cd compressionResults;gnuplot \"%s-pds.p\";mv \"%s.pds.eps\" \"%s-pds.eps\"", disFileName,disFileName, disFileName);
 		system(disCmd);
 		for(j=0;j<19;j++)
 			free(scriptLines[j]);
