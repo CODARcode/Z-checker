@@ -293,6 +293,15 @@ int ZC_ReadConf() {
 						system(linkCmd);
 					}
 					
+					sprintf(softLinkPath, "compressionResults/%s.pds", compResultCaseName);
+					if (access(softLinkPath, F_OK) != 0)
+					{
+						sprintf(tmpPathBuf, "%s/%s.pds", compare_dir, compResultCaseName);
+						updateLinkFullPath(tmpPathBuf, fullPathBuf);
+						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+						system(linkCmd);
+					}					
+					
 					sprintf(softLinkPath, "compressionResults/%s.autocorr", compResultCaseName);
 					if (access(softLinkPath, F_OK) != 0)
 					{
