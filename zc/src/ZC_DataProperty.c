@@ -302,20 +302,59 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	{
 		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
-		double cov = 0;
-		for (i = 0; i < numOfElem; i++)
-			cov += (data[i] - avg)*(data[i] - avg);
+		//		double cov = 0;
+		//		for (i = 0; i < numOfElem; i++)
+		//			cov += (data[i] - avg)*(data[i] - avg);
+		//
+		//		cov = cov/numOfElem;
+		//		int delta = 0;
+		//		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+		//		{
+		//			double sum = 0;
+		//
+		//			for (i = 0; i < numOfElem-delta; i++)
+		//				sum += (data[i]-avg)*(data[i+delta]-avg);
+		//
+		//			autocorr[delta] = sum/(numOfElem-delta)/cov;
+		//		}
 
-		cov = cov/numOfElem;
 		int delta;
+
 		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
+			double avg_0 = 0;
+			double avg_1 = 0;
+
+			for (i = 0; i < numOfElem-delta; i++)
+			{
+				avg_0 += data[i];
+				avg_1 += data[i+delta];
+			}
+
+			avg_0 = avg_0 / (numOfElem-delta);
+			avg_1 = avg_1 / (numOfElem-delta);
+
+			double cov_0 = 0;
+			double cov_1 = 0;
+
+			for (i = 0; i < numOfElem-delta; i++)
+			{
+				cov_0 += (data[i] - avg_0) * (data[i] - avg_0);
+				cov_1 += (data[i+delta] - avg_1) * (data[i+delta] - avg_1);
+			}
+
+			cov_0 = cov_0/(numOfElem-delta);
+			cov_1 = cov_1/(numOfElem-delta);
+
+			cov_0 = sqrt(cov_0);
+			cov_1 = sqrt(cov_1);
+
 			double sum = 0;
 
 			for (i = 0; i < numOfElem-delta; i++)
-				sum += (data[i]-avg)*(data[i+delta]-avg);
+				sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
 
-			autocorr[delta] = sum/(numOfElem-delta)/cov;
+			autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
 		}
 
 		autocorr[0] = 1;
@@ -409,20 +448,59 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 	{
 		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
-		double cov = 0;
-		for (i = 0; i < numOfElem; i++)
-			cov += (data[i] - avg)*(data[i] - avg);
+//		double cov = 0;
+//		for (i = 0; i < numOfElem; i++)
+//			cov += (data[i] - avg)*(data[i] - avg);
+//
+//		cov = cov/numOfElem;
+//		int delta = 0;
+//		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+//		{
+//			double sum = 0;
+//
+//			for (i = 0; i < numOfElem-delta; i++)
+//				sum += (data[i]-avg)*(data[i+delta]-avg);
+//
+//			autocorr[delta] = sum/(numOfElem-delta)/cov;
+//		}
 
-		cov = cov/numOfElem;
-		int delta = 0;
-		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+		int delta;
+
+		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
+			double avg_0 = 0;
+			double avg_1 = 0;
+
+			for (i = 0; i < numOfElem-delta; i++)
+			{
+				avg_0 += data[i];
+				avg_1 += data[i+delta];
+			}
+
+			avg_0 = avg_0 / (numOfElem-delta);
+			avg_1 = avg_1 / (numOfElem-delta);
+
+			double cov_0 = 0;
+			double cov_1 = 0;
+
+			for (i = 0; i < numOfElem-delta; i++)
+			{
+				cov_0 += (data[i] - avg_0) * (data[i] - avg_0);
+				cov_1 += (data[i+delta] - avg_1) * (data[i+delta] - avg_1);
+			}
+
+			cov_0 = cov_0/(numOfElem-delta);
+			cov_1 = cov_1/(numOfElem-delta);
+
+			cov_0 = sqrt(cov_0);
+			cov_1 = sqrt(cov_1);
+
 			double sum = 0;
 
 			for (i = 0; i < numOfElem-delta; i++)
-				sum += (data[i]-avg)*(data[i+delta]-avg);
+				sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
 
-			autocorr[delta] = sum/(numOfElem-delta)/cov;
+			autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
 		}
 
 		autocorr[0] = 1;
