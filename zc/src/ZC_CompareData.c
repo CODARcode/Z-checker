@@ -220,45 +220,94 @@ int r5, int r4, int r3, int r2, int r1)
 		compareResult->err_interval_rel = interval;
 		compareResult->err_minValue_rel = minDiff_rel;		
 	}
+
 	if (autoCorrAbsErrFlag)
 	{
 		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-		double *absDiff = (double*)malloc(numOfElem*sizeof(double));
 
-		double covDiff = 0;
-		for (i = 0; i < numOfElem; i++)
+		int delta;
+
+		if (numOfElem > 4096)
 		{
-			absDiff[i] = data2[i] - data1[i];
-			covDiff += (absDiff[i] - avgDiff)*(absDiff[i] - avgDiff);
-		}
+			double covDiff = 0;
+			for (i = 0; i < numOfElem; i++)
+			{
+				covDiff += (diff[i] - avgDiff)*(diff[i] - avgDiff);
+			}
 
-		covDiff = covDiff/numOfElem;
-        
-        if (covDiff == 0)
-        {
-            int delta;
-            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-                autoCorrAbsErr[delta] = 0;
-        }
-        else
-        {
-            int delta;
-            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-            {
-                double sum = 0;
-            
-                for (i = 0; i < numOfElem-delta; i++)
-                {
-                    sum += (absDiff[i]-avgDiff)*(absDiff[i+delta]-avgDiff);
-                }
-                
-                autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
-            }
-        }
+			covDiff = covDiff/numOfElem;
+
+			if (covDiff == 0)
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autoCorrAbsErr[delta] = 0;
+			}
+			else
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					double sum = 0;
+
+					for (i = 0; i < numOfElem-delta; i++)
+					{
+						sum += (diff[i]-avgDiff)*(diff[i+delta]-avgDiff);
+					}
+
+					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
+				}
+			}
+		}
+		else
+		{
+			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+			{
+				double avg_0 = 0;
+				double avg_1 = 0;
+
+				for (i = 0; i < numOfElem-delta; i++)
+				{
+					avg_0 += diff[i];
+					avg_1 += diff[i+delta];
+				}
+
+				avg_0 = avg_0 / (numOfElem-delta);
+				avg_1 = avg_1 / (numOfElem-delta);
+
+				double cov_0 = 0;
+				double cov_1 = 0;
+
+				for (i = 0; i < numOfElem-delta; i++)
+				{
+					cov_0 += (diff[i] - avg_0) * (diff[i] - avg_0);
+					cov_1 += (diff[i+delta] - avg_1) * (diff[i+delta] - avg_1);
+				}
+
+				cov_0 = cov_0/(numOfElem-delta);
+				cov_1 = cov_1/(numOfElem-delta);
+
+				cov_0 = sqrt(cov_0);
+				cov_1 = sqrt(cov_1);
+
+				if (cov_0*cov_1 == 0)
+				{
+					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+						autoCorrAbsErr[delta] = 0;
+				}
+				else
+				{
+					double sum = 0;
+
+					for (i = 0; i < numOfElem-delta; i++)
+						sum += (diff[i]-avg_0)*(diff[i+delta]-avg_1);
+
+					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+				}
+			}
+
+		}
         
         autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
-		free(absDiff);
 	}
 
 	if (pearsonCorrFlag)
@@ -319,9 +368,6 @@ int r5, int r4, int r3, int r2, int r1)
     	double valErrCorr = ee/std1/stdDiff;
 
 		compareResult->valErrCorr = valErrCorr;
-
-		printf ("Correlation between original values and compression errors = %lf\n", valErrCorr);
-
 	}
 
 	free(diff);
@@ -498,45 +544,95 @@ int r5, int r4, int r3, int r2, int r1)
 		compareResult->err_interval_rel = interval;
 		compareResult->err_minValue_rel = minDiff_rel;		
 	}
+
 	if (autoCorrAbsErrFlag)
 	{
 		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-		double *absDiff = (double*)malloc(numOfElem*sizeof(double));
 
-		double covDiff = 0;
-		for (i = 0; i < numOfElem; i++)
+		int delta;
+
+		if (numOfElem > 4096)
 		{
-			absDiff[i] = data2[i] - data1[i];
-			covDiff += (absDiff[i] - avgDiff)*(absDiff[i] - avgDiff);
-		}
+			double covDiff = 0;
+			for (i = 0; i < numOfElem; i++)
+			{
+				covDiff += (diff[i] - avgDiff)*(diff[i] - avgDiff);
+			}
 
-		covDiff = covDiff/numOfElem;
-        
-        if (covDiff == 0)
-        {
-            int delta;
-            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-                autoCorrAbsErr[delta] = 0;
-        }
-        else
-        {
-            int delta;
-            for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-            {
-                double sum = 0;
-            
-                for (i = 0; i < numOfElem-delta; i++)
-                {
-                    sum += (absDiff[i]-avgDiff)*(absDiff[i+delta]-avgDiff);
-                }
-                
-                autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
-            }
-        }
+			covDiff = covDiff/numOfElem;
+
+			if (covDiff == 0)
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autoCorrAbsErr[delta] = 0;
+			}
+			else
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					double sum = 0;
+
+					for (i = 0; i < numOfElem-delta; i++)
+					{
+						sum += (diff[i]-avgDiff)*(diff[i+delta]-avgDiff);
+					}
+
+					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
+				}
+			}
+		}
+		else
+		{
+			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+			{
+				double avg_0 = 0;
+				double avg_1 = 0;
+
+				for (i = 0; i < numOfElem-delta; i++)
+				{
+					avg_0 += diff[i];
+					avg_1 += diff[i+delta];
+				}
+
+				avg_0 = avg_0 / (numOfElem-delta);
+				avg_1 = avg_1 / (numOfElem-delta);
+
+				double cov_0 = 0;
+				double cov_1 = 0;
+
+				for (i = 0; i < numOfElem-delta; i++)
+				{
+					cov_0 += (diff[i] - avg_0) * (diff[i] - avg_0);
+					cov_1 += (diff[i+delta] - avg_1) * (diff[i+delta] - avg_1);
+				}
+
+				cov_0 = cov_0/(numOfElem-delta);
+				cov_1 = cov_1/(numOfElem-delta);
+
+				cov_0 = sqrt(cov_0);
+				cov_1 = sqrt(cov_1);
+
+
+				if (cov_0*cov_1 == 0)
+				{
+					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+						autoCorrAbsErr[delta] = 0;
+				}
+				else
+				{
+					double sum = 0;
+
+					for (i = 0; i < numOfElem-delta; i++)
+						sum += (diff[i]-avg_0)*(diff[i+delta]-avg_1);
+
+					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+				}
+			}
+
+		}
         
         autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
-		free(absDiff);
 	}
 
 	if (pearsonCorrFlag)
@@ -597,8 +693,6 @@ int r5, int r4, int r3, int r2, int r1)
     	double valErrCorr = ee/std1/stdDiff;
 
 		compareResult->valErrCorr = valErrCorr;
-
-		printf ("Correlation between original values and compression errors = %lf\n", valErrCorr);
 	}
 
 	free(diff);

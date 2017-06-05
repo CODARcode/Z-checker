@@ -302,7 +302,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 	{
 		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
-		int delta = 0;
+		int delta;
 
 		if (numOfElem > 4096)
 		{
@@ -312,19 +312,26 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 
 			cov = cov/numOfElem;
 
-			for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+			if (cov == 0)
 			{
-				double sum = 0;
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autocorr[delta] = 0;
+			}
+			else
+			{
+				for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					double sum = 0;
 
-				for (i = 0; i < numOfElem-delta; i++)
-					sum += (data[i]-avg)*(data[i+delta]-avg);
+					for (i = 0; i < numOfElem-delta; i++)
+						sum += (data[i]-avg)*(data[i+delta]-avg);
 
-				autocorr[delta] = sum/(numOfElem-delta)/cov;
+					autocorr[delta] = sum/(numOfElem-delta)/cov;
+				}
 			}
 		}
 		else
 		{
-
 			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
 			{
 				double avg_0 = 0;
@@ -344,8 +351,8 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 
 				for (i = 0; i < numOfElem-delta; i++)
 				{
-					cov_0 += (data[i] - avg_0) * (data[i] - avg_0);
-					cov_1 += (data[i+delta] - avg_1) * (data[i+delta] - avg_1);
+					cov_0 += (data[i]-avg_0)*(data[i]-avg_0);
+					cov_1 += (data[i+delta]-avg_1)*(data[i+delta]-avg_1);
 				}
 
 				cov_0 = cov_0/(numOfElem-delta);
@@ -354,12 +361,20 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfEle
 				cov_0 = sqrt(cov_0);
 				cov_1 = sqrt(cov_1);
 
-				double sum = 0;
+				if (cov_0*cov_1 == 0)
+				{
+					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+						autocorr[delta] = 0;
+				}
+				else
+				{
+					double sum = 0;
 
-				for (i = 0; i < numOfElem-delta; i++)
-					sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
+					for (i = 0; i < numOfElem-delta; i++)
+						sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
 
-				autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+					autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+				}
 			}
 		}
 
@@ -464,14 +479,22 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 			cov = cov/numOfElem;
 
-			for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+			if (cov == 0)
 			{
-				double sum = 0;
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autocorr[delta] = 0;
+			}
+			else
+			{
+				for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					double sum = 0;
 
-				for (i = 0; i < numOfElem-delta; i++)
-					sum += (data[i]-avg)*(data[i+delta]-avg);
+					for (i = 0; i < numOfElem-delta; i++)
+						sum += (data[i]-avg)*(data[i+delta]-avg);
 
-				autocorr[delta] = sum/(numOfElem-delta)/cov;
+					autocorr[delta] = sum/(numOfElem-delta)/cov;
+				}
 			}
 		}
 		else
@@ -495,8 +518,8 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 
 				for (i = 0; i < numOfElem-delta; i++)
 				{
-					cov_0 += (data[i] - avg_0) * (data[i] - avg_0);
-					cov_1 += (data[i+delta] - avg_1) * (data[i+delta] - avg_1);
+					cov_0 += (data[i]-avg_0)*(data[i]-avg_0);
+					cov_1 += (data[i+delta]-avg_1)*(data[i+delta]-avg_1);
 				}
 
 				cov_0 = cov_0/(numOfElem-delta);
@@ -505,12 +528,20 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfE
 				cov_0 = sqrt(cov_0);
 				cov_1 = sqrt(cov_1);
 
-				double sum = 0;
+				if (cov_0*cov_1 == 0)
+				{
+					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+						autocorr[delta] = 0;
+				}
+				else
+				{
+					double sum = 0;
 
-				for (i = 0; i < numOfElem-delta; i++)
-					sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
+					for (i = 0; i < numOfElem-delta; i++)
+						sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
 
-				autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+					autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+				}
 			}
 		}
 
