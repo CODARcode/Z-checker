@@ -67,24 +67,25 @@ int r5, int r4, int r3, int r2, int r1)
 	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
 	
 	double err;
-	//int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
 	int numOfElem = compareResult->property->numOfElem;
 	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
-	double diff, relDiff;
 	int numOfElem_ = 0;
+
+	double *diff = (double*)malloc(numOfElem*sizeof(double));
+	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
 
 	for (i = 0; i < numOfElem; i++)
 	{
 		sum1 += data1[i];
 		sum2 += data2[i];
 		
-		diff = data2[i]-data1[i];
-		if(minDiff > diff) minDiff = diff;
-		if(maxDiff < diff) maxDiff = diff;
-		sumDiff += diff;
-		sumOfDiffSquare += diff*diff;
+		diff[i] = data2[i]-data1[i];
+		if(minDiff > diff[i]) minDiff = diff[i];
+		if(maxDiff < diff[i]) maxDiff = diff[i];
+		sumDiff += diff[i];
+		sumOfDiffSquare += diff[i]*diff[i];
 				
-		err = fabs(diff);
+		err = fabs(diff[i]);
 		if(minErr>err) minErr = err;
 		if(maxErr<err) maxErr = err;
 		sumErr += err;
@@ -93,13 +94,13 @@ int r5, int r4, int r3, int r2, int r1)
 		if(data1[i]!=0)
 		{
 			numOfElem_ ++;
-			relDiff = diff/data1[i];
-			if(minDiff_rel > relDiff) minDiff_rel = relDiff;
-			if(maxDiff_rel < relDiff); maxDiff_rel = relDiff;
-			sumDiff_rel += relDiff;
-			sumOfDiffSquare_rel += diff*diff;
+			relDiff[i] = diff[i]/data1[i];
+			if(minDiff_rel > relDiff[i]) minDiff_rel = relDiff[i];
+			if(maxDiff_rel < relDiff[i]) maxDiff_rel = relDiff[i];
+			sumDiff_rel += relDiff[i];
+			sumOfDiffSquare_rel += relDiff[i]*relDiff[i];
 			
-			err = fabs(relDiff);
+			err = fabs(relDiff[i]);
 			if(minErr_rel>err) minErr_rel = err;
 			if(maxErr_rel<err) maxErr_rel = err;
 			sumErr_rel += err;
@@ -108,9 +109,6 @@ int r5, int r4, int r3, int r2, int r1)
 	}
 	
 	ZC_DataProperty* property = compareResult->property;
-	//double minValue = property->minValue;
-	//double maxValue = property->maxValue;
-	//double medValue = minValue+(maxVal-minVal)/2;
 	
 	double zeromean_variance = property->zeromean_variance;
 	double valRange = property->valueRange;
@@ -173,8 +171,7 @@ int r5, int r4, int r3, int r2, int r1)
 
 			for (i = 0; i < numOfElem; i++)
 			{
-				diff = data2[i] - data1[i];
-				index = (int)((diff-minDiff)/interval);
+				index = (int)((diff[i]-minDiff)/interval);
 				if(index==PDF_INTERVALS)
 					index = PDF_INTERVALS-1;
 				absErrPDF[index] += 1;
@@ -206,12 +203,11 @@ int r5, int r4, int r3, int r2, int r1)
 			{
 				if(data1[i]!=0)
 				{
-					diff = (data2[i] - data1[i])/data1[i];
-					if(diff>maxDiff_rel)
-						diff = maxDiff_rel;
-					if(diff<minDiff_rel)
-						diff = minDiff_rel;
-					index = (int)((diff-minDiff_rel)/interval);
+					if(relDiff[i]>maxDiff_rel)
+						relDiff[i] = maxDiff_rel;
+					if(relDiff[i]<minDiff_rel)
+						relDiff[i] = minDiff_rel;
+					index = (int)((relDiff[i]-minDiff_rel)/interval);
 					if(index==PDF_INTERVALS_REL)
 						index = PDF_INTERVALS_REL-1;
 					relErrPDF[index] += 1;					
@@ -306,6 +302,30 @@ int r5, int r4, int r3, int r2, int r1)
 		double psnr = -20.0*log10(sqrt(mse)/valRange);
 		compareResult->psnr = psnr;
 	}
+
+	if (valErrCorrFlag)
+	{
+		double prodSum = 0, sum1 = 0, sumDiff = 0;
+    	for (i = 0; i < numOfElem; i++)
+    	{
+    		prodSum += (data1[i]-mean1)*(diff[i]-avgDiff);
+    		sum1 += (data1[i]-mean1)*(data1[i]-mean1);
+    		sumDiff += (diff[i]-avgDiff)*(diff[i]-avgDiff);
+    	}
+
+    	double std1 = sqrt(sum1/numOfElem);
+    	double stdDiff = sqrt(sum2/numOfElem);
+    	double ee = prodSum/numOfElem;
+    	double valErrCorr = ee/std1/stdDiff;
+
+		compareResult->valErrCorr = valErrCorr;
+
+		printf ("Correlation between original values and compression errors = %lf\n", valErrCorr);
+
+	}
+
+	free(diff);
+	free(relDiff);
 }
 
 void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
@@ -325,24 +345,25 @@ int r5, int r4, int r3, int r2, int r1)
 	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
 	
 	double err;
-	//int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
 	int numOfElem = compareResult->property->numOfElem;
 	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
-	double diff, relDiff;
 	int numOfElem_ = 0;
+
+	double *diff = (double*)malloc(numOfElem*sizeof(double));
+	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
 
 	for (i = 0; i < numOfElem; i++)
 	{
 		sum1 += data1[i];
 		sum2 += data2[i];
 		
-		diff = data2[i]-data1[i];
-		if(minDiff > diff) minDiff = diff;
-		if(maxDiff < diff) maxDiff = diff;
-		sumDiff += diff;
-		sumOfDiffSquare += diff*diff;
+		diff[i] = data2[i]-data1[i];
+		if(minDiff > diff[i]) minDiff = diff[i];
+		if(maxDiff < diff[i]) maxDiff = diff[i];
+		sumDiff += diff[i];
+		sumOfDiffSquare += diff[i]*diff[i];
 				
-		err = fabs(diff);
+		err = fabs(diff[i]);
 		if(minErr>err) minErr = err;
 		if(maxErr<err) maxErr = err;
 		sumErr += err;
@@ -351,13 +372,13 @@ int r5, int r4, int r3, int r2, int r1)
 		if(data1[i]!=0)
 		{
 			numOfElem_ ++;
-			relDiff = diff/data1[i];
-			if(minDiff_rel > relDiff) minDiff_rel = relDiff;
-			if(maxDiff_rel < relDiff); maxDiff_rel = relDiff;
-			sumDiff_rel += relDiff;
-			sumOfDiffSquare_rel += diff*diff;
+			relDiff[i] = diff[i]/data1[i];
+			if(minDiff_rel > relDiff[i]) minDiff_rel = relDiff[i];
+			if(maxDiff_rel < relDiff[i]) maxDiff_rel = relDiff[i];
+			sumDiff_rel += relDiff[i];
+			sumOfDiffSquare_rel += relDiff[i]*relDiff[i];
 			
-			err = fabs(relDiff);
+			err = fabs(relDiff[i]);
 			if(minErr_rel>err) minErr_rel = err;
 			if(maxErr_rel<err) maxErr_rel = err;
 			sumErr_rel += err;
@@ -366,9 +387,6 @@ int r5, int r4, int r3, int r2, int r1)
 	}
 	
 	ZC_DataProperty* property = compareResult->property;
-	//double minValue = property->minValue;
-	//double maxValue = property->maxValue;
-	//double medValue = minValue+(maxVal-minVal)/2;
 	
 	double zeromean_variance = property->zeromean_variance;
 	double valRange = property->valueRange;
@@ -431,8 +449,7 @@ int r5, int r4, int r3, int r2, int r1)
 
 			for (i = 0; i < numOfElem; i++)
 			{
-				diff = data2[i] - data1[i];
-				index = (int)((diff-minDiff)/interval);
+				index = (int)((diff[i]-minDiff)/interval);
 				if(index==PDF_INTERVALS)
 					index = PDF_INTERVALS-1;
 				absErrPDF[index] += 1;
@@ -464,12 +481,11 @@ int r5, int r4, int r3, int r2, int r1)
 			{
 				if(data1[i]!=0)
 				{
-					diff = (data2[i] - data1[i])/data1[i];
-					if(diff>maxDiff_rel)
-						diff = maxDiff_rel;
-					if(diff<minDiff_rel)
-						diff = minDiff_rel;
-					index = (int)((diff-minDiff_rel)/interval);
+					if(relDiff[i]>maxDiff_rel)
+						relDiff[i] = maxDiff_rel;
+					if(relDiff[i]<minDiff_rel)
+						relDiff[i] = minDiff_rel;
+					index = (int)((relDiff[i]-minDiff_rel)/interval);
 					if(index==PDF_INTERVALS_REL)
 						index = PDF_INTERVALS_REL-1;
 					relErrPDF[index] += 1;					
@@ -564,6 +580,30 @@ int r5, int r4, int r3, int r2, int r1)
 		double psnr = -20.0*log10(sqrt(mse)/valRange);
 		compareResult->psnr = psnr;
 	}
+
+	if (valErrCorrFlag)
+	{
+		double prodSum = 0, sum1 = 0, sumDiff = 0;
+    	for (i = 0; i < numOfElem; i++)
+    	{
+    		prodSum += (data1[i]-mean1)*(diff[i]-avgDiff);
+    		sum1 += (data1[i]-mean1)*(data1[i]-mean1);
+    		sumDiff += (diff[i]-avgDiff)*(diff[i]-avgDiff);
+    	}
+
+    	double std1 = sqrt(sum1/numOfElem);
+    	double stdDiff = sqrt(sum2/numOfElem);
+    	double ee = prodSum/numOfElem;
+    	double valErrCorr = ee/std1/stdDiff;
+
+		compareResult->valErrCorr = valErrCorr;
+
+		printf ("Correlation between original values and compression errors = %lf\n", valErrCorr);
+	}
+
+	free(diff);
+	free(relDiff);
+
 }
 
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
@@ -683,7 +723,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult)
 {
-	char** s = (char**)malloc(24*sizeof(char*));
+	char** s = (char**)malloc(25*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -741,8 +781,12 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	sprintf(s[21], "psnr = %.10G\n", compareResult->psnr);
 	s[22] = (char*)malloc(100*sizeof(char));
 	sprintf(s[22], "snr = %.10G\n", compareResult->snr);	
+
 	s[23] = (char*)malloc(100*sizeof(char));
-	sprintf(s[23], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
+	sprintf(s[23], "valErrCorr = %.10G\n", compareResult->valErrCorr);
+
+	s[24] = (char*)malloc(100*sizeof(char));
+	sprintf(s[24], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
 	
 	return s;
 }
@@ -759,7 +803,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(24, s, tgtFilePath);
+	ZC_writeStrings(25, s, tgtFilePath);
 	
 	int i;
 	for(i=0;i<24;i++)
@@ -836,7 +880,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 		}	
 	}	
 
-		//write auto-correlation coefficients
+	//write auto-correlation coefficients
 	if(autoCorrAbsErrFlag)
 	{
 		char *autocorr[AUTOCORR_SIZE+2];

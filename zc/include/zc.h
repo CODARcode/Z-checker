@@ -140,6 +140,7 @@ extern int rmseFlag;
 extern int nrmseFlag;
 extern int snrFlag;
 extern int psnrFlag;
+extern int valErrCorrFlag;
 extern int pearsonCorrFlag;
 
 extern int plotAbsErrPDFFlag;

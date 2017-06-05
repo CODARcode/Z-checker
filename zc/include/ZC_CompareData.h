@@ -53,6 +53,9 @@ typedef struct ZC_CompareData
 	double rmse;
 	double nrmse;
 	double psnr;
+
+	double valErrCorr;
+
 	double pearsonCorr;
 	
 	complex *fftCoeff;	

@@ -59,6 +59,7 @@ int rmseFlag = 1;
 int nrmseFlag = 1;
 int snrFlag = 1;
 int psnrFlag = 1;
+int valErrCorrFlag = 1;
 int pearsonCorrFlag = 1;
 
 int plotAbsErrPDFFlag = 1;
