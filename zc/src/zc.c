@@ -643,7 +643,7 @@ void ZC_plotRateDistortion()
 			system(cmd);
 
 			for(j=0;j<count+1;j++)
-				if(dataLines_snr[j]!=NULL) free(dataLines_snr[j]);
+				if(dataLines_valErrCorr[j]!=NULL) free(dataLines_valErrCorr[j]);
 		}
 		
 		free(cmpResList);
