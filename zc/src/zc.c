@@ -876,7 +876,7 @@ void ZC_plotFFTAmplitude_DecompressData()
 	{
 		sprintf(ampFileName, "%s.fft", allVarNames[i]);
 		sprintf(ampPlotFile, "compressionResults/%s-fft-amp.p", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", GNUPLOT_FONT, 2, "frequency", "amplitude");
+		char** scriptLines = genGnuplotScript_fillsteps(ampFileName, "amp", GNUPLOT_FONT, 2, "frequency", "relative difference of amplitude");
 		ZC_writeStrings(19, scriptLines, ampPlotFile);
 		//execute .p files using system().
 		sprintf(ampCmd, "cd compressionResults;gnuplot \"%s-fft-amp.p\";mv \"%s.fft.amp.eps\" \"%s-fft-amp.eps\"", allVarNames[i],allVarNames[i], allVarNames[i]);
