@@ -991,32 +991,39 @@ void ZC_plotErrDistribtion()
 	int i,j;
 	char disFileName[ZC_BUFS], disPlotFile[ZC_BUFS], disCmd[ZC_BUFS_LONG];
 	char** allVarNames = ht_getAllKeys(ecCompareDataTable);
-	for(i=0;i<ecCompareDataTable->count;i++)
-	{
-		sprintf(disFileName, "%s", allVarNames[i]);
-		sprintf(disPlotFile, "compressionResults/%s-dis.p", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(disFileName, "dis", GNUPLOT_FONT, 2, "Error", "PDF");
-		ZC_writeStrings(19, scriptLines, disPlotFile);
-		//execute .p files using system().
-		sprintf(disCmd, "cd compressionResults;gnuplot \"%s-dis.p\";mv \"%s.dis.eps\" \"%s-dis.eps\"", disFileName,disFileName, disFileName);
-		system(disCmd);
-		for(j=0;j<19;j++)
-			free(scriptLines[j]);
-		free(scriptLines);	
-	}
 	
-	for(i=0;i<ecCompareDataTable->count;i++)
+	if(absErrPDFFlag)
 	{
-		sprintf(disFileName, "%s", allVarNames[i]);
-		sprintf(disPlotFile, "compressionResults/%s-pds.p", allVarNames[i]);
-		char** scriptLines = genGnuplotScript_fillsteps(disFileName, "pds", GNUPLOT_FONT, 2, "Error", "PDF");
-		ZC_writeStrings(19, scriptLines, disPlotFile);
-		//execute .p files using system().
-		sprintf(disCmd, "cd compressionResults;gnuplot \"%s-pds.p\";mv \"%s.pds.eps\" \"%s-pds.eps\"", disFileName,disFileName, disFileName);
-		system(disCmd);
-		for(j=0;j<19;j++)
-			free(scriptLines[j]);
-		free(scriptLines);	
+		for(i=0;i<ecCompareDataTable->count;i++)
+		{
+			sprintf(disFileName, "%s", allVarNames[i]);
+			sprintf(disPlotFile, "compressionResults/%s-dis.p", allVarNames[i]);
+			char** scriptLines = genGnuplotScript_fillsteps(disFileName, "dis", GNUPLOT_FONT, 2, "Error", "PDF");
+			ZC_writeStrings(19, scriptLines, disPlotFile);
+			//execute .p files using system().
+			sprintf(disCmd, "cd compressionResults;gnuplot \"%s-dis.p\";mv \"%s.dis.eps\" \"%s-dis.eps\"", disFileName,disFileName, disFileName);
+			system(disCmd);
+			for(j=0;j<19;j++)
+				free(scriptLines[j]);
+			free(scriptLines);	
+		}		
+	}
+
+	if(pwrErrPDFFlag)
+	{
+		for(i=0;i<ecCompareDataTable->count;i++)
+		{
+			sprintf(disFileName, "%s", allVarNames[i]);
+			sprintf(disPlotFile, "compressionResults/%s-pds.p", allVarNames[i]);
+			char** scriptLines = genGnuplotScript_fillsteps(disFileName, "pds", GNUPLOT_FONT, 2, "Error", "PDF");
+			ZC_writeStrings(19, scriptLines, disPlotFile);
+			//execute .p files using system().
+			sprintf(disCmd, "cd compressionResults;gnuplot \"%s-pds.p\";mv \"%s.pds.eps\" \"%s-pds.eps\"", disFileName,disFileName, disFileName);
+			system(disCmd);
+			for(j=0;j<19;j++)
+				free(scriptLines[j]);
+			free(scriptLines);	
+		}		
 	}	
 }
 

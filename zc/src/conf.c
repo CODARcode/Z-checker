@@ -287,50 +287,62 @@ int ZC_ReadConf() {
 						system(linkCmd);				
 					}					
 					
-					sprintf(softLinkPath, "compressionResults/%s.dis", compResultCaseName);
-					if (access(softLinkPath, F_OK) != 0)
+					if(absErrPDFFlag)
 					{
-						sprintf(tmpPathBuf, "%s/%s.dis", compare_dir, compResultCaseName);
-						updateLinkFullPath(tmpPathBuf, fullPathBuf);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
+						sprintf(softLinkPath, "compressionResults/%s.dis", compResultCaseName);
+						if (access(softLinkPath, F_OK) != 0)
+						{
+							sprintf(tmpPathBuf, "%s/%s.dis", compare_dir, compResultCaseName);
+							updateLinkFullPath(tmpPathBuf, fullPathBuf);
+							sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+							system(linkCmd);
+						}						
 					}
 					
-					sprintf(softLinkPath, "compressionResults/%s.pds", compResultCaseName);
-					if (access(softLinkPath, F_OK) != 0)
+					if(pwrErrPDFFlag)
 					{
-						sprintf(tmpPathBuf, "%s/%s.pds", compare_dir, compResultCaseName);
-						updateLinkFullPath(tmpPathBuf, fullPathBuf);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
+						sprintf(softLinkPath, "compressionResults/%s.pds", compResultCaseName);
+						if (access(softLinkPath, F_OK) != 0)
+						{
+							sprintf(tmpPathBuf, "%s/%s.pds", compare_dir, compResultCaseName);
+							updateLinkFullPath(tmpPathBuf, fullPathBuf);
+							sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+							system(linkCmd);
+						}						
 					}					
 					
-					sprintf(softLinkPath, "compressionResults/%s.autocorr", compResultCaseName);
-					if (access(softLinkPath, F_OK) != 0)
+					if(autoCorrAbsErrFlag)
 					{
-						sprintf(tmpPathBuf, "%s/%s.autocorr", compare_dir, compResultCaseName);
-						updateLinkFullPath(tmpPathBuf, fullPathBuf);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
+						sprintf(softLinkPath, "compressionResults/%s.autocorr", compResultCaseName);
+						if (access(softLinkPath, F_OK) != 0)
+						{
+							sprintf(tmpPathBuf, "%s/%s.autocorr", compare_dir, compResultCaseName);
+							updateLinkFullPath(tmpPathBuf, fullPathBuf);
+							sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+							system(linkCmd);
+						}						
 					}
 		
-					sprintf(softLinkPath, "compressionResults/%s.fft", compResultCaseName);
-					if (access(softLinkPath, F_OK) != 0)
+					if(fftFlag)
 					{
-						sprintf(tmpPathBuf, "%s/%s.fft", compare_dir, compResultCaseName);
-						updateLinkFullPath(tmpPathBuf, fullPathBuf);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
-					}			
-					
-					sprintf(softLinkPath, "compressionResults/%s.fft.amp", compResultCaseName);
-					if (access(softLinkPath, F_OK) != 0)
-					{
-						sprintf(tmpPathBuf, "%s/%s.fft.amp", compare_dir, compResultCaseName);
-						updateLinkFullPath(tmpPathBuf, fullPathBuf);
-						sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-						system(linkCmd);
-					}											
+						sprintf(softLinkPath, "compressionResults/%s.fft", compResultCaseName);
+						if (access(softLinkPath, F_OK) != 0)
+						{
+							sprintf(tmpPathBuf, "%s/%s.fft", compare_dir, compResultCaseName);
+							updateLinkFullPath(tmpPathBuf, fullPathBuf);
+							sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+							system(linkCmd);
+						}
+						
+						sprintf(softLinkPath, "compressionResults/%s.fft.amp", compResultCaseName);
+						if (access(softLinkPath, F_OK) != 0)
+						{
+							sprintf(tmpPathBuf, "%s/%s.fft.amp", compare_dir, compResultCaseName);
+							updateLinkFullPath(tmpPathBuf, fullPathBuf);
+							sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+							system(linkCmd);
+						}											
+					}									
 				}
 				free(compResultCaseName);
 			}	
