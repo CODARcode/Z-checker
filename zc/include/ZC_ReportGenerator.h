@@ -45,6 +45,8 @@ void ZC_generateCompressionFactorReport();
 
 void ZC_generateRateDistortionReport();
 
+void ZC_generateRateCorrelationReport();
+
 StringLine* ZC_generateStaticAnalysisFigures(char* metricType, StringElem* selectedErrorBounds, int selectedErrorBoundCount);
 
 void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);

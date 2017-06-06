@@ -393,6 +393,45 @@ void ZC_generateRateDistortionReport()
 	ZC_freeLines(texLines);	
 }
 
+StringLine* ZC_generateRateCorrelationFigure()
+{
+	int i, varCount;
+	char* varFiles[ZC_BUFS];
+	char* fileName;
+	char rateDisFile[ZC_BUFS];
+
+	for(i=0;i<ZC_BUFS;i++)
+		varFiles[i] = (char*)malloc(sizeof(char)*500);
+	ZC_getFileNames("dataProperties", "prop", &varCount, varFiles);
+	for(i = 0;i<varCount;i++)
+	{
+		fileName = rmFileExtension(varFiles[i]);
+		strcpy(varFiles[i], fileName);
+		free(fileName);
+	}
+	StringLine* header = ZC_generateComparisonFigTexLines(varCount, varFiles,
+	"compareCompressors", "rate-corr", "Rate Correlation (Correlation vs. Bit-rate)");
+
+	for(i=0;i<varCount;i++)
+		free(varFiles[i]);
+
+	return header;
+}
+
+void ZC_generateRateCorrelationReport()
+{
+	int lineCount;
+	char rateDisTexFile[ZC_BUFS];
+	sprintf(rateDisTexFile, "report/tex/resultsTex/rateCorrelation.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", rateDisTexFile);
+	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
+	StringLine* figLines =  ZC_generateRateCorrelationFigure();
+	int lineNumInsted = ZC_insertLines("%plot rate correlation\n", texLines, figLines);
+	ZC_writeLines(texLines, rateDisTexFile);
+	ZC_freeLines(texLines);
+}
+
 StringLine* ZC_generateCompressionFactorFigure()
 {
 	char* cases[ZC_BUFS];
@@ -514,7 +553,8 @@ void ZC_generateOverallReport(char* dataSetName)
 	ZC_generateCompressionRateReport();
 	ZC_generateDecompressionRateReport();
 	ZC_generatePSNRReport();
-	ZC_generateRateDistortionReport();		
+	ZC_generateRateDistortionReport();
+	ZC_generateRateCorrelationReport();
 
 	int i, n = 0, selectedErrorBoundCount;
 	char* caseFiles[ZC_BUFS_LONG];
