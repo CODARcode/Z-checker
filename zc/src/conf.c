@@ -157,7 +157,9 @@ int ZC_ReadConf() {
 	nrmseFlag = (int)iniparser_getint(ini, "COMPARE:nrmse", 0);
 	snrFlag = (int)iniparser_getint(ini, "COMPARE:snr", 0);
 	psnrFlag = (int)iniparser_getint(ini, "COMPARE:psnr", 0);
+
 	valErrCorrFlag = (int)iniparser_getint(ini, "COMPARE:valErrCorr", 0);
+
 	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
 			
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)

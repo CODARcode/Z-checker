@@ -265,6 +265,7 @@ void ZC_plotComparisonCases();
 char** getCompResKeyList(char* var, int* count);
 char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineNum);
 void ZC_plotRateDistortion();
 
 void ZC_plotAutoCorr_CompressError();

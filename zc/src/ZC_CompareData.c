@@ -19,7 +19,7 @@ void freeCompareResult(ZC_CompareData* compareData)
 
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 int compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
-double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double pearsonCorr, 
+double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF)
 {
 	ZC_CompareData* this = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
@@ -44,6 +44,7 @@ double* autoCorrAbsErr, double* absErrPDF)
 	this->nrmse = nrmse;
 	this->psnr = psnr;
 	this->snr = snr;
+	this->valErrCorr = valErrCorr;
 	this->pearsonCorr = pearsonCorr;
 	this->autoCorrAbsErr = autoCorrAbsErr;
 	this->absErrPDF = absErrPDF;
@@ -1048,6 +1049,9 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	double nrmse = (double)iniparser_getdouble(ini, "COMPARE:nrmse", 0);
 	double psnr = (double)iniparser_getdouble(ini, "COMPARE:psnr", 0);
 	double snr = (double)iniparser_getdouble(ini, "COMPARE:snr", 0);
+
+	double valErrCorr = (double)iniparser_getdouble(ini, "COMPARE:valErrCorr", 0);
+
 	double pearsonCorr = (double)iniparser_getdouble(ini, "COMPARE:pearsonCorr", 0); 
 	
 	//TODO: Read zfp-test2.autocorr for filling in sol-var.autocorr such as zfp-test2.autocorr
@@ -1059,7 +1063,7 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	ZC_CompareData* compareResult = ZC_constructCompareResult(var, 
 	compressTime, compressRate, compressRatio, rate, 
 	compressSize, decompressTime, decompressRate, minAbsErr, avgAbsErr, maxAbsErr, minRelErr, avgRelErr, maxRelErr, 
-	rmse, nrmse, psnr, snr, pearsonCorr, autoCorrAbsErr, absErrPDF);
+	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF);
 	
 	iniparser_freedict(ini);
 	return compareResult;

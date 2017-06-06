@@ -624,7 +624,27 @@ void ZC_plotRateDistortion()
 			
 			for(j=0;j<count+1;j++)
 				if(dataLines_snr[j]!=NULL) free(dataLines_snr[j]);						
-		}		
+		}
+
+		char** dataLines_valErrCorr = extractRateCorrelation(count, cmpResList, &validLineNum);
+		if(dataLines_valErrCorr!=NULL&&validLineNum>0)
+		{
+			char fileName[ZC_BUFS];
+			sprintf(fileName, "rate-corr_%s.txt", variables[i]);
+			ZC_writeStrings(count+1, dataLines_valErrCorr, fileName);
+
+			//TODO: generate the GNUPLOT script.
+			sprintf(fileName, "rate-corr_%s", variables[i]);
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Correlation");
+			sprintf(fileName, "rate-corr_%s.p", variables[i]);
+			ZC_writeStrings(24, scriptLines, fileName);
+			char cmd[ZC_BUFS];
+			sprintf(cmd, "gnuplot %s", fileName);
+			system(cmd);
+
+			for(j=0;j<count+1;j++)
+				if(dataLines_snr[j]!=NULL) free(dataLines_snr[j]);
+		}
 		
 		free(cmpResList);
 	}
@@ -797,6 +817,85 @@ char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLi
 			dataLines[q++] = l;
 		}
 		
+		for(j=0;j<totalCount;j++)
+			if(rdList[j]!=NULL) free(rdList[j]);
+	}
+
+	*validLineNum = t;
+
+	free(rdList);
+	return dataLines;
+}
+
+char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineNum)
+{
+	int i, j, p, k, q = 1, t = 0;
+	char stringBuffer[ZC_BUFS_LONG];
+
+	if(totalCount==0)
+		return NULL;
+	//construct the dataLines and the field line
+	char** dataLines = (char**)malloc((totalCount+1)*sizeof(char*)); //including field file
+	memset(dataLines, 0, (totalCount+1)*sizeof(char*));
+
+	dataLines[0] = (char*)malloc(ZC_BUFS);
+
+	sprintf(dataLines[0], "ratecorrelation");
+	for(i=0;i<compressors_count;i++)
+	{
+		sprintf(stringBuffer, "%s %s", dataLines[0], compressors[i]);
+		strcpy(dataLines[0], stringBuffer);
+	}
+	sprintf(stringBuffer, "%s\n", dataLines[0]);
+	strcpy(dataLines[0], stringBuffer);
+
+	RateDistElem* rdList = (RateDistElem*)malloc(totalCount*sizeof(RateDistElem));
+
+	//start checking compressors one by one, constructing the rate distortion curves.
+	for(i=0;i<compressors_count;i++)
+	{
+		memset(rdList, 0, totalCount*sizeof(RateDistElem));
+		p = 0;
+		char* compressorName = compressors[i];
+		//TODO: scan ecCompareDataTable and select matched records
+		for(j=0;j<totalCount;j++)
+		{
+			char* key = cmpResList[j];
+			int ck = checkStartsWith(key, compressorName);
+			if(ck)
+			{
+				ZC_CompareData* compareResult = ht_get(ecCompareDataTable, key);
+				RateDistElem e = (RateDistElem)malloc(sizeof(struct RateDistElem_t));
+				e->rate = compareResult->rate;
+				e->psnr = compareResult->valErrCorr;
+				e->maxAbsErr = compareResult->maxAbsErr;
+				e->compressRate = compareResult->compressRate;
+				rdList[p++] = e;
+			}
+		}
+
+		t += p;
+		ZC_quick_sort(rdList, 0, p-1);
+
+		for(j=0;j<p;j++)
+		{
+			RateDistElem e = rdList[j];
+			char* l = (char*)malloc(ZC_BUFS);
+			sprintf(l, "%f", e->rate);
+			for(k=0;k<compressors_count;k++)
+			{
+				if(k==i && e->maxAbsErr!=0)
+				{
+					sprintf(stringBuffer, "%s %f", l, e->psnr);
+					strcpy(l, stringBuffer);
+				}
+				else
+					strcat(l, " -");
+			}
+			strcat(l, "\n");
+			dataLines[q++] = l;
+		}
+
 		for(j=0;j<totalCount;j++)
 			if(rdList[j]!=NULL) free(rdList[j]);
 	}
