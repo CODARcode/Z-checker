@@ -324,7 +324,10 @@ int r5, int r4, int r3, int r2, int r1)
     	double std1 = sqrt(sum1/numOfElem);
     	double std2 = sqrt(sum2/numOfElem);
     	double ee = prodSum/numOfElem;
-    	double pearsonCorr = ee/std1/std2;
+    	double pearsonCorr = 0;
+
+    	if (std1*std2 != 0)
+    		pearsonCorr = ee/std1/std2;
 
     	compareResult->pearsonCorr = pearsonCorr;
 	}
@@ -366,7 +369,10 @@ int r5, int r4, int r3, int r2, int r1)
     	double std1 = sqrt(sum1/numOfElem);
     	double stdDiff = sqrt(sum2/numOfElem);
     	double ee = prodSum/numOfElem;
-    	double valErrCorr = ee/std1/stdDiff;
+    	double valErrCorr = 0;
+
+    	if (std1*stdDiff != 0)
+    		valErrCorr = ee/std1/stdDiff;
 
 		compareResult->valErrCorr = valErrCorr;
 	}
@@ -649,7 +655,10 @@ int r5, int r4, int r3, int r2, int r1)
     	double std1 = sqrt(sum1/numOfElem);
     	double std2 = sqrt(sum2/numOfElem);
     	double ee = prodSum/numOfElem;
-    	double pearsonCorr = ee/std1/std2;
+    	double pearsonCorr = 0;
+
+    	if (std1*std2 != 0)
+    		pearsonCorr = ee/std1/std2;
 
     	compareResult->pearsonCorr = pearsonCorr;
 	}
@@ -691,7 +700,10 @@ int r5, int r4, int r3, int r2, int r1)
     	double std1 = sqrt(sum1/numOfElem);
     	double stdDiff = sqrt(sum2/numOfElem);
     	double ee = prodSum/numOfElem;
-    	double valErrCorr = ee/std1/stdDiff;
+      	double valErrCorr = 0;
+
+    	if (std1*stdDiff != 0)
+    		valErrCorr = ee/std1/stdDiff;
 
 		compareResult->valErrCorr = valErrCorr;
 	}
