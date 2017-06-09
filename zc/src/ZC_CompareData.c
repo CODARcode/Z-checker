@@ -367,7 +367,7 @@ int r5, int r4, int r3, int r2, int r1)
     	}
 
     	double std1 = sqrt(sum1/numOfElem);
-    	double stdDiff = sqrt(sum2/numOfElem);
+    	double stdDiff = sqrt(sumDiff/numOfElem);
     	double ee = prodSum/numOfElem;
     	double valErrCorr = 0;
 
@@ -698,7 +698,7 @@ int r5, int r4, int r3, int r2, int r1)
     	}
 
     	double std1 = sqrt(sum1/numOfElem);
-    	double stdDiff = sqrt(sum2/numOfElem);
+    	double stdDiff = sqrt(sumDiff/numOfElem);
     	double ee = prodSum/numOfElem;
       	double valErrCorr = 0;
 
