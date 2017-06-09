@@ -29,10 +29,10 @@ cd ../SZ/example
 #generate results
 
 cd ../../Z-checker/examples/
-./compareDataSets zc.config hf $varName "${originaldataFile}" "${originaldataFile}.hf.out" $dim1 $dim2 $dim3 $dim4
+./compareDataSets zc.config "hf-prec-cvter" $varName "${originaldataFile}" "${originaldataFile}.hf.out" $dim1 $dim2 $dim3 $dim4
 
-./compareDataSets zc.config intrpl $varName "${originaldataFile}" "${originaldataFile}.intrpl.out" $dim1 $dim2 $dim3 $dim4
+./compareDataSets zc.config "dec-interp-cmprsor" $varName "${originaldataFile}" "${originaldataFile}.intrpl.out" $dim1 $dim2 $dim3 $dim4
 
 ./compareDataSets zc.config sz $varName "${originaldataFile}" "${originaldataFile}.sz.out" $dim1 $dim2 $dim3 $dim4
 
-./compareDataSets zc.config user_compressor $varName "${originaldataFile}" "$decompresseddataFile" $dim1 $dim2 $dim3 $dim4
+./compareDataSets zc.config user-compressor $varName "${originaldataFile}" "$decompresseddataFile" $dim1 $dim2 $dim3 $dim4
