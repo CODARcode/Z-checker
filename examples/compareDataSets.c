@@ -9,10 +9,10 @@ int main(int argc, char * argv[])
     char oriFilePath[640], decFilePath[640];
     char *cfgFile, *compressionCase, *varName;
 
-    if(argc < 8)
+    if(argc < 7)
     {
-        printf("Usage: compareDataSets [config_file] [compressionCase] [oriDataFilePath] [decDataFilePath] [dimension sizes...]\n");
-        printf("Example: compareDataSets zc.config SZ testfloat_8_8_128.dat testfloat_8_8_128.dat.out 8 8 128\n");
+        printf("Usage: compareDataSets [config_file] [compressionCase] [varName] [oriDataFilePath] [decDataFilePath] [dimension sizes...]\n");
+        printf("Example: compareDataSets zc.config SZ 8_8_128 testfloat_8_8_128.dat testfloat_8_8_128.dat.out 8 8 128\n");
         exit(0);
     }
 
