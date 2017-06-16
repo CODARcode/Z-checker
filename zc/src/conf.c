@@ -254,7 +254,7 @@ int ZC_ReadConf() {
 		char* buf = iniparser_getstring(ini, "PLOT:comparisonCases", NULL);
 		comparisonCases = (char*)malloc(strlen(buf)+1);
 		sprintf(comparisonCases, "%s", buf);
-		
+
 		cmpResultFileExtension = iniparser_getstring(ini, "PLOT:cmpResultFileExtension", NULL);	
 		
 		ecCompareDataTable = ht_create(HASHTABLE_SIZE);
@@ -409,7 +409,7 @@ int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* new
 		trim(attr);
 		if(strcmp(attr, targetAttribute)==0)
 		{
-			sprintf(p->next->str, "%s = %s", targetAttribute, newStringValue);
+			sprintf(p->next->str, "%s = %s\n", targetAttribute, newStringValue);
 			return ZC_SCES;
 		}
 		p=p->next;
