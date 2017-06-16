@@ -29,6 +29,7 @@ mkdir $caseName
 cp examples/*.sh $caseName
 cp examples/modifyZCConfig $caseName
 cp examples/analyzeDataProperty $caseName
+cp examples/compareDataSets $caseName
 cp examples/generateGNUPlot $caseName
 cp examples/generateReport $caseName
 cp examples/testRscript* $caseName
