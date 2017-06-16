@@ -26,8 +26,8 @@ if [ $datatype != "-f" ] && [ $datatype != "-d" ]; then
   exit
 fi
 
-echo ./DeciIntrler 5 ${datatype} ${originaldataFile} ${dim1} $dim2 $dim3 $dim4
-./DeciIntrler 5 ${datatype} ${originaldataFile} ${dim1} $dim2 $dim3 $dim4
+echo ./DeciIntrler 4 ${datatype} ${originaldataFile} ${dim1} $dim2 $dim3 $dim4
+./DeciIntrler 4 ${datatype} ${originaldataFile} ${dim1} $dim2 $dim3 $dim4
 
 echo ./HfPrecCvter ${datatype}  $originaldataFile $dim1 $dim2 $dim3 $dim4
 ./HfPrecCvter ${datatype}  $originaldataFile $dim1 $dim2 $dim3 $dim4
