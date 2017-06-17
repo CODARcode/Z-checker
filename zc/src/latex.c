@@ -117,7 +117,7 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	sprintf(tmpLine, "\\label{fig:%s}\n", figLabel);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	line = createLine("\\end{figure}\n"); p = appendOneLine(p, line);	
-	line = createLine("\\clearpage\n"); p = appendOneLine(p, line);
+//	line = createLine("\\clearpage\n"); p = appendOneLine(p, line);
 	
 	return header;
 }
