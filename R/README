@@ -1,0 +1,55 @@
+# The plug-in code to enable Z-checker to call R-script function
+
+ (C) 2017 by Mathematics and Computer Science (MCS), Argonne National Laboratory.
+
+See COPYRIGHT in top-level directory.
+
+Authors: Sheng Di
+
+## Installation method
+1. cd [Z-checker-package]/R;
+
+2. Set R_BASE in Makefile based on the installation path of R on your machine, shown as follows: 
+R_BASE = [installation path of R]
+Hint: you could run the command "which Rscript" to figure out where it is.
+For example, if it is /usr/lib64/R, then "which Rscript" would show "/usr/lib64/R/bin/Rscript", then the setting is like R_BASE = /usr/lib64/R.
+
+3. make
+
+Now, you are ready to call R-script from Z-checker.
+
+## Quick Start
+
+After compilation, you'll find the executables in R/test directory.
+
+1. zccallr is the executable allowing to perform the calling of script with different options.
+Details are below:
+
+Usage: zccallr <options>
+Options:
+* Rscript file:
+	-s <script_file>: specify the path of the R_script_file
+	-c <function_name>: specify the function
+* data type:
+	-i : integer data (int type)
+	-f : single precision (float type)
+	-d : double precision (double type)
+* input data files:
+	-e <endian_type>: endian type of the binary data in input files: 0(little-endian); 1(big-endian)
+	-A <first data file> : first data file such as original data file
+	-B <second data file> : second data file such as decompressed data file
+* output type of result file: 
+	-r : print the result on the screen.
+	-b : analysis result stored in binary format
+	-t : analysis result stored in text format
+	-o <output file path> : the path of the output file.
+* dimensions: 
+	-1 <nx> : dimension for 1D data such as data[nx]
+	-2 <nx> <ny> : dimensions for 2D data such as data[ny][nx]
+	-3 <nx> <ny> <nz> : dimensions for 3D data such as data[nz][ny][nx] 
+* examples: 
+	zccallr -s func.R -c add1 -r -f -e 0 -A ../../examples/testdata/x86/testfloat_8_8_128.dat -3 8 8 128
+	zccallr -s func.R -c computeErr -r -f -e 0 -A ../../examples/testdata/x86/testfloat_8_8_128.dat -B ../../examples/testdata/x86/testfloat_8_8_128.dat.sz.out -3 8 8 128
+
+2. In addition to zccallr, you can also test the calling of R-script functions using three executables: test_ZC_callR_x_1d, test_ZC_callR_x_2d, and test_ZC_callR_x_3d. 
+You can run test.sh for simplicity. It executes the three executables and performs a small test by calling the function add1 in the script func.R.

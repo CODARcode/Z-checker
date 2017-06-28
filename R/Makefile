@@ -1,0 +1,47 @@
+#######################################################
+#
+# (C) 2016 by Mathematics and Computer Science (MCS), Argonne National Laboratory.
+#       See COPYRIGHT in top-level directory.
+# Author: Sheng Di
+#######################################################
+
+##   COMPILERS
+CC	= gcc
+R_BASE = [Your installation path of R] (e.g., /usr/lib64/R); hint: you could run the command "which Rscript" to check where it is.
+#R_BASE = /usr/lib64/R
+
+CFLAGS = -g -I$(R_BASE)/include
+LFLAGS = -L$(R_BASE)/lib -lR -lRblas
+SO_FLAGS = -shared
+ZC_RFLAGS = -I./src
+ZC_FLAGS = -I../zc/include ../zc/.libs/libzc.a -lm
+
+OBJS = src/ZC_callR.o
+
+all:	 	test/test_ZC_callR_x_1d test/test_ZC_callR_x_2d test/test_ZC_callR_x_3d test/zccallr libzccallr.so.0.1 libzccallr.a
+
+src/%.o:	src/%.c
+	$(CC) $(CFLAGS) $(LFLAGS) -fPIC -c $<
+	mv *.o src/
+
+libzccallr.a:	$(OBJS)
+	ar crvs $@ $^
+
+libzccallr.so.0.1:	$(OBJS)
+	$(CC) $(SO_FLAGS) -Wl,-soname,libzccallr.so.0.1 -o $@ $^ -lc
+	ln -s libzccallr.so.0.1 libzccallr.so
+
+test/test_ZC_callR_x_1d: libzccallr.a test/test_ZC_callR_x_1d.c
+	$(CC) -o test/test_ZC_callR_x_1d test/test_ZC_callR_x_1d.c libzccallr.a $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS)
+
+test/test_ZC_callR_x_2d: libzccallr.a test/test_ZC_callR_x_2d.c
+	$(CC) -o test/test_ZC_callR_x_2d test/test_ZC_callR_x_2d.c libzccallr.a $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS)
+
+test/test_ZC_callR_x_3d: libzccallr.a test/test_ZC_callR_x_3d.c
+	$(CC) -o test/test_ZC_callR_x_3d test/test_ZC_callR_x_3d.c libzccallr.a $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS)
+
+test/zccallr:	libzccallr.a test/zccallr.c
+	$(CC) -g -o test/zccallr test/zccallr.c libzccallr.a $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS) $(ZC_FLAGS)
+
+clean: 
+	rm -rf src/*.o *.a *.gch libzccallr.so* test/test_ZC_callR_x_*d test/zccallr
