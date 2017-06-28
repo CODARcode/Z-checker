@@ -6,7 +6,10 @@ See COPYRIGHT in top-level directory.
 
 Authors: Sheng Di
 
-## Installation method
+## Installation
+
+- NOTICE: Dependency: You need to install Z-checker first, before installing the ZC_callR module. 
+
 1. cd [Z-checker-package]/R;
 
 2. Set R_BASE in Makefile based on the installation path of R on your machine, shown as follows: 
