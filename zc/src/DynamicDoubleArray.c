@@ -12,7 +12,7 @@
 #include <string.h>
 #include "DynamicDoubleArray.h"
 
-void new_DDA(DynamicDoubleArray **dda, int cap) {
+void new_DDA(DynamicDoubleArray **dda, size_t cap) {
 		*dda = (DynamicDoubleArray *)malloc(sizeof(DynamicDoubleArray));
         (*dda)->size = 0;
         (*dda)->capacity = cap;
@@ -35,7 +35,7 @@ void free_DDA(DynamicDoubleArray *dda)
 	free(dda);
 }
 
-double getDDA_Data(DynamicDoubleArray *dda, int pos)
+double getDDA_Data(DynamicDoubleArray *dda, size_t pos)
 {
 	if(pos>=dda->size)
 	{
@@ -45,7 +45,7 @@ double getDDA_Data(DynamicDoubleArray *dda, int pos)
 	return dda->array[pos];
 }
 
-void addDDA_Data(DynamicDoubleArray *dda, int value)
+void addDDA_Data(DynamicDoubleArray *dda, double value)
 {
 	if(dda->size==dda->capacity)
 	{

@@ -14,18 +14,20 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
+
 typedef struct DynamicDoubleArray
 {	
 	double* array;
-	int size;
-	int capacity;
+	size_t size;
+	double capacity;
 } DynamicDoubleArray;
 
-void new_DDA(DynamicDoubleArray **dda, int cap);
+void new_DDA(DynamicDoubleArray **dda, size_t cap);
 void convertDDAtoDoubles(DynamicDoubleArray *dba, double **data);
 void free_DDA(DynamicDoubleArray *dda);
-double getDDA_Data(DynamicDoubleArray *dda, int pos);
-void addDDA_Data(DynamicDoubleArray *dda, int value);
+double getDDA_Data(DynamicDoubleArray *dda, size_t pos);
+void addDDA_Data(DynamicDoubleArray *dda, double value);
 
 #ifdef __cplusplus
 }

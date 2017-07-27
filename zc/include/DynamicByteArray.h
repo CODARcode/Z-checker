@@ -14,19 +14,20 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
 typedef struct DynamicByteArray
 {	
 	unsigned char* array;
-	int size;
-	int capacity;
+	size_t size;
+	size_t capacity;
 } DynamicByteArray;
 
-void new_DBA(DynamicByteArray **dba, int cap);
+void new_DBA(DynamicByteArray **dba, size_t cap);
 void convertDBAtoBytes(DynamicByteArray *dba, unsigned char** bytes);
 void free_DBA(DynamicByteArray *dba);
-int getDBA_Data(DynamicByteArray *dba, int pos);
+unsigned char getDBA_Data(DynamicByteArray *dba, size_t pos);
 void addDBA_Data(DynamicByteArray *dba, unsigned char value);
-void memcpyDBA_Data(DynamicByteArray *dba, unsigned char* data, int length);
+void memcpyDBA_Data(DynamicByteArray *dba, unsigned char* data, size_t length);
 
 #ifdef __cplusplus
 }
