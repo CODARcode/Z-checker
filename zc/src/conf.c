@@ -8,6 +8,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "zc.h"
 #include "iniparser.h"
@@ -246,7 +247,7 @@ int ZC_ReadConf() {
 		if(propVarCount==0)
 		{
 			printf("Error: No property values are detected.\nPlease run analyzeDataProperty.sh (i.e., analyzeDataProperty.c) to generate the data perperties first.\n");
-			exit;
+			exit(0);
 		}
 
 		//and then load comparison results....

@@ -350,6 +350,7 @@ int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr)
 {
 	ZC_ReplaceStr(sSrc, sMatchStr, "!");
 	ZC_ReplaceStr(sSrc, "!", sReplaceStr);	
+	return 0;
 }
 
 char* strcat_new(char *s1, char *s2)
