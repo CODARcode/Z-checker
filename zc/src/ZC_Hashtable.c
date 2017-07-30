@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
+#include "ZC_Hashtable.h"
 #include "zc.h"
 
 hashtable_t *ecPropertyTable = NULL;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <zc.h>
+#include "ZC_quicksort.h"
+#include "zc.h"
 
 int ZC_divide(RateDistElem* list,int start,int end)
 {

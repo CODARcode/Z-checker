@@ -33,6 +33,9 @@ typedef struct ZC_DataSet
 //extern ZC_DataSet* zc_datasets;
 //extern int zc_dataset_count;
 
+ZC_DataSet* readHDF5File(char* hdf5File, int* zc_dataset_count);
+char*[] getVarListFromHDF5File();
+
 #ifdef __cplusplus
 }
 #endif

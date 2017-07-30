@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "latex.h"
+#include "ZC_latex.h"
 #include "ZC_ReportGenerator.h"
 #include "ZC_util.h"
-#include "zc.h"
 #include "ZC_rw.h"
+#include "zc.h"
 
 StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 {

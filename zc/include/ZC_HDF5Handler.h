@@ -16,8 +16,7 @@
 extern "C" {
 #endif
 
-
-
+ZC_DataSet* read();
 
 #ifdef __cplusplus
 }

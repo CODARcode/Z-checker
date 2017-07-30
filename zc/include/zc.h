@@ -26,7 +26,10 @@
 #include "ZC_util.h"
 #include "ZC_rw.h"
 #include "ZC_ReportGenerator.h"
-
+#include "ZC_gnuplot.h"
+#include "ZC_latex.h"
+#include "ZC_ByteToolkit.h"
+#include "ZC_conf.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -57,7 +60,7 @@ extern "C" {
 #define ZC_VERNUM 0x0010
 #define ZC_VER_MAJOR 0
 #define ZC_VER_MINOR 1
-#define ZC_VER_BUILD 0
+#define ZC_VER_BUILD 1
 #define ZC_VER_REVISION 0
 
 #define PDF_INTERVALS 2000

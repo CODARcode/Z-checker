@@ -11,7 +11,7 @@
 #define _ReportGenerator_H
 
 #include "ZC_rw.h"
-#include "latex.h"
+#include "ZC_latex.h"
 
 #ifdef __cplusplus
 extern "C" {

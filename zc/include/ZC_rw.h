@@ -11,6 +11,7 @@
 #define _ZC_IO_H
 
 #include <stdio.h>
+#include "ZC_rw.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'

@@ -10,6 +10,8 @@
 #ifndef _ZC_Hashtable_H
 #define _ZC_Hashtable_H
 
+#include "zc.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
