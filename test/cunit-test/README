@@ -1,4 +1,4 @@
-## Unit Testing Suite for ZC
+## Unit Testing Suite for Z-checker
 # Author: Sheng Di
 
 Use Makefile.bk to do the compilation, such as "make -f Makefile.bk". 

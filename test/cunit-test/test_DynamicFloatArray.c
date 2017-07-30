@@ -65,7 +65,7 @@ int main ( void )
       return CU_get_error();
 
    /* add a suite to the registry */
-   pSuite = CU_add_suite( "test_conf_suite", init_suite, clean_suite );
+   pSuite = CU_add_suite( "test_DynamicFloatArray_suite", init_suite, clean_suite );
    if ( NULL == pSuite ) {
       CU_cleanup_registry();
       return CU_get_error();

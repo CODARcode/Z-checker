@@ -17,7 +17,7 @@ CUnit_FLAG 	= -I$(CUnit_HOME)/include $(CUnit_HOME)/lib/libcunit.a
 cunit_patch	= CUnit_Array.o
 
 ##   TARGETS
-all: 		test_conf test_DynamicIntArray test_DynamicByteArray test_DynamicFloatArray test_DynamicDoubleArray test_ByteToolkit
+all: 		test_quicksort test_util test_conf test_DynamicIntArray test_DynamicByteArray test_DynamicFloatArray test_DynamicDoubleArray test_ByteToolkit
 
 CUnit_Array.o:	CUnit_Array.c CUnit_Array.h
 	$(CC) -Wall -c CUnit_Array.c -I$(CUnit_HOME)/include
@@ -43,5 +43,11 @@ test_DynamicDoubleArray:	$(cunit_patch) test_DynamicDoubleArray.c
 test_rw:	$(cunit_patch) test_rw.c
 	${CC} -Wall -g -o test_rw test_rw.c $(cunit_patch) $(CUnit_FLAG) $(ZCFLAG)
 
+test_util:	$(cunit_patch) test_util.c
+	${CC} -Wall -g -o test_util test_util.c $(cunit_patch) $(CUnit_FLAG) $(ZCFLAG)
+
+test_quicksort:	$(cunit_patch) test_quicksort.c
+	${CC} -Wall -g -o test_quicksort test_quicksort.c $(cunit_patch) $(CUnit_FLAG) $(ZCFLAG)
+
 clean:
-	rm -rf *.o test_conf test_ByteToolkit test_dataCompression test_DynamicIntArray test_DynamicByteArray test_DynamicFloatArray test_DynamicDoubleArray test_rw test_Huffman test_TypeManager
+	rm -rf *.o test_quicksort test_util test_conf test_ByteToolkit test_dataCompression test_DynamicIntArray test_DynamicByteArray test_DynamicFloatArray test_DynamicDoubleArray test_rw test_Huffman test_TypeManager
