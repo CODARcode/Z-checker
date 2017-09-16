@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ZC_util.h"
 #include "ZC_conf.h"
 #include "zc.h"
 #include "iniparser.h"
@@ -178,11 +179,11 @@ int ZC_ReadConf() {
 		//TODO: If not, create one dir named dataProperties, and softlinks will be created under it later.		
 		if(access("dataProperties", F_OK)!=0)
 		{
-			system("mkdir dataProperties");
+			system("mkdir -p dataProperties");
 		}
 		if(access("compressionResults", F_OK)!=0)
 		{
-			system("mkdir compressionResults");
+			system("mkdir -p compressionResults");
 		}
 		char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS], linkCmd[ZC_BUFS_LONG];
 		char* propertyExtension = iniparser_getstring(ini, "PLOT:propertyExtension", NULL);		
@@ -363,6 +364,7 @@ int ZC_ReadConf() {
 		}
 		else
 			reportTemplateDir = NULL;
+		//printf("=============reportTemplateDir=%s\n", reportTemplateDir);
 	}																																																																																																													
 	
 	ZC_versionNumber[0] = ZC_VER_MAJOR; //0

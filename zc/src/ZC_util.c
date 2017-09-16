@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "string.h"
 #include "zc.h"
 
 char* createLine(char* str)
@@ -363,6 +364,47 @@ char* strcat_new(char *s1, char *s2)
     strcat(result, s2);
 
     return result;
+}
+
+void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* compressorName, char* errBound)
+{
+	int i = 0, j = 0, mark = 0, errBoundIndex = 0;
+	//check if the compressorList contains compressorName
+	for(i=0;i<*num;i++)
+	{
+		if(strcmp(compressorList[i].compressorName, compressorName)==0)
+		{
+			mark = 1;
+			break;
+		}
+	}
+	if(mark==0)
+	{
+		i = *num;		
+		strcpy(compressorList[i].compressorName, compressorName);
+		compressorList[i].allErrBounds = (StringElem*)malloc(sizeof(StringElem)*ERRBOUND_MAX_LEN);
+		compressorList[i].selErrBounds = (StringElem*)malloc(sizeof(StringElem)*ERRBOUND_MAX_LEN);		
+		(*num)++;
+	}
+	//add errBound to the compressorElement if missing.
+	mark = 0;
+	for(j=0;j < compressorList[i].allErrBoundCount;j++)
+	{
+		if(strcmp(compressorList[i].allErrBounds[j]->str, errBound)==0)
+		{
+			mark = 1;
+			break;
+		}
+	}
+	if(mark==0)
+	{
+		errBoundIndex = compressorList[i].allErrBoundCount;
+		compressorList[i].allErrBounds[errBoundIndex] = (StringElem)malloc(sizeof(struct StringElem_t));
+		compressorList[i].allErrBounds[errBoundIndex]->str = (char*)malloc(sizeof(char)*ERRBOUND_STR_BUFSIZE);
+		strcpy(compressorList[i].allErrBounds[errBoundIndex]->str, errBound);
+		compressorList[i].allErrBounds[errBoundIndex]->value = atof(errBound);		
+		compressorList[i].allErrBoundCount ++;		
+	}
 }
 
 void checkAndAddStringToList(char** strList, int* num, char* targetStr)

@@ -2,14 +2,14 @@
  * This test function is deprated. See Z-checker/R/test/zccallr.c instead. 
  *
  * */
-
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include "zc.h"
 int main()
 {
 	int count, i , j;
-	char* cmd = "cat R2.txt"; //this line is to simulate the R command with vector as output
+	char* cmd = "./compareDataSets.sh -f testdata/x86/testfloat_8_8_128.dat testdata/x86/testfloat_8_8_128.dat.sz.out 8 8 128"; //this line is to simulate the R command with vector as output
 	float* data;
 	int status = ZC_executeCmd_RfloatVector(cmd, &count, &data);
 	if(status!=ZC_SCES)

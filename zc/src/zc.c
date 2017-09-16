@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <math.h>
+#include "ZC_util.h"
 #include "zc.h"
 #include "ZC_rw.h"
 #include "ZC_Hashtable.h"
@@ -92,9 +93,11 @@ char* comparisonCases;
 int numOfErrorBoundCases;
 
 int allCompressorCount = 0;
-char* allCompressors[20];
-int allErrorBoundCount = 0;
-char* allErrorBounds[20];
+CmprsorErrBound allCompressors[CMPR_MAX_LEN];
+
+//char* allCompressors[20];
+//int allErrorBoundCount = 0;
+//char* allErrorBounds[20];
 int allVarCaseCount = 0;
 char* allVarCases[20];
 
@@ -132,6 +135,7 @@ int ZC_Init(char *configFilePath)
 	if(loadFileResult==ZC_NSCS)
 		exit(0);
 	
+	memset(allCompressors, 0, sizeof(CmprsorErrBound)*20);
 	return ZC_SCES;
 }
 
@@ -1061,5 +1065,16 @@ void ZC_Finalize()
 		ht_freeTable(ecCompareDataTable);
 	if(reportTemplateDir!=NULL)
 		free(reportTemplateDir);
-    return ;
+	//free compressor_errBounds_elements
+	int i =0, j=0;
+	for(i=0;i<allCompressorCount;i++)
+	{
+		for(j=0;j<allCompressors[i].allErrBoundCount;j++)
+		{
+			free(allCompressors[i].allErrBounds[j]->str);//Don't need to free selErrBounds[j] because it's pointing allErrBounds[j]
+			free(allCompressors[i].allErrBounds[j]);
+		}
+		free(allCompressors[i].allErrBounds);
+		free(allCompressors[i].selErrBounds);	
+	}
 }

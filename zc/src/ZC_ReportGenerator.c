@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "ZC_util.h"
 #include "ZC_latex.h"
 #include "ZC_ReportGenerator.h"
-#include "ZC_util.h"
 #include "ZC_rw.h"
 #include "zc.h"
 
@@ -110,50 +110,68 @@ void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCou
         varCase[len-8]='\0';
         varName = varCase;
         
-		checkAndAddStringToList(allCompressors, &allCompressorCount, compressor);//e.g., compressor=sz
-		checkAndAddStringToList(allErrorBounds, &allErrorBoundCount, errBound); //e.g., errBound=1E-3
+		//checkAndAddStringToList(allCompressors, &allCompressorCount, compressor);//e.g., compressor=sz
+		//checkAndAddStringToList(allErrorBounds, &allErrorBoundCount, errBound); //e.g., errBound=1E-3
+		
+		checkAndAddCmprorToList(allCompressors, &allCompressorCount, compressor, errBound);
 		checkAndAddStringToList(allVarCases, &allVarCaseCount, varName); //e.g., varName=FLDSC_1_1800_3600
 	}
 }
 
-void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int *selectedErrorBoundCount)
+
+void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor)
 {
+	StringElem* allErrBounds = compressor->allErrBounds;
+	int allErrBoundCount = compressor->allErrBoundCount;
+	StringElem* selectedErrBounds = compressor->selErrBounds;
+	
 	int errorBoundInterval = 0, i, j;
 	int errBoundCount = 0;
 	StringElem sortedErrorBounds[ZC_BUFS];
-	for(i=0;i<ZC_BUFS;i++)
+	for(i=0;i<ERRBOUND_MAX_LEN;i++)
 		sortedErrorBounds[i] = (StringElem)malloc(sizeof(struct StringElem_t));
 	//select error bounds based on errorBoundCases setting
-	if(allErrorBoundCount%numOfErrorBoundCases==0)
-		errorBoundInterval = allErrorBoundCount/numOfErrorBoundCases;
+	if(allErrBoundCount%numOfErrorBoundCases==0)
+		errorBoundInterval = allErrBoundCount/numOfErrorBoundCases;
 	else
-		errorBoundInterval = allErrorBoundCount/numOfErrorBoundCases+1;
+		errorBoundInterval = allErrBoundCount/numOfErrorBoundCases+1;
 
-	for(i=0;i<allErrorBoundCount;i++)
+	for(i=0;i<allErrBoundCount;i++)
 	{
-		sortedErrorBounds[i]->str = allErrorBounds[i];
-		sortedErrorBounds[i]->value = atof(allErrorBounds[i]);
+		sortedErrorBounds[i]->str = allErrBounds[i]->str;
+		sortedErrorBounds[i]->value = atof(allErrBounds[i]->str);
 	}
 	
 	//sort error bounds
-	ZC_quick_sort2(sortedErrorBounds,0,allErrorBoundCount-1);	
+	ZC_quick_sort2(sortedErrorBounds,0,allErrBoundCount-1);	
 	
-	for(i=0;i<allErrorBoundCount;i++)
+	for(i=0;i<allErrBoundCount;i++)
 	{
 		if(i%errorBoundInterval==0)
 		{
-			selectedErrorBounds[errBoundCount]->str = sortedErrorBounds[i]->str;
-			selectedErrorBounds[errBoundCount]->value = atof(sortedErrorBounds[i]->str);
+			selectedErrBounds[errBoundCount] = (StringElem)malloc(sizeof(struct StringElem_t));
+			selectedErrBounds[errBoundCount]->str = sortedErrorBounds[i]->str;
+			selectedErrBounds[errBoundCount]->value = atof(sortedErrorBounds[i]->str);
 			errBoundCount++;
 		}
 	}
 	
-	for(i=0;i<ZC_BUFS;i++)
+	for(i=0;i<ERRBOUND_MAX_LEN;i++)
 		free(sortedErrorBounds[i]);
 	
-	*selectedErrorBoundCount = errBoundCount;
+	compressor->selErrBoundCount = errBoundCount;
 	//no need to sort varCases, because it's fine as long as a particular order of 
 	//presenting all varCases is chosen and it's consistent.
+}
+
+void ZC_constructSortedSelectedErrorBounds4CmprsEelments(CmprsorErrBound *allCompressors, int allCompressorCount)
+{
+	int i = 0;
+	for(i=0;i < allCompressorCount;i++)
+	{
+		ZC_constructSortedSelectedErrorBounds(allCompressors+i);
+		printf("allCompressors[%d].compressorName=%s\n", i, allCompressors[i].compressorName);
+	}
 }
 
 StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNameCount)
@@ -310,13 +328,14 @@ void ZC_generatePSNRReport()
 }
 
 StringLine* ZC_generateStaticAnalysisFigures(char* metricType, 
-StringElem* selectedErrorBounds, int selectedErrorBoundCount)
+CmprsorErrBound *allCompressors, int allCompressorCount)
 {
 	int i, j, k, n = 0;// n: numOfEpsFiles
 	char* selectedEpsFiles[ZC_BUFS];
 	for(i=0;i<ZC_BUFS;i++)
 		selectedEpsFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-	char* selectedErrorBound, *varCase, *compressor;
+	char* selectedErrorBound, *varCase, *compressorName;
+	CmprsorErrBound *compressor;
 	
 	StringLine* totalHeader = createStringLineHeader();
 	StringLine* figHeader;
@@ -325,17 +344,18 @@ StringElem* selectedErrorBounds, int selectedErrorBoundCount)
 	//construct the selected cases (eps files) based on compressors
 	for(i=0;i<allCompressorCount;i++)
 	{		
-		compressor = allCompressors[i];
+		compressor = allCompressors+i;
+		compressorName = compressor->compressorName;
 		//construct figure tex lines
-		for(j=0;j<selectedErrorBoundCount;j++)
+		for(j=0;j<compressor->selErrBoundCount;j++)
 		{
-			selectedErrorBound = selectedErrorBounds[j]->str;
+			selectedErrorBound = compressor->selErrBounds[j]->str;
 			for(k=0;k<allVarCaseCount;k++)
 			{
 				varCase = allVarCases[k];
 				
 				//construct varFiles
-				sprintf(selectedEpsFiles[n++], "%s(%s):%s.dat-%s", compressor, selectedErrorBound, varCase, metricType);
+				sprintf(selectedEpsFiles[n++], "%s(%s):%s.dat-%s", compressorName, selectedErrorBound, varCase, metricType);
 			}
 			//generate figure tex lines	
 			//TODO
@@ -457,7 +477,7 @@ void ZC_generateCompressionFactorReport()
 	ZC_freeLines(texLines);
 }
 
-void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount)
+void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCompressorCount)
 {
 	int lineCount;
 	char texFile[ZC_BUFS];
@@ -469,13 +489,13 @@ void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selec
 	
 	if(absErrPDFFlag)
 	{
-		StringLine* figLines =  ZC_generateStaticAnalysisFigures("dis", selectedErrorBounds, selectedErrorBoundCount);
+		StringLine* figLines =  ZC_generateStaticAnalysisFigures("dis", allCompressors, allCompressorCount);
 		int lineNumInsted = ZC_insertLines("%plot error distribution\n", texLines, figLines);		
 	}
 
 	if(pwrErrPDFFlag)
 	{
-		StringLine* figLines2 = ZC_generateStaticAnalysisFigures("pds", selectedErrorBounds, selectedErrorBoundCount);
+		StringLine* figLines2 = ZC_generateStaticAnalysisFigures("pds", allCompressors, allCompressorCount);
 		int lineNumInsted = ZC_insertLines("%plot point-wise relative error distribution\n", texLines, figLines2);		
 	}
 	if(absErrPDFFlag || pwrErrPDFFlag)
@@ -483,7 +503,7 @@ void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selec
 	ZC_freeLines(texLines);
 }
 
-void ZC_generateErrAutoCorrReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount)
+void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompressorCount)
 {
 	int lineCount;
 	char texFile[ZC_BUFS];
@@ -491,14 +511,14 @@ void ZC_generateErrAutoCorrReport(StringElem* selectedErrorBounds, int selectedE
 	//printf("%s\n", reportTemplateDir);
 	printf("Processing %s\n", texFile);
 	StringLine* texLines = ZC_readLines(texFile, &lineCount);
-	StringLine* figLines =  ZC_generateStaticAnalysisFigures("autocorr", selectedErrorBounds, selectedErrorBoundCount);
+	StringLine* figLines =  ZC_generateStaticAnalysisFigures("autocorr", allCompressors, allCompressorCount);
 	int lineNumInsted = ZC_insertLines("%plot error auto correlation\n", texLines, figLines);
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);	
 }
 
-void ZC_generateSpectrumDistortionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount)
+void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int allCompressorCount)
 {
 	int lineCount;
 	char texFile[ZC_BUFS];
@@ -506,7 +526,7 @@ void ZC_generateSpectrumDistortionReport(StringElem* selectedErrorBounds, int se
 	//printf("%s\n", reportTemplateDir);
 	printf("Processing %s\n", texFile);
 	StringLine* texLines = ZC_readLines(texFile, &lineCount);
-	StringLine* figLines =  ZC_generateStaticAnalysisFigures("fft-amp", selectedErrorBounds, selectedErrorBoundCount);
+	StringLine* figLines =  ZC_generateStaticAnalysisFigures("fft-amp", allCompressors, allCompressorCount);
 	int lineNumInsted = ZC_insertLines("%plot spectrum distortion\n", texLines, figLines);
 	
 	ZC_writeLines(texLines, texFile);
@@ -562,17 +582,14 @@ void ZC_generateOverallReport(char* dataSetName)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
 	ZC_getFileNames("compressionResults", "dis", &n, caseFiles);
 	ZC_extractCompressorAndErrorBounds(caseFiles, n);
-	for(i=0;i<ZC_BUFS;i++)
+	for(i=0;i<ZC_BUFS_LONG;i++)
 		free(caseFiles[i]);
 	
-	StringElem selectedErrorBounds[ZC_BUFS];
-	for(i=0;i<ZC_BUFS;i++)
-		selectedErrorBounds[i] = (StringElem)malloc(sizeof(struct StringElem_t));
-	ZC_constructSortedSelectedErrorBounds(selectedErrorBounds, &selectedErrorBoundCount);
+	ZC_constructSortedSelectedErrorBounds4CmprsEelments(allCompressors, allCompressorCount);	
 	
-	ZC_generateErrDistributionReport(selectedErrorBounds, selectedErrorBoundCount);
-	ZC_generateErrAutoCorrReport(selectedErrorBounds, selectedErrorBoundCount);	
-	ZC_generateSpectrumDistortionReport(selectedErrorBounds, selectedErrorBoundCount);
+	ZC_generateErrDistributionReport(allCompressors, allCompressorCount);
+	ZC_generateErrAutoCorrReport(allCompressors, allCompressorCount);	
+	ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);
 	
 	ZC_updateZCRootTexFile(dataSetName);
 	//sprintf(cmd, "cd report;make clean;make");

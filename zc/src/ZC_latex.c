@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ZC_util.h"
 #include "ZC_latex.h"
 #include "zc.h"
 

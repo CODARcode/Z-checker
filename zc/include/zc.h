@@ -23,9 +23,9 @@
 #include "DynamicFloatArray.h"
 #include "DynamicDoubleArray.h"
 #include "DynamicIntArray.h"
-#include "ZC_util.h"
+//#include "ZC_util.h"
 #include "ZC_rw.h"
-#include "ZC_ReportGenerator.h"
+//#include "ZC_ReportGenerator.h"
 #include "ZC_gnuplot.h"
 #include "ZC_latex.h"
 #include "ZC_ByteToolkit.h"
@@ -103,6 +103,12 @@ extern "C" {
 
 #define GNUPLOT_FONT 22
 
+#define CMPR_MAX_LEN 20
+#define PROP_MAX_LEN 20
+#define CMPRNAME_STR_BUFSIZE 50
+#define ERRBOUND_MAX_LEN 50
+#define ERRBOUND_STR_BUFSIZE 50
+
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
 
@@ -167,21 +173,14 @@ extern double totalCmprCost;
 extern double totalDecCost;
 
 extern int compressors_count; //this compressors_count is the number of compressors to be compared, set by zc.config
-extern char* compressors[20];
-extern char* compressors_dir[20];
-extern char* compareData_dir[20];
-extern char* properties_dir[20];
+extern char* compressors[CMPR_MAX_LEN];
+extern char* compressors_dir[CMPR_MAX_LEN];
+extern char* compareData_dir[CMPR_MAX_LEN];
+extern char* properties_dir[PROP_MAX_LEN];
 
 extern char* comparisonCases;
 
 extern int numOfErrorBoundCases;
-
-extern int allCompressorCount;
-extern char* allCompressors[20];
-extern int allErrorBoundCount;
-extern char* allErrorBounds[20];
-extern int allVarCaseCount;
-extern char* allVarCases[20];
 
 typedef union eclshort
 {
@@ -210,6 +209,31 @@ typedef struct RateDistElem_t
 	double maxAbsErr;
 	double compressRate;
 } *RateDistElem;
+
+typedef struct StringElem_t
+{
+	char* str;
+	double value;
+} *StringElem;
+
+typedef struct CmprsorErrBound
+{
+	char compressorName[CMPRNAME_STR_BUFSIZE];
+	int allErrBoundCount;
+	StringElem *allErrBounds;
+	int selErrBoundCount;
+	StringElem *selErrBounds;
+} CmprsorErrBound;
+
+extern int allCompressorCount;
+extern CmprsorErrBound allCompressors[CMPR_MAX_LEN];
+
+//extern char* allCompressors[20];
+//extern int allErrorBoundCount;
+//extern char* allErrorBounds[20];
+extern int allVarCaseCount;
+extern char* allVarCases[20];
+
 
 void cost_startCmpr();
 double cost_EndCmpr();
@@ -278,7 +302,25 @@ void ZC_plotFFTAmplitude_OriginalData();
 void ZC_plotFFTAmplitude_DecompressData();
 void ZC_plotErrDistribtion();
 
+void ZC_generateCompressionFactorReport();
+void ZC_generateRateDistortionReport();
+void ZC_generateRateCorrelationReport();
+void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
+void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompressorCount);
+void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
+
+void ZC_updateZCRootTexFile(char* dataSetName);
+void ZC_generateOverallReport(char* dataSetName);
+
 void ZC_Finalize();
+
+//The following executeCmd_xxx interfaces are depreated. (Please see [ZC_package]/R/ for how to call R scripts from Z-checker instead. 
+int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data);
+int ZC_executeCmd_GdoubleVector(char* cmd, int* count, double** data);
+int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data);
+int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data);
+int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
+int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
 
 #ifdef __cplusplus
 }
