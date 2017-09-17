@@ -71,7 +71,7 @@ int r5, int r4, int r3, int r2, int r1)
 	double err;
 	int numOfElem = compareResult->property->numOfElem;
 	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
-	int numOfElem_ = 0, numOfElem_2 = 0;
+	int numOfElem_ = 0;
 
 	double *diff = (double*)malloc(numOfElem*sizeof(double));
 	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
@@ -105,15 +105,10 @@ int r5, int r4, int r3, int r2, int r1)
 			err = fabs(relDiff[i]);
 			if(minErr_rel>err) minErr_rel = err;
 			if(maxErr_rel<err) maxErr_rel = err;
-			
-			if(err<=0.01)
-				numOfElem_2++;
 			sumErr_rel += err;
 			sumErrSqr_rel += err*err;
 		}	
 	}
-	
-	//printf("numOfElem_2/numOfElem_=%f\n", ((float)numOfElem_2)/numOfElem_);
 	
 	ZC_DataProperty* property = compareResult->property;
 	

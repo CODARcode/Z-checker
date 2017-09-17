@@ -364,7 +364,6 @@ int ZC_ReadConf() {
 		}
 		else
 			reportTemplateDir = NULL;
-		//printf("=============reportTemplateDir=%s\n", reportTemplateDir);
 	}																																																																																																													
 	
 	ZC_versionNumber[0] = ZC_VER_MAJOR; //0

@@ -170,7 +170,7 @@ void ZC_constructSortedSelectedErrorBounds4CmprsEelments(CmprsorErrBound *allCom
 	for(i=0;i < allCompressorCount;i++)
 	{
 		ZC_constructSortedSelectedErrorBounds(allCompressors+i);
-		printf("allCompressors[%d].compressorName=%s\n", i, allCompressors[i].compressorName);
+		//printf("allCompressors[%d].compressorName=%s\n", i, allCompressors[i].compressorName);
 	}
 }
 
