@@ -40,7 +40,7 @@ int ZC_checkExtension(char* str, char* extension)
  * */
 void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames)
 {
-	int i;
+	size_t i;
 	
 	if(access(dir,0)!=0)
 	{
@@ -107,9 +107,9 @@ void ZC_symTransform_4bytes(unsigned char data[4])
 	data[2] = tmp;
 }
 
-int ZC_checkFileSize(char *srcFilePath)
+size_t ZC_checkFileSize(char *srcFilePath)
 {
-	int filesize;
+	size_t filesize;
 	FILE *pFile = fopen(srcFilePath, "rb");
     if (pFile == NULL)
 	{
@@ -122,7 +122,7 @@ int ZC_checkFileSize(char *srcFilePath)
     return filesize;
 }
 
-unsigned char *ZC_readByteData(char *srcFilePath, int *byteLength)
+unsigned char *ZC_readByteData(char *srcFilePath, size_t *byteLength)
 {
 	FILE *pFile = fopen(srcFilePath, "rb");
     if (pFile == NULL)
@@ -147,7 +147,7 @@ unsigned char *ZC_readByteData(char *srcFilePath, int *byteLength)
     return byteBuf;
 }
 
-double *ZC_readDoubleData(char *srcFilePath, int *nbEle)
+double *ZC_readDoubleData(char *srcFilePath, size_t *nbEle)
 {
 	if(dataEndianType==sysEndianType)
 	{
@@ -156,9 +156,9 @@ double *ZC_readDoubleData(char *srcFilePath, int *nbEle)
 	}
 	else
 	{
-		int i,j;
+		size_t i,j;
 		
-		int byteLength;
+		size_t byteLength;
 		unsigned char* bytes = ZC_readByteData(srcFilePath, &byteLength);
 		double *daBuf = (double *)malloc(byteLength);
 		*nbEle = byteLength/8;
@@ -176,7 +176,7 @@ double *ZC_readDoubleData(char *srcFilePath, int *nbEle)
 	}
 }
 
-float *ZC_readFloatData(char *srcFilePath, int *nbEle)
+float *ZC_readFloatData(char *srcFilePath, size_t *nbEle)
 {
 	if(dataEndianType==sysEndianType)
 	{
@@ -185,9 +185,9 @@ float *ZC_readFloatData(char *srcFilePath, int *nbEle)
 	}
 	else
 	{
-		int i,j;
+		size_t i,j;
 		
-		int byteLength;
+		size_t byteLength;
 		unsigned char* bytes = ZC_readByteData(srcFilePath, &byteLength);
 		float *daBuf = (float *)malloc(byteLength);
 		*nbEle = byteLength/4;
@@ -205,9 +205,9 @@ float *ZC_readFloatData(char *srcFilePath, int *nbEle)
 	}
 }
 
-double *ZC_readDoubleData_systemEndian(char *srcFilePath, int *nbEle)
+double *ZC_readDoubleData_systemEndian(char *srcFilePath, size_t *nbEle)
 {
-	int inSize;
+	size_t inSize;
 	FILE *pFile = fopen(srcFilePath, "rb");
     if (pFile == NULL)
     {
@@ -232,9 +232,9 @@ double *ZC_readDoubleData_systemEndian(char *srcFilePath, int *nbEle)
     return daBuf;
 }
 
-float *ZC_readFloatData_systemEndian(char *srcFilePath, int *nbEle)
+float *ZC_readFloatData_systemEndian(char *srcFilePath, size_t *nbEle)
 {
-	int inSize;
+	size_t inSize;
 	FILE *pFile = fopen(srcFilePath, "rb");
     if (pFile == NULL)
     {
@@ -265,7 +265,7 @@ float *ZC_readFloatData_systemEndian(char *srcFilePath, int *nbEle)
     return daBuf;
 }
 
-void ZC_writeByteData(unsigned char *bytes, int byteLength, char *tgtFilePath)
+void ZC_writeByteData(unsigned char *bytes, size_t byteLength, char *tgtFilePath)
 {
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
@@ -278,9 +278,9 @@ void ZC_writeByteData(unsigned char *bytes, int byteLength, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeDoubleData(double *data, int nbEle, char *tgtFilePath)
+void ZC_writeDoubleData(double *data, size_t nbEle, char *tgtFilePath)
 {
-	int i = 0;
+	size_t i = 0;
 	char s[64];
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
@@ -299,9 +299,9 @@ void ZC_writeDoubleData(double *data, int nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeFloatData(float *data, int nbEle, char *tgtFilePath)
+void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath)
 {
-	int i = 0;
+	size_t i = 0;
 	char s[64];
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
@@ -321,7 +321,7 @@ void ZC_writeFloatData(float *data, int nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeData(void *data, int dataType, int nbEle, char *tgtFilePath)
+void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
 {
 	if(dataType == ZC_FLOAT)
 	{
@@ -346,7 +346,7 @@ void ZC_writeData(void *data, int dataType, int nbEle, char *tgtFilePath)
  * */
 int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
 {
-	int i = 0;
+	size_t i = 0;
 	char s[ZC_BUFS];
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
@@ -406,7 +406,7 @@ StringLine* ZC_readLines(char* filePath, int *lineCount)
 	StringLine *header = createStringLineHeader();
 	StringLine *tail = header; //the last element
 	
-	int i = 0;
+	size_t i = 0;
 	while(!feof(fp))
 	{
 		buf = (char*)malloc(MAX_MSG_LENGTH);
@@ -427,9 +427,9 @@ StringLine* ZC_readLines(char* filePath, int *lineCount)
  * 
  * @return the final number of lines
  * */
-int ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
+size_t ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
 {
-	int i = 0;
+	size_t i = 0;
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
     {
@@ -458,7 +458,7 @@ void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replac
 	}
 }
 
-int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
+size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
 	if(toAddLineHeader==NULL)
 	{
@@ -470,7 +470,7 @@ int ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, String
 		return 0;
 	
 	StringLine* p = globalLineHeader->next, *q;
-	int count = 0;
+	size_t count = 0;
 	while(p!=NULL)
 	{
 		if(strcmp(keyAnnotationLine, p->str)==0)
@@ -528,9 +528,9 @@ void ZC_freeLines(StringLine* header)
 	}
 }
 
-void ZC_freeCharArrayLines(char** lines, int lineNum)
+void ZC_freeCharArrayLines(char** lines, size_t lineNum)
 {
-	int i = 0;
+	size_t i = 0;
 	for(;i<lineNum;i++)
 		free(lines[i]);
 	free(lines);
@@ -545,9 +545,9 @@ char* rmFileExtension(char* fullFileName)
 	return s;
 }
 
-void ZC_writeFloatData_inBytes(float *data, int nbEle, char* tgtFilePath)
+void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath)
 {
-	int i = 0;
+	size_t i = 0;
 	eclfloat buf;
 	unsigned char* bytes = (unsigned char*)malloc(nbEle*sizeof(float));
 	for(i=0;i<nbEle;i++)
@@ -564,9 +564,9 @@ void ZC_writeFloatData_inBytes(float *data, int nbEle, char* tgtFilePath)
 	free(bytes);
 }
 
-void ZC_writeDoubleData_inBytes(double *data, int nbEle, char* tgtFilePath)
+void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, char* tgtFilePath)
 {
-	int i = 0, index = 0;
+	size_t i = 0, index = 0;
 	ecldouble buf;
 	unsigned char* bytes = (unsigned char*)malloc(nbEle*sizeof(double));
 	for(i=0;i<nbEle;i++)

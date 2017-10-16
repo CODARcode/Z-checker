@@ -13,6 +13,7 @@
 #include "zc.h"
 #include "ZC_rw.h"
 #include "ZC_latex.h"
+#include "ZC_quicksort.h"
 
 #ifdef __cplusplus
 extern "C" {

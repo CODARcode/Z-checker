@@ -11,6 +11,7 @@
 #define _ZC_H
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -240,46 +241,12 @@ double cost_EndCmpr();
 void cost_startDec();
 double cost_endDec();
 
-/*conf.c*/
-void loadProperty(char* property_dir, char* propertyVarName);
-int ZC_ReadConf();
-int ZC_LoadConf();
-int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue);
-
-/*ByteToolkit.c*/
-int ZC_bytesToInt_bigEndian(unsigned char* bytes);
-void ZC_intToBytes_bigEndian(unsigned char *b, unsigned int num);
-long ZC_bytesToLong_bigEndian(unsigned char* b);
-void ZC_longToBytes_bigEndian(unsigned char *b, unsigned long num);
-long ZC_doubleToOSEndianLong(double value);
-int ZC_floatToOSEndianInt(float value);
-
-short ZC_bytesToShort(unsigned char* bytes);
-int ZC_bytesToInt(unsigned char* bytes);
-long ZC_bytesToLong(unsigned char* bytes);
-float ZC_bytesToFloat(unsigned char* bytes);
-void ZC_floatToBytes(unsigned char *b, float num);
-double ZC_bytesToDouble(unsigned char* bytes);
-void ZC_doubleToBytes(unsigned char *b, double num);
-
-/*gnuplot.c*/
-char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
-char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel, long maxYValue);
-char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
-char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
-
-/*quicksort.c*/
-int ZC_divide(RateDistElem* list,int start,int end);
-void ZC_quick_sort(RateDistElem* list,int start,int end);
-int ZC_divide2(StringElem* list,int start,int end);
-void ZC_quick_sort2(StringElem* list,int start,int end);
-
-/*ec.h*/
+/*zc.h*/
 int ZC_Init(char *configFilePath);
-int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1);
+long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, int r5, int r4, int r3, int r2, int r1);
-ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);
+ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize);
 void ZC_startDec();
 void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData);

@@ -10,13 +10,13 @@
 
 StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 {
-	int numOfElem = 0, dataType = 0;
+	size_t numOfElem = 0, dataType = 0;
 	float size_inMB = 0;
 	char* minValue, *avgValue, *maxValue, *valueRange, *entropy;	
 	//char rowTexLine[ZC_BUFS_LONG];
 	
 	dictionary *ini;
-	int i = 0, j = 0;
+	size_t i = 0, j = 0;
 	char varPropFile[ZC_BUFS];
 	int rows = varCaseCount, columns = 7;
 	char** keys = (char**)malloc(sizeof(char*)*columns);
@@ -93,7 +93,8 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount)
 {
-	int i = 0, j = 0, mark = 0, len = 0;
+	int mark = 0;
+	size_t i = 0, j = 0, len = 0;
     //char buff[ZC_BUFS];
 	int compressorNum = 0, errorBoundNum = 0;
 	char *cmpCaseFile, *cmpCase, *varCase, *varName, *compressor, *errBound, *tmpErrBoundString;
@@ -125,8 +126,8 @@ void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor)
 	int allErrBoundCount = compressor->allErrBoundCount;
 	StringElem* selectedErrBounds = compressor->selErrBounds;
 	
-	int errorBoundInterval = 0, i, j;
-	int errBoundCount = 0;
+	size_t errorBoundInterval = 0, i, j;
+	size_t errBoundCount = 0;
 	StringElem sortedErrorBounds[ZC_BUFS];
 	for(i=0;i<ERRBOUND_MAX_LEN;i++)
 		sortedErrorBounds[i] = (StringElem)malloc(sizeof(struct StringElem_t));
@@ -166,7 +167,7 @@ void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor)
 
 void ZC_constructSortedSelectedErrorBounds4CmprsEelments(CmprsorErrBound *allCompressors, int allCompressorCount)
 {
-	int i = 0;
+	size_t i = 0;
 	for(i=0;i < allCompressorCount;i++)
 	{
 		ZC_constructSortedSelectedErrorBounds(allCompressors+i);
@@ -178,7 +179,7 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 {	
 	StringLine* figHeader = NULL, *figHeader2 = NULL;
 	char caption[ZC_BUFS], figLabel[ZC_BUFS];
-	int i, n = 0;
+	size_t i, n = 0;
 	char** caseFiles = (char**)malloc(sizeof(char*)*caseNameCount);
 	for(i=0;i<caseNameCount;i++)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
@@ -255,7 +256,7 @@ void ZC_generateDataPropertyAnalysisReport()
 StringLine* ZC_generateCompressionRateFigure()
 {
 	char* cases[ZC_BUFS];
-	int i, n = getComparisonCases(cases);
+	size_t i, n = getComparisonCases(cases);
 	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "crate", "Compression Rate (in B/s)");
 
 	for(i=0;i<n;i++)
@@ -280,7 +281,7 @@ void ZC_generateCompressionRateReport()
 StringLine* ZC_generateDecompressionRateFigure()
 {
 	char* cases[ZC_BUFS];
-	int i, n = getComparisonCases(cases);
+	size_t i, n = getComparisonCases(cases);
 	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "drate", "Decompression Rate (in B/s)");
 	for(i=0;i<n;i++)
 		free(cases[i]);
@@ -305,7 +306,7 @@ void ZC_generateDecompressionRateReport()
 StringLine* ZC_generatePSNRFigure()
 {
 	char* cases[ZC_BUFS];
-	int i, n = getComparisonCases(cases);
+	size_t i, n = getComparisonCases(cases);
 	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "psnr", "Peak Signal-to-Noise Ratio (PSNR)");
 	for(i=0;i<n;i++)
 		free(cases[i]);
@@ -330,7 +331,7 @@ void ZC_generatePSNRReport()
 StringLine* ZC_generateStaticAnalysisFigures(char* metricType, 
 CmprsorErrBound *allCompressors, int allCompressorCount)
 {
-	int i, j, k, n = 0;// n: numOfEpsFiles
+	size_t i, j, k, n = 0;// n: numOfEpsFiles
 	char* selectedEpsFiles[ZC_BUFS];
 	for(i=0;i<ZC_BUFS;i++)
 		selectedEpsFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
@@ -376,7 +377,8 @@ CmprsorErrBound *allCompressors, int allCompressorCount)
 
 StringLine* ZC_generateRateDistortionFigure()
 {
-	int i, varCount;
+	size_t i; 
+	int varCount;
 	char* varFiles[ZC_BUFS];
 	char* fileName;
 	char rateDisFile[ZC_BUFS];
@@ -415,7 +417,8 @@ void ZC_generateRateDistortionReport()
 
 StringLine* ZC_generateRateCorrelationFigure()
 {
-	int i, varCount;
+	size_t i; 
+	int varCount;
 	char* varFiles[ZC_BUFS];
 	char* fileName;
 	char rateDisFile[ZC_BUFS];
@@ -455,7 +458,7 @@ void ZC_generateRateCorrelationReport()
 StringLine* ZC_generateCompressionFactorFigure()
 {
 	char* cases[ZC_BUFS];
-	int i, n = getComparisonCases(cases);
+	size_t i, n = getComparisonCases(cases);
 	StringLine* header = ZC_generateComparisonFigTexLines(n, cases, "compareCompressors", "cratio", "Compression Factor (i.e., Compression Ratio)");
 	for(i=0;i<n;i++)
 		free(cases[i]);

@@ -26,7 +26,7 @@ void ltrim(char *s)
 
 void rtrim(char *s)
 {
-	int i;
+	size_t i;
 	if(s==NULL)
 		return;
 	i = strlen(s)-1;
@@ -218,7 +218,7 @@ int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data)
 		free_DFA(dfa);
 		return ZC_CMDE;
 	}
-	int i = 0, j = 0;
+	size_t i = 0, j = 0;
 	char* delim = "\t ";
 	char* p = NULL;
 	for(i=0;fgets(buf, CMD_OUTPUT_BUF, fp) != NULL;i++)
@@ -275,7 +275,7 @@ int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data)
 		free_DDA(dda);
 		return ZC_CMDE;
 	}
-	int i = 0, j = 0;
+	size_t i = 0, j = 0;
 	char* delim = "\t ";
 	char* p = NULL;
 	for(i=0;fgets(buf, CMD_OUTPUT_BUF, fp) != NULL;i++)
@@ -368,7 +368,8 @@ char* strcat_new(char *s1, char *s2)
 
 void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* compressorName, char* errBound)
 {
-	int i = 0, j = 0, mark = 0, errBoundIndex = 0;
+	int mark = 0;
+	size_t i = 0, j = 0, errBoundIndex = 0;
 	//check if the compressorList contains compressorName
 	for(i=0;i<*num;i++)
 	{
@@ -409,7 +410,8 @@ void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* co
 
 void checkAndAddStringToList(char** strList, int* num, char* targetStr)
 {
-	int i = 0, mark = 0;
+	size_t i = 0;
+	int mark = 0;
 	for(i=0;i<*num;i++)
 	{
 		if(strcmp(strList[i], targetStr)==0)

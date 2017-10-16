@@ -68,11 +68,11 @@ double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse,
 double* autoCorrAbsErr, double* absErrPDF);
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
-int r5, int r4, int r3, int r2, int r1);
+size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
-int r5, int r4, int r3, int r2, int r1);
+size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData);
-ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, int r5, int r4, int r3, int r2, int r1);
+ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_printCompressionResult(ZC_CompareData* compareResult);
 char** constructCompareDataString(ZC_CompareData* compareResult);
 void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir);

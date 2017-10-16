@@ -139,9 +139,9 @@ int ZC_Init(char *configFilePath)
 	return ZC_SCES;
 }
 
-int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1)
+long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	int dataLength;
+	long dataLength;
 	if(r1==0) 
 	{
 		dataLength = 0;
@@ -169,9 +169,9 @@ int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1)
 	return dataLength;
 }
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1)
+ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	int i;
+	size_t i;
 	double min,max,valueRange,sum = 0,avg;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
@@ -230,7 +230,7 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, int r5
 	return property;
 }
 
-ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1)
+ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_DataProperty* property = ZC_genProperties(varName, dataType, oriData, r5, r4, r3, r2, r1);
 	char tgtWorkspaceDir[ZC_BUFS];
@@ -303,7 +303,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 		printf("If you already have ZC_Init(config) in your code, please make sure checkCompressors=1.\n");
 		exit(0);
 	}
-	int i, j, count = ecPropertyTable->count;
+	size_t i, j, count = ecPropertyTable->count;
 	char stringBuffer[ZC_BUFS_LONG];
 	
 	char** keys = ht_getAllKeys(ecPropertyTable);
@@ -472,7 +472,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 
 int getComparisonCases(char* cases[])
 {
-	int i;
+	size_t i;
 	char copyCompCases[ZC_BUFS_LONG];
 	strcpy(copyCompCases, comparisonCases);
 	char* ccase = strtok(copyCompCases, " ");
@@ -492,7 +492,7 @@ int getComparisonCases(char* cases[])
 
 void ZC_plotComparisonCases()
 {
-	int i=0,n,j;
+	size_t i=0,n,j;
 	char* cases[ZC_BUFS]; //100 cases at most
 	n = getComparisonCases(cases);
 	
@@ -506,7 +506,7 @@ void ZC_plotComparisonCases()
 			sprintf(cmprssors[j], "%s", cmprsor); 
 			cmprsor = strtok(NULL, ",");
 		}
-		int m = j;
+		size_t m = j;
 		ZC_plotHistogramResults(m, cmprssors);
 		for(j=0;j<m;j++)
 			free(cmprssors[j]);
@@ -524,7 +524,7 @@ void ZC_plotCompressionRatio()
 		printf("Error: compressors_count==0.\n Please run ZC_Init(config) first.\n");
 		exit(0);
 	}
-	int i, j, count = ecPropertyTable->count;
+	size_t i, j, count = ecPropertyTable->count;
 	
 	//TODO: Construct the cases by using compressor name and the variable name
 	//TODO: traverse all the property-variables through the propertyTable
@@ -582,7 +582,7 @@ void ZC_plotRateDistortion()
 		printf("Error: compressors_count==0.\n Please run ZC_Init(config) first.\n");
 		exit(0);
 	}
-	int i, j;
+	size_t i, j;
 	
 	//select variables
 	char** variables = ht_getAllKeys(ecPropertyTable);
@@ -656,7 +656,7 @@ void ZC_plotRateDistortion()
 
 char** getCompResKeyList(char* var, int* count)
 {
-	int i, j = 0;
+	size_t i, j = 0;
 	char** selected = (char**)malloc(ecCompareDataTable->count*sizeof(char*));
 	char** cmpResKeys = ht_getAllKeys(ecCompareDataTable);
 	for(i=0;i < ecCompareDataTable->count;i++)
@@ -675,7 +675,7 @@ char** getCompResKeyList(char* var, int* count)
 
 char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validLineNum)
 {
-	int i, j, p, k, q = 1, t = 0;
+	size_t i, j, p, k, q = 1, t = 0;
 	char stringBuffer[ZC_BUFS_LONG];
 	
 	if(totalCount==0)
@@ -754,7 +754,7 @@ char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validL
 
 char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLineNum)
 {
-	int i, j, p, k, q = 1, t = 0;
+	size_t i, j, p, k, q = 1, t = 0;
 	char stringBuffer[ZC_BUFS_LONG];
 	
 	if(totalCount==0)
@@ -833,7 +833,7 @@ char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLi
 
 char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineNum)
 {
-	int i, j, p, k, q = 1, t = 0;
+	size_t i, j, p, k, q = 1, t = 0;
 	char stringBuffer[ZC_BUFS_LONG];
 
 	if(totalCount==0)
@@ -912,7 +912,7 @@ char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineN
 
 void ZC_plotAutoCorr_CompressError()
 {
-	int i,j;
+	size_t i,j;
 	char acFileName[ZC_BUFS], acPlotFile[ZC_BUFS], acCmd[ZC_BUFS_LONG];
 	char** allCampCaseNames = ht_getAllKeys(ecCompareDataTable);
 	for(i=0;i<ecCompareDataTable->count;i++)
@@ -932,7 +932,7 @@ void ZC_plotAutoCorr_CompressError()
 
 void ZC_plotAutoCorr_DataProperty()
 {
-	int i,j;
+	size_t i,j;
 	char acFileName[ZC_BUFS], acPlotFile[ZC_BUFS], acCmd[ZC_BUFS_LONG];
 	char** allVarNames = ht_getAllKeys(ecPropertyTable);
 	for(i=0;i<ecPropertyTable->count;i++)
@@ -952,7 +952,7 @@ void ZC_plotAutoCorr_DataProperty()
 
 void ZC_plotFFTAmplitude_OriginalData()
 {
-	int i,j;
+	size_t i,j;
 	char ampFileName[ZC_BUFS], ampPlotFile[ZC_BUFS], ampCmd[ZC_BUFS_LONG];
 	char** allVarNames = ht_getAllKeys(ecPropertyTable);
 	for(i=0;i<ecPropertyTable->count;i++)
@@ -972,7 +972,7 @@ void ZC_plotFFTAmplitude_OriginalData()
 
 void ZC_plotFFTAmplitude_DecompressData()
 {
-	int i,j;
+	size_t i,j;
 	char ampFileName[ZC_BUFS], ampPlotFile[ZC_BUFS], ampCmd[ZC_BUFS_LONG];
 	char** allVarNames = ht_getAllKeys(ecCompareDataTable);
 	for(i=0;i<ecCompareDataTable->count;i++)
@@ -992,7 +992,7 @@ void ZC_plotFFTAmplitude_DecompressData()
 
 void ZC_plotErrDistribtion()
 {
-	int i,j;
+	size_t i,j;
 	char disFileName[ZC_BUFS], disPlotFile[ZC_BUFS], disCmd[ZC_BUFS_LONG];
 	char** allVarNames = ht_getAllKeys(ecCompareDataTable);
 	
@@ -1066,7 +1066,7 @@ void ZC_Finalize()
 	if(reportTemplateDir!=NULL)
 		free(reportTemplateDir);
 	//free compressor_errBounds_elements
-	int i =0, j=0;
+	size_t i =0, j=0;
 	for(i=0;i<allCompressorCount;i++)
 	{
 		for(j=0;j<allCompressors[i].allErrBoundCount;j++)

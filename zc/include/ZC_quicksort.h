@@ -23,10 +23,10 @@
 extern "C" {
 #endif
 
-int ZC_divide(RateDistElem* list,int start,int end);
-void ZC_quick_sort(RateDistElem* list,int start,int end);
-int ZC_divide2(StringElem* list,int start,int end);
-void ZC_quick_sort2(StringElem* list,int start,int end);
+size_t ZC_divide(RateDistElem* list,size_t start,size_t end);
+void ZC_quick_sort(RateDistElem* list,size_t start,size_t end);
+size_t ZC_divide2(StringElem* list,size_t start,size_t end);
+void ZC_quick_sort2(StringElem* list,size_t start,size_t end);
 
 #ifdef __cplusplus
 }

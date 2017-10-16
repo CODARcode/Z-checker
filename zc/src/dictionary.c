@@ -142,7 +142,7 @@ dictionary * dictionary_new(int size)
 /*--------------------------------------------------------------------------*/
 void dictionary_del(dictionary * d)
 {
-    int i;
+    int     i ;
 
     if (d==NULL) return ;
     for (i=0 ; i<d->size ; i++) {

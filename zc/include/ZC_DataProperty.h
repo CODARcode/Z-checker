@@ -29,15 +29,15 @@ typedef struct ZC_DataProperty
 {
 	char* varName;
 	int dataType; /*ZC_DOUBLE or ZC_FLOAT*/
-	int r5;
-	int r4;
-	int r3;
-	int r2;
-	int r1;
+	size_t r5;
+	size_t r4;
+	size_t r3;
+	size_t r2;
+	size_t r1;
 	
 	void *data;
 	
-	int numOfElem;
+	size_t numOfElem;
 	double minValue;
 	double maxValue;
 	double valueRange;
@@ -49,24 +49,24 @@ typedef struct ZC_DataProperty
 	double* lap;
 } ZC_DataProperty;
 
-void hash_init(HashEntry *table, int table_size);
-int hash_get(HashEntry *table, unsigned long key, int table_size);
-void hash_put(HashEntry *table, unsigned long key, int table_size);
+void hash_init(HashEntry *table, size_t table_size);
+size_t hash_get(HashEntry *table, unsigned long key, size_t table_size);
+void hash_put(HashEntry *table, unsigned long key, size_t table_size);
 
-void fft(complex *v, int n, complex *tmp);
-void ifft(complex *v, int n, complex *tmp);
+void fft(complex *v, size_t n, complex *tmp);
+void ifft(complex *v, size_t n, complex *tmp);
 
-void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r1);
+void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 void freeDataProperty(ZC_DataProperty* dataProperty);
-ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, int r5, int r4, int r3, int r2, int r1, 
-int numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
+ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
+size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
 double entropy, double* autocorr, complex* fftCoeff);
 
-complex* ZC_computeFFT(void* data, int n, int dataType);
-ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfElem, int r5, int r4, int r3, int r2, int r1);
-ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfElem, int r5, int r4, int r3, int r2, int r1);
-ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);
+complex* ZC_computeFFT(void* data, size_t n, int dataType);
+ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_printDataProperty(ZC_DataProperty* property);
 char** constructDataPropertyString(ZC_DataProperty* property);
 

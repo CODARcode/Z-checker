@@ -101,7 +101,7 @@ int ZC_ReadConf() {
 		dataEndianType = BIG_ENDIAN_DATA;
 	else
 	{
-		printf("Error: Wrong dataEndianType: please set it correctly in ec.config.\n");
+		printf("Error: Wrong dataEndianType: please set it correctly in zc.config.\n");
 		exit(0);
 	}
 
