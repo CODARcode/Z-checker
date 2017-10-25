@@ -123,20 +123,20 @@ int main(int argc, char *argv[])
 				usage();
 			outputPath = argv[i];
 		case '1': 
-			if (++i == argc || sscanf(argv[i], "%d", &r1) != 1)
+			if (++i == argc || sscanf(argv[i], "%zd", &r1) != 1)
 				usage();
 			dim = 1;
 			break;
 		case '2':
-			if (++i == argc || sscanf(argv[i], "%d", &r1) != 1 || 
-				++i == argc || sscanf(argv[i], "%d", &r2) != 1)
+			if (++i == argc || sscanf(argv[i], "%zd", &r1) != 1 || 
+				++i == argc || sscanf(argv[i], "%zd", &r2) != 1)
 				usage();
 			dim = 2;
 			break;
 		case '3':
-			if (++i == argc || sscanf(argv[i], "%d", &r1) != 1 ||
-				++i == argc || sscanf(argv[i], "%d", &r2) != 1 ||
-				++i == argc || sscanf(argv[i], "%d", &r3) != 1)
+			if (++i == argc || sscanf(argv[i], "%zd", &r1) != 1 ||
+				++i == argc || sscanf(argv[i], "%zd", &r2) != 1 ||
+				++i == argc || sscanf(argv[i], "%zd", &r3) != 1)
 				usage();
 			dim = 3;		
 			break;
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 	
 	if(printOntoScreen)
 		for(i=0;i<outLen;i++)
-			printf("%d %f\n", i, out[i]);
+			printf("%zu %f\n", i, out[i]);
 		
 	//The output results are always in double-precision.
 	if(outputPath!=NULL)

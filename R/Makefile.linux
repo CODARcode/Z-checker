@@ -7,8 +7,8 @@
 
 ##   COMPILERS
 CC	= gcc
-R_BASE = [Your installation path of R] (e.g., /usr/lib64/R); hint: you could run the command "which Rscript" to check where it is.
-#R_BASE = /usr/lib64/R
+#R_BASE = [Your installation path of R] (e.g., /usr/lib64/R); hint: you could run the command "which Rscript" to check where it is.
+R_BASE = /usr/lib64/R
 
 CFLAGS = -g -I$(R_BASE)/include
 LFLAGS = -L$(R_BASE)/lib -lR -lRblas
@@ -18,7 +18,7 @@ ZC_FLAGS = -I../zc/include ../zc/.libs/libzc.a -lm
 
 OBJS = src/ZC_callR.o
 
-all:	 	test/test_ZC_callR_x_1d test/test_ZC_callR_x_2d test/test_ZC_callR_x_3d test/zccallr libzccallr.so.0.1 libzccallr.a
+all:	 	libzccallr.so.0.1 libzccallr.a test/test_ZC_callR_x_1d test/test_ZC_callR_x_2d test/test_ZC_callR_x_3d test/zccallr
 
 src/%.o:	src/%.c
 	$(CC) $(CFLAGS) $(LFLAGS) -fPIC -c $<
