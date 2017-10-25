@@ -136,7 +136,12 @@ libzc_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libzc_la_OBJECTS = src/libzc_la-ZC_ByteToolkit.lo \
 	src/libzc_la-ZC_gnuplot.lo src/libzc_la-ZC_Hashtable.lo \
-	src/libzc_la-iniparser.lo src/libzc_la-ZC_DataProperty.lo \
+	src/libzc_la-iniparser.lo \
+	src/libzc_la-ZC_DataProperty_float.lo \
+	src/libzc_la-ZC_DataProperty_double.lo \
+	src/libzc_la-ZC_DataProperty.lo \
+	src/libzc_la-ZC_CompareData_float.lo \
+	src/libzc_la-ZC_CompareData_double.lo \
 	src/libzc_la-ZC_CompareData.lo src/libzc_la-DynamicIntArray.lo \
 	src/libzc_la-DynamicFloatArray.lo \
 	src/libzc_la-DynamicDoubleArray.lo \
@@ -343,7 +348,8 @@ lib_LTLIBRARIES = libzc.la
 libzc_la_CFLAGS = -g -I./include
 libzc_la_LDFLAGS = -version-info  0:1:0
 #libsz_la_LIDADD=../zlib/.libs/libzlib.a
-libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty.c src/ZC_CompareData.c\
+libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c src/ZC_DataProperty_double.c src/ZC_DataProperty.c\
+		src/ZC_CompareData_float.c src/ZC_CompareData_double.c src/ZC_CompareData.c\
 		src/DynamicIntArray.c src/DynamicFloatArray.c src/DynamicDoubleArray.c src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c\
 		src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c src/ZC_util.c src/zc.c\
 		#src/ZC_HDF5Handler.c src/ZC_DataSetHandler.c
@@ -430,7 +436,15 @@ src/libzc_la-ZC_Hashtable.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-iniparser.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_DataProperty_float.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_DataProperty_double.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-ZC_DataProperty.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_CompareData_float.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_CompareData_double.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-ZC_CompareData.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
@@ -475,7 +489,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-DynamicIntArray.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_ByteToolkit.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_CompareData.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_Hashtable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_conf.Plo@am__quote@
@@ -540,12 +558,40 @@ src/libzc_la-iniparser.lo: src/iniparser.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-iniparser.lo `test -f 'src/iniparser.c' || echo '$(srcdir)/'`src/iniparser.c
 
+src/libzc_la-ZC_DataProperty_float.lo: src/ZC_DataProperty_float.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty_float.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Tpo -c -o src/libzc_la-ZC_DataProperty_float.lo `test -f 'src/ZC_DataProperty_float.c' || echo '$(srcdir)/'`src/ZC_DataProperty_float.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Tpo src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataProperty_float.c' object='src/libzc_la-ZC_DataProperty_float.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty_float.lo `test -f 'src/ZC_DataProperty_float.c' || echo '$(srcdir)/'`src/ZC_DataProperty_float.c
+
+src/libzc_la-ZC_DataProperty_double.lo: src/ZC_DataProperty_double.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty_double.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Tpo -c -o src/libzc_la-ZC_DataProperty_double.lo `test -f 'src/ZC_DataProperty_double.c' || echo '$(srcdir)/'`src/ZC_DataProperty_double.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Tpo src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataProperty_double.c' object='src/libzc_la-ZC_DataProperty_double.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty_double.lo `test -f 'src/ZC_DataProperty_double.c' || echo '$(srcdir)/'`src/ZC_DataProperty_double.c
+
 src/libzc_la-ZC_DataProperty.lo: src/ZC_DataProperty.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty.Tpo -c -o src/libzc_la-ZC_DataProperty.lo `test -f 'src/ZC_DataProperty.c' || echo '$(srcdir)/'`src/ZC_DataProperty.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataProperty.Tpo src/$(DEPDIR)/libzc_la-ZC_DataProperty.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataProperty.c' object='src/libzc_la-ZC_DataProperty.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty.lo `test -f 'src/ZC_DataProperty.c' || echo '$(srcdir)/'`src/ZC_DataProperty.c
+
+src/libzc_la-ZC_CompareData_float.lo: src/ZC_CompareData_float.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData_float.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Tpo -c -o src/libzc_la-ZC_CompareData_float.lo `test -f 'src/ZC_CompareData_float.c' || echo '$(srcdir)/'`src/ZC_CompareData_float.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_CompareData_float.c' object='src/libzc_la-ZC_CompareData_float.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_CompareData_float.lo `test -f 'src/ZC_CompareData_float.c' || echo '$(srcdir)/'`src/ZC_CompareData_float.c
+
+src/libzc_la-ZC_CompareData_double.lo: src/ZC_CompareData_double.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData_double.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Tpo -c -o src/libzc_la-ZC_CompareData_double.lo `test -f 'src/ZC_CompareData_double.c' || echo '$(srcdir)/'`src/ZC_CompareData_double.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_CompareData_double.c' object='src/libzc_la-ZC_CompareData_double.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_CompareData_double.lo `test -f 'src/ZC_CompareData_double.c' || echo '$(srcdir)/'`src/ZC_CompareData_double.c
 
 src/libzc_la-ZC_CompareData.lo: src/ZC_CompareData.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData.Tpo -c -o src/libzc_la-ZC_CompareData.lo `test -f 'src/ZC_CompareData.c' || echo '$(srcdir)/'`src/ZC_CompareData.c
