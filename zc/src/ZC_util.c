@@ -26,7 +26,7 @@ void ltrim(char *s)
 
 void rtrim(char *s)
 {
-	size_t i;
+	int i;
 	if(s==NULL)
 		return;
 	i = strlen(s)-1;
