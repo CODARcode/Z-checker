@@ -16,15 +16,15 @@
 
 int main(int argc, char * argv[])
 {
-    size_t r5=0,r4=0,r3=0,r2=0,r1=0;
+    int r5=0,r4=0,r3=0,r2=0,r1=0;
     char outDir[640], oriFilePath[640], outputFilePath[640];
     char *cfgFile, *zcFile, *solName, *varName, *errBoundMode;
     double absErrBound;
     int errboundmode;
     if(argc < 9)
     {
-        printf("Test case: testfloat_CompDecomp [config_file] [zc.config] [solName] [varName] [errBoundMode] [ErrBound] [srcFilePath] [dimension sizes...]\n");
-        printf("Example: testfloat_CompDecomp sz.config zc.config sz(1E-6) testfloat ABS 1E-6 testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
+        printf("Test case: testfloat_CompDecomp [config_file] [zc.config] [solName] [varName] [errBoundMode] [absErrBound] [relErrBound] [srcFilePath] [dimension sizes...]\n");
+        printf("Example: testfloat_CompDecomp sz.config zc.config sz(1E-6) testfloat ABS 1E-6 0 testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
         exit(0);
     }
 
@@ -47,7 +47,7 @@ int main(int argc, char * argv[])
     }
     else
     {
-        printf("Error: Z-checker checking doesn't support this error bound mode: %s, but only ABS, REL, and PW_REL.\n", errBoundMode);
+        echo "Error: Z-checker checking doesn't support this error bound mode: %s, but only ABS, REL, and PW_REL.\n", errBoundMode);
         exit(0);
     }
 
@@ -72,11 +72,10 @@ int main(int argc, char * argv[])
  
     sprintf(outputFilePath, "%s.sz", oriFilePath);
    
-    size_t nbEle; 
-    int status = SZ_SCES;
+    int nbEle, status = SZ_SCES;
     double *data = readDoubleData(oriFilePath, &nbEle, &status);
    
-    size_t outSize; 
+    int outSize; 
     ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
    
     unsigned char *bytes = SZ_compress_args(SZ_DOUBLE, data, &outSize, errboundmode, absErrBound, absErrBound, r5, r4, r3, r2, r1);

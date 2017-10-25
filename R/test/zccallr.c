@@ -46,11 +46,11 @@ void usage()
 
 int main(int argc, char *argv[])
 {
-	int r5 = 0;
-	int r4 = 0;
-	int r3 = 0;
-	int r2 = 0; 
-	int r1 = 0;
+	size_t r5 = 0;
+	size_t r4 = 0;
+	size_t r3 = 0;
+	size_t r2 = 0; 
+	size_t r1 = 0;
 	
 	char *dataPath1 = NULL, *dataPath2 = NULL;
 	char *rscriptPath = NULL, *funcName = NULL;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	int binaryOutput = 0;
 	int printOntoScreen = 0;
 	int dim = 0;
-	int i = 0;
+	size_t i = 0;
 	int endianType = 0;
 	int dataType;	
 	
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 		usage();
 	}
 
-	int nbEle1 = 0, nbEle2 = 0;
+	size_t nbEle1 = 0, nbEle2 = 0;
 	float *f_data1 = NULL, *f_data2 = NULL;
 	double *d_data1 = NULL, *d_data2 = NULL;
 	switch(dataType)

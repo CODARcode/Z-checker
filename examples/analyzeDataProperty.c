@@ -5,7 +5,7 @@
 
 int main(int argc, char * argv[])
 {	
-    int r5=0,r4=0,r3=0,r2=0,r1=0;
+    size_t r5=0,r4=0,r3=0,r2=0,r1=0;
     char dataFile[640], outputFilePath[640], oriFilePath[640];
     char *datatype, *cfgFile, *dataDir;
 
@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
     printf("cfgFile=%s\n", cfgFile);
     ZC_Init(cfgFile);
 
-    int nbEle;
+    size_t nbEle;
     ZC_DataProperty* property = NULL;
     if(strcmp(datatype, "-f")==0)
     {
