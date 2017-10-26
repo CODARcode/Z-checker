@@ -101,6 +101,8 @@ CmprsorErrBound allCompressors[CMPR_MAX_LEN];
 int allVarCaseCount = 0;
 char* allVarCases[20];
 
+hashtable_t* varHashtable = NULL;
+
 void cost_startCmpr()
 {
 	gettimeofday(&startCmprTime, NULL);
@@ -254,7 +256,7 @@ ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize)
 	if(compressTimeFlag)
 	{
 		compareResult->compressTime = cmprTime;
-		compareResult->compressRate = dataProperty->numOfElem*elemSize/cmprTime; //in MB/s		
+		compareResult->compressRate = dataProperty->numOfElem*elemSize/cmprTime; //in B/s		
 	}
 
 	if(compressSizeFlag)
@@ -284,7 +286,7 @@ void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
 	{
 		double decTime = cost_endDec();
 		compareResult->decompressTime = decTime;  //in seconds
-		compareResult->decompressRate = compareResult->property->numOfElem*elemSize/decTime; // in MB/s		
+		compareResult->decompressRate = compareResult->property->numOfElem*elemSize/decTime; // in B/s		
 	}
 	if(compareResult==NULL)
 	{
@@ -710,7 +712,7 @@ char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validL
 			int ck = checkStartsWith(key, compressorName);
 			if(ck)
 			{
-				ZC_CompareData* compareResult = ht_get(ecCompareDataTable, key);
+				ZC_CompareData* compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, key);
 				RateDistElem e = (RateDistElem)malloc(sizeof(struct RateDistElem_t));
 				e->rate = compareResult->rate;
 				e->psnr = compareResult->psnr;
@@ -789,7 +791,7 @@ char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLi
 			int ck = checkStartsWith(key, compressorName);
 			if(ck)
 			{
-				ZC_CompareData* compareResult = ht_get(ecCompareDataTable, key);
+				ZC_CompareData* compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, key);
 				RateDistElem e = (RateDistElem)malloc(sizeof(struct RateDistElem_t));
 				e->rate = compareResult->rate;
 				e->psnr = compareResult->snr;
@@ -868,7 +870,7 @@ char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineN
 			int ck = checkStartsWith(key, compressorName);
 			if(ck)
 			{
-				ZC_CompareData* compareResult = ht_get(ecCompareDataTable, key);
+				ZC_CompareData* compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, key);
 				RateDistElem e = (RateDistElem)malloc(sizeof(struct RateDistElem_t));
 				e->rate = compareResult->rate;
 				e->psnr = compareResult->valErrCorr;
@@ -1078,3 +1080,28 @@ void ZC_Finalize()
 		free(allCompressors[i].selErrBounds);	
 	}
 }
+
+ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	ZC_CompareData* zcv = NULL;
+	if(ecPropertyTable==NULL)
+		ecPropertyTable = ht_create(HASHTABLE_SIZE);
+	ZC_DataProperty* property = ht_get(ecPropertyTable, name);
+	if(property==NULL)
+	{
+		property = ZC_genProperties(name, dataType, oriData, r5, r4, r3, r2, r1);
+		ht_set(ecPropertyTable, name, property);
+	}
+	if(ecCompareDataTable==NULL)
+		ecCompareDataTable = ht_create(HASHTABLE_SIZE);
+	zcv = (ZC_CompareData*)ht_get(ecCompareDataTable, name);
+	if(zcv==NULL)
+	{
+		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
+		zcv->property = property;
+		zcv->dec_data = NULL;
+	}
+	
+	return zcv;
+}
+

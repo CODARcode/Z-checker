@@ -11,22 +11,26 @@
 void freeCompareResult(ZC_CompareData* compareData)
 {
 	//free(compareData->property);
-	free(compareData->autoCorrAbsErr);
-	free(compareData->absErrPDF);
-	free(compareData->pwrErrPDF);
-	free(compareData->fftCoeff);
+	if(compareData->autoCorrAbsErr!=NULL)
+		free(compareData->autoCorrAbsErr);
+	if(compareData->absErrPDF!=NULL)
+		free(compareData->absErrPDF);
+	if(compareData->pwrErrPDF!=NULL)
+		free(compareData->pwrErrPDF);
+	if(compareData->fftCoeff!=NULL)
+		free(compareData->fftCoeff);
 	free(compareData);
 }
 
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
-int compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
+size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF)
 {
 	ZC_CompareData* this = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
 
 	//TODO: get the dataProperty based on varName from the hashtable.
-	this->property = ht_get(ecPropertyTable, varName);
+	this->property = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
 	
 	this->compressTime = compressTime;
 	this->compressRate = compressRate;
@@ -418,4 +422,151 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	
 	iniparser_freedict(ini);
 	return compareResult;
+}
+
+ZC_CompareData_Overall* ZC_compareData_overall()
+{
+	ZC_CompareData_Overall* result = (ZC_CompareData_Overall*)malloc(sizeof(ZC_CompareData_Overall));
+	
+	if(ecCompareDataTable==NULL || ht_getElemCount(ecCompareDataTable) == 0)
+	{
+		printf("Error: there are no elements registered. Please use ZC_registerVar() to register variables.\n");
+		exit(0);
+	}
+	
+	int count = ecCompareDataTable->count;
+	result->numOfVar = count;
+	int i, j = 0;
+	
+	//extract all the compression results from the hashtable
+	ZC_CompareData** compressDataList = (ZC_CompareData**)malloc(sizeof(ZC_CompareData*)*count);
+	for(i=0;i<ecCompareDataTable->capacity&&j<count;i++)
+	{
+		entry_t* t = ecCompareDataTable->table[i];
+		while(t!=NULL)
+		{
+			compressDataList[j++] = t->value;
+			t = t->next;
+		}
+	}
+	
+	//Start the overall analysis
+	size_t total_OriSize = 0;
+	size_t total_CompressSize = 0;
+	double overall_ComprsRatio = 0;
+	double total_ComprsTime = 0;
+	double total_DecmprTime = 0;
+	double overall_ComprsRate = 0;
+	double overall_DecmprRate = 0;
+	
+	double overall_Rate = 0;
+
+	double overall_minAbsErr = 1E20;
+	double overall_avgAbsErr = 0;
+	double overall_maxAbsErr = 0;
+	double overall_minRelErr = 1;
+	double overall_avgRelErr = 0;
+	double overall_maxRelErr = 0;
+
+	double overall_PSNR = 0;
+	double overall_SNR = 0;
+
+	double overall_rmse = 0;
+	double overall_nrmse = 0;
+	
+	double overall_minPearsonCorr = 1;
+	double overall_avgPearsonCorr = 0;
+	double overall_maxPearsonCorr = -1;
+	
+
+	size_t total_numOfElem = 0;
+	double sumSE = 0; //sum of squared error
+	double sumNRMSE_Sq = 0;
+	double rmse = 0, nrmse = 0;
+	int dataType, typeSize = 0;
+	
+	for(i=0;i<count;i++)
+	{
+		dataType = compressDataList[i]->property->dataType;
+		if(dataType==ZC_FLOAT)
+			typeSize = 4;
+		else if(dataType==ZC_DOUBLE)
+			typeSize = 8;
+		else
+		{
+			printf("Error: No such a data type: %d\n", dataType);
+			exit(0);
+		}	
+		
+		total_numOfElem += compressDataList[i]->property->numOfElem;
+		total_OriSize += compressDataList[i]->property->numOfElem * typeSize;
+		total_CompressSize += compressDataList[i]->compressSize;
+		total_ComprsTime += compressDataList[i]->compressTime;
+		total_DecmprTime += compressDataList[i]->decompressTime;
+		if(overall_minAbsErr > compressDataList[i]->minAbsErr)
+			overall_minAbsErr = compressDataList[i]->minAbsErr;
+		if(overall_maxAbsErr < compressDataList[i]->maxAbsErr)
+			overall_maxAbsErr = compressDataList[i]->maxAbsErr;
+		overall_avgAbsErr += compressDataList[i]->avgAbsErr;
+
+		if(overall_minPearsonCorr > compressDataList[i]->minRelErr)
+			overall_minPearsonCorr = compressDataList[i]->minRelErr;
+		if(overall_maxRelErr < compressDataList[i]->maxRelErr)
+			overall_maxRelErr = compressDataList[i]->maxRelErr;
+		overall_avgRelErr += compressDataList[i]->avgRelErr;	
+		
+		if(overall_minRelErr > compressDataList[i]->pearsonCorr)
+			overall_minRelErr = compressDataList[i]->pearsonCorr;
+		if(overall_maxPearsonCorr < compressDataList[i]->pearsonCorr)
+			overall_maxPearsonCorr = compressDataList[i]->pearsonCorr;
+		overall_avgPearsonCorr += compressDataList[i]->pearsonCorr;			
+		
+		rmse = compressDataList[i]->rmse;
+		nrmse = compressDataList[i]->nrmse;
+		sumSE += rmse*rmse*compressDataList[i]->property->numOfElem;
+		
+		sumNRMSE_Sq += nrmse*nrmse;
+	}
+	
+	overall_avgAbsErr /= total_numOfElem;
+	overall_avgRelErr /= total_numOfElem;
+	
+	overall_ComprsRatio = ((double)total_OriSize)/((double)total_CompressSize);
+	overall_Rate = (total_OriSize/total_numOfElem*8)/overall_ComprsRatio;
+	
+	overall_ComprsRate = total_OriSize/total_ComprsTime; //in B/s
+	overall_DecmprRate = total_OriSize/total_DecmprTime;
+	
+	overall_rmse = sqrt(sumSE/total_numOfElem);
+	overall_nrmse = sqrt(sumNRMSE_Sq/total_numOfElem);
+	
+	overall_PSNR = 20*log10(1.0/overall_nrmse);
+	
+	//copy data to result
+	result->numOfVar = count;
+	result->originalSize = total_OriSize;
+	result->compressSize = total_CompressSize;
+	result->compressRatio = overall_ComprsRatio;
+	
+	result->compressTime = total_ComprsTime;
+	result->decompressTime = total_DecmprTime;
+	result->compressRate = overall_ComprsRate;
+	result->decompressRate = overall_DecmprRate;
+	result->rate = overall_Rate;
+	result->minAbsErr = overall_minAbsErr;
+	result->avgAbsErr = overall_avgAbsErr;
+	result->maxAbsErr = overall_maxAbsErr;
+	result->minRelErr = overall_minRelErr;
+	result->avgRelErr = overall_avgRelErr;
+	result->maxRelErr = overall_maxRelErr;
+	
+	result->psnr = overall_PSNR;
+	result->rmse = overall_rmse;
+	result->nrmse = overall_nrmse;
+	
+	result->min_pearsonCorr = overall_minPearsonCorr;
+	result->avg_pearsonCorr = overall_avgPearsonCorr;	
+	result->max_pearsonCorr = overall_maxPearsonCorr;
+		
+	return result;
 }
