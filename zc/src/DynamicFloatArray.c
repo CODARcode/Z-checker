@@ -12,7 +12,7 @@
 #include <string.h>
 #include "DynamicFloatArray.h"
 
-void new_DFA(DynamicFloatArray **dfa, int cap) {
+void new_DFA(DynamicFloatArray **dfa, size_t cap) {
 		*dfa = (DynamicFloatArray *)malloc(sizeof(DynamicFloatArray));
         (*dfa)->size = 0;
         (*dfa)->capacity = cap;
@@ -35,7 +35,7 @@ void free_DFA(DynamicFloatArray *dfa)
 	free(dfa);
 }
 
-float getDFA_Data(DynamicFloatArray *dfa, int pos)
+float getDFA_Data(DynamicFloatArray *dfa, size_t pos)
 {
 	if(pos>=dfa->size)
 	{
@@ -45,7 +45,7 @@ float getDFA_Data(DynamicFloatArray *dfa, int pos)
 	return dfa->array[pos];
 }
 
-void addDFA_Data(DynamicFloatArray *dfa, int value)
+void addDFA_Data(DynamicFloatArray *dfa, float value)
 {
 	if(dfa->size==dfa->capacity)
 	{

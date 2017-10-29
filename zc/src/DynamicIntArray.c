@@ -12,7 +12,7 @@
 #include <string.h>
 #include "DynamicIntArray.h"
 
-void new_DIA(DynamicIntArray **dia, int cap) {
+void new_DIA(DynamicIntArray **dia, size_t cap) {
 		*dia = (DynamicIntArray *)malloc(sizeof(DynamicIntArray));
         (*dia)->size = 0;
         (*dia)->capacity = cap;
@@ -35,7 +35,7 @@ void free_DIA(DynamicIntArray *dia)
 	free(dia);
 }
 
-int getDIA_Data(DynamicIntArray *dia, int pos)
+int getDIA_Data(DynamicIntArray *dia, size_t pos)
 {
 	if(pos>=dia->size)
 	{

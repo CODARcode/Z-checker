@@ -7,14 +7,14 @@
 #include "iniparser.h"
 
 /* For entropy calculation */
-void hash_init(HashEntry *table, int table_size)
+void hash_init(HashEntry *table, size_t table_size)
 {
-	int i;
+	size_t i;
 	for (i = 0; i < table_size; i++)
 		table[i].flag = 0;
 }
 
-int hash_get(HashEntry *table, unsigned long key, int table_size)
+size_t hash_get(HashEntry *table, unsigned long key, size_t table_size)
 {
       int hash = (key % table_size);
       while (table[hash].flag != 0 && table[hash].key != key)
@@ -25,26 +25,34 @@ int hash_get(HashEntry *table, unsigned long key, int table_size)
             return table[hash].num;
 }
 
-void hash_put(HashEntry *table, unsigned long key, int table_size)
+void hash_put(HashEntry *table, unsigned long key, size_t table_size)
 {
-      int hash = (key % table_size);
-      while (table[hash].flag != 0 && table[hash].key != key)
-            hash = (hash + 1) % table_size;
-      if (table[hash].flag != 0)
-      	table[hash].num++;
-      else
-      {
-      	table[hash].flag = 1;
-    	table[hash].key = key;
-      	table[hash].num = 1;
-      }
+	size_t hash = (key % table_size);
+	size_t i = 0;
+	for (i=0;table[hash].flag != 0 && table[hash].key != key && i<table_size;i++)
+		hash = (hash + 1) % table_size;
+		
+	if(i==table_size)
+	{
+		printf("Error: hash table_size is not long enough!\n");
+		exit(0);
+	}	
+		
+	if (table[hash].flag != 0)
+	table[hash].num++;
+	else
+	{
+	table[hash].flag = 1;
+	table[hash].key = key;
+	table[hash].num = 1;
+	}
 }
 
 /* For FFT and iFFT calculation */
-void fft(complex *v, int n, complex *tmp)
+void fft(complex *v, size_t n, complex *tmp)
 {
 	if(n>1) {			/* otherwise, do nothing and return */
-		int k,m;
+		size_t k,m;
 		complex z, w, *vo, *ve;
 		ve = tmp;
 		vo = tmp+n/2;
@@ -68,10 +76,10 @@ void fft(complex *v, int n, complex *tmp)
 	return;
 }
 
-void ifft(complex *v, int n, complex *tmp)
+void ifft(complex *v, size_t n, complex *tmp)
 {
 	if(n>1) {			/* otherwise, do nothing and return */
-		int k,m;
+		size_t k,m;
 		complex z, w, *vo, *ve;
 		ve = tmp;
 		vo = tmp+n/2;
@@ -95,11 +103,11 @@ void ifft(complex *v, int n, complex *tmp)
 	return;
 }
 
-void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r1)
+void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	if (r2 == 0)		// compute Laplacian of 1D data
 	{
-		int x, y;
+		size_t x, y;
 			for (x = 0; x < r1; x++) {
 				unsigned long i = max(1u, min(x, r1 - 2));
 				double fxx = 1 * data[(i - 1)] - 2 * data[(i + 0)] + 1 * data[(i + 1)];
@@ -109,7 +117,7 @@ void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r
 	}
 	else if (r3 ==0)	// computer Laplacian of 2D data
 	{
-		int x, y;
+		size_t x, y;
 		for (y = 0; y < r2; y++) {
 			unsigned long j = max(1u, min(y, r2 - 2));
 			for (x = 0; x < r1; x++) {
@@ -127,7 +135,7 @@ void computeLap(double *data, double *lap, int r5, int r4, int r3, int r2, int r
 	}
 	else if (r4 == 0)	/*computer Laplacian of 3D data*/
 	{
-		int x, y, z;
+		size_t x, y, z;
 		for (z = 0; z < r3; z++) {
 			unsigned long k = max(1u, min(z, r3 - 2));
 			for (y = 0; y < r2; y++) {
@@ -166,8 +174,8 @@ void freeDataProperty(ZC_DataProperty* dataProperty)
 	free(dataProperty);
 }
 
-ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, int r5, int r4, int r3, int r2, int r1, 
-int numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
+ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
+size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
 double entropy, double* autocorr, complex* fftCoeff)
 {
 	ZC_DataProperty* this = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
@@ -189,9 +197,9 @@ double entropy, double* autocorr, complex* fftCoeff)
 	return this;
 }
 
-complex* ZC_computeFFT(void* data, int n, int dataType)
+complex* ZC_computeFFT(void* data, size_t n, int dataType)
 {
-	int i;
+	size_t i;
 	complex *fftCoeff = (complex*)malloc(n*sizeof(complex));
     complex *scratch  = (complex*)malloc(n*sizeof(complex));
 
@@ -231,344 +239,10 @@ complex* ZC_computeFFT(void* data, int n, int dataType)
 	return fftCoeff;
 }
 
-ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, int numOfElem, int r5, int r4, int r3, int r2, int r1)
-{
-	int i = 0;
-	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
-	memset(property, 0, sizeof(ZC_DataProperty));
-	
-	property->varName = varName;
-	property->dataType = ZC_FLOAT;
-	property->data = data;
-	
-	property->numOfElem = numOfElem;
-	double min=data[0],max=data[0],sum=0,avg,valueRange;
-
-    for(i=0;i<numOfElem;i++)
-	{
-		if(min>data[i]) min = data[i];
-		if(max<data[i]) max = data[i];
-		sum += data[i];
-	}
-
-	double med = min+(max-min)/2;
-	double sum_of_square = 0;
-	for(i=0;i<numOfElem;i++)
-		sum_of_square += (data[i] - med)*(data[i] - med);
-	property->zeromean_variance = sum_of_square/numOfElem;
-
-	avg = sum/numOfElem;
-	valueRange = max - min;
-
-	if (minValueFlag)
-		property->minValue = min;
-
-	if (maxValueFlag)
-		property->maxValue = max;
-
-	if (avgValueFlag)
-		property->avgValue = avg;
-	
-	if (valueRangeFlag)
-		property->valueRange = valueRange;
-    
-	if(entropyFlag)
-	{
-		double absErr = 1E-3 * valueRange; /*TODO change fixed value to user input*/
-		double entVal = 0.0;
-		int table_size;
-		if (valueRange/absErr > numOfElem)
-			table_size = (int)(valueRange/absErr);
-		else
-			table_size = numOfElem;
-		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
-		hash_init(table,table_size);
-
-		for (i = 0; i < numOfElem; i++)
- 			hash_put(table, (unsigned long)((data[i]-min)/absErr), table_size);
- 
-		for (i = 0; i<table_size; i++)
-			if (table[i].flag != 0)
-			{
-				double prob = (double)table[i].num/table_size;
-				entVal -= prob*log(prob)/log(2);
-			}
-
-		property->entropy = entVal;
-		free(table);
-	}
-
-	if(autocorrFlag)
-	{
-		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-
-		int delta;
-
-		if (numOfElem > 4096)
-		{
-			double cov = 0;
-			for (i = 0; i < numOfElem; i++)
-				cov += (data[i] - avg)*(data[i] - avg);
-
-			cov = cov/numOfElem;
-
-			if (cov == 0)
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autocorr[delta] = 0;
-			}
-			else
-			{
-				for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (data[i]-avg)*(data[i+delta]-avg);
-
-					autocorr[delta] = sum/(numOfElem-delta)/cov;
-				}
-			}
-		}
-		else
-		{
-			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-			{
-				double avg_0 = 0;
-				double avg_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					avg_0 += data[i];
-					avg_1 += data[i+delta];
-				}
-
-				avg_0 = avg_0 / (numOfElem-delta);
-				avg_1 = avg_1 / (numOfElem-delta);
-
-				double cov_0 = 0;
-				double cov_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					cov_0 += (data[i]-avg_0)*(data[i]-avg_0);
-					cov_1 += (data[i+delta]-avg_1)*(data[i+delta]-avg_1);
-				}
-
-				cov_0 = cov_0/(numOfElem-delta);
-				cov_1 = cov_1/(numOfElem-delta);
-
-				cov_0 = sqrt(cov_0);
-				cov_1 = sqrt(cov_1);
-
-				if (cov_0*cov_1 == 0)
-				{
-					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autocorr[delta] = 0;
-				}
-				else
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
-
-					autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
-				}
-			}
-		}
-
-		autocorr[0] = 1;
-		property->autocorr = autocorr;
-	}
-	
-	if(fftFlag)
-	{
-        int fft_size = pow(2, (int)log2(numOfElem));
-        property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_FLOAT);
-	}
-	
-	if (lapFlag)
-	{
-		double *lap = (double*)malloc(numOfElem*sizeof(double));
-		double *ddata = (double*)malloc(numOfElem*sizeof(double));
-		for(i=0;i<numOfElem;i++)
-			ddata[i] = data[i];
-		computeLap(ddata, lap, r5, r4, r3, r2, r1);
-		free(ddata);
-		property->lap = lap;
-	}
-
-	return property;
-}
-
-ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, int numOfElem, int r5, int r4, int r3, int r2, int r1)
-{
-	int i = 0;
-	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
-	memset(property, 0, sizeof(ZC_DataProperty));
-
-	property->varName = varName;
-	property->dataType = ZC_FLOAT;
-	property->data = data;
-
-	property->numOfElem = numOfElem;
-	double min=data[0],max=data[0],sum=0,avg,valueRange;
-
-	for(i=0;i<numOfElem;i++)
-	{
-		if(min>data[i]) min = data[i];
-		if(max<data[i]) max = data[i];
-		sum += data[i];
-	}
-
-	avg = sum/numOfElem;
-	valueRange = max - min;
-
-	if (minValueFlag)
-		property->minValue = min;
-
-	if (maxValueFlag)
-		property->maxValue = max;
-
-	if (avgValueFlag)
-		property->avgValue = avg;
-
-	if (valueRangeFlag)
-		property->valueRange = valueRange;
-
-	if(entropyFlag)
-	{
-		double absErr = 1E-3 * valueRange; /*TODO change fixed value to user input*/
-		double entVal = 0.0;
-		int table_size;
-		if (valueRange/absErr > numOfElem)
-			table_size = (int)(valueRange/absErr);
-		else
-			table_size = numOfElem;
-		printf ("value range = %lf, table_size = %d\n", valueRange, table_size);
-		HashEntry *table = (HashEntry*)malloc(table_size*sizeof(HashEntry));
-		hash_init(table,table_size);
-
-		for (i = 0; i < numOfElem; i++)
-		{
-			hash_put(table, (unsigned long)((data[i]-min)/absErr), table_size);
-		}
-
-		for (i = 0; i<table_size; i++)
-			if (table[i].flag != 0)
-			{
-				double prob = (double)table[i].num/table_size;
-				entVal -= prob*log(prob)/log(2);
-			}
-
-		property->entropy = entVal;
-	}
-
-	if(autocorrFlag)
-	{
-		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-
-		int delta;
-
-		if (numOfElem > 4096)
-		{
-			double cov = 0;
-			for (i = 0; i < numOfElem; i++)
-				cov += (data[i] - avg)*(data[i] - avg);
-
-			cov = cov/numOfElem;
-
-			if (cov == 0)
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autocorr[delta] = 0;
-			}
-			else
-			{
-				for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (data[i]-avg)*(data[i+delta]-avg);
-
-					autocorr[delta] = sum/(numOfElem-delta)/cov;
-				}
-			}
-		}
-		else
-		{
-			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-			{
-				double avg_0 = 0;
-				double avg_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					avg_0 += data[i];
-					avg_1 += data[i+delta];
-				}
-
-				avg_0 = avg_0 / (numOfElem-delta);
-				avg_1 = avg_1 / (numOfElem-delta);
-
-				double cov_0 = 0;
-				double cov_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					cov_0 += (data[i]-avg_0)*(data[i]-avg_0);
-					cov_1 += (data[i+delta]-avg_1)*(data[i+delta]-avg_1);
-				}
-
-				cov_0 = cov_0/(numOfElem-delta);
-				cov_1 = cov_1/(numOfElem-delta);
-
-				cov_0 = sqrt(cov_0);
-				cov_1 = sqrt(cov_1);
-
-				if (cov_0*cov_1 == 0)
-				{
-					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autocorr[delta] = 0;
-				}
-				else
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
-
-					autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
-				}
-			}
-		}
-
-		autocorr[0] = 1;
-		property->autocorr = autocorr;
-	}
-
-	if(fftFlag)
-	{
-        int fft_size = pow(2, (int)log2(numOfElem));
-        property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_DOUBLE);
-	}
-
-	if (lapFlag)
-	{
-		double *lap = (double*)malloc(numOfElem*sizeof(double));
-		computeLap(data, lap, r5, r4, r3, r2, r1);
-		property->lap = lap;
-	}
-
-	return property;
-}
-
-ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1)
+ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_DataProperty* property = NULL;
-	int numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
+	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
 	if(dataType==ZC_FLOAT)
 	{
 		float* data = (float*)oriData;
@@ -617,15 +291,15 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	s[2] = (char*)malloc(100*sizeof(char));
 	sprintf(s[2], "dataType = %d\n", property->dataType);	
 	s[3] = (char*)malloc(100*sizeof(char));
-	sprintf(s[3], "r5 = %d\n", property->r5);
+	sprintf(s[3], "r5 = %zu\n", property->r5);
 	s[4] = (char*)malloc(100*sizeof(char));
-	sprintf(s[4], "r4 = %d\n", property->r4);
+	sprintf(s[4], "r4 = %zu\n", property->r4);
 	s[5] = (char*)malloc(100*sizeof(char));
-	sprintf(s[5], "r3 = %d\n", property->r3);
+	sprintf(s[5], "r3 = %zu\n", property->r3);
 	s[6] = (char*)malloc(100*sizeof(char));
-	sprintf(s[6], "r2 = %d\n", property->r2);
+	sprintf(s[6], "r2 = %zu\n", property->r2);
 	s[7] = (char*)malloc(100*sizeof(char));
-	sprintf(s[7], "r1 = %d\n", property->r1);	
+	sprintf(s[7], "r1 = %zu\n", property->r1);	
 	
 	s[8] = (char*)malloc(100*sizeof(char));
 	sprintf(s[8], "numOfElem = %d\n", property->numOfElem);
@@ -649,7 +323,7 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 
 void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 {
-	int i;
+	size_t i;
 	char tgtFilePath[ZC_BUFS] = {0};
 	if(fftCoeff!=NULL)
 	{
@@ -697,7 +371,7 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 	sprintf(tgtFilePath, "%s/%s.prop", tgtWorkspaceDir, property->varName); 
 	ZC_writeStrings(15, s, tgtFilePath);
 	
-	int i;
+	size_t i;
 	for(i=0;i<15;i++)
 		free(s[i]);
 	free(s);
@@ -767,12 +441,12 @@ ZC_DataProperty* ZC_loadDataProperty(char* propResultFile)
 	snprintf(var, ZC_BUFS,"%s", par);
 	
 	int dataType = (int)iniparser_getint(ini, "PROPERTY:dataType", 0);
-	int r5 = (int)iniparser_getint(ini, "PROPERTY:r5", 0);
-	int r4 = (int)iniparser_getint(ini, "PROPERTY:r4", 0);
-	int r3 = (int)iniparser_getint(ini, "PROPERTY:r3", 0);
-	int r2 = (int)iniparser_getint(ini, "PROPERTY:r2", 0);
-	int r1 = (int)iniparser_getint(ini, "PROPERTY:r1", 0);
-	int numOfElem = (int)iniparser_getint(ini, "PROPERTY:numOfElem", 0);
+	size_t r5 = iniparser_getlint(ini, "PROPERTY:r5", 0);
+	size_t r4 = iniparser_getlint(ini, "PROPERTY:r4", 0);
+	size_t r3 = iniparser_getlint(ini, "PROPERTY:r3", 0);
+	size_t r2 = iniparser_getlint(ini, "PROPERTY:r2", 0);
+	size_t r1 = iniparser_getlint(ini, "PROPERTY:r1", 0);
+	size_t numOfElem = (int)iniparser_getint(ini, "PROPERTY:numOfElem", 0);
 	double minValue = (double)iniparser_getdouble(ini, "PROPERTY:minValue", 0);
 	double maxValue = (double)iniparser_getdouble(ini, "PROPERTY:maxValue", 0);
 	double valueRange = (double)iniparser_getdouble(ini, "PROPERTY:valueRange", 0);

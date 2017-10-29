@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT(Z-CHECKER, 0.1, sdi1@anl.gov)
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign -Wall -Werror subdir-objects])
 AC_CONFIG_SRCDIR([zc/src/zc.c])
 AC_CONFIG_HEADERS([config.h])
 

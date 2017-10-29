@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/stat.h>
+#include "ZC_util.h"
 #include "ZC_DataProperty.h"
 #include "ZC_CompareData.h"
 #include "zc.h"
@@ -10,22 +11,26 @@
 void freeCompareResult(ZC_CompareData* compareData)
 {
 	//free(compareData->property);
-	free(compareData->autoCorrAbsErr);
-	free(compareData->absErrPDF);
-	free(compareData->pwrErrPDF);
-	free(compareData->fftCoeff);
+	if(compareData->autoCorrAbsErr!=NULL)
+		free(compareData->autoCorrAbsErr);
+	if(compareData->absErrPDF!=NULL)
+		free(compareData->absErrPDF);
+	if(compareData->pwrErrPDF!=NULL)
+		free(compareData->pwrErrPDF);
+	if(compareData->fftCoeff!=NULL)
+		free(compareData->fftCoeff);
 	free(compareData);
 }
 
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
-int compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
+size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF)
 {
 	ZC_CompareData* this = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
 
 	//TODO: get the dataProperty based on varName from the hashtable.
-	this->property = ht_get(ecPropertyTable, varName);
+	this->property = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
 	
 	this->compressTime = compressTime;
 	this->compressRate = compressRate;
@@ -51,668 +56,6 @@ double* autoCorrAbsErr, double* absErrPDF)
 	return this;
 }
 
-void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
-int r5, int r4, int r3, int r2, int r1)
-{
-	int i = 0;
-	double minDiff = data2[0]-data1[0];
-	double maxDiff = minDiff;
-	double minErr = fabs(minDiff);
-	double maxErr = minErr;
-	double sum1 = 0, sum2 = 0, sumDiff = 0, sumErr = 0, sumErrSqr = 0;
-	
-	double minDiff_rel = 1E100;
-	double maxDiff_rel = -1E100;
-	double minErr_rel = 1E100;
-	double maxErr_rel = 0;
-	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
-	
-	double err;
-	int numOfElem = compareResult->property->numOfElem;
-	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
-	int numOfElem_ = 0;
-
-	double *diff = (double*)malloc(numOfElem*sizeof(double));
-	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
-
-	for (i = 0; i < numOfElem; i++)
-	{
-		sum1 += data1[i];
-		sum2 += data2[i];
-		
-		diff[i] = data2[i]-data1[i];
-		if(minDiff > diff[i]) minDiff = diff[i];
-		if(maxDiff < diff[i]) maxDiff = diff[i];
-		sumDiff += diff[i];
-		sumOfDiffSquare += diff[i]*diff[i];
-				
-		err = fabs(diff[i]);
-		if(minErr>err) minErr = err;
-		if(maxErr<err) maxErr = err;
-		sumErr += err;
-		sumErrSqr += err*err; //used for mse, nrmse, psnr
-	
-		if(data1[i]!=0)
-		{
-			numOfElem_ ++;
-			relDiff[i] = diff[i]/data1[i];
-			if(minDiff_rel > relDiff[i]) minDiff_rel = relDiff[i];
-			if(maxDiff_rel < relDiff[i]) maxDiff_rel = relDiff[i];
-			sumDiff_rel += relDiff[i];
-			sumOfDiffSquare_rel += relDiff[i]*relDiff[i];
-			
-			err = fabs(relDiff[i]);
-			if(minErr_rel>err) minErr_rel = err;
-			if(maxErr_rel<err) maxErr_rel = err;
-			sumErr_rel += err;
-			sumErrSqr_rel += err*err;
-		}	
-	}
-	
-	ZC_DataProperty* property = compareResult->property;
-	
-	double zeromean_variance = property->zeromean_variance;
-	double valRange = property->valueRange;
-	double mean1 = sum1/numOfElem;
-	double mean2 = sum2/numOfElem;
-	
-	double avgDiff = sumDiff/numOfElem;
-	double avgErr = sumErr/numOfElem;
-	double diffRange = maxDiff - minDiff;
-	double mse = sumErrSqr/numOfElem;
-	
-	double avgErr_rel = sumErr_rel/numOfElem;
-	double diffRange_rel = maxDiff_rel - minDiff_rel;
-	double mse_rel = sumErrSqr_rel/numOfElem_;
-	if(diffRange_rel>2*PWR_DIS_RNG_BOUND)
-	{
-		double avg = 0;//sumDiff_rel/numOfElem_;
-		diffRange_rel = 2*PWR_DIS_RNG_BOUND;
-		minDiff_rel = avg-PWR_DIS_RNG_BOUND;
-		maxDiff_rel = avg+PWR_DIS_RNG_BOUND;
-	}
-	
-	int index;
-	
-	if (minAbsErrFlag)
-		compareResult->minAbsErr = minErr;
-
-	if (minRelErrFlag)
-		compareResult->minRelErr = minErr/valRange;
-
-	if (maxAbsErrFlag)
-		compareResult->maxAbsErr = maxErr;
-
-	if (maxRelErrFlag)
-		compareResult->maxRelErr = maxErr/valRange;
-
-	if (avgAbsErrFlag)
-		compareResult->avgAbsErr = avgErr;
-
-	if (avgRelErrFlag)
-		compareResult->avgRelErr = avgErr/valRange;
-		
-	compareResult->minPWRErr = minErr_rel;
-	compareResult->maxPWRErr = maxErr_rel;
-	compareResult->avgPWRErr = sumErr_rel/numOfElem_;
-
-	if (absErrPDFFlag)
-	{
-		double interval = diffRange/PDF_INTERVALS;
-		double *absErrPDF = NULL;
-		if(interval==0)
-		{
-			absErrPDF = (double*)malloc(sizeof(double));
-			*absErrPDF = 0;
-		}
-		else
-		{
-			absErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS);
-			memset(absErrPDF, 0, PDF_INTERVALS*sizeof(double));
-
-			for (i = 0; i < numOfElem; i++)
-			{
-				index = (int)((diff[i]-minDiff)/interval);
-				if(index==PDF_INTERVALS)
-					index = PDF_INTERVALS-1;
-				absErrPDF[index] += 1;
-			}
-
-			for (i = 0; i < PDF_INTERVALS; i++)
-				absErrPDF[i]/=numOfElem;			
-		}
-		compareResult->absErrPDF = absErrPDF;
-		compareResult->err_interval = interval;
-		compareResult->err_minValue = minDiff;		
-	}
-
-	if (pwrErrPDFFlag)
-	{
-		double interval = diffRange_rel/PDF_INTERVALS_REL;
-		double *relErrPDF = NULL;
-		if(interval==0)
-		{
-			relErrPDF = (double*)malloc(sizeof(double));
-			*relErrPDF = 0;
-		}
-		else
-		{
-			relErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS_REL);
-			memset(relErrPDF, 0, PDF_INTERVALS_REL*sizeof(double));
-
-			for (i = 0; i < numOfElem; i++)
-			{
-				if(data1[i]!=0)
-				{
-					if(relDiff[i]>maxDiff_rel)
-						relDiff[i] = maxDiff_rel;
-					if(relDiff[i]<minDiff_rel)
-						relDiff[i] = minDiff_rel;
-					index = (int)((relDiff[i]-minDiff_rel)/interval);
-					if(index==PDF_INTERVALS_REL)
-						index = PDF_INTERVALS_REL-1;
-					relErrPDF[index] += 1;					
-				}
-			}
-			for (i = 0; i < PDF_INTERVALS_REL; i++)
-				relErrPDF[i]/=numOfElem_;			
-		}
-		compareResult->pwrErrPDF = relErrPDF;
-		compareResult->err_interval_rel = interval;
-		compareResult->err_minValue_rel = minDiff_rel;		
-	}
-
-	if (autoCorrAbsErrFlag)
-	{
-		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-
-		int delta;
-
-		if (numOfElem > 4096)
-		{
-			double covDiff = 0;
-			for (i = 0; i < numOfElem; i++)
-			{
-				covDiff += (diff[i] - avgDiff)*(diff[i] - avgDiff);
-			}
-
-			covDiff = covDiff/numOfElem;
-
-			if (covDiff == 0)
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autoCorrAbsErr[delta] = 0;
-			}
-			else
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-					{
-						sum += (diff[i]-avgDiff)*(diff[i+delta]-avgDiff);
-					}
-
-					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
-				}
-			}
-		}
-		else
-		{
-			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-			{
-				double avg_0 = 0;
-				double avg_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					avg_0 += diff[i];
-					avg_1 += diff[i+delta];
-				}
-
-				avg_0 = avg_0 / (numOfElem-delta);
-				avg_1 = avg_1 / (numOfElem-delta);
-
-				double cov_0 = 0;
-				double cov_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					cov_0 += (diff[i] - avg_0) * (diff[i] - avg_0);
-					cov_1 += (diff[i+delta] - avg_1) * (diff[i+delta] - avg_1);
-				}
-
-				cov_0 = cov_0/(numOfElem-delta);
-				cov_1 = cov_1/(numOfElem-delta);
-
-				cov_0 = sqrt(cov_0);
-				cov_1 = sqrt(cov_1);
-
-				if (cov_0*cov_1 == 0)
-				{
-					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autoCorrAbsErr[delta] = 0;
-				}
-				else
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (diff[i]-avg_0)*(diff[i+delta]-avg_1);
-
-					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
-				}
-			}
-
-		}
-        
-        autoCorrAbsErr[0] = 1;
-		compareResult->autoCorrAbsErr = autoCorrAbsErr;
-	}
-
-	if (pearsonCorrFlag)
-	{
-		double prodSum = 0, sum1 = 0, sum2 = 0;
-    	for (i = 0; i < numOfElem; i++)
-    	{
-    		prodSum += (data1[i]-mean1)*(data2[i]-mean2);
-    		sum1 += (data1[i]-mean1)*(data1[i]-mean1);
-    		sum2 += (data2[i]-mean2)*(data2[i]-mean2);
-    	}
-
-    	double std1 = sqrt(sum1/numOfElem);
-    	double std2 = sqrt(sum2/numOfElem);
-    	double ee = prodSum/numOfElem;
-    	double pearsonCorr = 0;
-
-    	if (std1*std2 != 0)
-    		pearsonCorr = ee/std1/std2;
-
-    	compareResult->pearsonCorr = pearsonCorr;
-	}
-
-	if (rmseFlag)
-	{
-		double rmse = sqrt(mse);
-		compareResult->rmse = rmse;
-	}
-
-	if (nrmseFlag)
-	{
-		double nrmse = sqrt(mse)/valRange;
-		compareResult->nrmse = nrmse;
-	}
-
-	if(snrFlag)
-	{
-		compareResult->snr = 10*log10(zeromean_variance/mse);
-		//printf("compareResult->snr=%f ccompareResult->snr_db=%f", compareResult->snr, compareResult->snr_db); 		
-	}
-
-	if (psnrFlag)
-	{
-		double psnr = -20.0*log10(sqrt(mse)/valRange);
-		compareResult->psnr = psnr;
-	}
-
-	if (valErrCorrFlag)
-	{
-		double prodSum = 0, sum1 = 0, sumDiff = 0;
-    	for (i = 0; i < numOfElem; i++)
-    	{
-    		prodSum += (data1[i]-mean1)*(diff[i]-avgDiff);
-    		sum1 += (data1[i]-mean1)*(data1[i]-mean1);
-    		sumDiff += (diff[i]-avgDiff)*(diff[i]-avgDiff);
-    	}
-
-    	double std1 = sqrt(sum1/numOfElem);
-    	double stdDiff = sqrt(sumDiff/numOfElem);
-    	double ee = prodSum/numOfElem;
-    	double valErrCorr = 0;
-
-    	if (std1*stdDiff != 0)
-    		valErrCorr = ee/std1/stdDiff;
-
-		compareResult->valErrCorr = valErrCorr;
-	}
-
-	free(diff);
-	free(relDiff);
-}
-
-void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
-int r5, int r4, int r3, int r2, int r1)
-{
-	int i = 0;
-	double minDiff = data2[0]-data1[0];
-	double maxDiff = minDiff;
-	double minErr = fabs(minDiff);
-	double maxErr = minErr;
-	double sum1 = 0, sum2 = 0, sumDiff = 0, sumErr = 0, sumErrSqr = 0;
-	
-	double minDiff_rel = 1E100;
-	double maxDiff_rel = -1E100;
-	double minErr_rel = 1E100;
-	double maxErr_rel = 0;
-	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
-	
-	double err;
-	int numOfElem = compareResult->property->numOfElem;
-	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
-	int numOfElem_ = 0;
-
-	double *diff = (double*)malloc(numOfElem*sizeof(double));
-	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
-
-	for (i = 0; i < numOfElem; i++)
-	{
-		sum1 += data1[i];
-		sum2 += data2[i];
-		
-		diff[i] = data2[i]-data1[i];
-		if(minDiff > diff[i]) minDiff = diff[i];
-		if(maxDiff < diff[i]) maxDiff = diff[i];
-		sumDiff += diff[i];
-		sumOfDiffSquare += diff[i]*diff[i];
-				
-		err = fabs(diff[i]);
-		if(minErr>err) minErr = err;
-		if(maxErr<err) maxErr = err;
-		sumErr += err;
-		sumErrSqr += err*err; //used for mse, nrmse, psnr
-	
-		if(data1[i]!=0)
-		{
-			numOfElem_ ++;
-			relDiff[i] = diff[i]/data1[i];
-			if(minDiff_rel > relDiff[i]) minDiff_rel = relDiff[i];
-			if(maxDiff_rel < relDiff[i]) maxDiff_rel = relDiff[i];
-			sumDiff_rel += relDiff[i];
-			sumOfDiffSquare_rel += relDiff[i]*relDiff[i];
-			
-			err = fabs(relDiff[i]);
-			if(minErr_rel>err) minErr_rel = err;
-			if(maxErr_rel<err) maxErr_rel = err;
-			sumErr_rel += err;
-			sumErrSqr_rel += err*err;
-		}	
-	}
-	
-	ZC_DataProperty* property = compareResult->property;
-	
-	double zeromean_variance = property->zeromean_variance;
-	double valRange = property->valueRange;
-	double mean1 = sum1/numOfElem;
-	double mean2 = sum2/numOfElem;
-	
-	double avgDiff = sumDiff/numOfElem;
-	double avgErr = sumErr/numOfElem;
-	double diffRange = maxDiff - minDiff;
-	double mse = sumErrSqr/numOfElem;
-	
-	double avgErr_rel = sumErr_rel/numOfElem;
-	double diffRange_rel = maxDiff_rel - minDiff_rel;
-	double mse_rel = sumErrSqr_rel/numOfElem_;
-	if(diffRange_rel>2*PWR_DIS_RNG_BOUND)
-	{
-		double avg = 0;//sumDiff_rel/numOfElem_;
-		diffRange_rel = 2*PWR_DIS_RNG_BOUND;
-		minDiff_rel = avg-PWR_DIS_RNG_BOUND;
-		maxDiff_rel = avg+PWR_DIS_RNG_BOUND;
-	}
-	
-	int index;
-	
-	if (minAbsErrFlag)
-		compareResult->minAbsErr = minErr;
-
-	if (minRelErrFlag)
-		compareResult->minRelErr = minErr/valRange;
-
-	if (maxAbsErrFlag)
-		compareResult->maxAbsErr = maxErr;
-
-	if (maxRelErrFlag)
-		compareResult->maxRelErr = maxErr/valRange;
-
-	if (avgAbsErrFlag)
-		compareResult->avgAbsErr = avgErr;
-
-	if (avgRelErrFlag)
-		compareResult->avgRelErr = avgErr/valRange;
-		
-	compareResult->minPWRErr = minErr_rel;
-	compareResult->maxPWRErr = maxErr_rel;
-	compareResult->avgPWRErr = sumErr_rel/numOfElem_;
-
-	if (absErrPDFFlag)
-	{
-		double interval = diffRange/PDF_INTERVALS;
-		double *absErrPDF = NULL;
-		if(interval==0)
-		{
-			absErrPDF = (double*)malloc(sizeof(double));
-			*absErrPDF = 0;
-		}
-		else
-		{
-			absErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS);
-			memset(absErrPDF, 0, PDF_INTERVALS*sizeof(double));
-
-			for (i = 0; i < numOfElem; i++)
-			{
-				index = (int)((diff[i]-minDiff)/interval);
-				if(index==PDF_INTERVALS)
-					index = PDF_INTERVALS-1;
-				absErrPDF[index] += 1;
-			}
-
-			for (i = 0; i < PDF_INTERVALS; i++)
-				absErrPDF[i]/=numOfElem;			
-		}
-		compareResult->absErrPDF = absErrPDF;
-		compareResult->err_interval = interval;
-		compareResult->err_minValue = minDiff;		
-	}
-
-	if (pwrErrPDFFlag)
-	{
-		double interval = diffRange_rel/PDF_INTERVALS_REL;
-		double *relErrPDF = NULL;
-		if(interval==0)
-		{
-			relErrPDF = (double*)malloc(sizeof(double));
-			*relErrPDF = 0;
-		}
-		else
-		{
-			relErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS_REL);
-			memset(relErrPDF, 0, PDF_INTERVALS_REL*sizeof(double));
-
-			for (i = 0; i < numOfElem; i++)
-			{
-				if(data1[i]!=0)
-				{
-					if(relDiff[i]>maxDiff_rel)
-						relDiff[i] = maxDiff_rel;
-					if(relDiff[i]<minDiff_rel)
-						relDiff[i] = minDiff_rel;
-					index = (int)((relDiff[i]-minDiff_rel)/interval);
-					if(index==PDF_INTERVALS_REL)
-						index = PDF_INTERVALS_REL-1;
-					relErrPDF[index] += 1;					
-				}
-			}
-			for (i = 0; i < PDF_INTERVALS_REL; i++)
-				relErrPDF[i]/=numOfElem_;			
-		}
-		compareResult->pwrErrPDF = relErrPDF;
-		compareResult->err_interval_rel = interval;
-		compareResult->err_minValue_rel = minDiff_rel;		
-	}
-
-	if (autoCorrAbsErrFlag)
-	{
-		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-
-		int delta;
-
-		if (numOfElem > 4096)
-		{
-			double covDiff = 0;
-			for (i = 0; i < numOfElem; i++)
-			{
-				covDiff += (diff[i] - avgDiff)*(diff[i] - avgDiff);
-			}
-
-			covDiff = covDiff/numOfElem;
-
-			if (covDiff == 0)
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autoCorrAbsErr[delta] = 0;
-			}
-			else
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-					{
-						sum += (diff[i]-avgDiff)*(diff[i+delta]-avgDiff);
-					}
-
-					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/covDiff;
-				}
-			}
-		}
-		else
-		{
-			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-			{
-				double avg_0 = 0;
-				double avg_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					avg_0 += diff[i];
-					avg_1 += diff[i+delta];
-				}
-
-				avg_0 = avg_0 / (numOfElem-delta);
-				avg_1 = avg_1 / (numOfElem-delta);
-
-				double cov_0 = 0;
-				double cov_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					cov_0 += (diff[i] - avg_0) * (diff[i] - avg_0);
-					cov_1 += (diff[i+delta] - avg_1) * (diff[i+delta] - avg_1);
-				}
-
-				cov_0 = cov_0/(numOfElem-delta);
-				cov_1 = cov_1/(numOfElem-delta);
-
-				cov_0 = sqrt(cov_0);
-				cov_1 = sqrt(cov_1);
-
-
-				if (cov_0*cov_1 == 0)
-				{
-					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autoCorrAbsErr[delta] = 0;
-				}
-				else
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (diff[i]-avg_0)*(diff[i+delta]-avg_1);
-
-					autoCorrAbsErr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
-				}
-			}
-
-		}
-        
-        autoCorrAbsErr[0] = 1;
-		compareResult->autoCorrAbsErr = autoCorrAbsErr;
-	}
-
-	if (pearsonCorrFlag)
-	{
-		double prodSum = 0, sum1 = 0, sum2 = 0;
-    	for (i = 0; i < numOfElem; i++)
-    	{
-    		prodSum += (data1[i]-mean1)*(data2[i]-mean2);
-    		sum1 += (data1[i]-mean1)*(data1[i]-mean1);
-    		sum2 += (data2[i]-mean2)*(data2[i]-mean2);
-    	}
-
-    	double std1 = sqrt(sum1/numOfElem);
-    	double std2 = sqrt(sum2/numOfElem);
-    	double ee = prodSum/numOfElem;
-    	double pearsonCorr = 0;
-
-    	if (std1*std2 != 0)
-    		pearsonCorr = ee/std1/std2;
-
-    	compareResult->pearsonCorr = pearsonCorr;
-	}
-
-	if (rmseFlag)
-	{
-		double rmse = sqrt(mse);
-		compareResult->rmse = rmse;
-	}
-
-	if (nrmseFlag)
-	{
-		double nrmse = sqrt(mse)/valRange;
-		compareResult->nrmse = nrmse;
-	}
-
-	if(snrFlag)
-	{
-		compareResult->snr = 10*log10(zeromean_variance/mse);
-		//printf("compareResult->snr=%f ccompareResult->snr_db=%f", compareResult->snr, compareResult->snr_db); 		
-	}
-
-	if (psnrFlag)
-	{
-		double psnr = -20.0*log10(sqrt(mse)/valRange);
-		compareResult->psnr = psnr;
-	}
-
-	if (valErrCorrFlag)
-	{
-		double prodSum = 0, sum1 = 0, sumDiff = 0;
-    	for (i = 0; i < numOfElem; i++)
-    	{
-    		prodSum += (data1[i]-mean1)*(diff[i]-avgDiff);
-    		sum1 += (data1[i]-mean1)*(data1[i]-mean1);
-    		sumDiff += (diff[i]-avgDiff)*(diff[i]-avgDiff);
-    	}
-
-    	double std1 = sqrt(sum1/numOfElem);
-    	double stdDiff = sqrt(sumDiff/numOfElem);
-    	double ee = prodSum/numOfElem;
-      	double valErrCorr = 0;
-
-    	if (std1*stdDiff != 0)
-    		valErrCorr = ee/std1/stdDiff;
-
-		compareResult->valErrCorr = valErrCorr;
-	}
-
-	free(diff);
-	free(relDiff);
-
-}
-
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 {
 	if(compareResult==NULL)
@@ -723,12 +66,12 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	char* varName = compareResult->property->varName;
 	int dataType = compareResult->property->dataType;
 	void* oriData = compareResult->property->data;	
-	int r5 = compareResult->property->r5;
-	int r4 = compareResult->property->r4;
-	int r3 = compareResult->property->r3;
-	int r2 = compareResult->property->r2;
-	int r1 = compareResult->property->r1;
-    int numOfElem = compareResult->property->numOfElem;
+	size_t r5 = compareResult->property->r5;
+	size_t r4 = compareResult->property->r4;
+	size_t r3 = compareResult->property->r3;
+	size_t r2 = compareResult->property->r2;
+	size_t r1 = compareResult->property->r1;
+    size_t numOfElem = compareResult->property->numOfElem;
 
 	if(dataType==ZC_FLOAT)
 	{
@@ -764,7 +107,7 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
         complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_DOUBLE);
         complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
         
-        int i;
+        size_t i;
         fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
         fftCoeffRelDiff[0].Im = 0;
         fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
@@ -788,7 +131,7 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	}
 }
 
-ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, int r5, int r4, int r3, int r2, int r1)
+ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_CompareData* compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
 	memset(compareResult, 0, sizeof(ZC_CompareData));
@@ -798,7 +141,7 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 		float* data1 = (float*)oriData;
 		float* data2 = (float*)decData;
 		
-		int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+		size_t numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
 		//compareResult->property = ZC_genProperties_float(varName, data1, numOfElem, r5, r4, r3, r2, r1);
 		compareResult->property = ZC_startCmpr(varName, ZC_FLOAT, data1, r5, r4, r3, r2, r1);
 		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
@@ -808,7 +151,7 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 		double* data1 = (double*)oriData;
 		double* data2 = (double*)decData;
 		
-		int numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+		size_t numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
 		//compareResult->property = ZC_genProperties_double(varName, data1, numOfElem, r5, r4, r3, r2, r1);		
 		compareResult->property = ZC_startCmpr(varName, ZC_DOUBLE, data1, r5, r4, r3, r2, r1);
 		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);		
@@ -1079,4 +422,151 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	
 	iniparser_freedict(ini);
 	return compareResult;
+}
+
+ZC_CompareData_Overall* ZC_compareData_overall()
+{
+	ZC_CompareData_Overall* result = (ZC_CompareData_Overall*)malloc(sizeof(ZC_CompareData_Overall));
+	
+	if(ecCompareDataTable==NULL || ht_getElemCount(ecCompareDataTable) == 0)
+	{
+		printf("Error: there are no elements registered. Please use ZC_registerVar() to register variables.\n");
+		exit(0);
+	}
+	
+	int count = ecCompareDataTable->count;
+	result->numOfVar = count;
+	int i, j = 0;
+	
+	//extract all the compression results from the hashtable
+	ZC_CompareData** compressDataList = (ZC_CompareData**)malloc(sizeof(ZC_CompareData*)*count);
+	for(i=0;i<ecCompareDataTable->capacity&&j<count;i++)
+	{
+		entry_t* t = ecCompareDataTable->table[i];
+		while(t!=NULL)
+		{
+			compressDataList[j++] = t->value;
+			t = t->next;
+		}
+	}
+	
+	//Start the overall analysis
+	size_t total_OriSize = 0;
+	size_t total_CompressSize = 0;
+	double overall_ComprsRatio = 0;
+	double total_ComprsTime = 0;
+	double total_DecmprTime = 0;
+	double overall_ComprsRate = 0;
+	double overall_DecmprRate = 0;
+	
+	double overall_Rate = 0;
+
+	double overall_minAbsErr = 1E20;
+	double overall_avgAbsErr = 0;
+	double overall_maxAbsErr = 0;
+	double overall_minRelErr = 1;
+	double overall_avgRelErr = 0;
+	double overall_maxRelErr = 0;
+
+	double overall_PSNR = 0;
+	double overall_SNR = 0;
+
+	double overall_rmse = 0;
+	double overall_nrmse = 0;
+	
+	double overall_minPearsonCorr = 1;
+	double overall_avgPearsonCorr = 0;
+	double overall_maxPearsonCorr = -1;
+	
+
+	size_t total_numOfElem = 0;
+	double sumSE = 0; //sum of squared error
+	double sumNRMSE_Sq = 0;
+	double rmse = 0, nrmse = 0;
+	int dataType, typeSize = 0;
+	
+	for(i=0;i<count;i++)
+	{
+		dataType = compressDataList[i]->property->dataType;
+		if(dataType==ZC_FLOAT)
+			typeSize = 4;
+		else if(dataType==ZC_DOUBLE)
+			typeSize = 8;
+		else
+		{
+			printf("Error: No such a data type: %d\n", dataType);
+			exit(0);
+		}	
+		
+		total_numOfElem += compressDataList[i]->property->numOfElem;
+		total_OriSize += compressDataList[i]->property->numOfElem * typeSize;
+		total_CompressSize += compressDataList[i]->compressSize;
+		total_ComprsTime += compressDataList[i]->compressTime;
+		total_DecmprTime += compressDataList[i]->decompressTime;
+		if(overall_minAbsErr > compressDataList[i]->minAbsErr)
+			overall_minAbsErr = compressDataList[i]->minAbsErr;
+		if(overall_maxAbsErr < compressDataList[i]->maxAbsErr)
+			overall_maxAbsErr = compressDataList[i]->maxAbsErr;
+		overall_avgAbsErr += compressDataList[i]->avgAbsErr;
+
+		if(overall_minPearsonCorr > compressDataList[i]->minRelErr)
+			overall_minPearsonCorr = compressDataList[i]->minRelErr;
+		if(overall_maxRelErr < compressDataList[i]->maxRelErr)
+			overall_maxRelErr = compressDataList[i]->maxRelErr;
+		overall_avgRelErr += compressDataList[i]->avgRelErr;	
+		
+		if(overall_minRelErr > compressDataList[i]->pearsonCorr)
+			overall_minRelErr = compressDataList[i]->pearsonCorr;
+		if(overall_maxPearsonCorr < compressDataList[i]->pearsonCorr)
+			overall_maxPearsonCorr = compressDataList[i]->pearsonCorr;
+		overall_avgPearsonCorr += compressDataList[i]->pearsonCorr;			
+		
+		rmse = compressDataList[i]->rmse;
+		nrmse = compressDataList[i]->nrmse;
+		sumSE += rmse*rmse*compressDataList[i]->property->numOfElem;
+		
+		sumNRMSE_Sq += nrmse*nrmse;
+	}
+	
+	overall_avgAbsErr /= total_numOfElem;
+	overall_avgRelErr /= total_numOfElem;
+	
+	overall_ComprsRatio = ((double)total_OriSize)/((double)total_CompressSize);
+	overall_Rate = (total_OriSize/total_numOfElem*8)/overall_ComprsRatio;
+	
+	overall_ComprsRate = total_OriSize/total_ComprsTime; //in B/s
+	overall_DecmprRate = total_OriSize/total_DecmprTime;
+	
+	overall_rmse = sqrt(sumSE/total_numOfElem);
+	overall_nrmse = sqrt(sumNRMSE_Sq/total_numOfElem);
+	
+	overall_PSNR = 20*log10(1.0/overall_nrmse);
+	
+	//copy data to result
+	result->numOfVar = count;
+	result->originalSize = total_OriSize;
+	result->compressSize = total_CompressSize;
+	result->compressRatio = overall_ComprsRatio;
+	
+	result->compressTime = total_ComprsTime;
+	result->decompressTime = total_DecmprTime;
+	result->compressRate = overall_ComprsRate;
+	result->decompressRate = overall_DecmprRate;
+	result->rate = overall_Rate;
+	result->minAbsErr = overall_minAbsErr;
+	result->avgAbsErr = overall_avgAbsErr;
+	result->maxAbsErr = overall_maxAbsErr;
+	result->minRelErr = overall_minRelErr;
+	result->avgRelErr = overall_avgRelErr;
+	result->maxRelErr = overall_maxRelErr;
+	
+	result->psnr = overall_PSNR;
+	result->rmse = overall_rmse;
+	result->nrmse = overall_nrmse;
+	
+	result->min_pearsonCorr = overall_minPearsonCorr;
+	result->avg_pearsonCorr = overall_avgPearsonCorr;	
+	result->max_pearsonCorr = overall_maxPearsonCorr;
+		
+	return result;
 }

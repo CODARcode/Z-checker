@@ -10,23 +10,20 @@
 #ifndef _ReportGenerator_H
 #define _ReportGenerator_H
 
+#include "zc.h"
 #include "ZC_rw.h"
-#include "latex.h"
+#include "ZC_latex.h"
+#include "ZC_quicksort.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct StringElem_t
-{
-	char* str;
-	double value;
-} *StringElem;
-
 StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount);
 
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount);
-void ZC_constructSortedSelectedErrorBounds(StringElem* selectedErrorBounds, int *selectedErrorBoundCount);
+void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor);
+void ZC_constructSortedSelectedErrorBounds4CmprsEelments(CmprsorErrBound *allCompressors, int allCompressorCount);
 
 StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNameCount);
 void ZC_generateDataPropertyAnalysisReport();
@@ -41,20 +38,8 @@ StringLine* ZC_generatePSNRFigure();
 void ZC_generatePSNRReport();
 
 StringLine* ZC_generateCompressionFactorFigure();
-void ZC_generateCompressionFactorReport();
 
-void ZC_generateRateDistortionReport();
-
-void ZC_generateRateCorrelationReport();
-
-StringLine* ZC_generateStaticAnalysisFigures(char* metricType, StringElem* selectedErrorBounds, int selectedErrorBoundCount);
-
-void ZC_generateErrDistributionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);
-void ZC_generateErrAutoCorrReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);
-void ZC_generateSpectrumDistortionReport(StringElem* selectedErrorBounds, int selectedErrorBoundCount);
-
-void ZC_updateZCRootTexFile(char* dataSetName);
-void ZC_generateOverallReport(char* dataSetName);
+StringLine* ZC_generateStaticAnalysisFigures(char* metricType, CmprsorErrBound *allCompressors, int allCompressorCount);
 
 #ifdef __cplusplus
 }

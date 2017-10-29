@@ -1,3 +1,8 @@
+/**
+ * This test function is deprated. See Z-checker/R/test/zccallr.c instead. 
+ *
+ * */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "zc.h"

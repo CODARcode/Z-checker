@@ -14,17 +14,18 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
 typedef struct DynamicIntArray
 {	
-	unsigned char* array; /*char* (one byte) is enough, don't have to be int**/
-	int size;
-	int capacity;
+	unsigned char* array; //char* (one byte) is enough, don't have to be int*
+	size_t size;
+	size_t capacity;
 } DynamicIntArray;
 
-void new_DIA(DynamicIntArray **dia, int cap);
+void new_DIA(DynamicIntArray **dia, size_t cap);
 void convertDIAtoInts(DynamicIntArray *dia, unsigned char **data);
 void free_DIA(DynamicIntArray *dia);
-int getDIA_Data(DynamicIntArray *dia, int pos);
+int getDIA_Data(DynamicIntArray *dia, size_t pos);
 void addDIA_Data(DynamicIntArray *dia, int value);
 
 #ifdef __cplusplus

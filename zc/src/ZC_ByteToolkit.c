@@ -8,6 +8,7 @@
  */
  
 #include <stdlib.h>
+#include "ZC_ByteToolkit.h"
 #include "zc.h" 
 	
 int ZC_bytesToInt_bigEndian(unsigned char* bytes)

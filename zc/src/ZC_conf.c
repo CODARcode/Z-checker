@@ -8,7 +8,10 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "ZC_util.h"
+#include "ZC_conf.h"
 #include "zc.h"
 #include "iniparser.h"
 #include "ZC_rw.h"
@@ -98,7 +101,7 @@ int ZC_ReadConf() {
 		dataEndianType = BIG_ENDIAN_DATA;
 	else
 	{
-		printf("Error: Wrong dataEndianType: please set it correctly in ec.config.\n");
+		printf("Error: Wrong dataEndianType: please set it correctly in zc.config.\n");
 		exit(0);
 	}
 
@@ -176,11 +179,11 @@ int ZC_ReadConf() {
 		//TODO: If not, create one dir named dataProperties, and softlinks will be created under it later.		
 		if(access("dataProperties", F_OK)!=0)
 		{
-			system("mkdir dataProperties");
+			system("mkdir -p dataProperties");
 		}
 		if(access("compressionResults", F_OK)!=0)
 		{
-			system("mkdir compressionResults");
+			system("mkdir -p compressionResults");
 		}
 		char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS], linkCmd[ZC_BUFS_LONG];
 		char* propertyExtension = iniparser_getstring(ini, "PLOT:propertyExtension", NULL);		
@@ -246,7 +249,7 @@ int ZC_ReadConf() {
 		if(propVarCount==0)
 		{
 			printf("Error: No property values are detected.\nPlease run analyzeDataProperty.sh (i.e., analyzeDataProperty.c) to generate the data perperties first.\n");
-			exit;
+			exit(0);
 		}
 
 		//and then load comparison results....

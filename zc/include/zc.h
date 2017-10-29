@@ -11,6 +11,7 @@
 #define _ZC_H
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -23,10 +24,13 @@
 #include "DynamicFloatArray.h"
 #include "DynamicDoubleArray.h"
 #include "DynamicIntArray.h"
-#include "ZC_util.h"
+//#include "ZC_util.h"
 #include "ZC_rw.h"
-#include "ZC_ReportGenerator.h"
-
+//#include "ZC_ReportGenerator.h"
+#include "ZC_gnuplot.h"
+#include "ZC_latex.h"
+#include "ZC_ByteToolkit.h"
+#include "ZC_conf.h"
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -57,7 +61,8 @@ extern "C" {
 #define ZC_VERNUM 0x0010
 #define ZC_VER_MAJOR 0
 #define ZC_VER_MINOR 1
-#define ZC_VER_REVISION 1
+#define ZC_VER_BUILD 1
+#define ZC_VER_REVISION 0
 
 #define PDF_INTERVALS 2000
 #define PDF_INTERVALS_REL 50000
@@ -98,6 +103,12 @@ extern "C" {
 #define PWR_DIS_RNG_BOUND 1000 /*the upper bound of the value range for computing the distribution of pwr error*/
 
 #define GNUPLOT_FONT 22
+
+#define CMPR_MAX_LEN 20
+#define PROP_MAX_LEN 20
+#define CMPRNAME_STR_BUFSIZE 50
+#define ERRBOUND_MAX_LEN 50
+#define ERRBOUND_STR_BUFSIZE 50
 
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
@@ -163,21 +174,14 @@ extern double totalCmprCost;
 extern double totalDecCost;
 
 extern int compressors_count; //this compressors_count is the number of compressors to be compared, set by zc.config
-extern char* compressors[20];
-extern char* compressors_dir[20];
-extern char* compareData_dir[20];
-extern char* properties_dir[20];
+extern char* compressors[CMPR_MAX_LEN];
+extern char* compressors_dir[CMPR_MAX_LEN];
+extern char* compareData_dir[CMPR_MAX_LEN];
+extern char* properties_dir[PROP_MAX_LEN];
 
 extern char* comparisonCases;
 
 extern int numOfErrorBoundCases;
-
-extern int allCompressorCount;
-extern char* allCompressors[20];
-extern int allErrorBoundCount;
-extern char* allErrorBounds[20];
-extern int allVarCaseCount;
-extern char* allVarCases[20];
 
 typedef union eclshort
 {
@@ -207,51 +211,41 @@ typedef struct RateDistElem_t
 	double compressRate;
 } *RateDistElem;
 
+typedef struct StringElem_t
+{
+	char* str;
+	double value;
+} *StringElem;
+
+typedef struct CmprsorErrBound
+{
+	char compressorName[CMPRNAME_STR_BUFSIZE];
+	int allErrBoundCount;
+	StringElem *allErrBounds;
+	int selErrBoundCount;
+	StringElem *selErrBounds;
+} CmprsorErrBound;
+
+extern int allCompressorCount;
+extern CmprsorErrBound allCompressors[CMPR_MAX_LEN];
+
+//extern char* allCompressors[20];
+//extern int allErrorBoundCount;
+//extern char* allErrorBounds[20];
+extern int allVarCaseCount;
+extern char* allVarCases[20];
+
 void cost_startCmpr();
 double cost_EndCmpr();
 void cost_startDec();
 double cost_endDec();
 
-/*conf.c*/
-void loadProperty(char* property_dir, char* propertyVarName);
-int ZC_ReadConf();
-int ZC_LoadConf();
-int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue);
-
-/*ByteToolkit.c*/
-int ZC_bytesToInt_bigEndian(unsigned char* bytes);
-void ZC_intToBytes_bigEndian(unsigned char *b, unsigned int num);
-long ZC_bytesToLong_bigEndian(unsigned char* b);
-void ZC_longToBytes_bigEndian(unsigned char *b, unsigned long num);
-long ZC_doubleToOSEndianLong(double value);
-int ZC_floatToOSEndianInt(float value);
-
-short ZC_bytesToShort(unsigned char* bytes);
-int ZC_bytesToInt(unsigned char* bytes);
-long ZC_bytesToLong(unsigned char* bytes);
-float ZC_bytesToFloat(unsigned char* bytes);
-void ZC_floatToBytes(unsigned char *b, float num);
-double ZC_bytesToDouble(unsigned char* bytes);
-void ZC_doubleToBytes(unsigned char *b, double num);
-
-/*gnuplot.c*/
-char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
-char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel, long maxYValue);
-char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
-char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
-
-/*quicksort.c*/
-int ZC_divide(RateDistElem* list,int start,int end);
-void ZC_quick_sort(RateDistElem* list,int start,int end);
-int ZC_divide2(StringElem* list,int start,int end);
-void ZC_quick_sort2(StringElem* list,int start,int end);
-
-/*ec.h*/
+/*zc.h*/
 int ZC_Init(char *configFilePath);
-int ZC_computeDataLength(int r5, int r4, int r3, int r2, int r1);
+long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, int r5, int r4, int r3, int r2, int r1);
-ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, int r5, int r4, int r3, int r2, int r1);
+ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize);
 void ZC_startDec();
 void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData);
@@ -274,7 +268,27 @@ void ZC_plotFFTAmplitude_OriginalData();
 void ZC_plotFFTAmplitude_DecompressData();
 void ZC_plotErrDistribtion();
 
+void ZC_generateCompressionFactorReport();
+void ZC_generateRateDistortionReport();
+void ZC_generateRateCorrelationReport();
+void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
+void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompressorCount);
+void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
+
+void ZC_updateZCRootTexFile(char* dataSetName);
+void ZC_generateOverallReport(char* dataSetName);
+
 void ZC_Finalize();
+
+ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+//The following executeCmd_xxx interfaces are depreated. (Please see [ZC_package]/R/ for how to call R scripts from Z-checker instead. 
+int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data);
+int ZC_executeCmd_GdoubleVector(char* cmd, int* count, double** data);
+int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data);
+int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data);
+int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
+int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
 
 #ifdef __cplusplus
 }

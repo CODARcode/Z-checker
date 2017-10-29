@@ -12,7 +12,7 @@
 #include <string.h>
 #include "DynamicByteArray.h"
 
-void new_DBA(DynamicByteArray **dba, int cap) {
+void new_DBA(DynamicByteArray **dba, size_t cap) {
 		*dba = (DynamicByteArray *)malloc(sizeof(DynamicByteArray));
         (*dba)->size = 0;
         (*dba)->capacity = cap;
@@ -21,7 +21,7 @@ void new_DBA(DynamicByteArray **dba, int cap) {
 
 void convertDBAtoBytes(DynamicByteArray *dba, unsigned char** bytes)
 {
-	int size = dba->size;
+	size_t size = dba->size;
 	if(size>0)
 		*bytes = (unsigned char*)malloc(size * sizeof(unsigned char));
 	else
@@ -35,11 +35,11 @@ void free_DBA(DynamicByteArray *dba)
 	free(dba);
 }
 
-int getDBA_Data(DynamicByteArray *dba, int pos)
+unsigned char getDBA_Data(DynamicByteArray *dba, size_t pos)
 {
 	if(pos>=dba->size)
 	{
-		printf("Error: wrong position of DBA.\n");
+		printf("Error: wrong position of DBA (impossible case unless bugs elsewhere in the code?).\n");
 		exit(0);
 	}
 	return dba->array[pos];
@@ -56,7 +56,7 @@ void addDBA_Data(DynamicByteArray *dba, unsigned char value)
 	dba->size ++;
 }
 
-void memcpyDBA_Data(DynamicByteArray *dba, unsigned char* data, int length)
+void memcpyDBA_Data(DynamicByteArray *dba, unsigned char* data, size_t length)
 {
 	if(dba->size + length > dba->capacity)
 	{

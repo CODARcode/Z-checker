@@ -10,13 +10,15 @@
 #ifndef _ZC_Hashtable_H
 #define _ZC_Hashtable_H
 
+#include "zc.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct entry_t {
 	char *key;
-	ZC_CompareData* value;
+	void* value; //previously, it was ZC_CompareData* value, which I think is wrong. So, I changed it to void*. - shdi
 	struct entry_t *next;
 } entry_t;
 
@@ -26,8 +28,8 @@ typedef struct hashtable_t {
 	struct entry_t **table;	
 } hashtable_t;
 
-extern hashtable_t *ecPropertyTable;
-extern hashtable_t *ecCompareDataTable;
+extern hashtable_t *ecPropertyTable; //ecPropertyTable contains the properties.
+extern hashtable_t *ecCompareDataTable; //ecCompareDataTable contains all compareData cases.
 
 int checkStartsWith(char* str, char* key);
 hashtable_t *ht_create( int capacity );

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "ZC_gnuplot.h"
 #include "zc.h"
 
 char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
@@ -14,7 +15,7 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 	char** lines = (char**)malloc(24*sizeof(char*));
 	char stringBuffer[ZC_BUFS_LONG];
 	
-	int i = 0;
+	size_t i = 0;
 	for(i=0;i<24;i++)
 	{
 		lines[i] = (char*)malloc(250);
@@ -70,7 +71,7 @@ char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontS
 	char** lines = (char**)malloc(18*sizeof(char*));
 	char stringBuffer[ZC_BUFS_LONG];
 	
-	int i = 0;
+	size_t i = 0;
 	for(i=0;i<18;i++)
 	{
 		lines[i] = (char*)malloc(250);
@@ -121,7 +122,7 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 	char** lines = (char**)malloc(24*sizeof(char*));
 	char stringBuffer[ZC_BUFS_LONG];
 	
-	int i = 0;
+	size_t i = 0;
 	for(i=0;i<24;i++)
 	{
 		lines[i] = (char*)malloc(250);
@@ -177,7 +178,7 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 	char** lines = (char**)malloc(19*sizeof(char*));
 	char stringBuffer[ZC_BUFS_LONG];
 	
-	int i = 0;
+	size_t i = 0;
 	for(i=0;i<19;i++)
 	{
 		lines[i] = (char*)malloc(250);

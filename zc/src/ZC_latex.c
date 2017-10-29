@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ZC_util.h"
+#include "ZC_latex.h"
 #include "zc.h"
 
 char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix)
 {	
-	int i = 0;
+	size_t i = 0;
 	char* tmpLine = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
 	char stringBuffer[ZC_BUFS_LONG];
 	
@@ -27,7 +29,7 @@ char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix)
 
 char* gen_includegraphicsLine2(char* epsFileName, char* subDir)
 {	
-	int i = 0;
+	size_t i = 0;
 	char* tmpLine = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
 	char stringBuffer[ZC_BUFS_LONG];
 	
@@ -48,7 +50,7 @@ StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* su
 	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
 	
 	int rows = caseNum/2;
-	int i = 0,j;
+	size_t i = 0,j;
 	for(i=0;i<rows;i++)
 	{
 		line = createLine("\\hspace{-7mm}\n"); 
@@ -98,7 +100,7 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	StringLine* p = header; //p always points to the tail
 	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
 	
-	int i = 0;
+	size_t i = 0;
 	for(i=0;i<epsFileNum;i++)
 	{
 		strcpy(caseName, epsFileNames[i]);
@@ -124,7 +126,7 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 
 StringLine* ZC_generateSimpleTableTexLines(int rows, int columns, char** cases, char** keys, char*** cells, char* caption, char* tabLabel)
 {
-	int i = 0, j = 0;
+	size_t i = 0, j = 0;
 	char tmpLine[MAX_MSG_LENGTH], buf[MAX_MSG_LENGTH], caseName[MAX_MSG_LENGTH];	
 	StringLine* header = createStringLineHeader();
 	StringLine* p = header;

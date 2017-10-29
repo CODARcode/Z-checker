@@ -16,13 +16,13 @@
 
 ZC_DataSet* readHDF5File(char* hdf5File, int* zc_dataset_count)
 {
-	
+	return null;
 	
 }
 
 char*[] getVarListFromHDF5File()
 {
 	
-	
+	return null;
 }
 
