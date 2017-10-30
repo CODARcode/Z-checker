@@ -17,7 +17,7 @@ R_BASE = [installation path of R]
 Hint: you could run the command "which Rscript" to figure out where it is.
 For example, if it is /usr/lib64/R, then "which Rscript" would show "/usr/lib64/R/bin/Rscript", then the setting is like R_BASE = /usr/lib64/R.
 
-3. make
+3. make -f Makefile.linux (for Linux OS) or make -f Makefile.osx (for Mac OS)
 
 Now, you are ready to call R-script from Z-checker.
 
@@ -41,6 +41,10 @@ Options:
 	-e <endian_type>: endian type of the binary data in input files: 0(little-endian); 1(big-endian)
 	-A <first data file> : first data file such as original data file
 	-B <second data file> : second data file such as decompressed data file
+	-C <third data file> : third data file for analysis
+	-D <fourth data file> : fourth data file for analysis
+	-E <fifth data file> : fifth data file for analysis
+	-F <sixth data file> : sixth data file for analysis
 * output type of result file: 
 	-r : print the result on the screen.
 	-b : analysis result stored in binary format

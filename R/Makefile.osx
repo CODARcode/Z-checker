@@ -17,7 +17,7 @@ ZC_RFLAGS = -I./src
 ZC_FLAGS = -I../zc/include -L../zc/.libs -lzc -lm
 #../zc/.libs/libzc.a -lm 
 
-OBJS = src/ZC_callR.o
+OBJS = src/ZC_callR.o src/ZC_manyArgs.o
 
 all:	libzccallr.a libzccallr.dylib test/test_ZC_callR_x_1d test/test_ZC_callR_x_2d test/test_ZC_callR_x_3d test/zccallr
 

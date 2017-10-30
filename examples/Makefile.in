@@ -90,7 +90,6 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = analyzeDataProperty$(EXEEXT) compareDataSets$(EXEEXT) \
 	generateGNUPlot$(EXEEXT) generateReport$(EXEEXT) \
-	testRscript_float$(EXEEXT) testRscript_double$(EXEEXT) \
 	modifyZCConfig$(EXEEXT)
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -123,12 +122,6 @@ generateReport_DEPENDENCIES = ../zc/.libs/libzc.a
 am_modifyZCConfig_OBJECTS = modifyZCConfig.$(OBJEXT)
 modifyZCConfig_OBJECTS = $(am_modifyZCConfig_OBJECTS)
 modifyZCConfig_DEPENDENCIES = ../zc/.libs/libzc.a
-am_testRscript_double_OBJECTS = testRscript_double.$(OBJEXT)
-testRscript_double_OBJECTS = $(am_testRscript_double_OBJECTS)
-testRscript_double_DEPENDENCIES = ../zc/.libs/libzc.a
-am_testRscript_float_OBJECTS = testRscript_float.$(OBJEXT)
-testRscript_float_OBJECTS = $(am_testRscript_float_OBJECTS)
-testRscript_float_DEPENDENCIES = ../zc/.libs/libzc.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -165,12 +158,10 @@ am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(analyzeDataProperty_SOURCES) $(compareDataSets_SOURCES) \
 	$(generateGNUPlot_SOURCES) $(generateReport_SOURCES) \
-	$(modifyZCConfig_SOURCES) $(testRscript_double_SOURCES) \
-	$(testRscript_float_SOURCES)
+	$(modifyZCConfig_SOURCES)
 DIST_SOURCES = $(analyzeDataProperty_SOURCES) \
 	$(compareDataSets_SOURCES) $(generateGNUPlot_SOURCES) \
-	$(generateReport_SOURCES) $(modifyZCConfig_SOURCES) \
-	$(testRscript_double_SOURCES) $(testRscript_float_SOURCES)
+	$(generateReport_SOURCES) $(modifyZCConfig_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -323,10 +314,10 @@ generateGNUPlot_SOURCES = generateGNUPlot.c
 generateGNUPlot_LDADD = ../zc/.libs/libzc.a -lm
 generateReport_SOURCES = generateReport.c
 generateReport_LDADD = ../zc/.libs/libzc.a -lm
-testRscript_float_SOURCES = testRscript_float.c
-testRscript_float_LDADD = ../zc/.libs/libzc.a -lm
-testRscript_double_SOURCES = testRscript_double.c
-testRscript_double_LDADD = ../zc/.libs/libzc.a -lm
+#testRscript_float_SOURCES=testRscript_float.c
+#testRscript_float_LDADD=../zc/.libs/libzc.a -lm
+#testRscript_double_SOURCES=testRscript_double.c
+#testRscript_double_LDADD=../zc/.libs/libzc.a -lm
 modifyZCConfig_SOURCES = modifyZCConfig.c
 modifyZCConfig_LDADD = ../zc/.libs/libzc.a -lm
 all: all-am
@@ -432,14 +423,6 @@ modifyZCConfig$(EXEEXT): $(modifyZCConfig_OBJECTS) $(modifyZCConfig_DEPENDENCIES
 	@rm -f modifyZCConfig$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(modifyZCConfig_OBJECTS) $(modifyZCConfig_LDADD) $(LIBS)
 
-testRscript_double$(EXEEXT): $(testRscript_double_OBJECTS) $(testRscript_double_DEPENDENCIES) $(EXTRA_testRscript_double_DEPENDENCIES) 
-	@rm -f testRscript_double$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(testRscript_double_OBJECTS) $(testRscript_double_LDADD) $(LIBS)
-
-testRscript_float$(EXEEXT): $(testRscript_float_OBJECTS) $(testRscript_float_DEPENDENCIES) $(EXTRA_testRscript_float_DEPENDENCIES) 
-	@rm -f testRscript_float$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(testRscript_float_OBJECTS) $(testRscript_float_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -451,8 +434,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateGNUPlot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateReport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modifyZCConfig.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testRscript_double.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testRscript_float.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

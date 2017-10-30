@@ -29,6 +29,10 @@ void usage()
 	printf("	-e <endian_type>: endian type of the binary data in input files: 0(little-endian); 1(big-endian)\n");	
 	printf("	-A <first data file> : first data file such as original data file\n");
 	printf("	-B <second data file> : second data file such as decompressed data file\n");
+	printf("	-C <third data file> : third data file for analysis\n");
+	printf("	-D <fourth data file> : fourth data file for analysis\n");
+	printf("	-E <fifth data file> : fifth data file for analysis\n");
+	printf("	-F <sixth data file> : sixth data file for analysis\n");
 	printf("* output type of result file: \n");
 	printf("	-r : print the result on the screen.\n");
 	printf("	-b : analysis result stored in binary format\n");
@@ -52,7 +56,7 @@ int main(int argc, char *argv[])
 	size_t r2 = 0; 
 	size_t r1 = 0;
 	
-	char *dataPath1 = NULL, *dataPath2 = NULL;
+	char *dataPath1 = NULL, *dataPath2 = NULL, *dataPath3 = NULL, *dataPath4 = NULL, *dataPath5 = NULL, *dataPath6 = NULL;
 	char *rscriptPath = NULL, *funcName = NULL;
 	char *outputPath = NULL;
 	int arrNum = 0;
@@ -118,6 +122,30 @@ int main(int argc, char *argv[])
 			dataPath2 = argv[i];
 			arrNum ++;
 			break;
+		case 'C':
+			if (++i == argc)
+				usage();
+			dataPath3 = argv[i];
+			arrNum ++;
+			break;
+		case 'D':
+			if (++i == argc)
+				usage();
+			dataPath4 = argv[i];
+			arrNum ++;
+			break;
+		case 'E':
+			if (++i == argc)
+				usage();
+			dataPath5 = argv[i];
+			arrNum ++;
+			break;
+		case 'F':
+			if (++i == argc)
+				usage();
+			dataPath6 = argv[i];
+			arrNum ++;
+			break;									
 		case 'o': 
 			if (++i == argc)
 				usage();
@@ -152,56 +180,53 @@ int main(int argc, char *argv[])
 		usage();
 	}
 
-	size_t nbEle1 = 0, nbEle2 = 0;
-	float *f_data1 = NULL, *f_data2 = NULL;
-	double *d_data1 = NULL, *d_data2 = NULL;
+	size_t nbEle1 = 0, nbEle2 = 0, nbEle3 = 0, nbEle4 = 0, nbEle5 = 0, nbEle6 = 0;
+	float *f_data1 = NULL, *f_data2 = NULL, *f_data3 = NULL, *f_data4 = NULL, *f_data5 = NULL, *f_data6 = NULL;
+	double *d_data1 = NULL, *d_data2 = NULL, *d_data3 = NULL, *d_data4 = NULL, *d_data5 = NULL, *d_data6 = NULL;
 	switch(dataType)
 	{
 	case ZC_R_Int:
 		printf("Error: dosn't support ZC_R_Int type yet.\n");
 		break;
 	case ZC_R_Float: 
-		if(dataPath1!=NULL && dataPath2!=NULL)
+		if(dataPath1 == NULL && dataPath2 == NULL && dataPath3 == NULL && dataPath4 == NULL && dataPath5 == NULL && dataPath6 == NULL)
 		{
-			f_data1 = ZC_readFloatData(dataPath1, &nbEle1);
-			f_data2 = ZC_readFloatData(dataPath2, &nbEle2);
+			printf("Error: dataPath cannot be NULL; please use -A, -B, -C, -D, -E, and/or -F to specify data file(s).\n");
+			usage();			
 		}
-		else
-		{
-			if(dataPath1!=NULL)
-				f_data1 = ZC_readFloatData(dataPath1, &nbEle1);
-			else if(dataPath2!=NULL)
-				f_data1 = ZC_readFloatData(dataPath2, &nbEle1);
-			else
-			{
-				printf("Error: dataPath cannot be NULL; please use -A and/or -B to specify data file(s).\n");
-				usage();
-			}
-		}			
+		if(dataPath1!=NULL)
+			f_data1 = ZC_readFloatData(dataPath1, &nbEle1);
+		if(dataPath2 != NULL)
+			f_data2 = ZC_readFloatData(dataPath2, &nbEle2);
+		if(dataPath3 != NULL)
+			f_data3 = ZC_readFloatData(dataPath3, &nbEle3);
+		if(dataPath4 != NULL)
+			f_data4 = ZC_readFloatData(dataPath4, &nbEle4);
+		if(dataPath5 != NULL)
+			f_data5 = ZC_readFloatData(dataPath5, &nbEle5);
+		if(dataPath6 != NULL)
+			f_data6 = ZC_readFloatData(dataPath6, &nbEle6);											
 		break;
 	case ZC_R_Double: 
-		if(dataPath1!=NULL && dataPath2!=NULL)
+		if(dataPath1 == NULL && dataPath2 == NULL && dataPath3 == NULL && dataPath4 == NULL && dataPath5 == NULL && dataPath6 == NULL)
 		{
-			d_data1 = ZC_readDoubleData(dataPath1, &nbEle1);
-			d_data2 = ZC_readDoubleData(dataPath2, &nbEle2);
+			printf("Error: dataPath cannot be NULL; please use -A, -B, -C, -D, -E, and/or -F to specify data file(s).\n");
+			usage();			
 		}
-		else
-		{
-			if(dataPath1!=NULL)
-				d_data1 = ZC_readDoubleData(dataPath1, &nbEle1);
-			else if(dataPath2!=NULL)
-				d_data1 = ZC_readDoubleData(dataPath2, &nbEle1);
-			else
-			{
-				printf("Error: dataPath cannot be NULL; please use -A and/or -B to specify data file(s).\n");
-				usage();
-			}
-		}	
+		if(dataPath1!=NULL)
+			f_data1 = ZC_readFloatData(dataPath1, &nbEle1);
+		if(dataPath2 != NULL)
+			f_data2 = ZC_readFloatData(dataPath2, &nbEle2);
+		if(dataPath3 != NULL)
+			f_data3 = ZC_readFloatData(dataPath3, &nbEle3);
+		if(dataPath4 != NULL)
+			f_data4 = ZC_readFloatData(dataPath4, &nbEle4);
+		if(dataPath5 != NULL)
+			f_data5 = ZC_readFloatData(dataPath5, &nbEle5);
+		if(dataPath6 != NULL)
+			f_data6 = ZC_readFloatData(dataPath6, &nbEle6);											
 		break;
 	}
-
-//	for(i=0;i<10;i++)
-//		printf("data: %d %f\n", i, f_data1[i]);
 
     // Intialize the R environment.
     int r_argc = 2;
@@ -293,8 +318,160 @@ int main(int argc, char *argv[])
 			break;
 		}	
 		break;
+	case 3:
+		switch(dim)
+		{
+		case 1:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_3_1d(funcName, dataType, r1, f_data1, r1, f_data2, r1, f_data3, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_3_1d(funcName, dataType, r1, d_data1, r1, d_data2, r1, d_data3, &outLen, &out);
+				break;
+			}
+			break;
+		case 2:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_3_2d(funcName, dataType, r2, r1, f_data1, r2, r1, f_data2, r2, r1, f_data3, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_3_2d(funcName, dataType, r2, r1, d_data1, r2, r1, d_data2, r2, r1, d_data3, &outLen, &out);
+				break;
+			}		
+			break;
+		case 3:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_3_3d(funcName, dataType, r3, r2, r1, f_data1, r3, r2, r1, f_data2, r3, r2, r1, f_data3, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_3_3d(funcName, dataType, r3, r2, r1, d_data1, r3, r2, r1, d_data2, r3, r2, r1, d_data3, &outLen, &out);
+				break;
+			}				
+			break;
+		}	
+		break;
+	case 4:
+		switch(dim)
+		{
+		case 1:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_4_1d(funcName, dataType, r1, f_data1, r1, f_data2, r1, f_data3, r1, f_data4, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_4_1d(funcName, dataType, r1, d_data1, r1, d_data2, r1, d_data3, r1, d_data4, &outLen, &out);
+				break;
+			}
+			break;
+		case 2:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_4_2d(funcName, dataType, r2, r1, f_data1, r2, r1, f_data2, r2, r1, f_data3, r2, r1, f_data4, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_4_2d(funcName, dataType, r2, r1, d_data1, r2, r1, d_data2, r2, r1, d_data3, r2, r1, d_data4, &outLen, &out);
+				break;
+			}		
+			break;
+		case 3:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_4_3d(funcName, dataType, r3, r2, r1, f_data1, r3, r2, r1, f_data2, r3, r2, r1, f_data3, r3, r2, r1, f_data4, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_4_3d(funcName, dataType, r3, r2, r1, d_data1, r3, r2, r1, d_data2, r3, r2, r1, d_data3, r3, r2, r1, f_data4, &outLen, &out);
+				break;
+			}				
+			break;
+		}	
+		break;		
+	case 5:
+		switch(dim)
+		{
+		case 1:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_5_1d(funcName, dataType, r1, f_data1, r1, f_data2, r1, f_data3, r1, f_data4, r1, f_data5, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_5_1d(funcName, dataType, r1, d_data1, r1, d_data2, r1, d_data3, r1, d_data4, r1, d_data5, &outLen, &out);
+				break;
+			}
+			break;
+		case 2:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_5_2d(funcName, dataType, r2, r1, f_data1, r2, r1, f_data2, r2, r1, f_data3, r2, r1, f_data4, r2, r1, f_data5, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_5_2d(funcName, dataType, r2, r1, d_data1, r2, r1, d_data2, r2, r1, d_data3, r2, r1, d_data4, r2, r1, d_data5, &outLen, &out);
+				break;
+			}		
+			break;
+		case 3:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_5_3d(funcName, dataType, r3, r2, r1, f_data1, r3, r2, r1, f_data2, r3, r2, r1, f_data3, r3, r2, r1, f_data4, r3, r2, r1, f_data5, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_5_3d(funcName, dataType, r3, r2, r1, d_data1, r3, r2, r1, d_data2, r3, r2, r1, d_data3, r3, r2, r1, d_data4, r3, r2, r1, d_data5, &outLen, &out);
+				break;
+			}				
+			break;
+		}	
+		break;		
+	case 6:
+		switch(dim)
+		{
+		case 1:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_6_1d(funcName, dataType, r1, f_data1, r1, f_data2, r1, f_data3, r1, f_data4, r1, f_data5, r1, f_data6, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_6_1d(funcName, dataType, r1, d_data1, r1, d_data2, r1, d_data3, r1, d_data4, r1, d_data5, r1, d_data6, &outLen, &out);
+				break;
+			}
+			break;
+		case 2:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_6_2d(funcName, dataType, r2, r1, f_data1, r2, r1, f_data2, r2, r1, f_data3, r2, r1, f_data4, r2, r1, f_data5, r2, r1, f_data6, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_6_2d(funcName, dataType, r2, r1, d_data1, r2, r1, d_data2, r2, r1, d_data3, r2, r1, d_data4, r2, r1, d_data5, r2, r1, d_data6, &outLen, &out);
+				break;
+			}		
+			break;
+		case 3:
+			switch(dataType)
+			{
+			case ZC_R_Float:
+				ZC_callR_6_3d(funcName, dataType, r3, r2, r1, f_data1, r3, r2, r1, f_data2, r3, r2, r1, f_data3, r3, r2, r1, f_data4, r3, r2, r1, f_data5, r3, r2, r1, f_data6, &outLen, &out);
+				break;
+			case ZC_R_Double:
+				ZC_callR_6_3d(funcName, dataType, r3, r2, r1, d_data1, r3, r2, r1, d_data2, r3, r2, r1, d_data3, r3, r2, r1, d_data4, r3, r2, r1, d_data5, r3, r2, r1, d_data6, &outLen, &out);
+				break;
+			}				
+			break;
+		}	
+		break;
 	default: 
-		printf("number of arrays can only be 1 or 2.\n");
+		printf("number of arrays can only be 1, 2, 3, 4, 5, or 6.\n");
 		exit(0);
 	}
 	
