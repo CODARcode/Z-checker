@@ -1,0 +1,26 @@
+##   COMPILERS
+CC	= h5cc
+
+SO_FLAGS = -dynamiclib
+INC	 = -I./src
+
+OBJS = src/HDF5Reader.o
+
+all:	libhdf5reader.a libhdf5reader.dylib test/test_HDF5Reader
+
+src/%.o:	src/%.c
+	$(CC)  -fPIC -c $<
+	mv *.o src/
+
+libhdf5reader.a:		$(OBJS)
+	ar crvs $@ $^
+
+libhdf5reader.dylib:	$(OBJS)
+	$(CC) $(SO_FLAGS) -o $@ $^
+
+test/test_HDF5Reader: test/test_HDF5Reader.c
+	$(CC) $(INC) -o test/test_HDF5Reader test/test_HDF5Reader.c libhdf5reader.a
+	rm test_HDF5Reader.o
+
+clean: 
+	rm -rf src/*.o *.a *.dylib test/test_HDF5Reader
