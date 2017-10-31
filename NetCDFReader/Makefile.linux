@@ -1,0 +1,31 @@
+##   COMPILERS
+CC	= gcc
+
+#Please modify NETCDFPATH based on your own installation of netcdf
+NETCDFPATH	=/home/sdi/Install/netcdf-4.5.0-install
+
+NETCDFINC	= -I$(NETCDFPATH)/include
+NETCDFFLAGS = -L$(NETCDFPATH)/lib -lnetcdf
+SO_FLAGS	= -shared
+INC		= -I./src
+FLAGS		= -lnetcdfreader
+
+OBJS = src/NetCDFReader.o
+
+all:	libnetcdfreader.a libnetcdfreader.so test/test_NetCDFReader
+
+src/%.o:	src/%.c
+	$(CC) $(NETCDFINC) -fPIC -c $<
+	mv *.o src/
+
+libnetcdfreader.a:		$(OBJS)
+	ar crvs $@ $^
+
+libnetcdfreader.so:	$(OBJS)
+	$(CC) $(SO_FLAGS) -Wl,-soname,libzccallr.so -o $@ $^ -lc $(NETCDFFLAGS)
+
+test/test_NetCDFReader: test/test_NetCDFReader.c
+	$(CC) -o test/test_NetCDFReader test/test_NetCDFReader.c $(INC) -L. $(FLAGS) $(NETCDFINC) $(NETCDFFLAGS)
+	
+clean: 
+	rm -rf src/*.o *.a *.so test/test_NetCDFReader
