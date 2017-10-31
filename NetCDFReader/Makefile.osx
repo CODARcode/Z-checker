@@ -1,10 +1,10 @@
 ##   COMPILERS
-CC	= h5cc
+CC	= gcc
 
 NETCDFINC	= -I/usr/local/include
 NETCDFFLAGS = -lnetcdf
 DYLIB_FLAGS	= -dynamiclib
-INC			= -I./src
+INC			= -I./include
 FLAGS		= -lnetcdfreader
 
 OBJS = src/NetCDFReader.o
@@ -12,7 +12,7 @@ OBJS = src/NetCDFReader.o
 all:	libnetcdfreader.a libnetcdfreader.dylib test/test_NetCDFReader
 
 src/%.o:	src/%.c
-	$(CC) $(NETCDFINC) -fPIC -c $<
+	$(CC) $(NETCDFINC) $(INC) -fPIC -c $<
 	mv *.o src/
 
 libnetcdfreader.a:		$(OBJS)

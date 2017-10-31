@@ -2,14 +2,14 @@
 CC	= h5cc
 
 SO_FLAGS = -dynamiclib
-INC	 = -I./src
+INC	 = -I./include
 
 OBJS = src/HDF5Reader.o
 
 all:	libhdf5reader.a libhdf5reader.dylib test/test_HDF5Reader
 
 src/%.o:	src/%.c
-	$(CC)  -fPIC -c $<
+	$(CC) $(INC) -fPIC -c $<
 	mv *.o src/
 
 libhdf5reader.a:		$(OBJS)

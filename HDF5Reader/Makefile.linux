@@ -3,14 +3,14 @@ H5CC	= h5cc
 CC	= gcc
 
 SO_FLAGS = -shared
-INC	 = -I./src
+INC	 = -I./include
 
 OBJS = src/HDF5Reader.o
 
 all:	libhdf5reader.a libhdf5reader.so test/test_HDF5Reader
 
 src/%.o:	src/%.c
-	$(H5CC)  -fPIC -c $<
+	$(H5CC) $(INC) -fPIC -c $<
 	mv *.o src/
 
 libhdf5reader.a:	$(OBJS)

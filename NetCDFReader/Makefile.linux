@@ -7,7 +7,7 @@ NETCDFPATH	=/home/sdi/Install/netcdf-4.5.0-install
 NETCDFINC	= -I$(NETCDFPATH)/include
 NETCDFFLAGS = -L$(NETCDFPATH)/lib -lnetcdf
 SO_FLAGS	= -shared
-INC		= -I./src
+INC		= -I./include
 FLAGS		= -lnetcdfreader
 
 OBJS = src/NetCDFReader.o
@@ -15,11 +15,11 @@ OBJS = src/NetCDFReader.o
 all:	libnetcdfreader.a libnetcdfreader.so test/test_NetCDFReader
 
 src/%.o:	src/%.c
-	$(CC) $(NETCDFINC) -fPIC -c $<
+	$(CC) $(NETCDFINC) $(INC) -fPIC -c $<
 	mv *.o src/
 
 libnetcdfreader.a:		$(OBJS)
-	ar crvs $@ $^
+	ar crvs $@ $^ 
 
 libnetcdfreader.so:	$(OBJS)
 	$(CC) $(SO_FLAGS) -Wl,-soname,libzccallr.so -o $@ $^ -lc $(NETCDFFLAGS)
