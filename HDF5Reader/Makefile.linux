@@ -1,0 +1,26 @@
+##   COMPILERS
+H5CC	= h5cc
+CC	= gcc
+
+SO_FLAGS = -shared
+INC	 = -I./src
+
+OBJS = src/HDF5Reader.o
+
+all:	libhdf5reader.a libhdf5reader.so test/test_HDF5Reader
+
+src/%.o:	src/%.c
+	$(H5CC)  -fPIC -c $<
+	mv *.o src/
+
+libhdf5reader.a:	$(OBJS)
+	ar crvs $@ $^
+
+libhdf5reader.so:	$(OBJS)
+	$(CC) $(SO_FLAGS) -Wl,-soname,libhdf5reader.so -o $@ $^ -lc
+
+test/test_HDF5Reader:	test/test_HDF5Reader.c
+	$(H5CC) $(INC) -o test/test_HDF5Reader test/test_HDF5Reader.c libhdf5reader.a
+
+clean: 
+	rm -rf src/*.o *.a *.so test/test_HDF5Reader
