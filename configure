@@ -12732,8 +12732,12 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile NetCDFReader/Makefile zc/Makefile examples/Makefile"
+ac_config_files="$ac_config_files Makefile zc/Makefile examples/Makefile"
 
+if test "$ok" = "yes"; then
+ac_config_files="$ac_config_files NetCDFReader/Makefile"
+
+fi
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -13762,9 +13766,9 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "NetCDFReader/Makefile") CONFIG_FILES="$CONFIG_FILES NetCDFReader/Makefile" ;;
     "zc/Makefile") CONFIG_FILES="$CONFIG_FILES zc/Makefile" ;;
     "examples/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
+    "NetCDFReader/Makefile") CONFIG_FILES="$CONFIG_FILES NetCDFReader/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

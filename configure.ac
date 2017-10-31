@@ -121,7 +121,9 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memchr memset strchr strtol])
 
 AC_CONFIG_FILES([Makefile
-		 NetCDFReader/Makefile
                  zc/Makefile
-		 examples/Makefile])
+                 examples/Makefile])
+if test "$ok" = "yes"; then
+AC_CONFIG_FILES([NetCDFReader/Makefile])
+fi
 AC_OUTPUT
