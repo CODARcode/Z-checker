@@ -18,11 +18,14 @@
 #include "ZC_rw.h"
 #include "ZC_Hashtable.h"
 #include "ZC_ReportGenerator.h"
-
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
 int sysEndianType; //endian type of the system
 int dataEndianType; //endian type of the data
 
 int checkingStatus; //0 refers to probe_compressor, 1 refers to analyze_data, and 2 indicates compare_compressor
+int executionMode = 0;
 //char *ZC_workspaceDir;
 
 int errorBoundMode; //ABS, REL, ABS_AND_REL, or ABS_OR_REL
@@ -101,7 +104,14 @@ CmprsorErrBound allCompressors[CMPR_MAX_LEN];
 int allVarCaseCount = 0;
 char* allVarCases[20];
 
-hashtable_t* varHashtable = NULL;
+#ifdef HAVE_MPI
+MPI_Comm ZC_COMM_WORLD; 
+#endif
+
+int myRank = 1;
+int nbProc = 1;
+
+size_t globalDataLength = 0;
 
 void cost_startCmpr()
 {
@@ -138,6 +148,30 @@ int ZC_Init(char *configFilePath)
 		exit(0);
 	
 	memset(allCompressors, 0, sizeof(CmprsorErrBound)*20);
+
+#ifdef HAVE_MPI
+	int mpi_init = 0;
+	MPI_Initialized(&mpi_init);
+	if(!mpi_init)
+	{
+		MPI_Init(NULL, NULL);
+	}
+
+	MPI_Comm_dup(MPI_COMM_WORLD, &ZC_COMM_WORLD); 
+	MPI_Comm_size(ZC_COMM_WORLD, &nbProc);
+	MPI_Comm_rank(ZC_COMM_WORLD, &myRank);
+	if(nbProc>1 && mpi_init==0)
+	{
+		if(myRank==0)
+		{
+			printf("Error: You are using running the program with multiple ranks/processes but missing MPI_Init() before ZC_Init().\n");
+			printf("Solution: Please add/put the MPI_Init() to be ahead of ZC_Init().\n");
+		}
+		exit(0);
+		return ZC_NSCS;		
+	}
+#endif
+	
 	return ZC_SCES;
 }
 
@@ -1104,4 +1138,12 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	
 	return zcv;
 }
-
+//online interfaces
+#ifdef HAVE_MPI
+long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	long localDataLength = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	MPI_Allreduce(&localDataLength, &globalDataLength, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);
+	return globalDataLength;
+}
+#endif

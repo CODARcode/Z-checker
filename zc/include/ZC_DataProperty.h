@@ -37,7 +37,7 @@ typedef struct ZC_DataProperty
 	
 	void *data;
 	
-	size_t numOfElem;
+	long numOfElem;
 	double minValue;
 	double maxValue;
 	double valueRange;
@@ -73,6 +73,11 @@ char** constructDataPropertyString(ZC_DataProperty* property);
 void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir);
 void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir);
 ZC_DataProperty* ZC_loadDataProperty(char* propResultFile);
+
+#ifdef HAVE_MPI
+ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+#endif
 
 #ifdef __cplusplus
 }

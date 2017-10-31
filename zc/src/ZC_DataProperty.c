@@ -246,12 +246,26 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 	if(dataType==ZC_FLOAT)
 	{
 		float* data = (float*)oriData;
+#ifdef HAVE_MPI		
+		if(executionMode==ZC_OFFLINE)
+			property = ZC_genProperties_float(varName, data, numOfElem, r5, r4, r3, r2, r1);
+		else
+			property = ZC_genProperties_float_online(varName, data, numOfElem, r5, r4, r3, r2, r1);
+#else
 		property = ZC_genProperties_float(varName, data, numOfElem, r5, r4, r3, r2, r1);
+#endif
 	}
 	else if(dataType==ZC_DOUBLE)
 	{
 		double* data = (double*)oriData;
+#ifdef HAVE_MPI
+		if(executionMode==ZC_OFFLINE)
+			property = ZC_genProperties_double(varName, data, numOfElem, r5, r4, r3, r2, r1);
+		else
+			property = ZC_genProperties_double_online(varName, data, numOfElem, r5, r4, r3, r2, r1);
+#else
 		property = ZC_genProperties_double(varName, data, numOfElem, r5, r4, r3, r2, r1);
+#endif
 	}
 	else
 	{
@@ -277,6 +291,10 @@ void ZC_printDataProperty(ZC_DataProperty* property)
 	printf("avg value: %f\n", property->avgValue);
 	printf("max value: %f\n", property->maxValue);
 	printf("value range: %f\n", property->valueRange);
+	printf("entropy: %f\n", property->entropy);
+	//printf("(property->autocorr)[1]=%f\n", (property->autocorr)[1]);
+	//printf("(property->autocorr)[20]=%f\n", (property->autocorr)[20]);
+	//printf("(property->autocorr)[90]=%f\n", (property->autocorr)[90]);
 }
 
 char** constructDataPropertyString(ZC_DataProperty* property)

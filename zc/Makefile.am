@@ -9,7 +9,16 @@ include_HEADERS=include/ZC_ByteToolkit.h include/ZC_conf.h include/ZC_gnuplot.h 
 		#include/ZC_HDF5Handler.h include/ZC_DataSetHandler.h
 
 lib_LTLIBRARIES=libzc.la
+if MPI
+libzc_la_CFLAGS=-g -I./include -DHAVE_MPI
+else
 libzc_la_CFLAGS=-g -I./include
+endif
+
+if HDF5
+libzc_la_CFLAGS+=-DHAVE_HDF5
+endif
+
 libzc_la_LDFLAGS = -version-info  0:1:0
 #libsz_la_LIDADD=../zlib/.libs/libzlib.a
 libzc_la_SOURCES=src/ZC_ByteToolkit.c src/ZC_gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c src/ZC_DataProperty_double.c src/ZC_DataProperty.c\

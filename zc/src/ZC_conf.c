@@ -79,6 +79,7 @@ int ZC_ReadConf() {
     char *errBoundMode;
     char *endianTypeString;
     char *checkingStatusString;
+    char *executionModeString;
     dictionary *ini;
     char *par;
     printf("[ZC] Reading ZC configuration file (%s) ...\n", zc_cfgFile);
@@ -119,6 +120,12 @@ int ZC_ReadConf() {
 		printf("Example: checkingStatus = PROBE_COMPRESSOR, ANALYZE_DATA, COMPARE_COMPRESSOR\n");
 		exit(0);
 	}	
+
+	executionModeString = iniparser_getstring(ini, "ENV:executionMode", NULL);
+	if(strcmp(executionModeString, "OFFLINE")==0)
+		executionMode = ZC_OFFLINE;
+	else
+		executionMode = ZC_ONLINE;
 
 	char *y = (char*)&x;
 	

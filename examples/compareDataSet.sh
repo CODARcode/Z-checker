@@ -33,6 +33,6 @@ echo ./HfPrecCvter ${datatype}  $originaldataFile $dim1 $dim2 $dim3 $dim4
 ./HfPrecCvter ${datatype}  $originaldataFile $dim1 $dim2 $dim3 $dim4
 
 cd -
-./compareDataSets ${datatype} zc.config "hf-prec-cvter" $varName "${originaldataFile}" "${originaldataFile}.hf.out" $dim1 $dim2 $dim3 $dim4
-./compareDataSets ${datatype} zc.config "dec-interp-cmprsor" $varName "${originaldataFile}" "${originaldataFile}.intrpl.out" $dim1 $dim2 $dim3 $dim4
+#./compareDataSets ${datatype} zc.config "hf-prec-cvter" $varName "${originaldataFile}" "${originaldataFile}.hf.out" $dim1 $dim2 $dim3 $dim4
+#./compareDataSets ${datatype} zc.config "dec-interp-cmprsor" $varName "${originaldataFile}" "${originaldataFile}.intrpl.out" $dim1 $dim2 $dim3 $dim4
 ./compareDataSets ${datatype} zc.config user-compressor $varName "${originaldataFile}" "$decompresseddataFile" $dim1 $dim2 $dim3 $dim4

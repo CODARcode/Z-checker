@@ -31,6 +31,9 @@
 #include "ZC_latex.h"
 #include "ZC_ByteToolkit.h"
 #include "ZC_conf.h"
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
 
 #ifdef _WIN32
 #define PATH_SEPARATOR ';'
@@ -110,10 +113,14 @@ extern "C" {
 #define ERRBOUND_MAX_LEN 50
 #define ERRBOUND_STR_BUFSIZE 50
 
+#define ZC_OFFLINE 0
+#define ZC_ONLINE 1
+
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
 
 extern int checkingStatus;
+extern int executionMode;
 
 extern char *zc_cfgFile;
 
@@ -182,6 +189,15 @@ extern char* properties_dir[PROP_MAX_LEN];
 extern char* comparisonCases;
 
 extern int numOfErrorBoundCases;
+
+#ifdef HAVE_MPI
+extern MPI_Comm ZC_COMM_WORLD;
+#endif
+
+extern int myRank;
+extern int nbProc;
+
+extern size_t globalDataLength;
 
 typedef union eclshort
 {
@@ -289,6 +305,9 @@ int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data);
 int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data);
 int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
 int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
+
+//online interfaces
+long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 #ifdef __cplusplus
 }
