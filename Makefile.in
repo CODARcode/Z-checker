@@ -228,6 +228,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+H5CC = @H5CC@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -246,6 +247,12 @@ MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+MPICC = @MPICC@
+MPI_FLAGS = @MPI_FLAGS@
+NETCDF_CFLAGS = @NETCDF_CFLAGS@
+NETCDF_HDR = @NETCDF_HDR@
+NETCDF_LIB = @NETCDF_LIB@
+NETCDF_STATIC = @NETCDF_STATIC@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -319,7 +326,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = zc examples
+#if HDF5
+#SUBDIRS = HDF5Reader
+#endif
+SUBDIRS = NetCDFReader zc examples
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
