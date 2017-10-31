@@ -23,7 +23,6 @@ libnetcdfreader.dylib:	$(OBJS)
 
 test/test_NetCDFReader: test/test_NetCDFReader.c
 	$(CC) -o test/test_NetCDFReader test/test_NetCDFReader.c $(INC) -L. $(FLAGS)
-	rm test_NetCDFReader.o
 	
 clean: 
 	rm -rf src/*.o *.a *.dylib test/test_NetCDFReader
