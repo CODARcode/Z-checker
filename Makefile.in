@@ -156,7 +156,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = NetCDFReader zc examples
+DIST_SUBDIRS = zc examples NetCDFReader
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in README \
 	ar-lib compile config.guess config.sub install-sh ltmain.sh \
 	missing
@@ -326,11 +326,11 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-@NETCDF_FALSE@SUBDIRS = NetCDFReader zc examples
+@NETCDF_FALSE@SUBDIRS = zc examples
 #if HDF5
 #SUBDIRS = HDF5Reader
 #endif
-@NETCDF_TRUE@SUBDIRS = zc examples
+@NETCDF_TRUE@SUBDIRS = NetCDFReader zc examples
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

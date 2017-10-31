@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS=foreign
 #SUBDIRS = HDF5Reader
 #endif
 if NETCDF
-SUBDIRS = zc examples
-else
 SUBDIRS = NetCDFReader zc examples
+else
+SUBDIRS = zc examples
 endif
