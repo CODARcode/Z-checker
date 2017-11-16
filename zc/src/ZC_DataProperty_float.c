@@ -139,7 +139,8 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
-	property->varName = varName;
+	property->varName = (char*)malloc(strlen(varName)+1);
+	strcpy(property->varName, varName);
 	property->dataType = ZC_FLOAT;
 	property->data = data;
 

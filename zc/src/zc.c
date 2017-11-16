@@ -17,6 +17,7 @@
 #include "zc.h"
 #include "ZC_rw.h"
 #include "ZC_Hashtable.h"
+#include "ZC_DataSetHandler.h"
 #include "ZC_ReportGenerator.h"
 #ifdef HAVE_MPI
 #include <mpi.h>
@@ -1094,11 +1095,40 @@ int ZC_analyze_and_generateReport(char* dataSetName)
 
 void ZC_Finalize()
 {
-	//TODO: free hashtable memory
+	//free hashtable memory
 	if(ecPropertyTable!=NULL)
+	{
+		size_t i, count = ecPropertyTable->count;
+		char** keys = ht_getAllKeys(ecPropertyTable);
+	
+		for(i=0;i<count;i++)
+		{
+			char* key = keys[i];
+
+			ZC_DataProperty* property = ht_get(ecPropertyTable, key);
+			freeDataProperty(property);
+			if(ecCompareDataTable!=NULL)
+			{
+				ZC_CompareData* c = ht_get(ecCompareDataTable, key);
+				c->property = NULL;
+			}
+		}		
 		ht_freeTable(ecPropertyTable);
+	}
+
 	if(ecCompareDataTable!=NULL)
+	{
+		size_t i, count = ecPropertyTable->count;
+		char** keys = ht_getAllKeys(ecCompareDataTable);
+		for(i=0;i<count;i++)
+		{
+			char* key = keys[i];
+			ZC_CompareData* c = ht_get(ecCompareDataTable, key);
+			freeCompareResult(c);
+		}
+		
 		ht_freeTable(ecCompareDataTable);
+	}
 	if(reportTemplateDir!=NULL)
 		free(reportTemplateDir);
 	//free compressor_errBounds_elements
@@ -1138,6 +1168,90 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	
 	return zcv;
 }
+
+ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars)
+{
+	int i, lineCount, nbVars_ = 0;
+	StringLine* lines = ZC_readLines(multivarFile, &lineCount);
+	char *str, *token;
+	char delim[2];
+	strcpy(delim, ":"); 
+	
+	char varName[100];
+	char endian[20];
+	char type[10];
+	char dim[100];
+	char filePath[256];
+	
+	StringLine* p = lines->next;
+	while(p!=NULL)
+	{
+		str = p->str;
+		if(str[0]=='#'||str[0]=='\0')
+		{
+			p = p->next;
+			continue;
+		}
+		else
+			nbVars_++;
+		p = p->next;
+	}
+	ZC_CompareData** result = (ZC_CompareData**)malloc(sizeof(ZC_CompareData*)*nbVars_);	
+	
+	p = lines->next;
+	int counter = 0;
+	while(p!=NULL)
+	{
+		str = p->str;
+		
+		if(str[0]!='#'&&str[0]!='\0')
+		{
+			printf("Loading data %s\n", str);
+			/* get the first token */
+			token = strtok(str, delim);	
+			strcpy(varName, token);
+			token = strtok(NULL, delim);
+			if(token==NULL)
+			{
+				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
+				exit(0);
+			}
+			strcpy(endian, token);
+			token = strtok(NULL, delim);
+			if(token==NULL)
+			{
+				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
+				exit(0);
+			}
+			strcpy(type, token);
+			token = strtok(NULL, delim);
+			if(token==NULL)
+			{
+				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
+				exit(0);
+			}		
+			strcpy(dim, token);
+			token = strtok(NULL, delim);
+			if(token==NULL)
+			{
+				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
+				exit(0);
+			}		
+			strcpy(filePath, token);			
+
+			rtrim(filePath); //remove '\n'
+			
+			result[counter] = ZC_constructOneVariable(varName, endian, type, dim, filePath);
+			counter++;
+		}
+		p = p->next;
+	}
+	*nbVars = nbVars_;
+	ZC_freeLines(lines);
+	return result;
+}
+
+
 //online interfaces
 #ifdef HAVE_MPI
 long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)

@@ -154,8 +154,9 @@ void ht_freeTable( hashtable_t *hashtable)
 		if(hashtable->table[i] != NULL)
 		{	
 			//TODO: free contents of hashtable->table[i]
-			if(hashtable->table[i]->value!=NULL)
-				free(hashtable->table[i]->value);
+			/*The -->value should be freed in a specific way, like free_Property().*/
+			//if(hashtable->table[i]->value!=NULL)
+			//	free(hashtable->table[i]->value);
 			free(hashtable->table[i]);
 		}
 	}	

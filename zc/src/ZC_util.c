@@ -30,7 +30,7 @@ void rtrim(char *s)
 	if(s==NULL)
 		return;
 	i = strlen(s)-1;
-	while((s[i] == ' ' || s[i] == '\t') && i >= 0){i--;};
+	while((s[i] == ' ' || s[i] == '\t' || s[i] == '\n') && i >= 0){i--;};
 	s[i+1] = '\0';
 }
 

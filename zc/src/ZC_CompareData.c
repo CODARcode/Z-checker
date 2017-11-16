@@ -27,33 +27,36 @@ size_t compressSize, double decompressTime, double decompressRate, double minAbs
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF)
 {
-	ZC_CompareData* this = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
+	ZC_CompareData* result = (ZC_CompareData*)malloc(sizeof(struct ZC_CompareData));
 
 	//TODO: get the dataProperty based on varName from the hashtable.
-	this->property = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
+	result->property = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
 	
-	this->compressTime = compressTime;
-	this->compressRate = compressRate;
-	this->compressRatio = compressRatio;
-	this->rate = rate;
-	this->compressSize = compressSize;
-	this->decompressTime = decompressTime;
-	this->decompressRate = decompressRate;
-	this->minAbsErr = minAbsErr;
-	this->avgAbsErr = avgAbsErr;
-	this->maxAbsErr = maxAbsErr;
-	this->minRelErr = minRelErr;
-	this->avgRelErr = avgRelErr;
-	this->maxRelErr = maxRelErr;
-	this->rmse = rmse;
-	this->nrmse = nrmse;
-	this->psnr = psnr;
-	this->snr = snr;
-	this->valErrCorr = valErrCorr;
-	this->pearsonCorr = pearsonCorr;
-	this->autoCorrAbsErr = autoCorrAbsErr;
-	this->absErrPDF = absErrPDF;
-	return this;
+	result->dec_data = NULL;
+	result->compressTime = compressTime;
+	result->compressRate = compressRate;
+	result->compressRatio = compressRatio;
+	result->rate = rate;
+	result->compressSize = compressSize;
+	result->decompressTime = decompressTime;
+	result->decompressRate = decompressRate;
+	result->minAbsErr = minAbsErr;
+	result->avgAbsErr = avgAbsErr;
+	result->maxAbsErr = maxAbsErr;
+	result->minRelErr = minRelErr;
+	result->avgRelErr = avgRelErr;
+	result->maxRelErr = maxRelErr;
+	result->rmse = rmse;
+	result->nrmse = nrmse;
+	result->psnr = psnr;
+	result->snr = snr;
+	result->valErrCorr = valErrCorr;
+	result->pearsonCorr = pearsonCorr;
+	result->autoCorrAbsErr = autoCorrAbsErr;
+	result->absErrPDF = absErrPDF;
+	result->pwrErrPDF = NULL;
+	result->fftCoeff = NULL;
+	return result;
 }
 
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)

@@ -171,7 +171,8 @@ int ZC_ReadConf() {
 	valErrCorrFlag = (int)iniparser_getint(ini, "COMPARE:valErrCorr", 0);
 
 	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
-			
+
+	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
 	if(checkingStatus==COMPARE_COMPRESSOR)
 	{		
@@ -227,7 +228,6 @@ int ZC_ReadConf() {
 		}
 
 		//load property data first
-		ecPropertyTable = ht_create( HASHTABLE_SIZE );
 		char* property_dir = NULL;
 				
 		char** fileNames = (char**)malloc(ZC_BUFS_LONG*sizeof(char*)); //at most 1000 files, each of which has 500 chars.
@@ -426,3 +426,5 @@ int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* new
 	}
 	return ZC_NSCS;
 }
+
+

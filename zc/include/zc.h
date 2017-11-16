@@ -21,6 +21,7 @@
 #include "ZC_DataProperty.h"
 #include "ZC_CompareData.h"
 #include "ZC_Hashtable.h"
+#include "ZC_DataSetHandler.h"
 #include "DynamicFloatArray.h"
 #include "DynamicDoubleArray.h"
 #include "DynamicIntArray.h"
@@ -297,6 +298,8 @@ void ZC_generateOverallReport(char* dataSetName);
 void ZC_Finalize();
 
 ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars);
 
 //The following executeCmd_xxx interfaces are depreated. (Please see [ZC_package]/R/ for how to call R scripts from Z-checker instead. 
 int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data);

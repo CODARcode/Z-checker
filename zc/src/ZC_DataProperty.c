@@ -164,7 +164,8 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 
 void freeDataProperty(ZC_DataProperty* dataProperty)
 {
-	//free(dataProperty->varName);
+	if(dataProperty->varName!=NULL)
+		free(dataProperty->varName);
 	if(dataProperty->autocorr!=NULL)
 		free(dataProperty->autocorr);
 	if(dataProperty->fftCoeff!=NULL)
@@ -179,7 +180,8 @@ size_t numOfElem, double minValue, double maxValue, double valueRange, double av
 double entropy, double* autocorr, complex* fftCoeff)
 {
 	ZC_DataProperty* this = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
-	this->varName = varName;
+	this->varName = (char*)malloc(strlen(varName)+1);
+	strcpy(this->varName,varName);
 	this->dataType = dataType;
 	this->r5 = r5;
 	this->r4 = r4;
