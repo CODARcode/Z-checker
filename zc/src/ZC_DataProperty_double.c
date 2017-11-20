@@ -87,15 +87,18 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 	if(autocorrFlag)
 	{
 		double ccov[AUTOCORR_SIZE+1], gcov[AUTOCORR_SIZE+1];
+		memset(ccov, 0, sizeof(double)*(AUTOCORR_SIZE+1));
+		memset(gcov, 0, sizeof(double)*(AUTOCORR_SIZE+1));
+		
 		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 		int delta;
-		double cov = 0;
 		double var = 0, gvar = 0;
 		for (i = 0; i < numOfElem; i++)
 			var += (data[i] - property->avgValue)*(data[i] - property->avgValue);
 			
 		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
 		{
+			double cov = 0;
 			for (i = 0; i < numOfElem-delta; i++)
 				cov += (data[i]-property->avgValue)*(data[i+delta]-property->avgValue);
 			ccov[delta] = cov;	
@@ -107,7 +110,6 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 		if(myRank==0)
 		{	
 			gvar = gvar/globalDataLength;
-			size_t ccov_size = globalDataLength-nbProc*delta;
 			if (gvar == 0)
 			{
 				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
@@ -115,17 +117,21 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 			}
 			else
 			{
-				autocorr[delta] = gcov[delta]/ccov_size/gvar;
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					autocorr[delta] = gcov[delta]/(globalDataLength-nbProc*delta)/gvar;				
+				}
 			}
 			autocorr[0] = 1;
 			property->autocorr = autocorr;					
 		}
 	}
-	
 	//TODO compute FFT 
 	
 	
 	//TODO compute Lap
+	
+	return property;
 }
 #endif
 
@@ -134,8 +140,9 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 	size_t i = 0;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
-
-	property->varName = varName;
+	
+	property->varName = (char*)malloc(strlen(varName)+1);
+	strcpy(property->varName, varName);
 	property->dataType = ZC_DOUBLE;
 	property->data = data;
 

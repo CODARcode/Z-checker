@@ -299,7 +299,7 @@ void ZC_Finalize();
 
 ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars);
+ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status);
 
 //The following executeCmd_xxx interfaces are depreated. (Please see [ZC_package]/R/ for how to call R scripts from Z-checker instead. 
 int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data);

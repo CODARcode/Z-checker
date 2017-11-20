@@ -1,0 +1,5 @@
+#list of data files (each of which is an 1D or multi-dimensional array)
+VAR1_LE:LITTLE_ENDIAN:FLOAT:128x8x8:testdata/x86/testfloat_8_8_128.dat
+VAR2_LE:LITTLE_ENDIAN:DOUBLE:128x8x8:testdata/x86/testdouble_8_8_128.dat
+VAR3_BE:BIG_ENDIAN:FLOAT:128x8x8:testdata/ppc/testfloat_8_8_128.dat
+VAR4_BE:BIG_ENDIAN:DOUBLE:128x8x8:testdata/ppc/testdouble_8_8_128.dat

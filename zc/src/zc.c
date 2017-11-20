@@ -1112,8 +1112,10 @@ void ZC_Finalize()
 				ZC_CompareData* c = ht_get(ecCompareDataTable, key);
 				c->property = NULL;
 			}
+			//free(key);
 		}		
 		ht_freeTable(ecPropertyTable);
+		free(keys);
 	}
 
 	if(ecCompareDataTable!=NULL)
@@ -1169,7 +1171,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	return zcv;
 }
 
-ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars)
+ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status)
 {
 	int i, lineCount, nbVars_ = 0;
 	StringLine* lines = ZC_readLines(multivarFile, &lineCount);
@@ -1210,32 +1212,44 @@ ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars)
 			/* get the first token */
 			token = strtok(str, delim);	
 			strcpy(varName, token);
+			
+			void* value = ht_get(ecPropertyTable, varName);
+			if(value!=NULL)
+			{
+				printf("Error: duplicated name of variables in the list (%s)\n", varName);
+				*status = ZC_NSCS;
+				return NULL;
+			}
 			token = strtok(NULL, delim);
 			if(token==NULL)
 			{
 				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
-				exit(0);
+				*status = ZC_NSCS;
+				return NULL;
 			}
 			strcpy(endian, token);
 			token = strtok(NULL, delim);
 			if(token==NULL)
 			{
 				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
-				exit(0);
+				*status = ZC_NSCS;
+				return NULL;
 			}
 			strcpy(type, token);
 			token = strtok(NULL, delim);
 			if(token==NULL)
 			{
 				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
-				exit(0);
+				*status = ZC_NSCS;
+				return NULL;
 			}		
 			strcpy(dim, token);
 			token = strtok(NULL, delim);
 			if(token==NULL)
 			{
 				printf("Error: not enough information for variable %s in %s\n", varName, multivarFile);
-				exit(0);
+				*status = ZC_NSCS;
+				return NULL;
 			}		
 			strcpy(filePath, token);			
 
@@ -1248,6 +1262,7 @@ ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars)
 	}
 	*nbVars = nbVars_;
 	ZC_freeLines(lines);
+	*status = ZC_SCES;
 	return result;
 }
 

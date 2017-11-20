@@ -19,8 +19,14 @@ int main(int argc, char * argv[])
 	ZC_Init(argv[1]);
     sprintf(multivarsConfFile, "%s", argv[2]);
 
-	int nbVars;
-	ZC_CompareData** zcd = loadMultiVars(multivarsConfFile, &nbVars);
+	int nbVars, status;
+	ZC_CompareData** zcd = loadMultiVars(multivarsConfFile, &nbVars, &status);
+	
+	if(status==ZC_NSCS)
+	{
+		printf("Failed Status of loadMultiVars()\n");
+		exit(0);
+	}
 	
 	int i = 0;
 	ZC_DataProperty* property = NULL;
@@ -32,13 +38,15 @@ int main(int argc, char * argv[])
 		{
 			float* data = (float*)property->data;
 			printf("\t data=%f %f %f %f %f ....\n", data[0], data[1], data[2], data[3], data[4]);
-			free(data);
+			free(property->data);
+			property->data = NULL;			
 		}
 		else
 		{
 			double* data = (double*)property->data;
 			printf("\t data=%f %f %f %f %f ....\n", data[0], data[1], data[2], data[3], data[4]);	
-			free(data);		
+			free(property->data);
+			property->data = NULL;		
 		}
 	}
 	
