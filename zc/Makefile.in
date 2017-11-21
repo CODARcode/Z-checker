@@ -150,7 +150,8 @@ am_libzc_la_OBJECTS = src/libzc_la-ZC_ByteToolkit.lo \
 	src/libzc_la-ZC_ReportGenerator.lo \
 	src/libzc_la-ZC_quicksort.lo src/libzc_la-ZC_rw.lo \
 	src/libzc_la-ZC_conf.lo src/libzc_la-dictionary.lo \
-	src/libzc_la-ZC_util.lo src/libzc_la-zc.lo
+	src/libzc_la-ZC_util.lo src/libzc_la-zc.lo \
+	src/libzc_la-ZC_DataSetHandler.lo
 libzc_la_OBJECTS = $(am_libzc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -349,8 +350,7 @@ AUTOMAKE_OPTIONS = foreign
 include_HEADERS = include/ZC_ByteToolkit.h include/ZC_conf.h include/ZC_gnuplot.h include/ZC_latex.h include/ZC_quicksort.h\
 		include/ZC_rw.h include/ZC_Hashtable.h include/ZC_DataProperty.h include/ZC_CompareData.h\
 		include/DynamicIntArray.h include/DynamicFloatArray.h include/DynamicDoubleArray.h include/DynamicByteArray.h\
-		include/dictionary.h include/zc.h include/iniparser.h include/ZC_util.h include/ZC_ReportGenerator.h\
-		#include/ZC_HDF5Handler.h include/ZC_DataSetHandler.h
+		include/dictionary.h include/zc.h include/iniparser.h include/ZC_util.h include/ZC_ReportGenerator.h include/ZC_DataSetHandler.h
 
 lib_LTLIBRARIES = libzc.la
 @MPI_FALSE@libzc_la_CFLAGS = -g -I./include $(am__append_1)
@@ -360,8 +360,7 @@ libzc_la_LDFLAGS = -version-info  0:1:0
 libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c src/ZC_DataProperty_double.c src/ZC_DataProperty.c\
 		src/ZC_CompareData_float.c src/ZC_CompareData_double.c src/ZC_CompareData.c\
 		src/DynamicIntArray.c src/DynamicFloatArray.c src/DynamicDoubleArray.c src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c\
-		src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c src/ZC_util.c src/zc.c\
-		#src/ZC_HDF5Handler.c src/ZC_DataSetHandler.c
+		src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c
 
 all: all-am
 
@@ -480,6 +479,8 @@ src/libzc_la-dictionary.lo: src/$(am__dirstamp) \
 src/libzc_la-ZC_util.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-zc.lo: src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_DataSetHandler.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 
 libzc.la: $(libzc_la_OBJECTS) $(libzc_la_DEPENDENCIES) $(EXTRA_libzc_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libzc_la_LINK) -rpath $(libdir) $(libzc_la_OBJECTS) $(libzc_la_LIBADD) $(LIBS)
@@ -503,6 +504,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_Hashtable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_conf.Plo@am__quote@
@@ -692,6 +694,13 @@ src/libzc_la-zc.lo: src/zc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/zc.c' object='src/libzc_la-zc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-zc.lo `test -f 'src/zc.c' || echo '$(srcdir)/'`src/zc.c
+
+src/libzc_la-ZC_DataSetHandler.lo: src/ZC_DataSetHandler.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataSetHandler.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Tpo -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Tpo src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataSetHandler.c' object='src/libzc_la-ZC_DataSetHandler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
