@@ -310,6 +310,7 @@ int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
 int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
 
 //online interfaces
+ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 #ifdef __cplusplus

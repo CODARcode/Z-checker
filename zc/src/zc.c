@@ -1275,4 +1275,41 @@ long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, siz
 	MPI_Allreduce(&localDataLength, &globalDataLength, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);
 	return globalDataLength;
 }
+
+ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	size_t i;
+	double min,max,valueRange,sum = 0,avg;
+	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
+	memset(property, 0, sizeof(ZC_DataProperty));
+	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);	
+	
+	property->varName = varName;
+	property->dataType = dataType;
+	property->data = oriData;
+	property->r5 = r5;
+	property->r4 = r4;
+	property->r3 = r3;
+	property->r2 = r2;
+	property->r1 = r1;
+	
+	if(dataType == ZC_FLOAT)
+	{
+		float* data = (float*)oriData;
+		min = data[0];
+		max = data[0];
+		ZC_genBasicProperties_float_online(varName, data, numOfElem, property);	
+	}
+	else
+	{
+		double* data = (double*)oriData;
+		min = data[0];
+		max = data[0];
+		ZC_genBasicProperties_double_online(varName, data, numOfElem, property);
+	}
+	
+	if(compressTimeFlag)
+		MPI_Wtime();
+	return property;
+}
 #endif

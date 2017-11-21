@@ -129,6 +129,12 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile);
 
 ZC_CompareData_Overall* ZC_compareData_overall();
 
+//online interfaces
+void ZC_compareData_float_online(ZC_CompareData* compareResult, float* data1, float* data2, 
+size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+void ZC_compareData_double_online(ZC_CompareData* compareResult, double* data1, double* data2, 
+size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
 #ifdef __cplusplus
 }
 #endif

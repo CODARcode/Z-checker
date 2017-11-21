@@ -48,6 +48,23 @@ void hash_put(HashEntry *table, unsigned long key, size_t table_size)
 	}
 }
 
+int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	if(r1==0)
+		return 0;
+	if(r2==0)
+		return 1;
+	if(r3==0)
+		return 2;
+	if(r4==0)
+		return 3;
+	if(r5==0)
+		return 4;
+	else
+		return 5;
+		
+}
+
 /* For FFT and iFFT calculation */
 void fft(complex *v, size_t n, complex *tmp)
 {

@@ -138,26 +138,51 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 {
 	ZC_CompareData* compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
 	memset(compareResult, 0, sizeof(ZC_CompareData));
-
+	//size_t numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	
 	if(dataType==ZC_FLOAT)
 	{
 		float* data1 = (float*)oriData;
 		float* data2 = (float*)decData;
 		
-		size_t numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
-		//compareResult->property = ZC_genProperties_float(varName, data1, numOfElem, r5, r4, r3, r2, r1);
+#ifdef HAVE_MPI		
+		if(executionMode==ZC_OFFLINE)
+		{
+			//compareResult->property = ZC_genProperties_float(varName, data1, numOfElem, r5, r4, r3, r2, r1);
+			compareResult->property = ZC_startCmpr(varName, ZC_FLOAT, data1, r5, r4, r3, r2, r1);
+			ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
+		}//ZC_ONLINE
+		else
+		{
+			compareResult->property = ZC_startCmpr_online(varName, ZC_FLOAT, data1, r5, r4, r3, r2, r1);
+			ZC_compareData_float_online(compareResult, data1, data2, r5, r4, r3, r2, r1);			
+		}
+#else
 		compareResult->property = ZC_startCmpr(varName, ZC_FLOAT, data1, r5, r4, r3, r2, r1);
 		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
+#endif	
 	}
 	else if(dataType==ZC_DOUBLE)
 	{
 		double* data1 = (double*)oriData;
 		double* data2 = (double*)decData;
 		
-		size_t numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
-		//compareResult->property = ZC_genProperties_double(varName, data1, numOfElem, r5, r4, r3, r2, r1);		
+#ifdef HAVE_MPI		
+		if(executionMode==ZC_OFFLINE)
+		{
+			//compareResult->property = ZC_genProperties_float(varName, data1, numOfElem, r5, r4, r3, r2, r1);
+			compareResult->property = ZC_startCmpr(varName, ZC_DOUBLE, data1, r5, r4, r3, r2, r1);
+			ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
+		}//ZC_ONLINE
+		else
+		{
+			compareResult->property = ZC_startCmpr_online(varName, ZC_DOUBLE, data1, r5, r4, r3, r2, r1);
+			ZC_compareData_double_online(compareResult, data1, data2, r5, r4, r3, r2, r1);
+		}
+#else
 		compareResult->property = ZC_startCmpr(varName, ZC_DOUBLE, data1, r5, r4, r3, r2, r1);
-		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);		
+		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
+#endif		
 	}
 	else
 	{

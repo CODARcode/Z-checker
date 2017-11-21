@@ -53,6 +53,7 @@ void hash_init(HashEntry *table, size_t table_size);
 size_t hash_get(HashEntry *table, unsigned long key, size_t table_size);
 void hash_put(HashEntry *table, unsigned long key, size_t table_size);
 
+int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void fft(complex *v, size_t n, complex *tmp);
 void ifft(complex *v, size_t n, complex *tmp);
 
@@ -74,10 +75,11 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir);
 ZC_DataProperty* ZC_loadDataProperty(char* propResultFile);
 
-#ifdef HAVE_MPI
+//online interfaces
+void ZC_genBasicProperties_float_online(char* varName, float* data, size_t numOfElem, ZC_DataProperty* property);
+void ZC_genBasicProperties_double_online(char* varName, double* data, size_t numOfElem, ZC_DataProperty* property);
 ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-#endif
 
 #ifdef __cplusplus
 }

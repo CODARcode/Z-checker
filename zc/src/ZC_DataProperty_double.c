@@ -7,17 +7,16 @@
 #include "iniparser.h"
 
 #ifdef HAVE_MPI
-ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+
+void ZC_genBasicProperties_double_online(char* varName, double* data, size_t numOfElem, ZC_DataProperty* property)
 {
-	size_t i = 0;
-	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
-	memset(property, 0, sizeof(ZC_DataProperty));
+	size_t i;
 	
 	property->varName = varName;
 	property->dataType = ZC_DOUBLE;
-	property->data = data;
+	property->data = data;	
 	
-	property->numOfElem = numOfElem;
+	//property->numOfElem = numOfElem;
 	double min=data[0],max=data[0],sum=0;
 
     for(i=0;i<numOfElem;i++)
@@ -46,8 +45,16 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 		sum_of_square += (data[i] - med)*(data[i] - med);
 	MPI_Allreduce(&sum_of_square, &property->zeromean_variance, 1, MPI_DOUBLE, MPI_SUM, ZC_COMM_WORLD);
 	property->zeromean_variance = property->zeromean_variance/globalDataLength;
+	property->valueRange = property->maxValue - property->minValue;	
+}
+
+ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	size_t i = 0;
+	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
+	memset(property, 0, sizeof(ZC_DataProperty));
 	
-	property->valueRange = property->maxValue - property->minValue;
+	ZC_genBasicProperties_double_online(varName, data, numOfElem, property);
 	
 	if(entropyFlag)
 	{
@@ -63,7 +70,7 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 		unsigned long index = 0;
 		for (i = 0; i < numOfElem; i++)
  		{
-			index = (unsigned long)((data[i]-min)/absErr);
+			index = (unsigned long)((data[i]-property->minValue)/absErr);
 			table[index]++;
 		}
  

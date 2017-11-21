@@ -7,6 +7,12 @@
 #include "ZC_CompareData.h"
 #include "zc.h"
 
+void ZC_compareData_float_online(ZC_CompareData* compareResult, float* data1, float* data2, 
+size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	
+}
+
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
