@@ -7,6 +7,7 @@
 
 ##   COMPILERS
 CC	= gcc
+#CC	= mpicc
 #R_BASE = [Your installation path of R, which contains lib/libRblas.so and lib/libR.so] (e.g., /usr/lib64/R); hint: you could run the command "which Rscript" to check where it is.
 R_BASE = /usr/lib64/R
 

@@ -19,6 +19,10 @@ For example, if it is /usr/lib64/R, then "which Rscript" would show "/usr/lib64/
 
 3. make -f Makefile.linux (for Linux OS) or make -f Makefile.osx (for Mac OS)
 
+Note: if Z-checker was installed under the online mode, i.e., using "--enable-mpi", then, you need to change the compiler to be mpicc as follows, before running "make -f Makefile.linux or Makefile.osx.
+#CC	= gcc
+CC     = mpicc 
+
 Now, you are ready to call R-script from Z-checker.
 
 ## Quick Start
