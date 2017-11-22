@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include <ZC_rw.h>
-#include <zc.h>
+#include "ZC_rw.h"
+#include "zc.h"
 #include <mpi.h> 
 
 int main(int argc, char * argv[])
@@ -42,6 +42,32 @@ int main(int argc, char * argv[])
     printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
     ZC_Init(cfgFile);
 
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+	size_t offset;
+	switch(dim)
+	{
+	case 1:
+		r1 = r1/numprocs;
+		offset = r1*myrank;
+		break;
+	case 2:
+		r2 = r2/numprocs;
+		offset = r1*r2*myrank;
+		break;
+	case 3:
+		r3 = r3/numprocs;
+		offset = r1*r2*r3*myrank;
+		break;
+	case 4:
+		r4 = r4/numprocs;	
+		offset = r1*r2*r3*r4*myrank;
+		break;
+	case 5:
+		r5 = r5/numprocs;
+		offset = r1*r2*r3*r4*r5*myrank;	
+		break;
+	}
+	
     long globalLength = ZC_computeDataLength_online(r5,r4,r3,r2,r1);
     if(myrank==0)
 	    printf("globalLength = %d, %d\n", globalLength, globalDataLength);
@@ -50,19 +76,19 @@ int main(int argc, char * argv[])
     if(strcmp(datatype, "-f")==0)
     {
 		float *data = ZC_readFloatData(oriFilePath, &nbEle);
-		property = ZC_genProperties(dataFile, ZC_FLOAT, data, r5, r4, r3, r2, r1);
+		property = ZC_genProperties(dataFile, ZC_FLOAT, data+offset, r5, r4, r3, r2, r1);
     }
     else if(strcmp(datatype, "-d")==0)
     {
 		double *data = ZC_readDoubleData(oriFilePath, &nbEle);
-		property = ZC_genProperties(dataFile, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
+		property = ZC_genProperties(dataFile, ZC_DOUBLE, data+offset, r5, r4, r3, r2, r1);
     }
-	if(myRank==0)
-	{
+    if(myRank==0)
+    {
 		ZC_printDataProperty(property);
 		ZC_writeDataProperty(property, "dataProperties");
 		printf("Done\n");		
-	}
+    }
     MPI_Finalize();
     return 0;
 }

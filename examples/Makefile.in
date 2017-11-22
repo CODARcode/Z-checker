@@ -91,7 +91,7 @@ host_triplet = @host@
 bin_PROGRAMS = analyzeDataProperty$(EXEEXT) compareDataSets$(EXEEXT) \
 	generateGNUPlot$(EXEEXT) generateReport$(EXEEXT) \
 	modifyZCConfig$(EXEEXT) $(am__EXEEXT_1)
-@MPI_TRUE@am__append_1 = analyzeDataProperty_online
+@MPI_TRUE@am__append_1 = analyzeDataProperty_online compareDataSets_online
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -102,7 +102,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-@MPI_TRUE@am__EXEEXT_1 = analyzeDataProperty_online$(EXEEXT)
+@MPI_TRUE@am__EXEEXT_1 = analyzeDataProperty_online$(EXEEXT) \
+@MPI_TRUE@	compareDataSets_online$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_analyzeDataProperty_OBJECTS = analyzeDataProperty.$(OBJEXT)
@@ -123,6 +124,11 @@ analyzeDataProperty_online_OBJECTS =  \
 am_compareDataSets_OBJECTS = compareDataSets.$(OBJEXT)
 compareDataSets_OBJECTS = $(am_compareDataSets_OBJECTS)
 compareDataSets_DEPENDENCIES = ../zc/.libs/libzc.a
+am__compareDataSets_online_SOURCES_DIST = compareDataSets_online.c
+@MPI_TRUE@am_compareDataSets_online_OBJECTS =  \
+@MPI_TRUE@	compareDataSets_online.$(OBJEXT)
+compareDataSets_online_OBJECTS = $(am_compareDataSets_online_OBJECTS)
+@MPI_TRUE@compareDataSets_online_DEPENDENCIES = ../zc/.libs/libzc.a
 am_generateGNUPlot_OBJECTS = generateGNUPlot.$(OBJEXT)
 generateGNUPlot_OBJECTS = $(am_generateGNUPlot_OBJECTS)
 generateGNUPlot_DEPENDENCIES = ../zc/.libs/libzc.a
@@ -168,12 +174,15 @@ am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(analyzeDataProperty_SOURCES) \
 	$(analyzeDataProperty_online_SOURCES) \
-	$(compareDataSets_SOURCES) $(generateGNUPlot_SOURCES) \
-	$(generateReport_SOURCES) $(modifyZCConfig_SOURCES)
+	$(compareDataSets_SOURCES) $(compareDataSets_online_SOURCES) \
+	$(generateGNUPlot_SOURCES) $(generateReport_SOURCES) \
+	$(modifyZCConfig_SOURCES)
 DIST_SOURCES = $(analyzeDataProperty_SOURCES) \
 	$(am__analyzeDataProperty_online_SOURCES_DIST) \
-	$(compareDataSets_SOURCES) $(generateGNUPlot_SOURCES) \
-	$(generateReport_SOURCES) $(modifyZCConfig_SOURCES)
+	$(compareDataSets_SOURCES) \
+	$(am__compareDataSets_online_SOURCES_DIST) \
+	$(generateGNUPlot_SOURCES) $(generateReport_SOURCES) \
+	$(modifyZCConfig_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -341,6 +350,8 @@ modifyZCConfig_SOURCES = modifyZCConfig.c
 modifyZCConfig_LDADD = ../zc/.libs/libzc.a -lm
 @MPI_TRUE@analyzeDataProperty_online_SOURCES = analyzeDataProperty_online.c
 @MPI_TRUE@analyzeDataProperty_online_LDADD = ../zc/.libs/libzc.a -lm
+@MPI_TRUE@compareDataSets_online_SOURCES = compareDataSets_online.c
+@MPI_TRUE@compareDataSets_online_LDADD = ../zc/.libs/libzc.a -lm
 all: all-am
 
 .SUFFIXES:
@@ -436,6 +447,10 @@ compareDataSets$(EXEEXT): $(compareDataSets_OBJECTS) $(compareDataSets_DEPENDENC
 	@rm -f compareDataSets$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(compareDataSets_OBJECTS) $(compareDataSets_LDADD) $(LIBS)
 
+compareDataSets_online$(EXEEXT): $(compareDataSets_online_OBJECTS) $(compareDataSets_online_DEPENDENCIES) $(EXTRA_compareDataSets_online_DEPENDENCIES) 
+	@rm -f compareDataSets_online$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(compareDataSets_online_OBJECTS) $(compareDataSets_online_LDADD) $(LIBS)
+
 generateGNUPlot$(EXEEXT): $(generateGNUPlot_OBJECTS) $(generateGNUPlot_DEPENDENCIES) $(EXTRA_generateGNUPlot_DEPENDENCIES) 
 	@rm -f generateGNUPlot$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(generateGNUPlot_OBJECTS) $(generateGNUPlot_LDADD) $(LIBS)
@@ -457,6 +472,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/analyzeDataProperty.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/analyzeDataProperty_online.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compareDataSets.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/compareDataSets_online.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateGNUPlot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateReport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modifyZCConfig.Po@am__quote@

@@ -8,10 +8,9 @@
 
 #ifdef HAVE_MPI
 
-void ZC_genBasicProperties_float_online(char* varName, float* data, size_t numOfElem, ZC_DataProperty* property)
+void ZC_genBasicProperties_float_online(float* data, size_t numOfElem, ZC_DataProperty* property)
 {
 	size_t i;
-	property->varName = varName;
 	property->dataType = ZC_FLOAT;
 	property->data = data;	
 	
@@ -54,7 +53,9 @@ ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
-	ZC_genBasicProperties_float_online(varName, data, numOfElem, property);
+	property->varName = (char*)malloc(100);
+	strcpy(property->varName, varName);
+	ZC_genBasicProperties_float_online(data, numOfElem, property);
 	
 	if(entropyFlag)
 	{

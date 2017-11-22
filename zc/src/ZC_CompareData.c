@@ -235,8 +235,11 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	sprintf(s[11], "maxAbsErr = %.10G\n", compareResult->maxAbsErr);
 	
 	s[12] = (char*)malloc(100*sizeof(char));
-	sprintf(s[12], "autoCorrAbsErr = %.10G\n", (compareResult->autoCorrAbsErr)[1]); //TODO output AUTO_CORR_SIZE coefficients
-	
+	if(autoCorrAbsErrFlag)
+		sprintf(s[12], "autoCorrAbsErr = %.10G\n", (compareResult->autoCorrAbsErr)[1]); //TODO output AUTO_CORR_SIZE coefficients
+	else
+		sprintf(s[12], "autoCorrAbsErr = -2\n");
+		
 	s[13] = (char*)malloc(100*sizeof(char));
 	sprintf(s[13], "minRelErr = %.10G\n", compareResult->minRelErr);
 	s[14] = (char*)malloc(100*sizeof(char));
@@ -284,7 +287,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	ZC_writeStrings(25, s, tgtFilePath);
 	
 	int i;
-	for(i=0;i<24;i++)
+	for(i=0;i<=24;i++)
 		free(s[i]);
 	free(s);
 	
@@ -296,7 +299,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 		double err_minValue = compareResult->err_minValue;		
 		memset(tgtFilePath, 0, ZC_BUFS_LONG);
 		sprintf(tgtFilePath, "%s/%s:%s.dis", tgtWorkspaceDir, solution, varName);
-			
+	
 		if(err_interval==0)
 		{
 			char *ss[2];
@@ -313,17 +316,16 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);		
 			for(i=0;i<PDF_INTERVALS;i++)
 			{
+				//printf("%d\n", i);
 				ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
 				double x = err_minValue+i*err_interval;
 				sprintf(ss[i+1], "%.10G %.10G\n", x, compareResult->absErrPDF[i]); 
 			}
-			
 			ZC_writeStrings(PDF_INTERVALS+1, ss, tgtFilePath);
 			for(i=0;i<PDF_INTERVALS+1;i++)
 				free(ss[i]);			
 		}	
 	}
-	
 	if(pwrErrPDFFlag)
 	{
 		double err_interval = compareResult->err_interval_rel;
@@ -357,7 +359,6 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 				free(ss[i]);
 		}	
 	}	
-
 	//write auto-correlation coefficients
 	if(autoCorrAbsErrFlag)
 	{
@@ -378,14 +379,12 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 			free(autocorr[i]);		
 		
 	}
-	
 	if(fftFlag)
 	{
 		char buf[ZC_BUFS];
 		sprintf(buf, "%s:%s", solution, varName);
 		ZC_writeFFTResults(buf, compareResult->fftCoeff, tgtWorkspaceDir);		
 	}	
-
 	if(dir!=NULL)
 		closedir(dir);
 }

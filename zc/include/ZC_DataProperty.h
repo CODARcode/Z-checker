@@ -76,8 +76,8 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir);
 ZC_DataProperty* ZC_loadDataProperty(char* propResultFile);
 
 //online interfaces
-void ZC_genBasicProperties_float_online(char* varName, float* data, size_t numOfElem, ZC_DataProperty* property);
-void ZC_genBasicProperties_double_online(char* varName, double* data, size_t numOfElem, ZC_DataProperty* property);
+void ZC_genBasicProperties_float_online(float* data, size_t numOfElem, ZC_DataProperty* property);
+void ZC_genBasicProperties_double_online(double* data, size_t numOfElem, ZC_DataProperty* property);
 ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 

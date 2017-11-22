@@ -68,6 +68,10 @@ int main(int argc, char * argv[])
     
     ZC_writeCompressionResult(compareResult, compressionCase, varName, "compressionResults");
 	
+	freeDataProperty(compareResult->property);
+	freeCompareResult(compareResult);
+	free(data1);
+	free(data2);
     printf("done\n");
     return 0;
 }

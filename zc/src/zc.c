@@ -165,7 +165,7 @@ int ZC_Init(char *configFilePath)
 	{
 		if(myRank==0)
 		{
-			printf("Error: You are using running the program with multiple ranks/processes but missing MPI_Init() before ZC_Init().\n");
+			printf("Error: You are running the program with multiple ranks/processes but missing MPI_Init() before ZC_Init().\n");
 			printf("Solution: Please add/put the MPI_Init() to be ahead of ZC_Init().\n");
 		}
 		exit(0);
@@ -213,7 +213,8 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
-	property->varName = varName;
+	property->varName = (char*)malloc(sizeof(char)*100);
+	strcpy(property->varName, varName);
 	property->numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
 	property->dataType = dataType;
 	property->data = oriData;
@@ -1284,7 +1285,9 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	memset(property, 0, sizeof(ZC_DataProperty));
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);	
 	
-	property->varName = varName;
+	property->varName = (char*)malloc(sizeof(char)*100);
+	strcpy(property->varName, varName);
+	
 	property->dataType = dataType;
 	property->data = oriData;
 	property->r5 = r5;
@@ -1298,14 +1301,14 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 		float* data = (float*)oriData;
 		min = data[0];
 		max = data[0];
-		ZC_genBasicProperties_float_online(varName, data, numOfElem, property);	
+		ZC_genBasicProperties_float_online(data, numOfElem, property);	
 	}
 	else
 	{
 		double* data = (double*)oriData;
 		min = data[0];
 		max = data[0];
-		ZC_genBasicProperties_double_online(varName, data, numOfElem, property);
+		ZC_genBasicProperties_double_online(data, numOfElem, property);
 	}
 	
 	if(compressTimeFlag)

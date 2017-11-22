@@ -10,7 +10,200 @@
 void ZC_compareData_float_online(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
+	size_t i = 0;
+	double minDiff = data2[0]-data1[0];
+	double maxDiff = minDiff;
+	double minErr = fabs(minDiff);
+	double maxErr = minErr;
+	double sum1 = 0, sum2 = 0, sumDiff = 0, sumErr = 0, sumErrSqr = 0;
 	
+	double minDiff_rel = 1E100;
+	double maxDiff_rel = -1E100;
+	double minErr_rel = 1E100;
+	double maxErr_rel = 0;
+	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
+	
+	double err;
+	long numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+		
+	double sumOfDiffSquare = 0;
+	long numOfElem_ = 0;
+
+	double *diff = (double*)malloc(numOfElem*sizeof(double));
+	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
+
+	for (i = 0; i < numOfElem; i++)
+	{
+		sum1 += data1[i];
+		sum2 += data2[i];
+		
+		diff[i] = data2[i]-data1[i];
+		if(minDiff > diff[i]) minDiff = diff[i];
+		if(maxDiff < diff[i]) maxDiff = diff[i];
+		sumDiff += diff[i];
+		sumOfDiffSquare += diff[i]*diff[i];
+				
+		err = fabs(diff[i]);
+		if(minErr>err) minErr = err;
+		if(maxErr<err) maxErr = err;
+		sumErr += err;
+		sumErrSqr += err*err; //used for mse, nrmse, psnr
+	
+		if(data1[i]!=0)
+		{
+			numOfElem_ ++;
+			relDiff[i] = diff[i]/data1[i];
+			if(minDiff_rel > relDiff[i]) minDiff_rel = relDiff[i];
+			if(maxDiff_rel < relDiff[i]) maxDiff_rel = relDiff[i];
+			sumDiff_rel += relDiff[i];
+			
+			err = fabs(relDiff[i]);
+			if(minErr_rel>err) minErr_rel = err;
+			if(maxErr_rel<err) maxErr_rel = err;
+			sumErr_rel += err;
+			sumErrSqr_rel += err*err;
+		}	
+	}
+	
+	ZC_DataProperty* property = compareResult->property;
+	
+	double zeromean_variance = property->zeromean_variance;
+	double global_valRange = property->valueRange;
+	
+	double global_sum1, global_sum2, global_sumErr, global_maxDiff, global_minDiff, global_sumErrSqr;
+	double global_maxErr_rel, global_minErr_rel, global_sumErr_rel, global_maxErr, global_minErr; 
+	long global_numOfElem_;
+	//Compute the global sum and mean 
+	MPI_Allreduce(&sum1, &global_sum1, 1, MPI_DOUBLE, MPI_SUM, ZC_COMM_WORLD);
+	MPI_Allreduce(&sum2, &global_sum2, 1, MPI_DOUBLE, MPI_SUM, ZC_COMM_WORLD);
+	MPI_Allreduce(&sumErr, &global_sumErr, 1, MPI_DOUBLE, MPI_SUM, ZC_COMM_WORLD);
+	MPI_Allreduce(&maxErr, &global_maxErr, 1, MPI_DOUBLE, MPI_MAX, ZC_COMM_WORLD);
+	MPI_Allreduce(&minErr, &global_minErr, 1, MPI_DOUBLE, MPI_MIN, ZC_COMM_WORLD);	
+	MPI_Allreduce(&maxDiff, &global_maxDiff, 1, MPI_DOUBLE, MPI_MAX, ZC_COMM_WORLD);
+	MPI_Allreduce(&minDiff, &global_minDiff, 1, MPI_DOUBLE, MPI_MIN, ZC_COMM_WORLD);
+	MPI_Allreduce(&sumErrSqr, &global_sumErrSqr, 1, MPI_DOUBLE, MPI_SUM, ZC_COMM_WORLD);
+	MPI_Allreduce(&maxErr_rel, &global_maxErr_rel, 1, MPI_DOUBLE, MPI_MAX, ZC_COMM_WORLD);
+	MPI_Allreduce(&minErr_rel, &global_minErr_rel, 1, MPI_DOUBLE, MPI_MIN, ZC_COMM_WORLD);
+	MPI_Allreduce(&sumErr_rel, &global_sumErr_rel, 1, MPI_DOUBLE, MPI_SUM, ZC_COMM_WORLD);
+	MPI_Allreduce(&numOfElem_, &global_numOfElem_, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);
+			
+	double global_mean1 = global_sum1/globalDataLength;
+	double global_mean2 = global_sum2/globalDataLength;
+	
+	double global_avgErr = global_sumErr/globalDataLength;
+	double global_diffRange = global_maxDiff - global_minDiff;
+	double global_mse = global_sumErrSqr/globalDataLength;
+	
+	double global_avgErr_rel = global_sumErr_rel/global_numOfElem_;
+		
+	size_t index;
+	
+	if (minAbsErrFlag)
+		compareResult->minAbsErr = global_minErr;
+
+	if (minRelErrFlag)
+		compareResult->minRelErr = global_minErr/global_valRange;
+
+	if (maxAbsErrFlag)
+		compareResult->maxAbsErr = global_maxErr;
+
+	if (maxRelErrFlag)
+		compareResult->maxRelErr = global_maxErr/global_valRange;
+
+	if (avgAbsErrFlag)
+		compareResult->avgAbsErr = global_avgErr;
+
+	if (avgRelErrFlag)
+		compareResult->avgRelErr = global_avgErr/global_valRange;
+		
+	compareResult->minPWRErr = global_minErr_rel;
+	compareResult->maxPWRErr = global_maxErr_rel;
+	compareResult->avgPWRErr = global_sumErr_rel/global_numOfElem_;
+
+	if (absErrPDFFlag)
+	{
+		double interval = global_diffRange/PDF_INTERVALS;
+		double *absErrPDF = NULL, *global_absErrPDF = NULL; 
+						
+		if(interval==0)
+		{
+			global_absErrPDF = (double*)malloc(sizeof(double));
+			*global_absErrPDF = 0;
+		}
+		else
+		{
+			absErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS);
+			memset(absErrPDF, 0, PDF_INTERVALS*sizeof(double));
+			global_absErrPDF = (double*)malloc(sizeof(double)*PDF_INTERVALS);
+			memset(global_absErrPDF, 0, PDF_INTERVALS*sizeof(double));
+			
+			for (i = 0; i < numOfElem; i++)
+			{
+				index = (size_t)((diff[i]-global_minDiff)/interval);
+				if(index==PDF_INTERVALS)
+					index = PDF_INTERVALS-1;
+				absErrPDF[index] += 1;
+			}
+
+			MPI_Reduce(absErrPDF, global_absErrPDF, PDF_INTERVALS, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+			
+			free(absErrPDF);
+			
+			if(myRank==0)
+			{
+				for (i = 0; i < PDF_INTERVALS; i++)
+					global_absErrPDF[i]/=globalDataLength;						
+			}	
+			
+		}
+		if(myRank==0)
+		{
+			compareResult->absErrPDF = global_absErrPDF;
+			compareResult->err_interval = interval;
+			compareResult->err_minValue = global_minDiff;					
+		}
+	}
+
+	if (autoCorrAbsErrFlag)
+	{
+		//TODO
+	}
+
+	if (pearsonCorrFlag)
+	{
+		//TODO
+	}
+
+	if (rmseFlag)
+	{
+		double global_rmse = sqrt(global_mse);
+		compareResult->rmse = global_rmse;
+	}
+
+	if (nrmseFlag)
+	{
+		double nrmse = sqrt(global_mse)/global_valRange;
+		compareResult->nrmse = nrmse;
+	}
+
+	if(snrFlag)
+	{
+		compareResult->snr = 10*log10(zeromean_variance/global_mse);
+	}
+
+	if (psnrFlag)
+	{
+		double psnr = -20.0*log10(sqrt(global_mse)/global_valRange);
+		compareResult->psnr = psnr;
+	}
+
+	if (valErrCorrFlag)
+	{
+		//TODO
+	}
+
+	free(diff);
+	free(relDiff);	
 }
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
