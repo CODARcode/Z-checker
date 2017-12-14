@@ -540,6 +540,9 @@ char* rmFileExtension(char* fullFileName)
 {
 	char* s = (char*)malloc(ZC_BUFS);
 	sprintf(s, "%s", fullFileName);
+	int i = strcspn(s,".");
+	if(i==strlen(s)) //if s doesn't contain '.'
+		return s;
 	char* b = strrchr(s, '.');
 	b[0] = '\0';
 	return s;
