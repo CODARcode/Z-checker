@@ -108,7 +108,10 @@ void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCou
         tmpErrBoundString = strtok(NULL,"(");
         errBound = rtrim_C(tmpErrBoundString, ')');
         len = strlen(varCase);
-        varCase[len-8]='\0';
+        
+        //remove the first "." in the varCase (e.g., FLDSC_1_1800_3600.dat.dis --> FLDSC_1_1800_3600)
+        j = strcspn(varCase,".");
+        varCase[j]='\0';
         varName = varCase;
         
 		//checkAndAddStringToList(allCompressors, &allCompressorCount, compressor);//e.g., compressor=sz
@@ -356,7 +359,7 @@ CmprsorErrBound *allCompressors, int allCompressorCount)
 				varCase = allVarCases[k];
 				
 				//construct varFiles
-				sprintf(selectedEpsFiles[n++], "%s(%s):%s.dat-%s", compressorName, selectedErrorBound, varCase, metricType);
+				sprintf(selectedEpsFiles[n++], "%s(%s):%s-%s", compressorName, selectedErrorBound, varCase, metricType);
 			}
 			//generate figure tex lines	
 			//TODO

@@ -214,7 +214,9 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
 	property->varName = (char*)malloc(sizeof(char)*100);
-	strcpy(property->varName, varName);
+	char* varN = rmFileExtension(varName); //remove the final "." if any
+	strcpy(property->varName, varN);
+	free(varN);
 	property->numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
 	property->dataType = dataType;
 	property->data = oriData;
@@ -1108,11 +1110,6 @@ void ZC_Finalize()
 
 			ZC_DataProperty* property = ht_get(ecPropertyTable, key);
 			freeDataProperty(property);
-			if(ecCompareDataTable!=NULL)
-			{
-				ZC_CompareData* c = ht_get(ecCompareDataTable, key);
-				c->property = NULL;
-			}
 			//free(key);
 		}		
 		ht_freeTable(ecPropertyTable);

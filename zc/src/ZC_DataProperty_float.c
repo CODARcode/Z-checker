@@ -54,7 +54,11 @@ ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
 	property->varName = (char*)malloc(100);
+	
+	char* varN = rmFileExtension(varName);
 	strcpy(property->varName, varName);
+	free(varN);
+	
 	ZC_genBasicProperties_float_online(data, numOfElem, property);
 	
 	if(entropyFlag)
@@ -149,7 +153,11 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
 	property->varName = (char*)malloc(strlen(varName)+1);
-	strcpy(property->varName, varName);
+	
+	char varN = rmFileExtension(varName);
+	strcpy(property->varName, varN);
+	free(varN);
+	
 	property->dataType = ZC_FLOAT;
 	property->data = data;
 
