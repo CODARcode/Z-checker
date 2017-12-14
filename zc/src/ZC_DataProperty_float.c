@@ -154,7 +154,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 	
 	property->varName = (char*)malloc(strlen(varName)+1);
 	
-	char varN = rmFileExtension(varName);
+	char* varN = rmFileExtension(varName);
 	strcpy(property->varName, varN);
 	free(varN);
 	
