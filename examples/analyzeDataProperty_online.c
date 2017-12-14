@@ -8,20 +8,19 @@ int main(int argc, char * argv[])
 {	
     size_t r5=0,r4=0,r3=0,r2=0,r1=0;
     char dataFile[640], outputFilePath[640], oriFilePath[640];
-    char *datatype, *cfgFile, *dataDir;
+    char *datatype, *cfgFile, *varName;
 
-    if(argc < 5)
+    if(argc < 4)
     {
-        printf("Usage: analyzeDataProperty [datatype (-f or -d)] [config_file] [srcDataDir] [dataFileName] [dimension sizes...]\n");
-        printf("Example: analyzeDataProperty -f zc.config testdata/x86 testfloat_8_8_128.dat 8 8 128\n");
+        printf("Usage: analyzeDataProperty [datatype (-f or -d)] [config_file] [varName] [dataFilePath] [dimension sizes...]\n");
+        printf("Example: analyzeDataProperty -f zc.config testfloat testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
         exit(0);
     }
 
     datatype=argv[1];
     cfgFile=argv[2];
-    dataDir=argv[3];
-    sprintf(dataFile, "%s", argv[4]);
-    sprintf(oriFilePath, "%s/%s", dataDir, dataFile);
+    varName=argv[3];
+    sprintf(oriFilePath, "%s", argv[4]);
     if(argc>=6)
         r1 = atoi(argv[5]); //8
     if(argc>=7)
@@ -76,12 +75,12 @@ int main(int argc, char * argv[])
     if(strcmp(datatype, "-f")==0)
     {
 		float *data = ZC_readFloatData(oriFilePath, &nbEle);
-		property = ZC_genProperties(dataFile, ZC_FLOAT, data+offset, r5, r4, r3, r2, r1);
+		property = ZC_genProperties(varName, ZC_FLOAT, data+offset, r5, r4, r3, r2, r1);
     }
     else if(strcmp(datatype, "-d")==0)
     {
 		double *data = ZC_readDoubleData(oriFilePath, &nbEle);
-		property = ZC_genProperties(dataFile, ZC_DOUBLE, data+offset, r5, r4, r3, r2, r1);
+		property = ZC_genProperties(varName, ZC_DOUBLE, data+offset, r5, r4, r3, r2, r1);
     }
     if(myRank==0)
     {
