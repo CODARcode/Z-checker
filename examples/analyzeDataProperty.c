@@ -11,15 +11,16 @@ int main(int argc, char * argv[])
 
     if(argc < 5)
     {
-        printf("Usage: analyzeDataProperty [varName] [datatype (-f or -d)] [config_file] [dataFilePath] [dimension sizes...]\n");
-        printf("Example: analyzeDataProperty var1 -f zc.config testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
+        printf("Usage: analyzeDataProperty [datatype (-f or -d)] [config_file] [filePath] [dimension sizes...]\n");
+        printf("Example: analyzeDataProperty -f zc.config testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
         exit(0);
     }
 
-    varName=argv[1];
+	varName = argv[1];
     datatype=argv[2];
     cfgFile=argv[3];
-    sprintf(oriFilePath, "%s", argv[4]);
+    sprintf(oriFilePath, "%s", argv[4]); 
+
     if(argc>=6)
         r1 = atoi(argv[5]); //8
     if(argc>=7)
@@ -33,7 +34,7 @@ int main(int argc, char * argv[])
 
     int numprocs, myrank;
 
-    printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
+    //printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
     ZC_Init(cfgFile);
 
     size_t nbEle;
