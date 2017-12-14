@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $# < 3 ]]; then
+if [[ $# < 2 ]]; then
 	echo "Usage - option 1: $0 [datatype (-f or -d)] [data directory] [extension] [dimension sizes....]"
 	echo "      - option 2: $0 [datatype (-f or -d)] [varListFile]"
 	echo Example: $0 -f /home/shdi/CESM-testdata/1800x3600 3600 1800
