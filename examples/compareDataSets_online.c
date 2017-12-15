@@ -140,7 +140,7 @@ int main(int argc, char * argv[])
 	if(myrank==0)
 	{
 		ZC_printCompressionResult(compareResult);
-		ZC_writeCompressionResult(compareResult, compressionCase, varName, "compressionResults");		
+		//ZC_writeCompressionResult(compareResult, compressionCase, varName, "compressionResults");		
 	}
 
 	freeDataProperty(compareResult->property);
