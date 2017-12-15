@@ -4,6 +4,8 @@
 #include "ZC_rw.h"
 #include "zc.h"
 
+#define WORKTAG 50
+
 int main(int argc, char * argv[])
 {	
 	size_t r5=0,r4=0,r3=0,r2=0,r1=0;
@@ -71,30 +73,59 @@ int main(int argc, char * argv[])
 		break;
 	}
 	
+	long localLength = ZC_computeDataLength(r5, r4, r3, r2, r1);
     long globalLength = ZC_computeDataLength_online(r5,r4,r3,r2,r1);
-    if(myrank==0)
-	    printf("globalLength = %d, %d\n", globalLength, globalDataLength);
 
-	size_t nbEle1, nbEle2;
-	float *data1 = ZC_readFloatData(oriFilePath, &nbEle1);
-	float *data2 = ZC_readFloatData(decFilePath, &nbEle2);
+    if(myrank==0)
+	    printf("localLength = %ld, globalDataLength = %ld\n", localLength, globalLength);
+
+	MPI_Status status;
+	size_t nbEle1, nbEle2, i = 0;
+	float *data1 = NULL, *data2 = NULL;
+	MPI_Request req1[2], req2[2];
+	if(myrank==0)
+	{
+		data1 = ZC_readFloatData(oriFilePath, &nbEle1);
+		data2 = ZC_readFloatData(decFilePath, &nbEle2);
 
 	if(nbEle1!=nbEle2)
 	{
 		printf("Error: nbEle1(%d)!=nbEle2(%d)\n",nbEle1, nbEle2);
 		exit(0);
 	}	
+	for(i=1;i<numprocs;i++)
+	{
+		MPI_Isend(data1+offset, localLength, MPI_FLOAT, i, WORKTAG, MPI_COMM_WORLD, &req1[0]);
+		MPI_Isend(data2+offset, localLength, MPI_FLOAT, i, WORKTAG, MPI_COMM_WORLD, &req1[1]);					
+	}
+	}
+	else
+	{
+		data1 = (float*)malloc(sizeof(float)*localLength);
+		data2 = (float*)malloc(sizeof(float)*localLength);
+		MPI_Irecv(data1, localLength, MPI_FLOAT, 0, WORKTAG, MPI_COMM_WORLD, &req2[0]);
+		MPI_Irecv(data2, localLength, MPI_FLOAT, 0, WORKTAG, MPI_COMM_WORLD, &req2[1]);			
+	}
+
+	if (myrank == 0)
+	{
+		MPI_Waitall(2,req1,&status);
+	}
+	else 
+	{
+		MPI_Waitall(2,req2,&status);
+	}
 
 	ZC_CompareData* compareResult;
 	
 	double startTime = MPI_Wtime();
 	if (argv[1][1] == 'f')
 	{
-		compareResult = ZC_compareData(varName, ZC_FLOAT, data1+offset, data2+offset, r5, r4, r3, r2, r1);
+		compareResult = ZC_compareData(varName, ZC_FLOAT, data1, data2, r5, r4, r3, r2, r1);
 	}
 	else if (argv[1][1] == 'd')
 	{
-		compareResult = ZC_compareData(varName, ZC_DOUBLE, data1+offset, data2+offset, r5, r4, r3, r2, r1);
+		compareResult = ZC_compareData(varName, ZC_DOUBLE, data1, data2, r5, r4, r3, r2, r1);
 	}
 	else
 	{
