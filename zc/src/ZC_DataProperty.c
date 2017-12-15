@@ -372,7 +372,7 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 		for(i=0;i<FFT_SIZE;i++)
 		{
 			ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
-			sprintf(ss[i+1], "%zu/%zu %f %f\n", i, FFT_SIZE, fftCoeff[i].Re, fftCoeff[i].Im);
+			sprintf(ss[i+1], "%zu/%d %f %f\n", i, FFT_SIZE, fftCoeff[i].Re, fftCoeff[i].Im);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.fft", tgtWorkspaceDir, varName);
@@ -385,7 +385,7 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 //			double Re = fftCoeff[i].Re;
 //			double Im = fftCoeff[i].Im;
 //			double amplitude = sqrt(Re*Re+Im*Im);
-			sprintf(ss[i+1], "%zu/%zu %f\n", i, FFT_SIZE, fftCoeff[i].Amp);
+			sprintf(ss[i+1], "%zu/%d %f\n", i, FFT_SIZE, fftCoeff[i].Amp);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.fft.amp", tgtWorkspaceDir, varName);
