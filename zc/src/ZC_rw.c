@@ -117,7 +117,7 @@ size_t ZC_checkFileSize(char *srcFilePath)
 		exit(1);
 	}
 	fseek(pFile, 0, SEEK_END);
-    filesize = (int)ftell(pFile);
+    filesize = ftell(pFile);
     fclose(pFile);
     return filesize;
 }
@@ -131,7 +131,7 @@ unsigned char *ZC_readByteData(char *srcFilePath, size_t *byteLength)
         exit(1);
     }
 	fseek(pFile, 0, SEEK_END);
-    *byteLength = (int)ftell(pFile);
+    *byteLength = ftell(pFile);
     fclose(pFile);
     
     unsigned char *byteBuf = ( unsigned char *)malloc((*byteLength)*sizeof(unsigned char)); //sizeof(char)==1
@@ -216,7 +216,7 @@ double *ZC_readDoubleData_systemEndian(char *srcFilePath, size_t *nbEle)
     }
 	fseek(pFile, 0, SEEK_END);
     inSize = ftell(pFile);
-    *nbEle = (int)inSize/8; //only support double in this version
+    *nbEle = inSize/8; //only support double in this version
     fclose(pFile);
     
     double *daBuf = (double *)malloc(inSize);
@@ -243,7 +243,7 @@ float *ZC_readFloatData_systemEndian(char *srcFilePath, size_t *nbEle)
     }
 	fseek(pFile, 0, SEEK_END);
     inSize = ftell(pFile);
-    *nbEle = (int)inSize/4; 
+    *nbEle = inSize/4; 
     fclose(pFile);
     
     if(inSize<=0)
