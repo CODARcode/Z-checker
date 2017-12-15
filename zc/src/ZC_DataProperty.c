@@ -305,7 +305,7 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 
 void ZC_printDataProperty(ZC_DataProperty* property)
 {
-	printf("number of elements: %d\n", property->numOfElem);
+	printf("number of elements: %zu\n", property->numOfElem);
 	printf("min value: %f\n", property->minValue);
 	printf("avg value: %f\n", property->avgValue);
 	printf("max value: %f\n", property->maxValue);
@@ -339,7 +339,7 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	sprintf(s[7], "r1 = %zu\n", property->r1);	
 	
 	s[8] = (char*)malloc(100*sizeof(char));
-	sprintf(s[8], "numOfElem = %d\n", property->numOfElem);
+	sprintf(s[8], "numOfElem = %zu\n", property->numOfElem);
 	s[9] = (char*)malloc(100*sizeof(char));
 	sprintf(s[9], "minValue = %.10G\n", property->minValue);
 	s[10] = (char*)malloc(100*sizeof(char));
@@ -372,7 +372,7 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 		for(i=0;i<FFT_SIZE;i++)
 		{
 			ss[i+1] = (char*)malloc(sizeof(char)*ZC_BUFS);
-			sprintf(ss[i+1], "%d/%d %f %f\n", i, FFT_SIZE, fftCoeff[i].Re, fftCoeff[i].Im);
+			sprintf(ss[i+1], "%zu/%zu %f %f\n", i, FFT_SIZE, fftCoeff[i].Re, fftCoeff[i].Im);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.fft", tgtWorkspaceDir, varName);
@@ -385,7 +385,7 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 //			double Re = fftCoeff[i].Re;
 //			double Im = fftCoeff[i].Im;
 //			double amplitude = sqrt(Re*Re+Im*Im);
-			sprintf(ss[i+1], "%d/%d %f\n", i, FFT_SIZE, fftCoeff[i].Amp);
+			sprintf(ss[i+1], "%zu/%zu %f\n", i, FFT_SIZE, fftCoeff[i].Amp);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.fft.amp", tgtWorkspaceDir, varName);
@@ -425,7 +425,7 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 		for (i = 1; i < AUTOCORR_SIZE+2; i++)
 		{
 			autocorr[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-			sprintf(autocorr[i], "%d %.10G\n", i-1, (property->autocorr)[i-1]);
+			sprintf(autocorr[i], "%zu %.10G\n", i-1, (property->autocorr)[i-1]);
 		}
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s.autocorr", tgtWorkspaceDir, property->varName);

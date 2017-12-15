@@ -64,7 +64,7 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 		entropy = iniparser_getstring(ini, "PROPERTY:entropy", "0");
 		
 		//sprintf(rowTexLine, "\\hline %d & %f & %s & %s & %s & %s & %s \\\\", numOfElem, size_inMB, minValue, avgValue, maxValue, valueRange, entropy);
-		sprintf(cells[i][0], "%d", numOfElem);
+		sprintf(cells[i][0], "%zu", numOfElem);
 		sprintf(cells[i][1], "%f", size_inMB);
 		strcpy(cells[i][2], minValue);
 		strcpy(cells[i][3], avgValue);
@@ -363,8 +363,8 @@ CmprsorErrBound *allCompressors, int allCompressorCount)
 			}
 			//generate figure tex lines	
 			//TODO
-			sprintf(caption, "%s: compressor=%s, err bound=%s", metricType, compressor, selectedErrorBound);
-			sprintf(figLabel, "%s-%s-%s", metricType, compressor, selectedErrorBound);
+			sprintf(caption, "%s: compressor=%s, err bound=%s", metricType, compressorName, selectedErrorBound);
+			sprintf(figLabel, "%s-%s-%s", metricType, compressorName, selectedErrorBound);
 			figHeader = ZC_generateVarStatFigTexLines(n, selectedEpsFiles, "compressionResults", caption, figLabel);		
 			ZC_appendLines(totalHeader, figHeader);
 			

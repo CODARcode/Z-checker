@@ -410,8 +410,8 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	//Compute the global sum and mean 
 	
 	double sum_localBuffer[6], sum_globalBuffer[6];
-	double max_localBuffer[4], max_globalBuffer[3];
-	double min_localBuffer[4], min_globalBuffer[3];
+	double max_localBuffer[4], max_globalBuffer[4];
+	double min_localBuffer[4], min_globalBuffer[4];
 	
 	sum_localBuffer[0] = sum1;
 	sum_localBuffer[1] = sum2;

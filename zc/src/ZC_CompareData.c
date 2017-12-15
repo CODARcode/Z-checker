@@ -220,7 +220,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	s[5] = (char*)malloc(100*sizeof(char));
 	sprintf(s[5], "rate = %f\n", compareResult->rate);			
 	s[6] = (char*)malloc(100*sizeof(char));
-	sprintf(s[6], "compressSize = %d\n", compareResult->compressSize);
+	sprintf(s[6], "compressSize = %zu\n", compareResult->compressSize);
 	
 	s[7] = (char*)malloc(100*sizeof(char));
 	sprintf(s[7], "decompressTime = %.10G\n", compareResult->decompressTime);
