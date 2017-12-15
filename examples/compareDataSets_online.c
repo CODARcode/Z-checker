@@ -86,7 +86,8 @@ int main(int argc, char * argv[])
 	}	
 
 	ZC_CompareData* compareResult;
-
+	
+	double startTime = MPI_Wtime();
 	if (argv[1][1] == 'f')
 	{
 		compareResult = ZC_compareData(varName, ZC_FLOAT, data1+offset, data2+offset, r5, r4, r3, r2, r1);
@@ -101,6 +102,9 @@ int main(int argc, char * argv[])
 		printf ("Please use -f or -d to specify single or double data type.\n");
 		exit(0);
 	}
+	double endTime = MPI_Wtime();
+	if(myRank==0)
+		printf("execution time = %f\n", endTime - startTime);
 
 	if(myrank==0)
 	{
