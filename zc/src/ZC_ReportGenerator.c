@@ -83,7 +83,7 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 		free(cells[i]);
 	}
 	free(cells);
-	for(i=0;i<varCaseCount;i++)
+	for(i=0;i<columns;i++)
 		free(keys[i]);
 	free(keys);
 	
