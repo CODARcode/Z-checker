@@ -12,14 +12,14 @@ int main(int argc, char * argv[])
 
     if(argc < 4)
     {
-        printf("Usage: analyzeDataProperty [datatype (-f or -d)] [config_file] [varName] [dataFilePath] [dimension sizes...]\n");
-        printf("Example: analyzeDataProperty -f zc.config testfloat testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
+        printf("Usage: analyzeDataProperty [varName] [datatype (-f or -d)] [config_file] [dataFilePath] [dimension sizes...]\n");
+        printf("Example: analyzeDataProperty var1 -f zc.config testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
         exit(0);
     }
 
-    datatype=argv[1];
-    cfgFile=argv[2];
-    varName=argv[3];
+    varName=argv[1];
+    datatype=argv[2];
+    cfgFile=argv[3];
     sprintf(oriFilePath, "%s", argv[4]);
     if(argc>=6)
         r1 = atoi(argv[5]); //8

@@ -9,14 +9,14 @@ int main(int argc, char * argv[])
     char dataFile[640], outputFilePath[640], oriFilePath[640];
     char *datatype, *cfgFile, *varName;
 
-    if(argc < 5)
+    if(argc < 4)
     {
-        printf("Usage: analyzeDataProperty [datatype (-f or -d)] [config_file] [filePath] [dimension sizes...]\n");
-        printf("Example: analyzeDataProperty -f zc.config testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
+        printf("Usage: analyzeDataProperty [varName] [datatype (-f or -d)] [config_file] [filePath] [dimension sizes...]\n");
+        printf("Example: analyzeDataProperty var1 -f zc.config testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
         exit(0);
     }
 
-	varName = argv[1];
+    varName = argv[1];
     datatype=argv[2];
     cfgFile=argv[3];
     sprintf(oriFilePath, "%s", argv[4]); 
@@ -33,10 +33,17 @@ int main(int argc, char * argv[])
         r5 = atoi(argv[9]);
 
     int numprocs, myrank;
+    if(executionMode==ZC_ONLINE)
+    {
+		printf("Error: you are running analyzeProperty, so please set the executionMode to OFFLINE in zc.config\n");
+		printf("Usage: for online executionMode with MPI support, you need to run analyzeProperty_online instead.\n");
+		exit(0);
+    }
 
     //printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
     ZC_Init(cfgFile);
-
+	executionMode = ZC_OFFLINE;
+	
     size_t nbEle;
     ZC_DataProperty* property = NULL;
     if(strcmp(datatype, "-f")==0)
