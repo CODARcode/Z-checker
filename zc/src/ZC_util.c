@@ -2,6 +2,21 @@
 #include <stdlib.h>
 #include "string.h"
 #include "zc.h"
+#include "ZC_util.h"
+
+//0 means false, 1 means matching.
+int startsWith(const char *pre, const char *str)
+{
+    int lenpre = strlen(pre); 
+    int lenstr = strlen(str);
+    if(lenstr < lenpre)
+		return 0;
+	int r = strncmp(pre, str, lenpre);
+	if(r==0)
+		return 1;
+	else
+		return 0;
+}
 
 char* createLine(char* str)
 {

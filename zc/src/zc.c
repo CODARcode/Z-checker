@@ -319,13 +319,13 @@ void ZC_startDec()
 void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
 {
 	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
-	
 	if(decompressTimeFlag)
 	{
 		double decTime = cost_endDec();
 		compareResult->decompressTime = decTime;  //in seconds
 		compareResult->decompressRate = compareResult->property->numOfElem*elemSize/decTime; // in B/s		
 	}
+
 	if(compareResult==NULL)
 	{
 		printf("Error: compressionResults==NULL. \nPlease construct ZC_CompareData* compareResult using ZC_compareData() or ZC_endCmpr().\n");

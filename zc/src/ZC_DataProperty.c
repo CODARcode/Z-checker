@@ -247,7 +247,6 @@ complex* ZC_computeFFT(void* data, size_t n, int dataType)
 	}
 
 	fft(fftCoeff, n, scratch);
-    
     for (i = 0; i < n; i++)
     {
         fftCoeff[i].Amp = sqrt(fftCoeff[i].Re*fftCoeff[i].Re + fftCoeff[i].Im*fftCoeff[i].Im);

@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+int startsWith(const char *pre, const char *str);
 char* createLine(char* str);
 
 void ltrim(char *s);

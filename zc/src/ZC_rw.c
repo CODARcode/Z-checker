@@ -15,6 +15,17 @@
 #include "ZC_rw.h"
 #include "zc.h"
 
+int ZC_check_file_exists(const char *fname)
+{
+    FILE *file;
+    if ((file = fopen(fname, "r")))
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
 void updateLinkFullPath(char* oriPath, char* finalPath)
 {
 	if(oriPath[0]=='/') //full path

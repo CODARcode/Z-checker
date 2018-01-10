@@ -80,16 +80,15 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	{
 		float* data1 = (float*)oriData;
 		float* data2 = (float*)decData;
-        int fft_size = pow(2,(int)log2(numOfElem));
+        size_t fft_size = pow(2,(int)log2(numOfElem));
+         
         complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_FLOAT);
         complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_FLOAT);
         complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
-        
-        int i;
+        size_t i;
         fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
         fftCoeffRelDiff[0].Im = 0;
         fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
-        
         for (i = 1; i < FFT_SIZE; i++)
         {
             fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
@@ -105,7 +104,7 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	{
 		double* data1 = (double*)oriData;
 		double* data2 = (double*)decData;
-        int fft_size = pow(2,(int)log2(numOfElem));
+        size_t fft_size = pow(2,(int)log2(numOfElem));
         complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_DOUBLE);
         complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_DOUBLE);
         complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));

@@ -29,6 +29,7 @@ typedef struct StringLine
 	struct StringLine* next; 
 } StringLine;
 
+int ZC_check_file_exists(const char *fname);
 void updateLinkFullPath(char* oriPath, char* finalPath);
 int ZC_checkExtension(char* str, char* extension);
 void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames);
