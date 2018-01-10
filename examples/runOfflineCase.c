@@ -22,6 +22,8 @@ typedef struct ComprItem
 {
 	char precStr[20];
 	double precision;
+	double cmprTime; //in seconds
+	double decoTime; //in seconds
 	char cmprDataFile[256]; 
 	char decoDataFile[256];
 	
@@ -258,6 +260,7 @@ VarItem* ZC_readInfo(char* filePath, int *varCount)
 			if(startsWith("prec", buf))
 			{
 				newCItem = (ComprItem*)malloc(sizeof(ComprItem));
+				memset(newCItem, 0, sizeof(ComprItem));
 				comprPreItem->next = newCItem;
 				strcpy(newCItem->precStr, valueBuf);
 				newCItem->precision = atof(valueBuf);
@@ -267,6 +270,10 @@ VarItem* ZC_readInfo(char* filePath, int *varCount)
 				strcpy(newCItem->cmprDataFile, valueBuf);
 			else if(startsWith("dec_data", buf))
 				strcpy(newCItem->decoDataFile, valueBuf);
+			else if(startsWith("cpr_time", buf))
+				newCItem->cmprTime = atof(valueBuf);
+			else if(startsWith("dec_time", buf))
+				newCItem->decoTime = atof(valueBuf);
 			else
 			{
 				printf("Error: unrecoganized key in the line: %s\n", buf);
@@ -812,7 +819,7 @@ int main(int argc, char* argv[])
 							printf("data size %ld x %ld x %ld x %ld x %ld doesn't match file size (%zu elements).\n", p->dim5, p->dim4, p->dim3, p->dim2, p->dim1, nbEle); 
 							exit(0);
 						}
-						//TODO
+						
 						compareResult = ZC_compareData(p->varName, ZC_FLOAT, (float*)oriData_v, decData, p->dim5, p->dim4, p->dim3, p->dim2, p->dim1);	
 					}
 					else if(p->dataType == ZC_DOUBLE)
@@ -826,7 +833,6 @@ int main(int argc, char* argv[])
 							printf("data size %ld x %ld x %ld x %ld x %ld doesn't match file size (%zu elements).\n", p->dim5, p->dim4, p->dim3, p->dim2, p->dim1, nbEle); 
 							exit(0);
 						}
-						//TODO			
 						
 						compareResult = ZC_compareData(p->varName, ZC_FLOAT, (double*)oriData_v, decData, p->dim5, p->dim4, p->dim3, p->dim2, p->dim1);			
 					}
@@ -834,7 +840,16 @@ int main(int argc, char* argv[])
 					compareResult->compressSize = ZC_checkFileSize(ci->cmprDataFile);
 					compareResult->compressRatio = (oriDataSize*1.0/compareResult->compressSize);
 					compareResult->rate = datatype*8.0/compareResult->compressRatio;
-					
+					compareResult->compressTime = ci->cmprTime;
+					compareResult->decompressTime = ci->decoTime;
+					if(compareResult->compressTime!=0)
+						compareResult->compressRate = oriDataSize*1.0/compareResult->compressTime;
+					else
+						compareResult->compressRate = 0;
+					if(compareResult->decompressTime!=0)
+						compareResult->decompressRate = oriDataSize*1.0/compareResult->decompressTime;					
+					else
+						compareResult->decompressRate = 0;
 					ZC_printCompressionResult(compareResult);
 
 					sprintf(compressionCase, "%s(%s)", compressorName, ci->precStr);
