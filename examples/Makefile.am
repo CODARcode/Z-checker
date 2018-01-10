@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS=foreign
 AM_CFLAGS = -I../zc/include
-bin_PROGRAMS=analyzeDataProperty compareDataSets generateGNUPlot generateReport modifyZCConfig
+bin_PROGRAMS=analyzeDataProperty compareDataSets generateGNUPlot generateReport modifyZCConfig runOfflineCase
 
 if MPI
 bin_PROGRAMS+=analyzeDataProperty_online compareDataSets_online
@@ -20,6 +20,8 @@ generateReport_LDADD=../zc/.libs/libzc.a -lm
 #testRscript_double_LDADD=../zc/.libs/libzc.a -lm
 modifyZCConfig_SOURCES=modifyZCConfig.c
 modifyZCConfig_LDADD=../zc/.libs/libzc.a -lm
+runOfflineCase_SOURCES=runOfflineCase.c
+runOfflineCase_LDADD=../zc/.libs/libzc.a -lm
 if MPI
 analyzeDataProperty_online_SOURCES=analyzeDataProperty_online.c
 analyzeDataProperty_online_LDADD=../zc/.libs/libzc.a -lm

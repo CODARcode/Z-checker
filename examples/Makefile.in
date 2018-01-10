@@ -90,7 +90,8 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = analyzeDataProperty$(EXEEXT) compareDataSets$(EXEEXT) \
 	generateGNUPlot$(EXEEXT) generateReport$(EXEEXT) \
-	modifyZCConfig$(EXEEXT) $(am__EXEEXT_1)
+	modifyZCConfig$(EXEEXT) runOfflineCase$(EXEEXT) \
+	$(am__EXEEXT_1)
 @MPI_TRUE@am__append_1 = analyzeDataProperty_online compareDataSets_online
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -138,6 +139,9 @@ generateReport_DEPENDENCIES = ../zc/.libs/libzc.a
 am_modifyZCConfig_OBJECTS = modifyZCConfig.$(OBJEXT)
 modifyZCConfig_OBJECTS = $(am_modifyZCConfig_OBJECTS)
 modifyZCConfig_DEPENDENCIES = ../zc/.libs/libzc.a
+am_runOfflineCase_OBJECTS = runOfflineCase.$(OBJEXT)
+runOfflineCase_OBJECTS = $(am_runOfflineCase_OBJECTS)
+runOfflineCase_DEPENDENCIES = ../zc/.libs/libzc.a
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -176,13 +180,13 @@ SOURCES = $(analyzeDataProperty_SOURCES) \
 	$(analyzeDataProperty_online_SOURCES) \
 	$(compareDataSets_SOURCES) $(compareDataSets_online_SOURCES) \
 	$(generateGNUPlot_SOURCES) $(generateReport_SOURCES) \
-	$(modifyZCConfig_SOURCES)
+	$(modifyZCConfig_SOURCES) $(runOfflineCase_SOURCES)
 DIST_SOURCES = $(analyzeDataProperty_SOURCES) \
 	$(am__analyzeDataProperty_online_SOURCES_DIST) \
 	$(compareDataSets_SOURCES) \
 	$(am__compareDataSets_online_SOURCES_DIST) \
 	$(generateGNUPlot_SOURCES) $(generateReport_SOURCES) \
-	$(modifyZCConfig_SOURCES)
+	$(modifyZCConfig_SOURCES) $(runOfflineCase_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -348,6 +352,8 @@ generateReport_LDADD = ../zc/.libs/libzc.a -lm
 #testRscript_double_LDADD=../zc/.libs/libzc.a -lm
 modifyZCConfig_SOURCES = modifyZCConfig.c
 modifyZCConfig_LDADD = ../zc/.libs/libzc.a -lm
+runOfflineCase_SOURCES = runOfflineCase.c
+runOfflineCase_LDADD = ../zc/.libs/libzc.a -lm
 @MPI_TRUE@analyzeDataProperty_online_SOURCES = analyzeDataProperty_online.c
 @MPI_TRUE@analyzeDataProperty_online_LDADD = ../zc/.libs/libzc.a -lm
 @MPI_TRUE@compareDataSets_online_SOURCES = compareDataSets_online.c
@@ -463,6 +469,10 @@ modifyZCConfig$(EXEEXT): $(modifyZCConfig_OBJECTS) $(modifyZCConfig_DEPENDENCIES
 	@rm -f modifyZCConfig$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(modifyZCConfig_OBJECTS) $(modifyZCConfig_LDADD) $(LIBS)
 
+runOfflineCase$(EXEEXT): $(runOfflineCase_OBJECTS) $(runOfflineCase_DEPENDENCIES) $(EXTRA_runOfflineCase_DEPENDENCIES) 
+	@rm -f runOfflineCase$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(runOfflineCase_OBJECTS) $(runOfflineCase_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -476,6 +486,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateGNUPlot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generateReport.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/modifyZCConfig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/runOfflineCase.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
