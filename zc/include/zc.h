@@ -65,7 +65,7 @@ extern "C" {
 #define ZC_VERNUM 0x0010
 #define ZC_VER_MAJOR 0
 #define ZC_VER_MINOR 1
-#define ZC_VER_BUILD 1
+#define ZC_VER_BUILD 2
 #define ZC_VER_REVISION 0
 
 #define PDF_INTERVALS 2000

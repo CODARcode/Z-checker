@@ -54,6 +54,7 @@ size_t hash_get(HashEntry *table, unsigned long key, size_t table_size);
 void hash_put(HashEntry *table, unsigned long key, size_t table_size);
 
 int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, char* output);
 void fft(complex *v, size_t n, complex *tmp);
 void ifft(complex *v, size_t n, complex *tmp);
 

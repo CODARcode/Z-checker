@@ -22,7 +22,7 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 	char** keys = (char**)malloc(sizeof(char*)*columns);
 	for(i=0;i<columns;i++)
 		keys[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
-	strcpy(keys[0], "numOfElem");
+	strcpy(keys[0], "dimensions");
 	strcpy(keys[1], "size(MB)");
 	strcpy(keys[2], "minValue");
 	strcpy(keys[3], "avgValue");
@@ -38,6 +38,10 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 			cells[i][j] = (char*)malloc(sizeof(char)*ZC_BUFS);
 	}
 	
+	char dimensions[50];
+	int dim = 0;
+	size_t r5 = 0, r4 = 0, r3 = 0, r2 = 0, r1 = 0;
+	memset(dimensions, 0, 50);
 	for(i=0;i<varCaseCount;i++)
 	{
 		sprintf(varPropFile, "dataProperties/%s.prop", varCases[i]);
@@ -57,6 +61,16 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 			printf("Error: support only float or double but doesn't support other types\n");
 			exit(0);
 		}
+		
+		
+		r5 = iniparser_getlint(ini, "PROPERTY:r5", 0);
+		r4 = iniparser_getlint(ini, "PROPERTY:r4", 0);
+		r3 = iniparser_getlint(ini, "PROPERTY:r3", 0);
+		r2 = iniparser_getlint(ini, "PROPERTY:r2", 0);
+		r1 = iniparser_getlint(ini, "PROPERTY:r1", 0);
+		
+		ZC_constructDimString(r5, r4, r3, r2, r1, dimensions);
+		
 		minValue = iniparser_getstring(ini, "PROPERTY:minValue", "0");
 		avgValue = iniparser_getstring(ini, "PROPERTY:avgValue", "0");
 		maxValue = iniparser_getstring(ini, "PROPERTY:maxValue", "0");
@@ -64,13 +78,15 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 		entropy = iniparser_getstring(ini, "PROPERTY:entropy", "0");
 		
 		//sprintf(rowTexLine, "\\hline %d & %f & %s & %s & %s & %s & %s \\\\", numOfElem, size_inMB, minValue, avgValue, maxValue, valueRange, entropy);
-		sprintf(cells[i][0], "%zu", numOfElem);
+		strcpy(cells[i][0], dimensions);
 		sprintf(cells[i][1], "%f", size_inMB);
 		strcpy(cells[i][2], minValue);
 		strcpy(cells[i][3], avgValue);
 		strcpy(cells[i][4], maxValue);
 		strcpy(cells[i][5], valueRange);
 		strcpy(cells[i][6], entropy);
+		
+		iniparser_freedict(ini);	
 	}
 	
 	StringLine* header = ZC_generateSimpleTableTexLines(rows, columns, 
@@ -87,7 +103,6 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 		free(keys[i]);
 	free(keys);
 	
-	iniparser_freedict(ini);	
 	return header;
 }
 

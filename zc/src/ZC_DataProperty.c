@@ -65,6 +65,29 @@ int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		
 }
 
+void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, char* output)
+{
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+	switch(dim)
+	{
+	case 1:
+		sprintf(output, "%zu\0", r1);
+		break;
+	case 2: 
+		sprintf(output, "%zuX%zu\0", r2, r1);
+		break;
+	case 3: 
+		sprintf(output, "%zuX%zuX%zu\0", r3, r2, r1);
+		break;
+	case 4:
+		sprintf(output, "%zuX%zuX%zuX%zu\0", r4, r3, r2, r1);
+		break;
+	case 5:
+		sprintf(output, "%zuX%zuX%zuX%zuX%zu\0", r5, r4, r3, r2, r1);
+		break;
+	}
+}
+
 /* For FFT and iFFT calculation */
 void fft(complex *v, size_t n, complex *tmp)
 {
