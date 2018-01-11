@@ -1,0 +1,16 @@
+The SSIM is a measure of similarity (intensity, variability and cross-structure) between two multidimensional fields a and b. The SSIM ranges between -1 and 1, the closer to 1 the more similar are the two fields. The SSIM index has three components, each of them respectively assesses for the similarity in intensity (‘int’ hereafter), the similarity in variability (‘var’ hereafter) and the cross-covariance between the fields (‘struc’ hereafter). 
+
+int = (2*mu_a*mu_b + c1)/(mu_a^2 + mu_b^2 + c1),
+var = (2*s_a*s_b + c2)/(s_a^2 + s_b^2 + c2),
+struc = (s_ab + c3)/(s_a*s_b + c3), 
+
+with mu_a = mean(a)
+mu_b = mean(b)
+s_a = standarddeviation(a)
+s_b = standarddeviation(b)
+s_ab = covariance(a,b)
+L, c1, c2, c3, k1, k2 are parameters linked with the fields setup,
+
+ssim = (int^alpha) * (var^beta) * (struc^gamma)
+
+In order to specify the importance of each of the three components within the total index, the user can specify the parameters alpha, beta, gamma; whose sum should equal 1. 

@@ -16,11 +16,10 @@ print(cor(c(a),c(b)))
 
 
 KS_test = function(a,b){  # a and b are of any dimension 
-    #KS = ks.test(x=c(a),y=c(b))
-    #pval = KS$p.value
-    #print('Kolmogorov-Smirnov test p-value')
-    #print(pval)
-    ks.test(x=c(a),y=c(b))
+    KS = ks.test(x=c(a),y=c(b))
+    pval = KS$p.value
+    print('Kolmogorov-Smirnov test p-value')
+    print(pval)
 }
 
 
