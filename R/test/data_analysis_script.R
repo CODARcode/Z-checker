@@ -18,8 +18,9 @@ print(cor(c(a),c(b)))
 KS_test = function(a,b){  # a and b are of any dimension 
     KS = ks.test(x=c(a),y=c(b))
     pval = KS$p.value
-    print('Kolmogorov-Smirnov test p-value')
-    print(pval)
+    #print('Kolmogorov-Smirnov test p-value')
+    #print(pval)
+    pval
 }
 
 
@@ -36,15 +37,16 @@ s_a = sd(c(a),na.rm=TRUE)
 s_b = sd(c(b),na.rm=TRUE)
 s_ab = cov(c(a),c(b))
 lum = (2*mu_a*mu_b + c1)/(mu_a^2 + mu_b^2 + c1)
-print('Luminance')
-print(lum)
+#print('Luminance')
+#print(lum)
 cont = (2*s_a*s_b + c2)/(s_a^2 + s_b^2 + c2)
-print('Contrast')
-print(cont)
+#print('Contrast')
+#print(cont)
 struc = (s_ab + c3)/(s_a*s_b + c3)
-print('Structure')
-print(struc)
+#print('Structure')
+#print(struc)
 ssim = (lum^alpha) * (cont^beta) * (struc^gamma)
-print('SSIM')
-print(ssim)  }
+#print('SSIM')
+#print(ssim)
+c(lum,cont,struc,ssim)  }
 
