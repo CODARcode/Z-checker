@@ -31,11 +31,11 @@ k2 = 0.03
 c1 = (k1*L)^2
 c2 = (k2*L)^2
 c3 = c2/2
-mu_a = mean(a,na.rm=TRUE)
-mu_b = mean(b,na.rm=TRUE)
-s_a = sd(a,na.rm=TRUE)
-s_b = sd(b,na.rm=TRUE)
-s_ab = cov(a,b)
+mu_a = mean(c(a),na.rm=TRUE)
+mu_b = mean(c(b),na.rm=TRUE)
+s_a = sd(c(a),na.rm=TRUE)
+s_b = sd(c(b),na.rm=TRUE)
+s_ab = cov(c(a),c(b))
 lum = (2*mu_a*mu_b + c1)/(mu_a^2 + mu_b^2 + c1)
 print('Luminance')
 print(lum)
