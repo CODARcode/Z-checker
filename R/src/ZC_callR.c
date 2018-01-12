@@ -29,13 +29,13 @@ void source(const char *name)
 }
 
 
-int ZC_callR_1_1d(char* rFuncName, int vecType, int inLen, void* in, int* outLen, double** out)
+int ZC_callR_1_1d(char* rFuncName, int vecType, size_t inLen, void* in, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg;	
     float *float_in;
     double *double_in;
-    int i;
+    size_t i;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -84,13 +84,13 @@ int ZC_callR_1_1d(char* rFuncName, int vecType, int inLen, void* in, int* outLen
     }
 }
 
-int ZC_callR_2_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Len, void* in2, int* outLen, double** out)
+int ZC_callR_2_1d(char* rFuncName, int vecType, size_t in1Len, void* in1, size_t in2Len, void* in2, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2;
     float *float_in1, *float_in2;
     double *double_in1, *double_in2;
-    int i;
+    size_t i;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -149,13 +149,13 @@ int ZC_callR_2_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Le
     }
 }
 
-int ZC_callR_1_2d(char* rFuncName, int vecType, int in_n2, int in_n1, void* in, int* outLen, double** out)
+int ZC_callR_1_2d(char* rFuncName, int vecType, size_t in_n2, size_t in_n1, void* in, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg;	
     float *float_in;
     double *double_in;
-    int i, j;
+    size_t i, j;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -206,15 +206,15 @@ int ZC_callR_1_2d(char* rFuncName, int vecType, int in_n2, int in_n1, void* in, 
 }
 
 int ZC_callR_2_2d(char* rFuncName, int vecType, 
-int in1_n2, int in1_n1, void* in1, 
-int in2_n2, int in2_n1, void* in2, 
-int* outLen, double** out)
+size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n2, size_t in2_n1, void* in2, 
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2;
     float *float_in1, *float_in2;
     double *double_in1, *double_in2;
-    int i,j;
+    size_t i,j;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -275,13 +275,13 @@ int* outLen, double** out)
     }
 }
 
-int ZC_callR_1_3d(char* rFuncName, int vecType, int in_n3, int in_n2, int in_n1, void* in, int* outLen, double** out)
+int ZC_callR_1_3d(char* rFuncName, int vecType, size_t in_n3, size_t in_n2, size_t in_n1, void* in, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg;	
     float *float_in;
     double *double_in;
-    int i, j, k, n21;
+    size_t i, j, k, n21;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -334,17 +334,17 @@ int ZC_callR_1_3d(char* rFuncName, int vecType, int in_n3, int in_n2, int in_n1,
 }
 
 int ZC_callR_2_3d(char* rFuncName, int vecType, 
-int in1_n3, int in1_n2, int in1_n1, void* in1, 
-int in2_n3, int in2_n2, int in2_n1, void* in2, 
-int* outLen, double** out)
+size_t in1_n3, size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n3, size_t in2_n2, size_t in2_n1, void* in2, 
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2;
     float *float_in1, *float_in2;
     double *double_in1, *double_in2;
-    int i,j,k;
-	int in1_n21 = in1_n2*in1_n1;
-	int in2_n21 = in2_n2*in2_n1;
+    size_t i,j,k;
+	size_t in1_n21 = in1_n2*in1_n1;
+	size_t in2_n21 = in2_n2*in2_n1;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -409,13 +409,13 @@ int* outLen, double** out)
 }
 
 
-int ZC_callR_3_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Len, void* in2, int in3Len, void* in3, int* outLen, double** out)
+int ZC_callR_3_1d(char* rFuncName, int vecType, size_t in1Len, void* in1, size_t in2Len, void* in2, size_t in3Len, void* in3, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3;
     float *float_in1, *float_in2, *float_in3;
     double *double_in1, *double_in2, *double_in3;
-    int i;
+    size_t i;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -484,13 +484,13 @@ int ZC_callR_3_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Le
     }
 }
 
-int ZC_callR_4_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Len, void* in2, int in3Len, void* in3, int in4Len, void* in4, int* outLen, double** out)
+int ZC_callR_4_1d(char* rFuncName, int vecType, size_t in1Len, void* in1, size_t in2Len, void* in2, size_t in3Len, void* in3, size_t in4Len, void* in4, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4;
     float *float_in1, *float_in2, *float_in3, *float_in4;
     double *double_in1, *double_in2, *double_in3, *double_in4;
-    int i;
+    size_t i;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -569,13 +569,13 @@ int ZC_callR_4_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Le
     }
 }
 
-int ZC_callR_5_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Len, void* in2, int in3Len, void* in3, int in4Len, void* in4, int in5Len, void* in5, int* outLen, double** out)
+int ZC_callR_5_1d(char* rFuncName, int vecType, size_t in1Len, void* in1, size_t in2Len, void* in2, size_t in3Len, void* in3, size_t in4Len, void* in4, size_t in5Len, void* in5, size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4, arg5;
     float *float_in1, *float_in2, *float_in3, *float_in4, *float_in5;
     double *double_in1, *double_in2, *double_in3, *double_in4, *double_in5;
-    int i;
+    size_t i;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -666,19 +666,19 @@ int ZC_callR_5_1d(char* rFuncName, int vecType, int in1Len, void* in1, int in2Le
 
 
 int ZC_callR_6_1d(char* rFuncName, int vecType, 
-int in1Len, void* in1, 
-int in2Len, void* in2, 
-int in3Len, void* in3, 
-int in4Len, void* in4, 
-int in5Len, void* in5, 
-int in6Len, void* in6, 
-int* outLen, double** out)
+size_t in1Len, void* in1, 
+size_t in2Len, void* in2, 
+size_t in3Len, void* in3, 
+size_t in4Len, void* in4, 
+size_t in5Len, void* in5, 
+size_t in6Len, void* in6, 
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4, arg5, arg6;
     float *float_in1, *float_in2, *float_in3, *float_in4, *float_in5, *float_in6;
     double *double_in1, *double_in2, *double_in3, *double_in4, *double_in5, *double_in6;
-    int i;
+    size_t i;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -778,16 +778,16 @@ int* outLen, double** out)
 }
 
 int ZC_callR_3_2d(char* rFuncName, int vecType, 
-int in1_n2, int in1_n1, void* in1, 
-int in2_n2, int in2_n1, void* in2, 
-int in3_n2, int in3_n1, void* in3,
-int* outLen, double** out)
+size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n2, size_t in3_n1, void* in3,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3;
     float *float_in1, *float_in2, *float_in3;
     double *double_in1, *double_in2, *double_in3;
-    int i,j;
+    size_t i,j;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -860,17 +860,17 @@ int* outLen, double** out)
 }
 
 int ZC_callR_4_2d(char* rFuncName, int vecType, 
-int in1_n2, int in1_n1, void* in1, 
-int in2_n2, int in2_n1, void* in2, 
-int in3_n2, int in3_n1, void* in3,
-int in4_n2, int in4_n1, void* in4, 
-int* outLen, double** out)
+size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n2, size_t in3_n1, void* in3,
+size_t in4_n2, size_t in4_n1, void* in4, 
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4;
     float *float_in1, *float_in2, *float_in3, *float_in4;
     double *double_in1, *double_in2, *double_in3, *double_in4;
-    int i,j;
+    size_t i,j;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -954,18 +954,18 @@ int* outLen, double** out)
 }
 
 int ZC_callR_5_2d(char* rFuncName, int vecType, 
-int in1_n2, int in1_n1, void* in1, 
-int in2_n2, int in2_n1, void* in2, 
-int in3_n2, int in3_n1, void* in3,
-int in4_n2, int in4_n1, void* in4, 
-int in5_n2, int in5_n1, void* in5,
-int* outLen, double** out)
+size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n2, size_t in3_n1, void* in3,
+size_t in4_n2, size_t in4_n1, void* in4, 
+size_t in5_n2, size_t in5_n1, void* in5,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4, arg5;
     float *float_in1, *float_in2, *float_in3, *float_in4, *float_in5;
     double *double_in1, *double_in2, *double_in3, *double_in4, *double_in5;
-    int i,j;
+    size_t i,j;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -1060,19 +1060,19 @@ int* outLen, double** out)
 }
 
 int ZC_callR_6_2d(char* rFuncName, int vecType, 
-int in1_n2, int in1_n1, void* in1, 
-int in2_n2, int in2_n1, void* in2, 
-int in3_n2, int in3_n1, void* in3,
-int in4_n2, int in4_n1, void* in4, 
-int in5_n2, int in5_n1, void* in5,
-int in6_n2, int in6_n1, void* in6,
-int* outLen, double** out)
+size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n2, size_t in3_n1, void* in3,
+size_t in4_n2, size_t in4_n1, void* in4, 
+size_t in5_n2, size_t in5_n1, void* in5,
+size_t in6_n2, size_t in6_n1, void* in6,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4, arg5, arg6;
     float *float_in1, *float_in2, *float_in3, *float_in4, *float_in5, *float_in6;
     double *double_in1, *double_in2, *double_in3, *double_in4, *double_in5, *double_in6;
-    int i,j;
+    size_t i,j;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -1178,19 +1178,19 @@ int* outLen, double** out)
 }
 
 int ZC_callR_3_3d(char* rFuncName, int vecType, 
-int in1_n3, int in1_n2, int in1_n1, void* in1, 
-int in2_n3, int in2_n2, int in2_n1, void* in2, 
-int in3_n3, int in3_n2, int in3_n1, void* in3,
-int* outLen, double** out)
+size_t in1_n3, size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n3, size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n3, size_t in3_n2, size_t in3_n1, void* in3,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3;
     float *float_in1, *float_in2, *float_in3;
     double *double_in1, *double_in2, *double_in3;
-    int i,j,k;
-	int in1_n21 = in1_n2*in1_n1;
-	int in2_n21 = in2_n2*in2_n1;
-	int in3_n21 = in3_n2*in3_n1;
+    size_t i,j,k;
+	size_t in1_n21 = in1_n2*in1_n1;
+	size_t in2_n21 = in2_n2*in2_n1;
+	size_t in3_n21 = in3_n2*in3_n1;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -1267,21 +1267,21 @@ int* outLen, double** out)
 }
 
 int ZC_callR_4_3d(char* rFuncName, int vecType, 
-int in1_n3, int in1_n2, int in1_n1, void* in1, 
-int in2_n3, int in2_n2, int in2_n1, void* in2, 
-int in3_n3, int in3_n2, int in3_n1, void* in3,
-int in4_n3, int in4_n2, int in4_n1, void* in4,
-int* outLen, double** out)
+size_t in1_n3, size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n3, size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n3, size_t in3_n2, size_t in3_n1, void* in3,
+size_t in4_n3, size_t in4_n2, size_t in4_n1, void* in4,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4;
     float *float_in1, *float_in2, *float_in3, *float_in4;
     double *double_in1, *double_in2, *double_in3, *double_in4;
-    int i,j,k;
-	int in1_n21 = in1_n2*in1_n1;
-	int in2_n21 = in2_n2*in2_n1;
-	int in3_n21 = in3_n2*in3_n1;
-	int in4_n21 = in4_n2*in4_n1;
+    size_t i,j,k;
+	size_t in1_n21 = in1_n2*in1_n1;
+	size_t in2_n21 = in2_n2*in2_n1;
+	size_t in3_n21 = in3_n2*in3_n1;
+	size_t in4_n21 = in4_n2*in4_n1;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -1369,23 +1369,23 @@ int* outLen, double** out)
 }
 
 int ZC_callR_5_3d(char* rFuncName, int vecType, 
-int in1_n3, int in1_n2, int in1_n1, void* in1, 
-int in2_n3, int in2_n2, int in2_n1, void* in2, 
-int in3_n3, int in3_n2, int in3_n1, void* in3,
-int in4_n3, int in4_n2, int in4_n1, void* in4,
-int in5_n3, int in5_n2, int in5_n1, void* in5,
-int* outLen, double** out)
+size_t in1_n3, size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n3, size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n3, size_t in3_n2, size_t in3_n1, void* in3,
+size_t in4_n3, size_t in4_n2, size_t in4_n1, void* in4,
+size_t in5_n3, size_t in5_n2, size_t in5_n1, void* in5,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4, arg5;
     float *float_in1, *float_in2, *float_in3, *float_in4, *float_in5;
     double *double_in1, *double_in2, *double_in3, *double_in4, *double_in5;
-    int i,j,k;
-	int in1_n21 = in1_n2*in1_n1;
-	int in2_n21 = in2_n2*in2_n1;
-	int in3_n21 = in3_n2*in3_n1;
-	int in4_n21 = in4_n2*in4_n1;
-	int in5_n21 = in5_n2*in5_n1;
+    size_t i,j,k;
+	size_t in1_n21 = in1_n2*in1_n1;
+	size_t in2_n21 = in2_n2*in2_n1;
+	size_t in3_n21 = in3_n2*in3_n1;
+	size_t in4_n21 = in4_n2*in4_n1;
+	size_t in5_n21 = in5_n2*in5_n1;
 	switch(vecType)
 	{
 	case ZC_R_Int:
@@ -1485,25 +1485,25 @@ int* outLen, double** out)
 }
 
 int ZC_callR_6_3d(char* rFuncName, int vecType, 
-int in1_n3, int in1_n2, int in1_n1, void* in1, 
-int in2_n3, int in2_n2, int in2_n1, void* in2, 
-int in3_n3, int in3_n2, int in3_n1, void* in3,
-int in4_n3, int in4_n2, int in4_n1, void* in4,
-int in5_n3, int in5_n2, int in5_n1, void* in5,
-int in6_n3, int in6_n2, int in6_n1, void* in6,
-int* outLen, double** out)
+size_t in1_n3, size_t in1_n2, size_t in1_n1, void* in1, 
+size_t in2_n3, size_t in2_n2, size_t in2_n1, void* in2, 
+size_t in3_n3, size_t in3_n2, size_t in3_n1, void* in3,
+size_t in4_n3, size_t in4_n2, size_t in4_n1, void* in4,
+size_t in5_n3, size_t in5_n2, size_t in5_n1, void* in5,
+size_t in6_n3, size_t in6_n2, size_t in6_n1, void* in6,
+size_t* outLen, double** out)
 {
 	// Allocate an R vector and copy the C array into it.
     SEXP arg1, arg2, arg3, arg4, arg5, arg6;
     float *float_in1, *float_in2, *float_in3, *float_in4, *float_in5, *float_in6;
     double *double_in1, *double_in2, *double_in3, *double_in4, *double_in5, *double_in6;
-    int i,j,k;
-	int in1_n21 = in1_n2*in1_n1;
-	int in2_n21 = in2_n2*in2_n1;
-	int in3_n21 = in3_n2*in3_n1;
-	int in4_n21 = in4_n2*in4_n1;
-	int in5_n21 = in5_n2*in5_n1;
-	int in6_n21 = in6_n2*in6_n1;
+    size_t i,j,k;
+	size_t in1_n21 = in1_n2*in1_n1;
+	size_t in2_n21 = in2_n2*in2_n1;
+	size_t in3_n21 = in3_n2*in3_n1;
+	size_t in4_n21 = in4_n2*in4_n1;
+	size_t in5_n21 = in5_n2*in5_n1;
+	size_t in6_n21 = in6_n2*in6_n1;
 	switch(vecType)
 	{
 	case ZC_R_Int:

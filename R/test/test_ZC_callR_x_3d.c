@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     Rf_initEmbeddedR(r_argc, r_argv);
 
     int arg[2][3][4];
-    int i,j,k;
+    size_t i,j,k;
     for(i=0;i<2;i++)
 		for(j=0;j<3;j++)
 			for(k=0;k<4;k++)
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
     // Invoke a function in R
     source("func.R");
-    int outLen;
+    size_t outLen;
     double *out;
     printf("ZC_callR_1_3d (int vector)----\n");
     ZC_callR_1_3d("add1", ZC_R_Int, 2, 3, 4, arg, &outLen, &out);

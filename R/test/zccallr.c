@@ -7,6 +7,7 @@
  *      See COPYRIGHT in top-level directory.
  */
  
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
@@ -236,16 +237,15 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-    // Intialize the R environment.
-    int r_argc = 2;
-    char *r_argv[] = { "R", "--silent" };
-    Rf_initEmbeddedR(r_argc, r_argv);
+	// Intialize the R environment.
+	int r_argc = 2;
+	char *r_argv[] = { "R", "--silent" };
+	Rf_initEmbeddedR(r_argc, r_argv);
 
-    // Invoke a function in R
-    source(rscriptPath);
-    int outLen;
-    double *out;
-
+	// Invoke a function in R
+	source(rscriptPath);
+	size_t outLen;
+	double *out;
 
 	//perform the script
 	switch(arrNum)

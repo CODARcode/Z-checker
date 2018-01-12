@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h> 
 
@@ -12,13 +13,13 @@ int main(int argc, char *argv[])
 	Rf_initEmbeddedR(r_argc, r_argv);
 
 	int arg[6];
-	int i,k=1;
+	size_t i,k=1;
 	for(i=0;i<6;i++)
 		arg[i]=k++;
 
 	// Invoke a function in R
 	source("func.R");
-	int outLen;
+	size_t outLen;
 	double *out;
 	printf("ZC_callR_1_1d (int vector)----\n");
 	ZC_callR_1_1d("add1", ZC_R_Int, 6, arg, &outLen, &out);
