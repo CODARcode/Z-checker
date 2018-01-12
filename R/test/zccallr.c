@@ -12,7 +12,7 @@
 #include <string.h> 
 
 #include "ZC_callR.h"
-#include "zc.h"
+#include "ZC_rw.h"
 
 void usage()
 {
@@ -179,6 +179,14 @@ int main(int argc, char *argv[])
 		printf("Note: You didn't specify any output way. Use -r or -o to do it.\n");
 		usage();
 	}
+
+	int x;
+	char *y = (char*)&x;
+	
+	if(*y==1)
+		sysEndianType = LITTLE_ENDIAN_SYSTEM;
+	else //=0
+		sysEndianType = BIG_ENDIAN_SYSTEM;
 
 	size_t nbEle1 = 0, nbEle2 = 0, nbEle3 = 0, nbEle4 = 0, nbEle5 = 0, nbEle6 = 0;
 	float *f_data1 = NULL, *f_data2 = NULL, *f_data3 = NULL, *f_data4 = NULL, *f_data5 = NULL, *f_data6 = NULL;

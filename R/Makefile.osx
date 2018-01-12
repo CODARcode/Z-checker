@@ -42,7 +42,7 @@ test/test_ZC_callR_x_3d: test/test_ZC_callR_x_3d.c
 	$(CC) -o test/test_ZC_callR_x_3d test/test_ZC_callR_x_3d.c $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS) -L. -lzccallr
 
 test/zccallr:	test/zccallr.c
-	$(CC) -g -o test/zccallr test/zccallr.c $(CFLAGS) $(LFLAGS) $(ZC_FLAGS) $(ZC_RFLAGS) -L. -lzccallr
+	$(CC) -g -o test/zccallr test/zccallr.c test/ZC_rw.c -Itest $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS) -L. -lzccallr
 
 clean: 
 	rm -rf src/*.o *.a *.gch libzccallr.so* test/test_ZC_callR_x_*d test/zccallr

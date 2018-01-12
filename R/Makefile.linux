@@ -6,8 +6,8 @@
 #######################################################
 
 ##   COMPILERS
-CC	= gcc
-#CC	= mpicc
+#CC	= gcc
+CC	= mpicc
 #R_BASE = [Your installation path of R, which contains lib/libRblas.so and lib/libR.so] (e.g., /usr/lib64/R); hint: you could run the command "which Rscript" to check where it is.
 R_BASE = /usr/lib64/R
 
@@ -42,7 +42,7 @@ test/test_ZC_callR_x_3d: libzccallr.a test/test_ZC_callR_x_3d.c
 	$(CC) -o test/test_ZC_callR_x_3d test/test_ZC_callR_x_3d.c libzccallr.a $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS)
 
 test/zccallr:	libzccallr.a test/zccallr.c
-	$(CC) -g -o test/zccallr test/zccallr.c libzccallr.a $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS) $(ZC_FLAGS)
+	$(CC) -g -o test/zccallr test/zccallr.c test/ZC_rw.c libzccallr.a -Itest $(CFLAGS) $(LFLAGS) $(ZC_RFLAGS)
 
 clean: 
 	rm -rf src/*.o *.a *.gch libzccallr.so* test/test_ZC_callR_x_*d test/zccallr
