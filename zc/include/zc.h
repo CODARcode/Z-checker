@@ -117,6 +117,8 @@ extern "C" {
 #define ZC_OFFLINE 0
 #define ZC_ONLINE 1
 
+extern char rscriptPath[MAX_MSG_LENGTH];
+
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
 
@@ -141,6 +143,7 @@ extern int valueRangeFlag;
 extern int avgValueFlag;
 extern int entropyFlag;
 extern int autocorrFlag;
+extern int autocorr3DFlag;
 extern int fftFlag;
 extern int lapFlag;
 
@@ -148,6 +151,7 @@ extern int minAbsErrFlag;
 extern int avgAbsErrFlag;
 extern int maxAbsErrFlag;
 extern int autoCorrAbsErrFlag;
+extern int autoCorrAbsErr3DFlag;
 extern int absErrPDFFlag;
 extern int pwrErrPDFFlag;
 
@@ -161,6 +165,9 @@ extern int snrFlag;
 extern int psnrFlag;
 extern int valErrCorrFlag;
 extern int pearsonCorrFlag;
+
+extern int KS_testFlag;
+extern int SSIMFlag;
 
 extern int plotAbsErrPDFFlag;
 extern int plotAutoCorrFlag;
@@ -180,6 +187,11 @@ extern struct timeval startDecTime;
 extern struct timeval endDecTime;
 extern double totalCmprCost;
 extern double totalDecCost;
+
+extern double initTime;
+extern double endTime;
+
+extern long globalCmprSize;
 
 extern int compressors_count; //this compressors_count is the number of compressors to be compared, set by zc.config
 extern char* compressors[CMPR_MAX_LEN];
@@ -261,11 +273,11 @@ double cost_endDec();
 int ZC_Init(char *configFilePath);
 long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize);
-void ZC_startDec();
-void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData);
+ZC_DataProperty* ZC_startCmpr_offline(char* varName, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, int cmprSize);
+void ZC_startDec_offline();
+void ZC_endDec_offline(ZC_CompareData* compareResult, char* solution, void *decData);
 
 void ZC_plotCompressionRatio();
 void ZC_plotHistogramResults(int cmpCount, char** compressorCases);
@@ -310,8 +322,19 @@ int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
 int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
 
 //online interfaces
-ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, long cmprSize);
+void ZC_startDec_online();
+void ZC_endDec_online(ZC_CompareData* compareResult, char* solution, void *decData);
+
+
+//overall interfaces for checkingStatus==PROBE_COMPRESSOR
+ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, long cmprSize);
+void ZC_startDec();
+void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData);
+
 
 #ifdef __cplusplus
 }

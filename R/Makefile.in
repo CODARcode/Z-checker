@@ -89,7 +89,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = NetCDFReader
+subdir = R
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -129,19 +129,18 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libnetcdfreader_la_LIBADD =
+libzccallr_la_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libnetcdfreader_la_OBJECTS =  \
-	src/libnetcdfreader_la-NetCDFReader.lo
-libnetcdfreader_la_OBJECTS = $(am_libnetcdfreader_la_OBJECTS)
+am_libzccallr_la_OBJECTS = src/libzccallr_la-ZC_callR.lo \
+	src/libzccallr_la-ZC_manyArgs.lo
+libzccallr_la_OBJECTS = $(am_libzccallr_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libnetcdfreader_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libnetcdfreader_la_CFLAGS) $(CFLAGS) \
-	$(libnetcdfreader_la_LDFLAGS) $(LDFLAGS) -o $@
+libzccallr_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libzccallr_la_CFLAGS) \
+	$(CFLAGS) $(libzccallr_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -176,8 +175,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libnetcdfreader_la_SOURCES)
-DIST_SOURCES = $(libnetcdfreader_la_SOURCES)
+SOURCES = $(libzccallr_la_SOURCES)
+DIST_SOURCES = $(libzccallr_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -203,7 +202,7 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
+am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -334,12 +333,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-include_HEADERS = include/NetCDFReader.h
-lib_LTLIBRARIES = libnetcdfreader.la
-libnetcdfreader_la_CFLAGS = -g -I./include -DHAVE_NETCDF $(NETCDF_HDR)
-libnetcdfreader_la_LDFLAGS = -version-info  0:1:0
-libnetcdfreader_la_LIDADD = $(NETCDF_LIBS) $(NETCDF_LIB)
-libnetcdfreader_la_SOURCES = src/NetCDFReader.c
+include_HEADERS = src/ZC_callR.h src/ZC_manyArgs.h
+lib_LTLIBRARIES = libzccallr.la
+libzccallr_la_CFLAGS = -g -I./include -DHAVE_R $(R_HDR)
+libzccallr_la_LDFLAGS = -version-info  0:1:0
+libzccallr_la_LIDADD = $(R_LIBS) $(R_LIB)
+libzccallr_la_SOURCES = src/ZC_callR.c src/ZC_manyArgs.c
 all: all-am
 
 .SUFFIXES:
@@ -353,9 +352,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign NetCDFReader/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign R/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign NetCDFReader/Makefile
+	  $(AUTOMAKE) --foreign R/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -414,11 +413,13 @@ src/$(am__dirstamp):
 src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/$(DEPDIR)
 	@: > src/$(DEPDIR)/$(am__dirstamp)
-src/libnetcdfreader_la-NetCDFReader.lo: src/$(am__dirstamp) \
+src/libzccallr_la-ZC_callR.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libzccallr_la-ZC_manyArgs.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 
-libnetcdfreader.la: $(libnetcdfreader_la_OBJECTS) $(libnetcdfreader_la_DEPENDENCIES) $(EXTRA_libnetcdfreader_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libnetcdfreader_la_LINK) -rpath $(libdir) $(libnetcdfreader_la_OBJECTS) $(libnetcdfreader_la_LIBADD) $(LIBS)
+libzccallr.la: $(libzccallr_la_OBJECTS) $(libzccallr_la_DEPENDENCIES) $(EXTRA_libzccallr_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libzccallr_la_LINK) -rpath $(libdir) $(libzccallr_la_OBJECTS) $(libzccallr_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -428,7 +429,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libnetcdfreader_la-NetCDFReader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzccallr_la-ZC_callR.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzccallr_la-ZC_manyArgs.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -454,12 +456,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-src/libnetcdfreader_la-NetCDFReader.lo: src/NetCDFReader.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnetcdfreader_la_CFLAGS) $(CFLAGS) -MT src/libnetcdfreader_la-NetCDFReader.lo -MD -MP -MF src/$(DEPDIR)/libnetcdfreader_la-NetCDFReader.Tpo -c -o src/libnetcdfreader_la-NetCDFReader.lo `test -f 'src/NetCDFReader.c' || echo '$(srcdir)/'`src/NetCDFReader.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libnetcdfreader_la-NetCDFReader.Tpo src/$(DEPDIR)/libnetcdfreader_la-NetCDFReader.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/NetCDFReader.c' object='src/libnetcdfreader_la-NetCDFReader.lo' libtool=yes @AMDEPBACKSLASH@
+src/libzccallr_la-ZC_callR.lo: src/ZC_callR.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzccallr_la_CFLAGS) $(CFLAGS) -MT src/libzccallr_la-ZC_callR.lo -MD -MP -MF src/$(DEPDIR)/libzccallr_la-ZC_callR.Tpo -c -o src/libzccallr_la-ZC_callR.lo `test -f 'src/ZC_callR.c' || echo '$(srcdir)/'`src/ZC_callR.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzccallr_la-ZC_callR.Tpo src/$(DEPDIR)/libzccallr_la-ZC_callR.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_callR.c' object='src/libzccallr_la-ZC_callR.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libnetcdfreader_la_CFLAGS) $(CFLAGS) -c -o src/libnetcdfreader_la-NetCDFReader.lo `test -f 'src/NetCDFReader.c' || echo '$(srcdir)/'`src/NetCDFReader.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzccallr_la_CFLAGS) $(CFLAGS) -c -o src/libzccallr_la-ZC_callR.lo `test -f 'src/ZC_callR.c' || echo '$(srcdir)/'`src/ZC_callR.c
+
+src/libzccallr_la-ZC_manyArgs.lo: src/ZC_manyArgs.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzccallr_la_CFLAGS) $(CFLAGS) -MT src/libzccallr_la-ZC_manyArgs.lo -MD -MP -MF src/$(DEPDIR)/libzccallr_la-ZC_manyArgs.Tpo -c -o src/libzccallr_la-ZC_manyArgs.lo `test -f 'src/ZC_manyArgs.c' || echo '$(srcdir)/'`src/ZC_manyArgs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzccallr_la-ZC_manyArgs.Tpo src/$(DEPDIR)/libzccallr_la-ZC_manyArgs.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_manyArgs.c' object='src/libzccallr_la-ZC_manyArgs.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzccallr_la_CFLAGS) $(CFLAGS) -c -o src/libzccallr_la-ZC_manyArgs.lo `test -f 'src/ZC_manyArgs.c' || echo '$(srcdir)/'`src/ZC_manyArgs.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

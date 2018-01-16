@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
 				break;
 			}				
 			break;
-		}	
+		}
 		break;
 	case 4:
 		switch(dim)

@@ -401,6 +401,26 @@ StringLine* appendOneLine(StringLine* tail, char* str)
 	return newLine;
 }
 
+void ZC_readFirstLine(char* filePath, char* line)
+{
+	char buf[MAX_MSG_LENGTH] = {0};
+	memset(buf, 0, MAX_MSG_LENGTH);
+	int len = 0;
+
+	FILE *fp = fopen(filePath, "r");
+	if(fp == NULL)
+	{
+		printf("failed to open the file %s\n", filePath);
+		exit(0);
+	}
+	
+	//get the first line
+	fgets(buf, MAX_MSG_LENGTH, fp); // already including \n
+	strcpy(line, buf);
+
+	fclose(fp);	
+}
+
 StringLine* ZC_readLines(char* filePath, int *lineCount)
 {
 	char* buf;
@@ -573,7 +593,7 @@ void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath)
 		bytes[i*4+3] = buf.byte[3];					
 	}
 
-	int byteLength = nbEle*sizeof(float);
+	size_t byteLength = nbEle*sizeof(float);
 	ZC_writeByteData(bytes, byteLength, tgtFilePath);
 	free(bytes);
 }
@@ -597,7 +617,7 @@ void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, char* tgtFilePath)
 		bytes[index+7] = buf.byte[7];
 	}
 
-	int byteLength = nbEle*sizeof(double);
+	size_t byteLength = nbEle*sizeof(double);
 	ZC_writeByteData(bytes, byteLength, tgtFilePath);
 	free(bytes);
 }

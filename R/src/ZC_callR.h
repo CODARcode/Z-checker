@@ -22,9 +22,9 @@ extern "C" {
 #define ZC_R_SUCCESS 0
 #define ZC_R_ERROR 1
 
-#define ZC_R_Int 0
-#define ZC_R_Float 1
-#define ZC_R_Double 2
+#define ZC_R_Float 0
+#define ZC_R_Double 1
+#define ZC_R_Int 2
 
 void source(const char *name);
 

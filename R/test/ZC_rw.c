@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include "ZC_rw.h"
+#include "ZC_callR.h"
 
 int dataEndianType;
 int sysEndianType;
@@ -374,19 +375,19 @@ void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath)
 
 void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
 {
-	if(dataType == ZC_FLOAT)
+	if(dataType == ZC_R_Float)
 	{
 		float* dataArray = (float *)data;
 		ZC_writeFloatData(dataArray, nbEle, tgtFilePath);
 	}
-	else if(dataType == ZC_DOUBLE)
+	else if(dataType == ZC_R_Double)
 	{
 		double* dataArray = (double *)data;
 		ZC_writeDoubleData(dataArray, nbEle, tgtFilePath);
 	}
 	else
 	{
-		printf("Error: data type cannot be the types other than ZC_FLOAT or ZC_DOUBLE\n");
+		printf("Error: data type cannot be the types other than ZC_R_Float or ZC_R_Double\n");
 		exit(0);	
 	}
 }

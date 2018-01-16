@@ -43,60 +43,177 @@ else
 fi
 fi
 
-##--------------------------------------------------------------------
-##
-## NetCDF
-##
-##--------------------------------------------------------------------
-
-
-AC_ARG_ENABLE(netcdf, [  --enable-netcdf            use NETCDF], ok=$enableval, ok=no)
+# Check NETCDF library
+AC_ARG_ENABLE(netcdf, [  --enable-netcdf            use NETCDF], netcdf_ok=$enableval, netcdf_ok=no)
 AM_CONDITIONAL([NETCDF], [test "x$enable_netcdf" = "xyes"])
 
-AC_SUBST(NETCDF_CFLAGS)
-
-# Check NETCDF library
-
-if test "$ok" = "yes"; then
-AC_ARG_WITH([netcdf-prefix], [AS_HELP_STRING([--with-netcdf-prefix=DIR], 
+if test "$netcdf_ok" = "yes"; then
+#	NETCDF_CFLAGS="-DHAVE_NETCDF"
+	AC_ARG_WITH([netcdf-prefix], [AS_HELP_STRING([--with-netcdf-prefix=DIR], 
             [installation prefix for netcdf])], 
             [with_netcdf_include_path=$with_netcdf_prefix/include; 
              with_netcdf_lib_path=$with_netcdf_prefix/lib])
 
-AC_ARG_WITH([netcdf-include-path], [AS_HELP_STRING([--with-netcdf-include-path=DIR],
+	AC_ARG_WITH([netcdf-include-path], [AS_HELP_STRING([--with-netcdf-include-path=DIR],
             [path to the netcdf directory, defaults to /usr/include])], [])
 
-if test "x$with_netcdf_include_path" = x ; then
-    with_netcdf_include_path="/usr/include"
-fi
+	if test "x$with_netcdf_include_path" = x ; then
+    		with_netcdf_include_path="/usr/include"
+	fi
 
-AC_CHECK_FILE([${with_netcdf_include_path}/nc.h], [],
-              AC_MSG_ERROR([Invalid path to nc.h]))
-NETCDF_HDR="-I$with_netcdf_include_path"
+	AC_CHECK_FILE([${with_netcdf_include_path}/netcdf.h], [],
+              AC_MSG_ERROR([Invalid path to netcdf.h]))
+	NETCDF_HDR="-I$with_netcdf_include_path"
 
-AC_ARG_WITH([netcdf-lib-path], [AS_HELP_STRING([--with-netcdf-lib-path],
+	AC_ARG_WITH([netcdf-lib-path], [AS_HELP_STRING([--with-netcdf-lib-path],
             [path to the  netcdf libraries, defaults to /usr/lib])], [])
-if test "x$with_netcdf_lib_path" = x ; then
-    with_netcdf_lib_path="/usr/lib"
-fi
-NETCDF_LIB="-L$with_netcdf_lib_path"
-LIBS="$NETCDF_LIB"
+	if test "x$with_netcdf_lib_path" = x ; then
+    		with_netcdf_lib_path="/usr/lib"
+	fi
 
-if test "x$BUILD_STATIC" = xyes ; then
-    NETCDF_STATIC="${with_netcdf_lib_path}/libnetcdf.a"
-    NETCDF_LIB=
+	NETCDF_LIB="-L$with_netcdf_lib_path"
+	LIBS="$NETCDF_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+		NETCDF_STATIC="${with_netcdf_lib_path}/libnetcdf.a"
+		NETCDF_LIB=
+	else
+    		NETCDF_STATIC="-lnetcdf"
+	fi
+
+#	AC_SUBST(NETCDF_CFLAGS)
+	AC_SUBST(NETCDF_HDR)
+	AC_SUBST(NETCDF_LIB)
+	AC_SUBST(NETCDF_STATIC)
+
 else
-    NETCDF_STATIC="-lnetcdf"
+  	AC_MSG_WARN([NETCDF disabled])
 fi
 
-AC_SUBST(NETCDF_HDR)
-AC_SUBST(NETCDF_LIB)
-AC_SUBST(NETCDF_STATIC)
+# Check FFTW3 library
+AC_ARG_ENABLE(fftw3, [  --enable-fftw3            use FFTW3], fftw_ok=$enableval, fftw_ok=no)
+AM_CONDITIONAL([FFTW3], [test "x$enable_fftw3" = "xyes"])
+
+if test "$fftw_ok" = "yes"; then
+#	FFTW3_CFLAGS="-DHAVE_FFTW3"
+	AC_ARG_WITH([fftw3-prefix], [AS_HELP_STRING([--with-fftw3-prefix=DIR], 
+            [installation prefix for fftw3])], 
+            [with_fftw3_include_path=$with_fftw3_prefix/include; 
+             with_fftw3_lib_path=$with_fftw3_prefix/lib])
+
+	AC_ARG_WITH([fftw3-include-path], [AS_HELP_STRING([--with-fftw3-include-path=DIR],
+            [path to the fftw3 directory, defaults to /usr/include])], [])
+
+	if test "x$with_fftw3_include_path" = x ; then
+    		with_fftw3_include_path="/usr/include"
+	fi
+
+	AC_CHECK_FILE([${with_fftw3_include_path}/fftw3.h], [],
+              AC_MSG_ERROR([Invalid path to fftw3.h]))
+	FFTW3_HDR="-I$with_fftw3_include_path"
+
+	AC_ARG_WITH([fftw3-lib-path], [AS_HELP_STRING([--with-fftw3-lib-path],
+            [path to the fftw3 libraries, defaults to /usr/lib])], [])
+	if test "x$with_fftw3_lib_path" = x ; then
+    		with_fftw3_lib_path="/usr/lib"
+	fi
+	FFTW3_LIB="-L$with_fftw3_lib_path"
+	LIBS="$FFTW3_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+    		FFTW3_STATIC="${with_fftw3_lib_path}/libfftw3.a"
+    		FFTW3_LIB=
+	else
+    		FFTW3_STATIC="-lfftw3"
+	fi
+
+#	AC_SUBST(FFTW3_CFLAGS)
+	AC_SUBST(FFTW3_HDR)
+	AC_SUBST(FFTW3_LIB)
+	AC_SUBST(FFTW3_STATIC)
 
 else
-  AC_MSG_WARN([NETCDF disabled])
+  	AC_MSG_WARN([FFTW3 disabled])
 fi
 
+# Check R library
+AC_ARG_ENABLE(r, [  --enable-r            use R], r_ok=$enableval, r_ok=no)
+AM_CONDITIONAL([R], [test "x$enable_r" = "xyes"])
+
+if test "$r_ok" = "yes"; then 
+#	R_CFLAGS="-DHAVE_R"
+	AC_ARG_WITH([r-prefix], [AS_HELP_STRING([--with-r-prefix=DIR], 
+			[installation prefix for r])], 
+			[with_r_include_path=$with_r_prefix/include; 
+			 with_r_lib_path=$with_r_prefix/lib])
+
+	AC_ARG_WITH([r-include-path], [AS_HELP_STRING([--with-r-include-path=DIR],
+		[path to the r directory, defaults to /usr/include])], [])
+
+	if test "x$with_r_include_path" = x ; then 
+		with_r_include_path="/usr/include"
+	fi
+
+	AC_CHECK_FILE([${with_r_include_path}/R.h], [],
+		  AC_MSG_ERROR([Invalid path to R.h]))
+	R_HDR="-I$with_r_include_path"
+
+	AC_ARG_WITH([r-lib-path], [AS_HELP_STRING([--with-r-lib-path],
+		[path to the  r libraries, defaults to /usr/lib])], [])
+	if test "x$with_r_lib_path" = x ; then 
+		with_r_lib_path="/usr/lib"
+	fi
+
+	R_LIB="-L$with_r_lib_path"
+	LIBS="$R_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+		R_STATIC="${with_r_lib_path}/libr.a"
+		R_LIB=
+	else
+		R_STATIC="-lR"
+	fi
+
+#   AC_SUBST(R_CFLAGS)
+	AC_SUBST(R_HDR)
+	AC_SUBST(R_LIB)
+	AC_SUBST(R_STATIC)
+
+else
+	AC_MSG_WARN([R disabled])
+fi
+
+#check for R, netcdf and fftw3
+if test "$netcdf_ok" = "yes"; then
+	if test "$fftw_ok" = "yes"; then
+		if test "$r_ok" = "yes"; then
+			LIBS="$NETCDF_LIB $FFTW3_LIB $R_LIB"
+		else
+			LIBS="$NETCDF_LIB $FFTW3_LIB"
+		fi
+	else
+		if test "$r_ok" = "yes"; then
+			LIBS="$NETCDF_LIB $R_LIB"
+		else
+			LIBS="$NETCDF_LIB"
+		fi 
+	fi
+else
+	if test "$fftw_ok" = "yes"; then
+		if test "$r_ok" = "yes"; then
+			LIBS="$FFTW3_LIB $R_LIB"
+		else
+			LIBS="$FFTW3_LIB"
+		fi
+	else
+		if test "$r_ok" = "yes"; then
+			LIBS="$R_LIB"
+		fi 
+	fi
+fi
+
+
+#mpi
 AC_SUBST(MPI_FLAGS)
 
 AC_PROG_RANLIB
@@ -120,10 +237,16 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memchr memset strchr strtol])
 
-AC_CONFIG_FILES([Makefile
-                 zc/Makefile
-                 examples/Makefile])
-if test "$ok" = "yes"; then
+AC_CONFIG_FILES([Makefile])
+if test "$netcdf_ok" = "yes"; then
 AC_CONFIG_FILES([NetCDFReader/Makefile])
 fi
+if test "$r_ok" = "yes"; then
+AC_CONFIG_FILES([R/Makefile])
+fi
+AC_CONFIG_FILES([zc/Makefile
+                 examples/Makefile])
 AC_OUTPUT
+
+#set package dir in sz.config
+

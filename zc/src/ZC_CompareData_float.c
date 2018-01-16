@@ -6,6 +6,12 @@
 #include "ZC_DataProperty.h"
 #include "ZC_CompareData.h"
 #include "zc.h"
+#ifdef HAVE_FFTW3
+#include "ZC_FFTW3_math.h"
+#endif
+#ifdef HAVE_R
+#include "ZC_R_math.h"
+#endif
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
@@ -27,6 +33,8 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	size_t numOfElem = compareResult->property->numOfElem;
 	double sumOfDiffSquare = 0, sumOfDiffSquare_rel = 0;
 	size_t numOfElem_ = 0;
+
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
 
 	double *diff = (double*)malloc(numOfElem*sizeof(double));
 	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
@@ -268,6 +276,33 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
 	}
 
+#ifdef HAVE_FFTW3	
+	if(autoCorrAbsErr3DFlag)
+	{
+		switch(dim)
+		{
+		case 1:
+			compareResult->autoCorrAbsErr3D = autocorr_3d_double(diff, r1, 1, 1);
+			break;
+		case 2:
+			compareResult->autoCorrAbsErr3D = autocorr_3d_double(diff, r1, r2, 1);
+			break;
+		case 3:
+			compareResult->autoCorrAbsErr3D = autocorr_3d_double(diff, r1, r2, r3);
+			break;
+		case 4:
+			compareResult->autoCorrAbsErr3D = autocorr_3d_double(diff, r1, r2, r3*r4);
+			break;
+		case 5:
+			compareResult->autoCorrAbsErr3D = autocorr_3d_double(diff, r1, r2, r3*r4*r5);
+			break;
+		default: 
+			printf("Error: wrong dimension (dim=%d)\n", dim);
+			exit(0);
+		}		
+	}
+#endif
+
 	if (pearsonCorrFlag)
 	{
 		double prodSum = 0, sum1 = 0, sum2 = 0;
@@ -313,6 +348,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->psnr = psnr;
 	}
 
+	//the correlation between the original data values and the compression errors
 	if (valErrCorrFlag)
 	{
 		double prodSum = 0, sum1 = 0, sumDiff = 0;
@@ -333,6 +369,22 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 
 		compareResult->valErrCorr = valErrCorr;
 	}
+
+#ifdef HAVE_R
+	if(KS_testFlag)
+	{
+		compareResult->ksValue = KS_test(compareResult->property->dataType, data1, data2, r5, r4, r3, r2, r1);
+	}
+	
+	if(SSIM)
+	{
+		double* ssimResult = SSIM(compareResult->property->dataType, data1, data2, r5, r4, r3, r2, r1);
+		compareResult->lum = ssimResult[0];
+		compareResult->cont = ssimResult[1];
+		compareResult->struc = ssimResult[2];
+		compareResult->ssim = ssimResult[3];
+	}
+#endif
 
 	free(diff);
 	free(relDiff);
@@ -358,10 +410,13 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
 	
 	double err;
-	long numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	long numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);	
 		
+	if(globalDataLength <= 0)
+		MPI_Allreduce(&numOfElem, &globalDataLength, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);
+			
 	double sumOfDiffSquare = 0;
-	long numOfElem_ = 0;
+	long numOfElem_ = 0; //used to record the number of elements for relative-error-bound cases
 
 	double *diff = (double*)malloc(numOfElem*sizeof(double));
 	double *relDiff = (double*)malloc(numOfElem*sizeof(double));

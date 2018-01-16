@@ -32,10 +32,19 @@ int main(int argc, char * argv[])
     if(argc>=12)
         r5 = atoi(argv[11]);
 
+   /* if(executionMode==ZC_ONLINE)
+    {
+		printf("Error: you are running compareDataSets, so please set the executionMode to OFFLINE in zc.config\n");
+		pirntf("Usage: for online execution mode with MPI support, you need to run compareDataSets_online instead.\n");
+		exit(0);
+    }*/
+
     printf("cfgFile=%s\n", cfgFile);
     printf("oriFilePath=%s\n", oriFilePath);
     printf("decFilePath=%s\n", decFilePath);
     ZC_Init(cfgFile);
+    executionMode = ZC_OFFLINE;
+
 
     size_t nbEle1, nbEle2;
     float *data1 = ZC_readFloatData(oriFilePath, &nbEle1);

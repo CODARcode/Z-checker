@@ -208,6 +208,8 @@ void freeDataProperty(ZC_DataProperty* dataProperty)
 		free(dataProperty->varName);
 	if(dataProperty->autocorr!=NULL)
 		free(dataProperty->autocorr);
+	if(dataProperty->autocorr3D!=NULL)
+		free(dataProperty->autocorr3D);
 	if(dataProperty->fftCoeff!=NULL)
 		free(dataProperty->fftCoeff);
 	if(dataProperty->lap!=NULL)
@@ -341,7 +343,6 @@ void ZC_printDataProperty(ZC_DataProperty* property)
 char** constructDataPropertyString(ZC_DataProperty* property)
 {
 	char** s = (char**)malloc(15*sizeof(char*));
-	
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[PROPERTY]\n");
 	
@@ -359,24 +360,23 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	sprintf(s[6], "r2 = %zu\n", property->r2);
 	s[7] = (char*)malloc(100*sizeof(char));
 	sprintf(s[7], "r1 = %zu\n", property->r1);	
-	
 	s[8] = (char*)malloc(100*sizeof(char));
 	sprintf(s[8], "numOfElem = %zu\n", property->numOfElem);
 	s[9] = (char*)malloc(100*sizeof(char));
 	sprintf(s[9], "minValue = %.10G\n", property->minValue);
 	s[10] = (char*)malloc(100*sizeof(char));
 	sprintf(s[10], "maxValue = %.10G\n", property->maxValue);
-	
 	s[11] = (char*)malloc(100*sizeof(char));
 	sprintf(s[11], "valueRange = %.10G\n", property->valueRange);
-	
 	s[12] = (char*)malloc(100*sizeof(char));
 	sprintf(s[12], "avgValue = %.10G\n", property->avgValue);
 	s[13] = (char*)malloc(100*sizeof(char));
 	sprintf(s[13], "entropy = %.10G\n", property->entropy);
 	s[14] = (char*)malloc(100*sizeof(char));
-	sprintf(s[14], "autocorr = %.10G\n", (property->autocorr)[1]);
-	
+	if(property->autocorr!=NULL)
+		sprintf(s[14], "autocorr = %.10G\n", (property->autocorr)[1]);
+	else 
+		strcpy(s[14], "autocorr = -\n");
 	return s;
 }
 
@@ -429,15 +429,12 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 	char tgtFilePath[ZC_BUFS];
 	sprintf(tgtFilePath, "%s/%s.prop", tgtWorkspaceDir, property->varName); 
 	ZC_writeStrings(15, s, tgtFilePath);
-	
 	size_t i;
 	for(i=0;i<15;i++)
 		free(s[i]);
 	free(s);
-
 	/*write the fft coefficients and amplitudes*/
 	ZC_writeFFTResults(property->varName, property->fftCoeff, tgtWorkspaceDir);
-
 	/*write auto-correlation coefficients*/
 	if(property->autocorr!=NULL)
 	{
@@ -454,6 +451,16 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 		ZC_writeStrings(AUTOCORR_SIZE, autocorr, tgtFilePath);
 		for (i = 0; i < AUTOCORR_SIZE+2; i++)
 			free(autocorr[i]);
+	}
+	/*write 3d auto-correlation results*/
+	if(property->autocorr3D!=NULL)
+	{
+		memset(tgtFilePath, 0, ZC_BUFS);
+		sprintf(tgtFilePath, "%s/%s.ac3d", tgtWorkspaceDir, property->varName);
+		if(property->dataType==ZC_FLOAT)
+			ZC_writeFloatData_inBytes((float*)(property->autocorr3D), property->numOfElem, tgtFilePath);
+		else
+			ZC_writeDoubleData_inBytes((double*)(property->autocorr3D), property->numOfElem, tgtFilePath);	
 	}
 
 	/*write Laplacian*/

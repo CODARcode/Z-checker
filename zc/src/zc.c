@@ -22,6 +22,12 @@
 #ifdef HAVE_MPI
 #include <mpi.h>
 #endif
+#ifdef HAVE_R
+#include "ZC_callR.h"
+#endif
+
+char rscriptPath[MAX_MSG_LENGTH];
+
 int sysEndianType; //endian type of the system
 int dataEndianType; //endian type of the data
 
@@ -42,6 +48,7 @@ int valueRangeFlag = 1;
 int avgValueFlag = 1;
 int entropyFlag = 1;
 int autocorrFlag = 1;
+int autocorr3DFlag = 1;
 int fftFlag = 1;
 int lapFlag = 1;
 
@@ -53,6 +60,7 @@ int minAbsErrFlag = 1;
 int avgAbsErrFlag = 1;
 int maxAbsErrFlag = 1;
 int autoCorrAbsErrFlag = 1;
+int autoCorrAbsErr3DFlag = 1;
 int absErrPDFFlag = 1;
 int pwrErrPDFFlag = 1;
 
@@ -66,6 +74,9 @@ int snrFlag = 1;
 int psnrFlag = 1;
 int valErrCorrFlag = 1;
 int pearsonCorrFlag = 1;
+
+int KS_testFlag = 1;
+int SSIMFlag = 1;
 
 int plotAbsErrPDFFlag = 1;
 int plotAutoCorrFlag = 1;
@@ -85,6 +96,11 @@ struct timeval startDecTime;
 struct timeval endDecTime;
 double totalCmprCost = 0;
 double totalDecCost = 0;
+
+double initTime = 0;
+double endTime = 0;
+
+long globalCmprSize = 0;
 
 int compressors_count = 0;
 char* compressors[20];
@@ -145,6 +161,15 @@ int ZC_Init(char *configFilePath)
 	char str[512]="", str2[512]="", str3[512]="";
 	zc_cfgFile = configFilePath;
 	int loadFileResult = ZC_LoadConf();
+
+#ifdef HAVE_R
+	// Intialize the R environment.
+	int r_argc = 2;
+	char *r_argv[] = { "R", "--silent" };
+	Rf_initEmbeddedR(r_argc, r_argv);
+	source(rscriptPath);
+#endif	
+	
 	if(loadFileResult==ZC_NSCS)
 		exit(0);
 	
@@ -206,7 +231,7 @@ long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	return dataLength;
 }
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_startCmpr_offline(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i;
 	double min,max,valueRange,sum = 0,avg;
@@ -264,13 +289,14 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 	property->maxValue = max;
 	property->valueRange = max - min;
 	property->avgValue = sum/property->numOfElem;
+//	printf("property->avgValue=%f, sum=%f, property->numOfElem=%zu\n", property->avgValue, sum, property->numOfElem);
 	
 	if(compressTimeFlag)
 		cost_startCmpr();
 	return property;
 }
 
-ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_DataProperty* property = ZC_genProperties(varName, dataType, oriData, r5, r4, r3, r2, r1);
 	char tgtWorkspaceDir[ZC_BUFS];
@@ -281,7 +307,7 @@ ZC_DataProperty* ZC_startCmpr_withDataAnalysis(char* varName, int dataType, void
 	return property;
 }
 
-ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize)
+ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, int cmprSize)
 {
 	double cmprTime;
 	if(compressTimeFlag)
@@ -310,13 +336,13 @@ ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, int cmprSize)
 	return compareResult;
 }
 
-void ZC_startDec()
+void ZC_startDec_offline()
 {
 	if(decompressTimeFlag)
 		cost_startDec();
 }
 
-void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
+void ZC_endDec_offline(ZC_CompareData* compareResult, char* solution, void *decData)
 {
 	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
 	if(decompressTimeFlag)
@@ -331,6 +357,7 @@ void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
 		printf("Error: compressionResults==NULL. \nPlease construct ZC_CompareData* compareResult using ZC_compareData() or ZC_endCmpr().\n");
 		exit(0);
 	}
+	
 	ZC_compareData_dec(compareResult, decData);
 	ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
 }
@@ -1143,6 +1170,11 @@ void ZC_Finalize()
 		free(allCompressors[i].allErrBounds);
 		free(allCompressors[i].selErrBounds);	
 	}
+	
+#ifdef HAVE_R
+	// Release R environment
+	Rf_endEmbeddedR(0);
+#endif	
 }
 
 ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
@@ -1264,7 +1296,6 @@ ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status)
 	return result;
 }
 
-
 //online interfaces
 #ifdef HAVE_MPI
 long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
@@ -1309,7 +1340,121 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	}
 	
 	if(compressTimeFlag)
-		MPI_Wtime();
+		initTime = MPI_Wtime();
 	return property;
 }
+
+ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, long cmprSize)
+{
+	double cmprTime = 0;
+	if(compressTimeFlag)
+	{
+		endTime = MPI_Wtime();
+		cmprTime = endTime - initTime;
+	}
+	ZC_CompareData* compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
+	memset(compareResult, 0, sizeof(ZC_CompareData));	
+	int elemSize = dataProperty->dataType==ZC_FLOAT? 4: 8;	
+	
+	if(compressTimeFlag)
+	{
+		compareResult->compressTime = cmprTime;
+		compareResult->compressRate = dataProperty->numOfElem*elemSize/cmprTime; //in B/s (dataProperty->numOfElem here means globalDataLength) 
+	}
+
+	if(compressSizeFlag)
+	{
+		//aggregate the compression size among all ranks
+		MPI_Allreduce(&cmprSize, &globalCmprSize, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);		
+		
+		compareResult->compressSize = globalCmprSize;
+		compareResult->compressRatio = (double)(dataProperty->numOfElem*elemSize)/globalCmprSize;
+		if(dataProperty->dataType == ZC_DOUBLE)
+			compareResult->rate = 64.0/compareResult->compressRatio;
+		else
+			compareResult->rate = 32.0/compareResult->compressRatio;
+	}
+	compareResult->property = dataProperty;
+	return compareResult;
+}
+
+void ZC_startDec_online()
+{
+	if(decompressTimeFlag)
+		initTime = MPI_Wtime();
+}
+
+void ZC_endDec_online(ZC_CompareData* compareResult, char* solution, void *decData)
+{
+	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
+	if(decompressTimeFlag)
+	{
+		endTime = MPI_Wtime();
+		compareResult->decompressTime = endTime - initTime;  //in seconds
+		compareResult->decompressRate = compareResult->property->numOfElem*elemSize/compareResult->decompressTime; // in B/s		
+	}
+
+	if(compareResult==NULL)
+	{
+		printf("Error: compressionResults==NULL. \nPlease construct ZC_CompareData* compareResult using ZC_compareData() or ZC_endCmpr().\n");
+		exit(0);
+	}
+	ZC_compareData_dec(compareResult, decData);
+	if(myRank==0)
+		ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
+}
 #endif
+
+//overall interfaces for checkingStatus==PROBE_COMPRESSOR
+
+ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	ZC_DataProperty* result = NULL;
+#ifdef HAVE_MPI
+	if(executionMode == ZC_ONLINE)
+		result = ZC_startCmpr_online(varName, dataType, oriData, r5, r4, r3, r2, r1);
+	else
+		result = ZC_startCmpr_offline(varName, dataType, oriData, r5, r4, r3, r2, r1);
+#else
+	result = ZC_startCmpr_offline(varName, dataType, oriData, r5, r4, r3, r2, r1);
+#endif	
+	return result;
+}
+
+ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, long cmprSize)
+{
+	ZC_CompareData* result = NULL;
+#ifdef HAVE_MPI
+	if(executionMode == ZC_ONLINE)
+		result = ZC_endCmpr_online(dataProperty, cmprSize);
+	else
+		result = ZC_endCmpr_offline(dataProperty, cmprSize);
+#else
+	result = ZC_endCmpr_offline(dataProperty, cmprSize);
+#endif
+	return result;
+}
+
+void ZC_startDec()
+{
+#ifdef HAVE_MPI
+	if(executionMode == ZC_ONLINE)
+		ZC_startDec_online();
+	else
+		ZC_startDec_offline();
+#else
+	ZC_startDec_offline();
+#endif	
+}
+
+void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
+{
+#ifdef HAVE_MPI
+	if(executionMode == ZC_ONLINE)
+		ZC_endDec_online(compareResult, solution, decData);
+	else
+		ZC_endDec_offline(compareResult, solution, decData);
+#else
+	ZC_endDec_offline(compareResult, solution, decData);
+#endif
+}

@@ -687,10 +687,19 @@ ac_ct_AR
 AR
 RANLIB
 MPI_FLAGS
+R_STATIC
+R_LIB
+R_HDR
+R_FALSE
+R_TRUE
+FFTW3_STATIC
+FFTW3_LIB
+FFTW3_HDR
+FFTW3_FALSE
+FFTW3_TRUE
 NETCDF_STATIC
 NETCDF_LIB
 NETCDF_HDR
-NETCDF_CFLAGS
 NETCDF_FALSE
 NETCDF_TRUE
 H5CC
@@ -774,6 +783,14 @@ enable_netcdf
 with_netcdf_prefix
 with_netcdf_include_path
 with_netcdf_lib_path
+enable_fftw3
+with_fftw3_prefix
+with_fftw3_include_path
+with_fftw3_lib_path
+enable_r
+with_r_prefix
+with_r_include_path
+with_r_lib_path
 enable_dependency_tracking
 enable_shared
 enable_static
@@ -1418,6 +1435,8 @@ Optional Features:
   --enable-mpi            use MPI
   --enable-hdf5            use HDF5
   --enable-netcdf            use NETCDF
+  --enable-fftw3            use FFTW3
+  --enable-r            use R
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -1440,6 +1459,15 @@ Optional Packages:
                           path to the netcdf directory, defaults to
                           /usr/include
   --with-netcdf-lib-path  path to the netcdf libraries, defaults to /usr/lib
+  --with-fftw3-prefix=DIR installation prefix for fftw3
+  --with-fftw3-include-path=DIR
+                          path to the fftw3 directory, defaults to
+                          /usr/include
+  --with-fftw3-lib-path   path to the fftw3 libraries, defaults to /usr/lib
+  --with-r-prefix=DIR     installation prefix for r
+  --with-r-include-path=DIR
+                          path to the r directory, defaults to /usr/include
+  --with-r-lib-path       path to the r libraries, defaults to /usr/lib
   --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
                           both]
   --with-aix-soname=aix|svr4|both
@@ -3046,18 +3074,12 @@ else
 fi
 fi
 
-##--------------------------------------------------------------------
-##
-## NetCDF
-##
-##--------------------------------------------------------------------
-
-
+# Check NETCDF library
 # Check whether --enable-netcdf was given.
 if test "${enable_netcdf+set}" = set; then :
-  enableval=$enable_netcdf; ok=$enableval
+  enableval=$enable_netcdf; netcdf_ok=$enableval
 else
-  ok=no
+  netcdf_ok=no
 fi
 
  if test "x$enable_netcdf" = "xyes"; then
@@ -3069,11 +3091,8 @@ else
 fi
 
 
-
-
-# Check NETCDF library
-
-if test "$ok" = "yes"; then
+if test "$netcdf_ok" = "yes"; then
+#	NETCDF_CFLAGS="-DHAVE_NETCDF"
 
 # Check whether --with-netcdf-prefix was given.
 if test "${with_netcdf_prefix+set}" = set; then :
@@ -3089,19 +3108,19 @@ if test "${with_netcdf_include_path+set}" = set; then :
 fi
 
 
-if test "x$with_netcdf_include_path" = x ; then
-    with_netcdf_include_path="/usr/include"
-fi
+	if test "x$with_netcdf_include_path" = x ; then
+    		with_netcdf_include_path="/usr/include"
+	fi
 
-as_ac_File=`$as_echo "ac_cv_file_${with_netcdf_include_path}/nc.h" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${with_netcdf_include_path}/nc.h" >&5
-$as_echo_n "checking for ${with_netcdf_include_path}/nc.h... " >&6; }
+	as_ac_File=`$as_echo "ac_cv_file_${with_netcdf_include_path}/netcdf.h" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${with_netcdf_include_path}/netcdf.h" >&5
+$as_echo_n "checking for ${with_netcdf_include_path}/netcdf.h... " >&6; }
 if eval \${$as_ac_File+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   test "$cross_compiling" = yes &&
   as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "${with_netcdf_include_path}/nc.h"; then
+if test -r "${with_netcdf_include_path}/netcdf.h"; then
   eval "$as_ac_File=yes"
 else
   eval "$as_ac_File=no"
@@ -3113,10 +3132,10 @@ $as_echo "$ac_res" >&6; }
 if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
 
 else
-  as_fn_error $? "Invalid path to nc.h" "$LINENO" 5
+  as_fn_error $? "Invalid path to netcdf.h" "$LINENO" 5
 fi
 
-NETCDF_HDR="-I$with_netcdf_include_path"
+	NETCDF_HDR="-I$with_netcdf_include_path"
 
 
 # Check whether --with-netcdf-lib-path was given.
@@ -3124,28 +3143,246 @@ if test "${with_netcdf_lib_path+set}" = set; then :
   withval=$with_netcdf_lib_path;
 fi
 
-if test "x$with_netcdf_lib_path" = x ; then
-    with_netcdf_lib_path="/usr/lib"
-fi
-NETCDF_LIB="-L$with_netcdf_lib_path"
-LIBS="$NETCDF_LIB"
+	if test "x$with_netcdf_lib_path" = x ; then
+    		with_netcdf_lib_path="/usr/lib"
+	fi
 
-if test "x$BUILD_STATIC" = xyes ; then
-    NETCDF_STATIC="${with_netcdf_lib_path}/libnetcdf.a"
-    NETCDF_LIB=
+	NETCDF_LIB="-L$with_netcdf_lib_path"
+	LIBS="$NETCDF_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+		NETCDF_STATIC="${with_netcdf_lib_path}/libnetcdf.a"
+		NETCDF_LIB=
+	else
+    		NETCDF_STATIC="-lnetcdf"
+	fi
+
+#	AC_SUBST(NETCDF_CFLAGS)
+
+
+
+
 else
-    NETCDF_STATIC="-lnetcdf"
-fi
-
-
-
-
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: NETCDF disabled" >&5
+  	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: NETCDF disabled" >&5
 $as_echo "$as_me: WARNING: NETCDF disabled" >&2;}
 fi
 
+# Check FFTW3 library
+# Check whether --enable-fftw3 was given.
+if test "${enable_fftw3+set}" = set; then :
+  enableval=$enable_fftw3; fftw_ok=$enableval
+else
+  fftw_ok=no
+fi
+
+ if test "x$enable_fftw3" = "xyes"; then
+  FFTW3_TRUE=
+  FFTW3_FALSE='#'
+else
+  FFTW3_TRUE='#'
+  FFTW3_FALSE=
+fi
+
+
+if test "$fftw_ok" = "yes"; then
+#	FFTW3_CFLAGS="-DHAVE_FFTW3"
+
+# Check whether --with-fftw3-prefix was given.
+if test "${with_fftw3_prefix+set}" = set; then :
+  withval=$with_fftw3_prefix; with_fftw3_include_path=$with_fftw3_prefix/include;
+             with_fftw3_lib_path=$with_fftw3_prefix/lib
+fi
+
+
+
+# Check whether --with-fftw3-include-path was given.
+if test "${with_fftw3_include_path+set}" = set; then :
+  withval=$with_fftw3_include_path;
+fi
+
+
+	if test "x$with_fftw3_include_path" = x ; then
+    		with_fftw3_include_path="/usr/include"
+	fi
+
+	as_ac_File=`$as_echo "ac_cv_file_${with_fftw3_include_path}/fftw3.h" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${with_fftw3_include_path}/fftw3.h" >&5
+$as_echo_n "checking for ${with_fftw3_include_path}/fftw3.h... " >&6; }
+if eval \${$as_ac_File+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "${with_fftw3_include_path}/fftw3.h"; then
+  eval "$as_ac_File=yes"
+else
+  eval "$as_ac_File=no"
+fi
+fi
+eval ac_res=\$$as_ac_File
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
+
+else
+  as_fn_error $? "Invalid path to fftw3.h" "$LINENO" 5
+fi
+
+	FFTW3_HDR="-I$with_fftw3_include_path"
+
+
+# Check whether --with-fftw3-lib-path was given.
+if test "${with_fftw3_lib_path+set}" = set; then :
+  withval=$with_fftw3_lib_path;
+fi
+
+	if test "x$with_fftw3_lib_path" = x ; then
+    		with_fftw3_lib_path="/usr/lib"
+	fi
+	FFTW3_LIB="-L$with_fftw3_lib_path"
+	LIBS="$FFTW3_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+    		FFTW3_STATIC="${with_fftw3_lib_path}/libfftw3.a"
+    		FFTW3_LIB=
+	else
+    		FFTW3_STATIC="-lfftw3"
+	fi
+
+#	AC_SUBST(FFTW3_CFLAGS)
+
+
+
+
+else
+  	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: FFTW3 disabled" >&5
+$as_echo "$as_me: WARNING: FFTW3 disabled" >&2;}
+fi
+
+# Check R library
+# Check whether --enable-r was given.
+if test "${enable_r+set}" = set; then :
+  enableval=$enable_r; r_ok=$enableval
+else
+  r_ok=no
+fi
+
+ if test "x$enable_r" = "xyes"; then
+  R_TRUE=
+  R_FALSE='#'
+else
+  R_TRUE='#'
+  R_FALSE=
+fi
+
+
+if test "$r_ok" = "yes"; then
+#	R_CFLAGS="-DHAVE_R"
+
+# Check whether --with-r-prefix was given.
+if test "${with_r_prefix+set}" = set; then :
+  withval=$with_r_prefix; with_r_include_path=$with_r_prefix/include;
+			 with_r_lib_path=$with_r_prefix/lib
+fi
+
+
+
+# Check whether --with-r-include-path was given.
+if test "${with_r_include_path+set}" = set; then :
+  withval=$with_r_include_path;
+fi
+
+
+	if test "x$with_r_include_path" = x ; then
+		with_r_include_path="/usr/include"
+	fi
+
+	as_ac_File=`$as_echo "ac_cv_file_${with_r_include_path}/R.h" | $as_tr_sh`
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for ${with_r_include_path}/R.h" >&5
+$as_echo_n "checking for ${with_r_include_path}/R.h... " >&6; }
+if eval \${$as_ac_File+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "${with_r_include_path}/R.h"; then
+  eval "$as_ac_File=yes"
+else
+  eval "$as_ac_File=no"
+fi
+fi
+eval ac_res=\$$as_ac_File
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
+
+else
+  as_fn_error $? "Invalid path to R.h" "$LINENO" 5
+fi
+
+	R_HDR="-I$with_r_include_path"
+
+
+# Check whether --with-r-lib-path was given.
+if test "${with_r_lib_path+set}" = set; then :
+  withval=$with_r_lib_path;
+fi
+
+	if test "x$with_r_lib_path" = x ; then
+		with_r_lib_path="/usr/lib"
+	fi
+
+	R_LIB="-L$with_r_lib_path"
+	LIBS="$R_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+		R_STATIC="${with_r_lib_path}/libr.a"
+		R_LIB=
+	else
+		R_STATIC="-lR"
+	fi
+
+#   AC_SUBST(R_CFLAGS)
+
+
+
+
+else
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: R disabled" >&5
+$as_echo "$as_me: WARNING: R disabled" >&2;}
+fi
+
+#check for R, netcdf and fftw3
+if test "$netcdf_ok" = "yes"; then
+	if test "$fftw_ok" = "yes"; then
+		if test "$r_ok" = "yes"; then
+			LIBS="$NETCDF_LIB $FFTW3_LIB $R_LIB"
+		else
+			LIBS="$NETCDF_LIB $FFTW3_LIB"
+		fi
+	else
+		if test "$r_ok" = "yes"; then
+			LIBS="$NETCDF_LIB $R_LIB"
+		else
+			LIBS="$NETCDF_LIB"
+		fi
+	fi
+else
+	if test "$fftw_ok" = "yes"; then
+		if test "$r_ok" = "yes"; then
+			LIBS="$FFTW3_LIB $R_LIB"
+		else
+			LIBS="$FFTW3_LIB"
+		fi
+	else
+		if test "$r_ok" = "yes"; then
+			LIBS="$R_LIB"
+		fi
+	fi
+fi
+
+
+#mpi
 
 
 if test -n "$ac_tool_prefix"; then
@@ -12732,12 +12969,18 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile zc/Makefile examples/Makefile"
+ac_config_files="$ac_config_files Makefile"
 
-if test "$ok" = "yes"; then
+if test "$netcdf_ok" = "yes"; then
 ac_config_files="$ac_config_files NetCDFReader/Makefile"
 
 fi
+if test "$r_ok" = "yes"; then
+ac_config_files="$ac_config_files R/Makefile"
+
+fi
+ac_config_files="$ac_config_files zc/Makefile examples/Makefile"
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -12873,6 +13116,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${NETCDF_TRUE}" && test -z "${NETCDF_FALSE}"; then
   as_fn_error $? "conditional \"NETCDF\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${FFTW3_TRUE}" && test -z "${FFTW3_FALSE}"; then
+  as_fn_error $? "conditional \"FFTW3\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${R_TRUE}" && test -z "${R_FALSE}"; then
+  as_fn_error $? "conditional \"R\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
@@ -13766,9 +14017,10 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "NetCDFReader/Makefile") CONFIG_FILES="$CONFIG_FILES NetCDFReader/Makefile" ;;
+    "R/Makefile") CONFIG_FILES="$CONFIG_FILES R/Makefile" ;;
     "zc/Makefile") CONFIG_FILES="$CONFIG_FILES zc/Makefile" ;;
     "examples/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
-    "NetCDFReader/Makefile") CONFIG_FILES="$CONFIG_FILES NetCDFReader/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -15037,4 +15289,7 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
+
+
+#set package dir in sz.config
 

@@ -18,9 +18,34 @@ if HDF5
 libzc_la_CFLAGS+=-DHAVE_HDF5
 endif
 
+if NETCDF
+libzc_la_CFLAGS+=-DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
+endif
+
+if FFTW3
+libzc_la_CFLAGS+=-DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
+include_HEADERS+=include/3rdParty/autocorr.h include/ZC_FFTW3_math.h
+endif
+
+if R
+libzc_la_CFLAGS+=-DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
+include_HEADERS+=include/ZC_R_math.h
+endif
+
 libzc_la_LDFLAGS = -version-info  0:1:0
-#libsz_la_LIDADD=../zlib/.libs/libzlib.a
+libzc_la_LIDADD=$(FFTW3_LIBS) $(FFTW3_LIB) $(NETCDF_LIBS) $(NETCDF_LIB)
+if R
+libzc_la_LIDADD+=../R/.libs/libzccallr.a
+endif
 libzc_la_SOURCES=src/ZC_ByteToolkit.c src/ZC_gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c src/ZC_DataProperty_double.c src/ZC_DataProperty.c\
 		src/ZC_CompareData_float.c src/ZC_CompareData_double.c src/ZC_CompareData.c\
 		src/DynamicIntArray.c src/DynamicFloatArray.c src/DynamicDoubleArray.c src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c\
 		src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c
+
+if FFTW3
+libzc_la_SOURCES+=src/ZC_FFTW3_math.c
+endif
+
+if R
+libzc_la_SOURCES+=src/ZC_R_math.c
+endif

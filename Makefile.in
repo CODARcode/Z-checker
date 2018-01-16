@@ -87,6 +87,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@NETCDF_TRUE@am__append_1 = NetCDFReader
+@R_TRUE@am__append_2 = R
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -156,7 +158,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = zc examples NetCDFReader
+DIST_SUBDIRS = NetCDFReader R zc examples
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in README \
 	ar-lib compile config.guess config.sub install-sh ltmain.sh \
 	missing
@@ -226,6 +228,9 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FFTW3_HDR = @FFTW3_HDR@
+FFTW3_LIB = @FFTW3_LIB@
+FFTW3_STATIC = @FFTW3_STATIC@
 FGREP = @FGREP@
 GREP = @GREP@
 H5CC = @H5CC@
@@ -249,7 +254,6 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MPICC = @MPICC@
 MPI_FLAGS = @MPI_FLAGS@
-NETCDF_CFLAGS = @NETCDF_CFLAGS@
 NETCDF_HDR = @NETCDF_HDR@
 NETCDF_LIB = @NETCDF_LIB@
 NETCDF_STATIC = @NETCDF_STATIC@
@@ -268,6 +272,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+R_HDR = @R_HDR@
+R_LIB = @R_LIB@
+R_STATIC = @R_STATIC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -326,11 +333,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-@NETCDF_FALSE@SUBDIRS = zc examples
 #if HDF5
 #SUBDIRS = HDF5Reader
 #endif
-@NETCDF_TRUE@SUBDIRS = NetCDFReader zc examples
+SUBDIRS = $(am__append_1) $(am__append_2) zc examples
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

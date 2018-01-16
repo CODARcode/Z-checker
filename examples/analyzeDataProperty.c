@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include <ZC_rw.h>
-#include <zc.h>
+#include "ZC_rw.h"
+#include "zc.h"
 
 int main(int argc, char * argv[])
 {	
@@ -41,6 +41,7 @@ int main(int argc, char * argv[])
     }
 
     //printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
+    printf("[ZC] Reading ZC configuration file (%s) ...\n", cfgFile);     
     ZC_Init(cfgFile);
 	executionMode = ZC_OFFLINE;
 	

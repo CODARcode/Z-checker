@@ -93,12 +93,20 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @HDF5_TRUE@am__append_1 = -DHAVE_HDF5
+@NETCDF_TRUE@am__append_2 = -DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
+@FFTW3_TRUE@am__append_3 = -DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
+@FFTW3_TRUE@am__append_4 = include/3rdParty/autocorr.h include/ZC_FFTW3_math.h
+@R_TRUE@am__append_5 = -DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
+@R_TRUE@am__append_6 = include/ZC_R_math.h
+@R_TRUE@am__append_7 = ../R/.libs/libzccallr.a
+@FFTW3_TRUE@am__append_8 = src/ZC_FFTW3_math.c
+@R_TRUE@am__append_9 = src/ZC_R_math.c
 subdir = zc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(include_HEADERS) \
+DIST_COMMON = $(srcdir)/Makefile.am $(am__include_HEADERS_DIST) \
 	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
@@ -134,7 +142,19 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libzc_la_LIBADD =
+am__libzc_la_SOURCES_DIST = src/ZC_ByteToolkit.c src/ZC_gnuplot.c \
+	src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c \
+	src/ZC_DataProperty_double.c src/ZC_DataProperty.c \
+	src/ZC_CompareData_float.c src/ZC_CompareData_double.c \
+	src/ZC_CompareData.c src/DynamicIntArray.c \
+	src/DynamicFloatArray.c src/DynamicDoubleArray.c \
+	src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c \
+	src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c \
+	src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c \
+	src/ZC_FFTW3_math.c src/ZC_R_math.c
 am__dirstamp = $(am__leading_dot)dirstamp
+@FFTW3_TRUE@am__objects_1 = src/libzc_la-ZC_FFTW3_math.lo
+@R_TRUE@am__objects_2 = src/libzc_la-ZC_R_math.lo
 am_libzc_la_OBJECTS = src/libzc_la-ZC_ByteToolkit.lo \
 	src/libzc_la-ZC_gnuplot.lo src/libzc_la-ZC_Hashtable.lo \
 	src/libzc_la-iniparser.lo \
@@ -151,7 +171,8 @@ am_libzc_la_OBJECTS = src/libzc_la-ZC_ByteToolkit.lo \
 	src/libzc_la-ZC_quicksort.lo src/libzc_la-ZC_rw.lo \
 	src/libzc_la-ZC_conf.lo src/libzc_la-dictionary.lo \
 	src/libzc_la-ZC_util.lo src/libzc_la-zc.lo \
-	src/libzc_la-ZC_DataSetHandler.lo
+	src/libzc_la-ZC_DataSetHandler.lo $(am__objects_1) \
+	$(am__objects_2)
 libzc_la_OBJECTS = $(am_libzc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -195,12 +216,22 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libzc_la_SOURCES)
-DIST_SOURCES = $(libzc_la_SOURCES)
+DIST_SOURCES = $(am__libzc_la_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__include_HEADERS_DIST = include/ZC_ByteToolkit.h include/ZC_conf.h \
+	include/ZC_gnuplot.h include/ZC_latex.h include/ZC_quicksort.h \
+	include/ZC_rw.h include/ZC_Hashtable.h \
+	include/ZC_DataProperty.h include/ZC_CompareData.h \
+	include/DynamicIntArray.h include/DynamicFloatArray.h \
+	include/DynamicDoubleArray.h include/DynamicByteArray.h \
+	include/dictionary.h include/zc.h include/iniparser.h \
+	include/ZC_util.h include/ZC_ReportGenerator.h \
+	include/ZC_DataSetHandler.h include/3rdParty/autocorr.h \
+	include/ZC_FFTW3_math.h include/ZC_R_math.h
 HEADERS = $(include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
@@ -247,6 +278,9 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+FFTW3_HDR = @FFTW3_HDR@
+FFTW3_LIB = @FFTW3_LIB@
+FFTW3_STATIC = @FFTW3_STATIC@
 FGREP = @FGREP@
 GREP = @GREP@
 H5CC = @H5CC@
@@ -270,7 +304,6 @@ MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MPICC = @MPICC@
 MPI_FLAGS = @MPI_FLAGS@
-NETCDF_CFLAGS = @NETCDF_CFLAGS@
 NETCDF_HDR = @NETCDF_HDR@
 NETCDF_LIB = @NETCDF_LIB@
 NETCDF_STATIC = @NETCDF_STATIC@
@@ -289,6 +322,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+R_HDR = @R_HDR@
+R_LIB = @R_LIB@
+R_STATIC = @R_STATIC@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -347,21 +383,33 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-include_HEADERS = include/ZC_ByteToolkit.h include/ZC_conf.h include/ZC_gnuplot.h include/ZC_latex.h include/ZC_quicksort.h\
-		include/ZC_rw.h include/ZC_Hashtable.h include/ZC_DataProperty.h include/ZC_CompareData.h\
-		include/DynamicIntArray.h include/DynamicFloatArray.h include/DynamicDoubleArray.h include/DynamicByteArray.h\
-		include/dictionary.h include/zc.h include/iniparser.h include/ZC_util.h include/ZC_ReportGenerator.h include/ZC_DataSetHandler.h
-
+include_HEADERS = include/ZC_ByteToolkit.h include/ZC_conf.h \
+	include/ZC_gnuplot.h include/ZC_latex.h include/ZC_quicksort.h \
+	include/ZC_rw.h include/ZC_Hashtable.h \
+	include/ZC_DataProperty.h include/ZC_CompareData.h \
+	include/DynamicIntArray.h include/DynamicFloatArray.h \
+	include/DynamicDoubleArray.h include/DynamicByteArray.h \
+	include/dictionary.h include/zc.h include/iniparser.h \
+	include/ZC_util.h include/ZC_ReportGenerator.h \
+	include/ZC_DataSetHandler.h $(am__append_4) $(am__append_6)
 lib_LTLIBRARIES = libzc.la
-@MPI_FALSE@libzc_la_CFLAGS = -g -I./include $(am__append_1)
-@MPI_TRUE@libzc_la_CFLAGS = -g -I./include -DHAVE_MPI $(am__append_1)
+@MPI_FALSE@libzc_la_CFLAGS = -g -I./include $(am__append_1) \
+@MPI_FALSE@	$(am__append_2) $(am__append_3) $(am__append_5)
+@MPI_TRUE@libzc_la_CFLAGS = -g -I./include -DHAVE_MPI $(am__append_1) \
+@MPI_TRUE@	$(am__append_2) $(am__append_3) $(am__append_5)
 libzc_la_LDFLAGS = -version-info  0:1:0
-#libsz_la_LIDADD=../zlib/.libs/libzlib.a
-libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c src/ZC_DataProperty_double.c src/ZC_DataProperty.c\
-		src/ZC_CompareData_float.c src/ZC_CompareData_double.c src/ZC_CompareData.c\
-		src/DynamicIntArray.c src/DynamicFloatArray.c src/DynamicDoubleArray.c src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c\
-		src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c
-
+libzc_la_LIDADD = $(FFTW3_LIBS) $(FFTW3_LIB) $(NETCDF_LIBS) \
+	$(NETCDF_LIB) $(am__append_7)
+libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c \
+	src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c \
+	src/ZC_DataProperty_double.c src/ZC_DataProperty.c \
+	src/ZC_CompareData_float.c src/ZC_CompareData_double.c \
+	src/ZC_CompareData.c src/DynamicIntArray.c \
+	src/DynamicFloatArray.c src/DynamicDoubleArray.c \
+	src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c \
+	src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c \
+	src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c $(am__append_8) \
+	$(am__append_9)
 all: all-am
 
 .SUFFIXES:
@@ -481,6 +529,10 @@ src/libzc_la-ZC_util.lo: src/$(am__dirstamp) \
 src/libzc_la-zc.lo: src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-ZC_DataSetHandler.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_FFTW3_math.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-ZC_R_math.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 
 libzc.la: $(libzc_la_OBJECTS) $(libzc_la_DEPENDENCIES) $(EXTRA_libzc_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libzc_la_LINK) -rpath $(libdir) $(libzc_la_OBJECTS) $(libzc_la_LIBADD) $(LIBS)
@@ -505,7 +557,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_Hashtable.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_R_math.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_conf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-ZC_gnuplot.Plo@am__quote@
@@ -701,6 +755,20 @@ src/libzc_la-ZC_DataSetHandler.lo: src/ZC_DataSetHandler.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataSetHandler.c' object='src/libzc_la-ZC_DataSetHandler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
+
+src/libzc_la-ZC_FFTW3_math.lo: src/ZC_FFTW3_math.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_FFTW3_math.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Tpo -c -o src/libzc_la-ZC_FFTW3_math.lo `test -f 'src/ZC_FFTW3_math.c' || echo '$(srcdir)/'`src/ZC_FFTW3_math.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Tpo src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_FFTW3_math.c' object='src/libzc_la-ZC_FFTW3_math.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_FFTW3_math.lo `test -f 'src/ZC_FFTW3_math.c' || echo '$(srcdir)/'`src/ZC_FFTW3_math.c
+
+src/libzc_la-ZC_R_math.lo: src/ZC_R_math.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_R_math.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_R_math.Tpo -c -o src/libzc_la-ZC_R_math.lo `test -f 'src/ZC_R_math.c' || echo '$(srcdir)/'`src/ZC_R_math.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_R_math.Tpo src/$(DEPDIR)/libzc_la-ZC_R_math.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_R_math.c' object='src/libzc_la-ZC_R_math.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_R_math.lo `test -f 'src/ZC_R_math.c' || echo '$(srcdir)/'`src/ZC_R_math.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

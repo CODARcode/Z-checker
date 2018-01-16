@@ -45,6 +45,7 @@ typedef struct ZC_DataProperty
 	double entropy;
 	double zeromean_variance;
 	double* autocorr; /*array of autocorrelation coefficients*/
+	void* autocorr3D; //double* or float*, depending on the floating type of the data
 	complex* fftCoeff; /*array of fft coefficients*/
 	double* lap;
 } ZC_DataProperty;

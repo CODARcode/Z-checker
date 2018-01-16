@@ -5,6 +5,7 @@
 #include "ZC_DataProperty.h"
 #include "zc.h"
 #include "iniparser.h"
+#include "ZC_FFTW3_math.h"
 
 #ifdef HAVE_MPI
 
@@ -165,6 +166,8 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 	property->numOfElem = numOfElem;
 	double min=data[0],max=data[0],sum=0,avg,valueRange;
 
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+
 	for(i=0;i<numOfElem;i++)
 	{
 		if(min>data[i]) min = data[i];
@@ -302,6 +305,33 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 		autocorr[0] = 1;
 		property->autocorr = autocorr;
 	}
+
+#ifdef HAVE_FFTW3
+	if(autocorr3DFlag)
+	{
+		switch(dim)
+		{
+		case 1:
+			property->autocorr3D = autocorr_3d_double(data, r1, 1, 1);
+			break;
+		case 2:
+			property->autocorr3D = autocorr_3d_double(data, r1, r2, 1);
+			break;
+		case 3:
+			property->autocorr3D = autocorr_3d_double(data, r1, r2, r3);
+			break;
+		case 4:
+			property->autocorr3D = autocorr_3d_double(data, r1, r2, r3*r4);
+			break;
+		case 5:
+			property->autocorr3D = autocorr_3d_double(data, r1, r2, r3*r4*r5);
+			break;
+		default: 
+			printf("Error: wrong dimension (dim=%d)\n", dim);
+			exit(0);
+		}
+	}
+#endif
 
 	if(fftFlag)
 	{

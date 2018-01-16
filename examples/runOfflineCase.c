@@ -4,6 +4,9 @@
 #include "zc.h"
 #include "ZC_util.h"
 #include <math.h>
+#ifdef HAVE_R
+#include "ZC_callR.h"
+#endif
 
 #define RO_LITTLE_ENDIAN 0
 #define RO_BIG_ENDIAN 1
@@ -369,6 +372,29 @@ int main(int argc, char* argv[])
 		exit(0);
 	}
 	
+	//get Rscript path if needed
+#ifdef HAVE_R
+	char R_buf[MAX_MSG_LENGTH];
+	ZC_readFirstLine(inPath, R_buf);
+	int rPathSetting = startsWith("#RscriptPath", R_buf);
+	if(rPathSetting)
+	{
+		char *RsPath = strchr(R_buf, '=');
+		int len = strlen(RsPath);
+		RsPath[len-1]=0;
+		rscriptPath = (char*)malloc(MAX_MSG_LENGTH);
+		char *tRsPath = RsPath+1;
+		trim(tRsPath);
+		strcpy(rscriptPath, tRsPath);
+	}
+	// Intialize the R environment.
+	int r_argc = 2;
+	char *r_argv[] = { "R", "--silent" };
+	Rf_initEmbeddedR(r_argc, r_argv);
+	source(rscriptPath);	
+#endif	
+	
+	//read info file
 	int varCount = 0;
 	VarItem* varItemHeader = ZC_readInfo(inPath, &varCount);
 	VarItem* p = varItemHeader->next;
@@ -808,7 +834,7 @@ int main(int argc, char* argv[])
 				int decoFileExists = ZC_check_file_exists(ci->decoDataFile);
 				if(decoFileExists)
 				{
-					if(p->dataType==ZC_FLOAT)
+					if(p->dataType == ZC_FLOAT)
 					{
 						float* decData = ZC_readFloatData(ci->decoDataFile, &nbEle);
 						if(nbEle!=len)
@@ -834,7 +860,7 @@ int main(int argc, char* argv[])
 							exit(0);
 						}
 						
-						compareResult = ZC_compareData(p->varName, ZC_FLOAT, (double*)oriData_v, decData, p->dim5, p->dim4, p->dim3, p->dim2, p->dim1);			
+						compareResult = ZC_compareData(p->varName, ZC_DOUBLE, (double*)oriData_v, decData, p->dim5, p->dim4, p->dim3, p->dim2, p->dim1);			
 					}
 
 					compareResult->compressSize = ZC_checkFileSize(ci->cmprDataFile);
@@ -864,4 +890,6 @@ int main(int argc, char* argv[])
 			i++;
 		}				
 	}
+	
+	ZC_Finalize();
 }

@@ -34,6 +34,7 @@ typedef struct ZC_CompareData
 	double avgAbsErr;
 	double maxAbsErr;
 	double* autoCorrAbsErr;
+	double* autoCorrAbsErr3D;
 	double* absErrPDF; /*keep the distribution of errors (1000 elements)*/
 	double* pwrErrPDF;
 	double err_interval;
@@ -58,6 +59,13 @@ typedef struct ZC_CompareData
 	double valErrCorr;
 
 	double pearsonCorr;
+	
+	double ksValue; //result of KS_test
+	//ssim assessment: lum,cont,struc,ssim
+	double lum;
+	double cont;
+	double struc;
+	double ssim;
 	
 	complex *fftCoeff;	
 } ZC_CompareData;
@@ -120,6 +128,10 @@ void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* da
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+void ZC_computeFFT_float_offline(ZC_CompareData* compareResult, float* data1, float* data2, size_t numOfElem);
+void ZC_computeFFT_double_offline(ZC_CompareData* compareResult, double* data1, double* data2, size_t numOfElem);
+
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData);
 ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_printCompressionResult(ZC_CompareData* compareResult);
@@ -129,7 +141,7 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile);
 
 ZC_CompareData_Overall* ZC_compareData_overall();
 
-//online interfaces
+//mpi interfaces
 void ZC_compareData_float_online(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_compareData_double_online(ZC_CompareData* compareResult, double* data1, double* data2, 

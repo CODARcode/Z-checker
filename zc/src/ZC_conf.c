@@ -82,7 +82,7 @@ int ZC_ReadConf() {
     char *executionModeString;
     dictionary *ini;
     char *par;
-    printf("[ZC] Reading ZC configuration file (%s) ...\n", zc_cfgFile);
+
     if (access(zc_cfgFile, F_OK) != 0)
     {
         printf("[ZC] Configuration file NOT accessible.\n");
@@ -95,6 +95,12 @@ int ZC_ReadConf() {
         return ZC_NSCS;
     }
 
+#ifdef HAVE_R
+	char* rscriptPath_ = iniparser_getstring(ini, "ENV:RscriptPath", NULL);	
+	if(rscriptPath_ != NULL)
+		strcpy(rscriptPath, rscriptPath_);
+#endif
+
 	endianTypeString = iniparser_getstring(ini, "ENV:dataEndianType", NULL);
 	if(strcmp(endianTypeString, "LITTLE_ENDIAN_DATA")==0)
 		dataEndianType = LITTLE_ENDIAN_DATA;
@@ -105,7 +111,6 @@ int ZC_ReadConf() {
 		printf("Error: Wrong dataEndianType: please set it correctly in zc.config.\n");
 		exit(0);
 	}
-
 	checkingStatusString = iniparser_getstring(ini, "ENV:checkingStatus", NULL);
 	if(strcmp(checkingStatusString, "PROBE_COMPRESSOR")==0 || strcmp(checkingStatusString, "probe_compressor")==0)
 		checkingStatus = PROBE_COMPRESSOR;
@@ -145,6 +150,7 @@ int ZC_ReadConf() {
 	avgValueFlag= (int)iniparser_getint(ini, "DATA:avgValue", 0);
 	entropyFlag= (int)iniparser_getint(ini, "DATA:entropy", 0);
 	autocorrFlag= (int)iniparser_getint(ini, "DATA:autocorr", 0);
+	autocorr3DFlag = (int)iniparser_getint(ini, "DATA:autocorr3D", 0);
 	fftFlag= (int)iniparser_getint(ini, "DATA:fft", 0);
 	lapFlag= (int)iniparser_getint(ini, "DATA:lap", 0);
 	
@@ -156,6 +162,7 @@ int ZC_ReadConf() {
 	avgAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:avgAbsErr", 0);
 	maxAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:maxAbsErr", 0);
 	autoCorrAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:autoCorrAbsErr", 0);
+	autoCorrAbsErr3DFlag = (int)iniparser_getint(ini, "COMPARE:autoCorrAbsErr3D", 0);
 	absErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:absErrPDF", 0);
 	pwrErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:pwrErrPDF", 0);
 	
@@ -171,6 +178,9 @@ int ZC_ReadConf() {
 	valErrCorrFlag = (int)iniparser_getint(ini, "COMPARE:valErrCorr", 0);
 
 	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
+	
+	KS_testFlag = (int)iniparser_getint(ini, "COMPARE:KS_test", 0);
+	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:SSIM", 0);
 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)

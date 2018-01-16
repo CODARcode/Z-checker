@@ -49,8 +49,6 @@ typedef struct StringLine
 	struct StringLine* next; 
 } StringLine;
 
-#define ZC_FLOAT 0
-#define ZC_DOUBLE 1
 #define ZC_BUFS 128
 #define MAX_MSG_LENGTH 1024
 

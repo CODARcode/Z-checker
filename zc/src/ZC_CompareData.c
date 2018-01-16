@@ -13,6 +13,8 @@ void freeCompareResult(ZC_CompareData* compareData)
 	//free(compareData->property);
 	if(compareData->autoCorrAbsErr!=NULL)
 		free(compareData->autoCorrAbsErr);
+	if(compareData->autoCorrAbsErr3D!=NULL)
+		free(compareData->autoCorrAbsErr3D);
 	if(compareData->absErrPDF!=NULL)
 		free(compareData->absErrPDF);
 	if(compareData->pwrErrPDF!=NULL)
@@ -59,6 +61,50 @@ double* autoCorrAbsErr, double* absErrPDF)
 	return result;
 }
 
+void ZC_computeFFT_float_offline(ZC_CompareData* compareResult,float* data1, float* data2, size_t numOfElem)
+{
+	size_t fft_size = pow(2,(int)log2(numOfElem));
+	 
+	complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_FLOAT);
+	complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_FLOAT);
+	complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
+	size_t i;
+	fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
+	fftCoeffRelDiff[0].Im = 0;
+	fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
+	for (i = 1; i < FFT_SIZE; i++)
+	{
+		fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
+		fftCoeffRelDiff[i].Im = fabs((fftCoeff2[i].Im - fftCoeff1[i].Im)/fftCoeff1[i].Im);
+		fftCoeffRelDiff[i].Amp= fabs((fftCoeff2[i].Amp - fftCoeff1[i].Amp)/fftCoeff1[i].Amp);
+	}			
+	compareResult->fftCoeff = fftCoeffRelDiff;
+	free(fftCoeff1);
+	free(fftCoeff2);	
+}
+
+void ZC_computeFFT_double_offline(ZC_CompareData* compareResult, double* data1, double* data2, size_t numOfElem)
+{
+	size_t fft_size = pow(2,(int)log2(numOfElem));
+	 
+	complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_FLOAT);
+	complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_FLOAT);
+	complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
+	size_t i;
+	fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
+	fftCoeffRelDiff[0].Im = 0;
+	fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
+	for (i = 1; i < FFT_SIZE; i++)
+	{
+		fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
+		fftCoeffRelDiff[i].Im = fabs((fftCoeff2[i].Im - fftCoeff1[i].Im)/fftCoeff1[i].Im);
+		fftCoeffRelDiff[i].Amp= fabs((fftCoeff2[i].Amp - fftCoeff1[i].Amp)/fftCoeff1[i].Amp);
+	}			
+	compareResult->fftCoeff = fftCoeffRelDiff;
+	free(fftCoeff1);
+	free(fftCoeff2);	
+}
+
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 {
 	if(compareResult==NULL)
@@ -80,51 +126,41 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	{
 		float* data1 = (float*)oriData;
 		float* data2 = (float*)decData;
-        size_t fft_size = pow(2,(int)log2(numOfElem));
-         
-        complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_FLOAT);
-        complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_FLOAT);
-        complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
-        size_t i;
-        fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
-        fftCoeffRelDiff[0].Im = 0;
-        fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
-        for (i = 1; i < FFT_SIZE; i++)
-        {
-            fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
-            fftCoeffRelDiff[i].Im = fabs((fftCoeff2[i].Im - fftCoeff1[i].Im)/fftCoeff1[i].Im);
-            fftCoeffRelDiff[i].Amp= fabs((fftCoeff2[i].Amp - fftCoeff1[i].Amp)/fftCoeff1[i].Amp);
-        }
-        compareResult->fftCoeff = fftCoeffRelDiff;
-		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
-        free(fftCoeff1);
-        free(fftCoeff2);
+		
+#ifdef HAVE_MPI
+		if(executionMode == ZC_OFFLINE)
+		{
+			ZC_computeFFT_float_offline(compareResult,data1, data2, numOfElem);
+			ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);
+		}
+		else //ZC_ONLINE
+		{
+			ZC_compareData_float_online(compareResult, data1, data2, r5, r4, r3, r2, r1);	
+		}
+#else
+		ZC_computeFFT_float_offline(compareResult,data1, data2, numOfElem);
+		ZC_compareData_float(compareResult, data1, data2, r5, r4, r3, r2, r1);			
+#endif
 	}
 	else if(dataType==ZC_DOUBLE)
 	{
 		double* data1 = (double*)oriData;
 		double* data2 = (double*)decData;
-        size_t fft_size = pow(2,(int)log2(numOfElem));
-        complex* fftCoeff1 = ZC_computeFFT(data1, fft_size, ZC_DOUBLE);
-        complex* fftCoeff2 = ZC_computeFFT(data2, fft_size, ZC_DOUBLE);
-        complex* fftCoeffRelDiff = (complex*)malloc(FFT_SIZE*sizeof(complex));
-        
-        size_t i;
-        fftCoeffRelDiff[0].Re = fabs((fftCoeff2[0].Re - fftCoeff1[0].Re)/fftCoeff1[0].Re);
-        fftCoeffRelDiff[0].Im = 0;
-        fftCoeffRelDiff[0].Amp= fabs((fftCoeff2[0].Amp - fftCoeff1[0].Amp)/fftCoeff1[0].Amp);
-        
-        for (i = 1; i < FFT_SIZE; i++)
-        {
-            fftCoeffRelDiff[i].Re = fabs((fftCoeff2[i].Re - fftCoeff1[i].Re)/fftCoeff1[i].Re);
-            fftCoeffRelDiff[i].Im = fabs((fftCoeff2[i].Im - fftCoeff1[i].Im)/fftCoeff1[i].Im);
-            fftCoeffRelDiff[i].Amp= fabs((fftCoeff2[i].Amp - fftCoeff1[i].Amp)/fftCoeff1[i].Amp);
-        }
-        
-        compareResult->fftCoeff = fftCoeffRelDiff;
+
+#ifdef HAVE_MPI
+		if(executionMode == ZC_OFFLINE)
+		{
+			ZC_computeFFT_double_offline(compareResult, data1, data2, numOfElem);
+			ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
+		}
+		else
+		{
+			ZC_compareData_double_online(compareResult, data1, data2, r5, r4, r3, r2, r1);	
+		}
+#else
+		ZC_computeFFT_double_offline(compareResult, data1, data2, numOfElem);
 		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
-        free(fftCoeff1);
-        free(fftCoeff2);
+#endif
 	}
 	else
 	{
@@ -200,7 +236,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult)
 {
-	char** s = (char**)malloc(25*sizeof(char*));
+	char** s = (char**)malloc(30*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -268,6 +304,29 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	s[24] = (char*)malloc(100*sizeof(char));
 	sprintf(s[24], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
 	
+#ifdef HAVE_R
+	s[25] = (char*)malloc(100*sizeof(char));
+	sprintf(s[25], "KS_test = %.10G\n", compareResult->ksValue);
+	s[26] = (char*)malloc(100*sizeof(char));
+	sprintf(s[26], "lum = %.10G\n", compareResult->lum);
+	s[27] = (char*)malloc(100*sizeof(char));
+	sprintf(s[27], "cont = %.10G\n", compareResult->cont);
+	s[28] = (char*)malloc(100*sizeof(char));
+	sprintf(s[28], "struc = %.10G\n", compareResult->struc);
+	s[29] = (char*)malloc(100*sizeof(char));
+	sprintf(s[29], "ssim = %.10G\n", compareResult->ssim);					
+#else
+	s[25] = (char*)malloc(100*sizeof(char));
+	strcpy(s[25], "KS_test = -\n");
+	s[26] = (char*)malloc(100*sizeof(char));
+	strcpy(s[26], "lum = -\n");
+	s[27] = (char*)malloc(100*sizeof(char));
+	strcpy(s[27], "cont = -\n");
+	s[28] = (char*)malloc(100*sizeof(char));
+	strcpy(s[28], "struc = -\n");
+	s[29] = (char*)malloc(100*sizeof(char));
+	strcpy(s[29], "ssim = -\n");
+#endif
 	return s;
 }
 
@@ -283,10 +342,10 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(25, s, tgtFilePath);
+	ZC_writeStrings(30, s, tgtFilePath);
 	
 	int i;
-	for(i=0;i<=24;i++)
+	for(i=0;i<=29;i++)
 		free(s[i]);
 	free(s);
 	
@@ -378,6 +437,14 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 			free(autocorr[i]);		
 		
 	}
+#ifdef HAVE_FFTW3	
+	if(autoCorrAbsErr3DFlag)
+	{
+		memset(tgtFilePath, 0, ZC_BUFS);
+		sprintf(tgtFilePath, "%s/%s:%s.ac3d", tgtWorkspaceDir, solution, varName);
+		ZC_writeDoubleData_inBytes(compareResult->autoCorrAbsErr3D, compareResult->property->numOfElem, tgtFilePath);			
+	}
+#endif	
 	if(fftFlag)
 	{
 		char buf[ZC_BUFS];

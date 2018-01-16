@@ -45,6 +45,8 @@ int main(int argc, char * argv[])
 	MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
 	MPI_Comm_rank(MPI_COMM_WORLD, &myrank);/* get the rank */ 
 	
+	if(myrank==0)
+		printf("[ZC] Reading ZC configuration file (%s) ...\n", cfgFile); 	
 	ZC_Init(cfgFile);
 
 	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
@@ -74,9 +76,9 @@ int main(int argc, char * argv[])
 	}
 	
 	long localLength = ZC_computeDataLength(r5, r4, r3, r2, r1);
-    long globalLength = ZC_computeDataLength_online(r5,r4,r3,r2,r1);
+	long globalLength = ZC_computeDataLength_online(r5,r4,r3,r2,r1);
 
-    if(myrank==0)
+	if(myrank==0)
 	    printf("localLength = %ld, globalDataLength = %ld\n", localLength, globalLength);
 
 	MPI_Status status;

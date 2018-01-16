@@ -39,6 +39,9 @@ int main(int argc, char * argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);/* get the rank */ 
 
     printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
+    
+	if(myrank==0)
+		printf("[ZC] Reading ZC configuration file (%s) ...\n", cfgFile); 
     ZC_Init(cfgFile);
 
 	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
