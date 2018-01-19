@@ -1400,8 +1400,8 @@ void ZC_endDec_online(ZC_CompareData* compareResult, char* solution, void *decDa
 		exit(0);
 	}
 	ZC_compareData_dec(compareResult, decData);
-	//if(myRank==0)
-	//	ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
+	if(myRank==0)
+		ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
 }
 #endif
 

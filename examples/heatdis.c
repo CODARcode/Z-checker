@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 
 			if(rank==0)
 			{
-				ZC_writeCompressionResult(compareResult, cmprCaseName, propName, "compressionResults");					
+				//ZC_writeCompressionResult(compareResult, cmprCaseName, propName, "compressionResults");					
 				ZC_writeDataProperty(dataProperty, "dataProperties");
 			}
 			freeDataProperty(dataProperty); //free data property generated at current time step
