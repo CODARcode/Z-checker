@@ -148,8 +148,10 @@ int main(int argc, char *argv[])
 			ZC_endDec(compareResult, cmprCaseName, decData); //end decompression			
 
 			if(rank==0)
+			{
+				ZC_writeCompressionResult(compareResult, compressorName, propName, "compressionResults");					
 				ZC_writeDataProperty(dataProperty, "dataProperties");
-			
+			}
 			freeDataProperty(dataProperty); //free data property generated at current time step
 			freeCompareResult(compareResult); //free compression assessment results generated at current time step
 			free(cmprBytes);
