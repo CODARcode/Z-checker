@@ -142,14 +142,14 @@ int main(int argc, char *argv[])
 			//cmprBytes = SZ_compress_args(SZ_DOUBLE, g, &cmprSize, REL, 1E-3, 1E-3, 1E-3, 0, 0, 0, 0, nbLines, M);
 			ZC_CompareData* compareResult =ZC_endCmpr(dataProperty, cmprSize); //end compression
 			
-			sprintf(cmprCaseName, "%s_%s_%04d(1E-3)", varName, compressorName, i); //name the compression case
+			sprintf(cmprCaseName, "%s(1E-3)", compressorName); //name the compression case
 			ZC_startDec(); //start decompression
 			decData = SZ_decompress(SZ_DOUBLE, cmprBytes, cmprSize, 0, 0, 0, nbLines, M);	
 			ZC_endDec(compareResult, cmprCaseName, decData); //end decompression			
 
 			if(rank==0)
 			{
-				ZC_writeCompressionResult(compareResult, compressorName, propName, "compressionResults");					
+				ZC_writeCompressionResult(compareResult, cmprCaseName, propName, "compressionResults");					
 				ZC_writeDataProperty(dataProperty, "dataProperties");
 			}
 			freeDataProperty(dataProperty); //free data property generated at current time step
