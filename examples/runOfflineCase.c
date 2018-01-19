@@ -382,7 +382,7 @@ int main(int argc, char* argv[])
 		char *RsPath = strchr(R_buf, '=');
 		int len = strlen(RsPath);
 		RsPath[len-1]=0;
-		rscriptPath = (char*)malloc(MAX_MSG_LENGTH);
+		//rscriptPath = (char*)malloc(MAX_MSG_LENGTH);
 		char *tRsPath = RsPath+1;
 		trim(tRsPath);
 		strcpy(rscriptPath, tRsPath);
