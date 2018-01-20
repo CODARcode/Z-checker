@@ -22,7 +22,7 @@ libnetcdfreader.a:		$(OBJS)
 	ar crvs $@ $^ 
 
 libnetcdfreader.so:	$(OBJS)
-	$(CC) $(SO_FLAGS) -Wl,-soname,libzccallr.so -o $@ $^ -lc $(NETCDFFLAGS)
+	$(CC) $(SO_FLAGS) -Wl,-soname,libnetcdfreader.so -o $@ $^ -lc $(NETCDFFLAGS)
 
 test/test_NetCDFReader: test/test_NetCDFReader.c
 	$(CC) -o test/test_NetCDFReader test/test_NetCDFReader.c $(INC) -L. $(FLAGS) $(NETCDFINC) $(NETCDFFLAGS)
