@@ -307,7 +307,7 @@ ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataTy
 	return property;
 }
 
-ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, int cmprSize)
+ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, long cmprSize)
 {
 	double cmprTime;
 	if(compressTimeFlag)
