@@ -212,7 +212,7 @@ extern int nbProc;
 
 extern size_t globalDataLength;
 
-extern int initStatus = 0; 
+extern int initStatus; 
 
 typedef union eclshort
 {
