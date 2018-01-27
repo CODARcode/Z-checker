@@ -212,6 +212,8 @@ extern int nbProc;
 
 extern size_t globalDataLength;
 
+extern int initStatus = 0; 
+
 typedef union eclshort
 {
 	unsigned short svalue;
@@ -307,7 +309,7 @@ void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int al
 void ZC_updateZCRootTexFile(char* dataSetName);
 void ZC_generateOverallReport(char* dataSetName);
 
-void ZC_Finalize();
+int ZC_Finalize();
 
 ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 

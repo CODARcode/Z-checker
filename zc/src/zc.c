@@ -130,6 +130,8 @@ int nbProc = 1;
 
 size_t globalDataLength = 0;
 
+int initStatus = 0; //0 means no initialization yet or already ZC_Finalize(), 1 means already ZC_Init();
+
 void cost_startCmpr()
 {
 	gettimeofday(&startCmprTime, NULL);
@@ -158,6 +160,8 @@ double cost_endDec()
 
 int ZC_Init(char *configFilePath)
 {
+	initStatus = 1; 
+	
 	char str[512]="", str2[512]="", str3[512]="";
 	zc_cfgFile = configFilePath;
 	int loadFileResult = ZC_LoadConf();
@@ -1123,8 +1127,14 @@ int ZC_analyze_and_generateReport(char* dataSetName)
 }
 
 
-void ZC_Finalize()
+int ZC_Finalize()
 {
+	if(initStatus==0)
+	{
+		printf("Error: ZC_finalize: you cannot perform ZC_Finalize() before ZC_Init().\n");
+		printf("Hint: ZC_Finalize() cannot be performed multiple times in a row without corresponding ZC_Init().\n");
+		return ZC_NSCS;
+	}
 	//free hashtable memory
 	if(ecPropertyTable!=NULL)
 	{
@@ -1175,6 +1185,8 @@ void ZC_Finalize()
 	// Release R environment
 	Rf_endEmbeddedR(0);
 #endif	
+	initStatus = 0;
+	return ZC_SCES;
 }
 
 ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
