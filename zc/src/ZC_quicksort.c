@@ -14,6 +14,38 @@ size_t ZC_divide(RateDistElem* list,size_t start,size_t end)
 
 	while(i<j)
 	{
+		while(list[i]->psnr <= list[pivot]->psnr && i < end)
+			i++;
+
+		while(list[j]->psnr > list[pivot]->psnr)
+			j--;
+
+		if(i<j)
+		{
+			temp = list[i];
+			list[i] = list[j];
+			list[j] = temp;
+		}
+	}
+
+	temp = list[j];
+	list[j] = list[pivot];
+	list[pivot] = temp;
+
+	return j;
+}
+
+size_t ZC_divide3(RateDistElem* list,size_t start,size_t end)
+{
+	size_t i,j,k,pivot;
+	RateDistElem temp = NULL; //temp is a pointer
+
+	i = start;
+	j = end;
+	pivot = end;
+
+	while(i<j)
+	{
 		while(list[i]->rate <= list[pivot]->rate && i < end)
 			i++;
 
