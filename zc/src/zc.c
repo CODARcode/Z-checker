@@ -670,7 +670,7 @@ void ZC_plotRateDistortion()
 			
 			//TODO: generate the GNUPLOT script.
 			sprintf(fileName, "rate-distortion_psnr_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Distortion");
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "PSNR");
 			sprintf(fileName, "rate-distortion_psnr_%s.p", variables[i]);
 			ZC_writeStrings(24, scriptLines, fileName);
 			char cmd[ZC_BUFS];
