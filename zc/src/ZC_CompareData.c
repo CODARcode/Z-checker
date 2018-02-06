@@ -52,6 +52,7 @@ double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse,
 double* autoCorrAbsErr, double* absErrPDF)
 {
 	ZC_CompareData* result = (ZC_CompareData*)malloc(sizeof(struct ZC_CompareData));
+	memset(result, 0, sizeof(struct ZC_CompareData));
 
 	//TODO: get the dataProperty based on varName from the hashtable.
 	result->property = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
@@ -77,6 +78,7 @@ double* autoCorrAbsErr, double* absErrPDF)
 	result->valErrCorr = valErrCorr;
 	result->pearsonCorr = pearsonCorr;
 	result->autoCorrAbsErr = autoCorrAbsErr;
+	result->autoCorrAbsErr3D = NULL;
 	result->absErrPDF = absErrPDF;
 	result->pwrErrPDF = NULL;
 	result->fftCoeff = NULL;

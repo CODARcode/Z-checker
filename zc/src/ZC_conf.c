@@ -295,7 +295,11 @@ int ZC_ReadConf() {
 					//todo: deal with full path
 					sprintf(tmpPathBuf, "%s/%s", compare_dir, fileNames[j]);				
 					//free(compResultCaseName);
+					
 					ZC_CompareData* compare = ZC_loadCompressionResult(tmpPathBuf);
+					compare->solution = (char*)malloc(strlen(compResultCaseName)+1);
+					strcpy(compare->solution, compResultCaseName);
+					
 					ht_set(ecCompareDataTable, compResultCaseName, compare);
 					
 					sprintf(softLinkPath, "compressionResults/%s", fileNames[j]);					
