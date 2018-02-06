@@ -183,6 +183,7 @@ int ZC_ReadConf() {
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:SSIM", 0);
 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
+	ecCompareDataTable = ht_create(HASHTABLE_SIZE);
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
 	if(checkingStatus==COMPARE_COMPRESSOR)
 	{		
@@ -276,8 +277,6 @@ int ZC_ReadConf() {
 		sprintf(comparisonCases, "%s", buf);
 
 		cmpResultFileExtension = iniparser_getstring(ini, "PLOT:cmpResultFileExtension", NULL);	
-		
-		ecCompareDataTable = ht_create(HASHTABLE_SIZE);
 		
 		for(i=0;i<compressors_count;i++)
 		{

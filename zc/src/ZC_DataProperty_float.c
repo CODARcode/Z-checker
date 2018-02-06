@@ -334,7 +334,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 	
 	if(fftFlag)
 	{
-        int fft_size = pow(2, (int)log2(numOfElem));
+        size_t fft_size = pow(2, (int)log2(numOfElem));
         property->fftCoeff = ZC_computeFFT(data, fft_size, ZC_FLOAT);
 	}
 	

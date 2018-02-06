@@ -311,7 +311,7 @@ ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataTy
 	return property;
 }
 
-ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, long cmprSize)
+ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
 {
 	double cmprTime;
 	if(compressTimeFlag)
@@ -337,7 +337,19 @@ ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, long cmprSize)
 			compareResult->rate = 32.0/compareResult->compressRatio;
 	}
 	compareResult->property = dataProperty;
-	return compareResult;
+	compareResult->solution = (char*)malloc(strlen(solution)+1);
+	strcpy(compareResult->solution, solution);
+	ZC_CompareData* zcc = ht_get(ecCompareDataTable, solution);
+	if(zcc==NULL)
+	{
+		ht_set(ecCompareDataTable, solution, compareResult);
+		return compareResult;
+	}
+	else
+	{//you compress one variable with the same 'solution' (or key) using the same compressor twice.
+	 //the return to be returned will use the one stored in the hash-table
+		return zcc;
+	}
 }
 
 void ZC_startDec_offline()
@@ -346,8 +358,9 @@ void ZC_startDec_offline()
 		cost_startDec();
 }
 
-void ZC_endDec_offline(ZC_CompareData* compareResult, char* solution, void *decData)
+void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 {
+	char* solution = compareResult->solution;
 	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
 	if(decompressTimeFlag)
 	{
@@ -1146,7 +1159,7 @@ int ZC_Finalize()
 			char* key = keys[i];
 
 			ZC_DataProperty* property = ht_get(ecPropertyTable, key);
-			freeDataProperty(property);
+			freeDataProperty_internal(property);
 			//free(key);
 		}		
 		ht_freeTable(ecPropertyTable);
@@ -1155,15 +1168,15 @@ int ZC_Finalize()
 
 	if(ecCompareDataTable!=NULL)
 	{
-		size_t i, count = ecPropertyTable->count;
+		size_t i, count = ecCompareDataTable->count;
 		char** keys = ht_getAllKeys(ecCompareDataTable);
 		for(i=0;i<count;i++)
 		{
 			char* key = keys[i];
 			ZC_CompareData* c = ht_get(ecCompareDataTable, key);
-			freeCompareResult(c);
+			freeCompareResult_internal(c);
 		}
-		
+		free(keys);
 		ht_freeTable(ecCompareDataTable);
 	}
 	if(reportTemplateDir!=NULL)
@@ -1356,7 +1369,7 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	return property;
 }
 
-ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, long cmprSize)
+ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
 {
 	double cmprTime = 0;
 	if(compressTimeFlag)
@@ -1387,7 +1400,19 @@ ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, long cmprSize)
 			compareResult->rate = 32.0/compareResult->compressRatio;
 	}
 	compareResult->property = dataProperty;
-	return compareResult;
+	compareResult->solution = (char*)malloc(strlen(solution)+1);
+	strcpy(compareResult->solution, solution);
+	ZC_CompareData* zcc = ht_get(ecCompareDataTable, solution);
+	if(zcc==NULL)
+	{
+		ht_set(ecCompareDataTable, solution, zcc);
+		return compareResult;
+	}
+	else
+	{//you compress one variable with the same 'solution' (or key) using the same compressor twice.
+	 //the return to be returned will use the one stored in the hash-table
+		return zcc;
+	}
 }
 
 void ZC_startDec_online()
@@ -1396,8 +1421,9 @@ void ZC_startDec_online()
 		initTime = MPI_Wtime();
 }
 
-void ZC_endDec_online(ZC_CompareData* compareResult, char* solution, void *decData)
+void ZC_endDec_online(ZC_CompareData* compareResult, void *decData)
 {
+	char* solution = compareResult->solution;
 	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
 	if(decompressTimeFlag)
 	{
@@ -1430,19 +1456,28 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 #else
 	result = ZC_startCmpr_offline(varName, dataType, oriData, r5, r4, r3, r2, r1);
 #endif	
-	return result;
+	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
+	if(p==NULL)
+	{
+		ht_set(ecPropertyTable, varName, result);
+		return result;
+	}
+	else
+	{
+		return p;
+	}
 }
 
-ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, long cmprSize)
+ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
 {
 	ZC_CompareData* result = NULL;
 #ifdef HAVE_MPI
 	if(executionMode == ZC_ONLINE)
-		result = ZC_endCmpr_online(dataProperty, cmprSize);
+		result = ZC_endCmpr_online(dataProperty, solution, cmprSize);
 	else
-		result = ZC_endCmpr_offline(dataProperty, cmprSize);
+		result = ZC_endCmpr_offline(dataProperty, solution, cmprSize);
 #else
-	result = ZC_endCmpr_offline(dataProperty, cmprSize);
+	result = ZC_endCmpr_offline(dataProperty, solution, cmprSize);
 #endif
 	return result;
 }
@@ -1459,14 +1494,14 @@ void ZC_startDec()
 #endif	
 }
 
-void ZC_endDec(ZC_CompareData* compareResult, char* solution, void *decData)
+void ZC_endDec(ZC_CompareData* compareResult, void *decData)
 {
 #ifdef HAVE_MPI
 	if(executionMode == ZC_ONLINE)
-		ZC_endDec_online(compareResult, solution, decData);
+		ZC_endDec_online(compareResult, decData);
 	else
-		ZC_endDec_offline(compareResult, solution, decData);
+		ZC_endDec_offline(compareResult, decData);
 #else
-	ZC_endDec_offline(compareResult, solution, decData);
+	ZC_endDec_offline(compareResult, decData);
 #endif
 }

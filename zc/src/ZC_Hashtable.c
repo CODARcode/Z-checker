@@ -168,6 +168,58 @@ void ht_freeTable( hashtable_t *hashtable)
 	free(hashtable);
 }
 
+/**
+ * Note that either ht_freePairEntry() or ht_freeTable() does not free the value actually. 
+ * 
+ * return: non-zero means found it and remove it; NULL means missing (didn't found the key)
+ * */
+void* ht_freePairEntry( hashtable_t *hashtable, char* key)
+{
+	int i, flag = 0;
+	void* found = NULL;
+	struct entry_t * pairEntry, * prePair;
+	for(i=0;i<HASHTABLE_SIZE;i++)
+	{
+		pairEntry = hashtable->table[i];
+		if(pairEntry == NULL)
+			continue;
+		prePair = NULL;
+		while(pairEntry != NULL)
+		{	
+			if(strcmp(pairEntry->key, key)==0)
+			{//free it and break;
+				if(prePair==NULL)
+				{
+					hashtable->table[i] = pairEntry->next;
+					if(pairEntry->key!=NULL)
+						free(pairEntry->key);
+					if(pairEntry->value!=NULL)
+						found = pairEntry->value;
+					free(pairEntry);
+				}
+				else
+				{
+					prePair->next = pairEntry->next;
+					if(pairEntry->key!=NULL)
+						free(pairEntry->key);
+					if(pairEntry->value!=NULL)
+						found = pairEntry->value;	
+					free(pairEntry);					
+				}
+				flag = 1;
+				break;
+			}
+			prePair = pairEntry;
+			pairEntry = pairEntry->next;	
+		}		
+		if(flag)
+			break;
+	}
+	if(flag)
+		hashtable->count--;
+	return found;
+}
+
 char** ht_getAllKeys(hashtable_t *hashtable)
 {
 	int i, j = 0;

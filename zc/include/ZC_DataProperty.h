@@ -61,7 +61,9 @@ void ifft(complex *v, size_t n, complex *tmp);
 
 void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-void freeDataProperty(ZC_DataProperty* dataProperty);
+void freeDataProperty_internal(ZC_DataProperty* dataProperty);
+int freeDataProperty(ZC_DataProperty* dataProperty);
+
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
 double entropy, double* autocorr, complex* fftCoeff);
@@ -70,6 +72,9 @@ complex* ZC_computeFFT(void* data, size_t n, int dataType);
 ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source);
+
 void ZC_printDataProperty(ZC_DataProperty* property);
 char** constructDataPropertyString(ZC_DataProperty* property);
 

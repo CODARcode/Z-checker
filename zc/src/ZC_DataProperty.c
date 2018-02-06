@@ -202,7 +202,7 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 	return;
 }
 
-void freeDataProperty(ZC_DataProperty* dataProperty)
+void freeDataProperty_internal(ZC_DataProperty* dataProperty)
 {
 	if(dataProperty->varName!=NULL)
 		free(dataProperty->varName);
@@ -215,6 +215,29 @@ void freeDataProperty(ZC_DataProperty* dataProperty)
 	if(dataProperty->lap!=NULL)
 		free(dataProperty->lap);
 	free(dataProperty);
+}
+
+/**
+ * 
+ * return: 1 means 'found and free' ;  0 means 'missing and free'
+ * 
+ * */
+int freeDataProperty(ZC_DataProperty* dataProperty)
+{
+	if(dataProperty==NULL)
+		return 0;
+	char* key = dataProperty->varName;
+	ZC_DataProperty* found = (ZC_DataProperty*)ht_freePairEntry(ecPropertyTable, key);
+	if(found==NULL)
+	{
+		freeDataProperty_internal(dataProperty);
+		return 0;
+	}
+	else
+	{
+		freeDataProperty_internal(found);
+		return 1;
+	}
 }
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
@@ -324,7 +347,92 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 		property->r1 = r1;
 	}
 
-	return property;
+	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
+	if(p==NULL)
+	{
+		ht_set(ecPropertyTable, varName, property);
+		return property;
+	}
+	else
+	{//move property's content to p
+		ZC_moveDataProperty(p, property);
+		return p;
+	}
+}
+
+/**
+ * Note that if target's pointer variables such as autocorr is not null, then this function will skip this variable instead of replacing it by new data.
+ * This is because we assume that the analysis result such as autocorr must be the same for the same key.
+ * 
+ * */
+int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source)
+{
+	if(source==NULL)
+	{
+		printf("source == NULL!\n");
+		return ZC_NSCS;
+	}
+	if(target->varName==NULL)
+	{	
+		target->varName = (char*)malloc(strlen(source->varName)+1);
+		strcpy(target->varName, source->varName);
+	}
+	target->dataType = source->dataType;
+	target->r5 = source->r5;
+	target->r4 = source->r4;
+	target->r3 = source->r3;
+	target->r2 = source->r2;
+	target->r1 = source->r1;
+	if(target->data==NULL)
+		target->data = source->data;
+	target->numOfElem = source->numOfElem;
+	target->minValue = source->minValue;
+	target->maxValue = source->maxValue;
+	target->valueRange = source->valueRange;
+	target->avgValue = source->avgValue;
+	target->entropy = source->entropy;
+	target->zeromean_variance = source->zeromean_variance;
+	if(target->autocorr==NULL && source->autocorr!=NULL)
+	{
+		target->autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
+		memcpy(target->autocorr, source->autocorr, (AUTOCORR_SIZE+1)*sizeof(double));
+	}
+#ifdef HAVE_MPI
+	if(myRank==0)
+	{
+		//TODO: we need to implement parallel version for autocorr3D and fft in advance. 
+	}
+	else
+	{
+		if(target->autocorr3D==NULL && source->autocorr3D !=NULL)
+		{
+			target->autocorr3D = (double*)malloc(sizeof(double)*source->numOfElem);
+			memcpy(target->autocorr3D, source->autocorr3D, sizeof(double)*source->numOfElem);
+		}
+		if(target->fftCoeff==NULL && source->fftCoeff!=NULL)
+		{
+			size_t fft_size = pow(2, (int)log2(source->numOfElem));
+			target->fftCoeff = (complex*)malloc(sizeof(complex)*fft_size);
+			memcpy(target->fftCoeff, source->fftCoeff, sizeof(complex)*fft_size);
+		}		
+	}
+#else
+	if(target->autocorr3D==NULL && source->autocorr3D !=NULL)
+	{
+		target->autocorr3D = (double*)malloc(sizeof(double)*source->numOfElem);
+		memcpy(target->autocorr3D, source->autocorr3D, sizeof(double)*source->numOfElem);
+	}
+	if(target->fftCoeff==NULL && source->fftCoeff!=NULL)
+	{
+		size_t fft_size = pow(2, (int)log2(source->numOfElem));
+		target->fftCoeff = (complex*)malloc(sizeof(complex)*fft_size);
+		memcpy(target->fftCoeff, source->fftCoeff, sizeof(complex)*fft_size);
+	}
+#endif	
+	//TODO: to copy double* lap, which actually is not plotted yet.
+	
+	freeDataProperty_internal(source);
+	return ZC_SCES;
 }
 
 void ZC_printDataProperty(ZC_DataProperty* property)

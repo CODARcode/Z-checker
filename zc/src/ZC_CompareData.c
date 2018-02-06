@@ -8,9 +8,13 @@
 #include "zc.h"
 #include "iniparser.h"
 
-void freeCompareResult(ZC_CompareData* compareData)
+void freeCompareResult_internal(ZC_CompareData* compareData)
 {
 	//free(compareData->property);
+	if(compareData==NULL)
+		return;
+	if(compareData->solution!=NULL)
+		free(compareData->solution);
 	if(compareData->autoCorrAbsErr!=NULL)
 		free(compareData->autoCorrAbsErr);
 	if(compareData->autoCorrAbsErr3D!=NULL)
@@ -22,6 +26,24 @@ void freeCompareResult(ZC_CompareData* compareData)
 	if(compareData->fftCoeff!=NULL)
 		free(compareData->fftCoeff);
 	free(compareData);
+}
+
+int freeCompareResult(ZC_CompareData* compareData)
+{
+	if(compareData==NULL)
+		return 0;
+	char* key = compareData->solution;
+	ZC_CompareData* found = (ZC_CompareData*)ht_freePairEntry(ecCompareDataTable, key);
+	if(found==NULL)
+	{
+		freeCompareResult_internal(compareData);
+		return 0;
+	}
+	else
+	{
+		freeCompareResult_internal(found);
+		return 1;
+	}
 }
 
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,

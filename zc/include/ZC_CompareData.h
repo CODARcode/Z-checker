@@ -18,6 +18,7 @@ extern "C" {
 
 typedef struct ZC_CompareData
 {	
+	char* solution; //the key string of the ZC_CompareData
 	ZC_DataProperty* property;
 	
 	void* dec_data;
@@ -117,7 +118,8 @@ typedef struct ZC_CompareData_Overall
 	double max_pearsonCorr;
 } ZC_CompareData_Overall;
 
-void freeCompareResult(ZC_CompareData* compareData);
+int freeCompareResult(ZC_CompareData* compareData);
+void freeCompareResult_internal(ZC_CompareData* compareData);
 
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
