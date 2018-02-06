@@ -307,6 +307,7 @@ complex* ZC_computeFFT(void* data, size_t n, int dataType)
 
 ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
+	char* varN = rmFileExtension(varName);
 	ZC_DataProperty* property = NULL;
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
 	if(dataType==ZC_FLOAT)
@@ -314,11 +315,11 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 		float* data = (float*)oriData;
 #ifdef HAVE_MPI		
 		if(executionMode==ZC_OFFLINE)
-			property = ZC_genProperties_float(varName, data, numOfElem, r5, r4, r3, r2, r1);
+			property = ZC_genProperties_float(varN, data, numOfElem, r5, r4, r3, r2, r1);
 		else
-			property = ZC_genProperties_float_online(varName, data, numOfElem, r5, r4, r3, r2, r1);
+			property = ZC_genProperties_float_online(varN, data, numOfElem, r5, r4, r3, r2, r1);
 #else
-		property = ZC_genProperties_float(varName, data, numOfElem, r5, r4, r3, r2, r1);
+		property = ZC_genProperties_float(varN, data, numOfElem, r5, r4, r3, r2, r1);
 #endif
 	}
 	else if(dataType==ZC_DOUBLE)
@@ -326,11 +327,11 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 		double* data = (double*)oriData;
 #ifdef HAVE_MPI
 		if(executionMode==ZC_OFFLINE)
-			property = ZC_genProperties_double(varName, data, numOfElem, r5, r4, r3, r2, r1);
+			property = ZC_genProperties_double(varN, data, numOfElem, r5, r4, r3, r2, r1);
 		else
-			property = ZC_genProperties_double_online(varName, data, numOfElem, r5, r4, r3, r2, r1);
+			property = ZC_genProperties_double_online(varN, data, numOfElem, r5, r4, r3, r2, r1);
 #else
-		property = ZC_genProperties_double(varName, data, numOfElem, r5, r4, r3, r2, r1);
+		property = ZC_genProperties_double(varN, data, numOfElem, r5, r4, r3, r2, r1);
 #endif
 	}
 	else
@@ -347,14 +348,16 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 		property->r1 = r1;
 	}
 
-	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
+	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, varN);
 	if(p==NULL)
 	{
-		ht_set(ecPropertyTable, varName, property);
+		ht_set(ecPropertyTable, varN, property);
+		free(varN);
 		return property;
 	}
 	else
 	{//move property's content to p
+		free(varN);
 		ZC_moveDataProperty(p, property);
 		return p;
 	}

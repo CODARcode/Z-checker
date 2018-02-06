@@ -1339,7 +1339,9 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);	
 	
 	property->varName = (char*)malloc(sizeof(char)*100);
-	strcpy(property->varName, varName);
+	char* varN = rmFileExtension(varName); //remove the final "." if any
+	strcpy(property->varName, varN);
+	free(varN);
 	
 	property->dataType = dataType;
 	property->data = oriData;
@@ -1456,10 +1458,10 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 #else
 	result = ZC_startCmpr_offline(varName, dataType, oriData, r5, r4, r3, r2, r1);
 #endif	
-	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
+	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, result->varName); //note that result->varName is the cleared string of varName.
 	if(p==NULL)
 	{
-		ht_set(ecPropertyTable, varName, result);
+		ht_set(ecPropertyTable, result->varName, result);
 		return result;
 	}
 	else
