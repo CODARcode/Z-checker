@@ -50,7 +50,7 @@ int entropyFlag = 1;
 int autocorrFlag = 1;
 int autocorr3DFlag = 1;
 int fftFlag = 1;
-int lapFlag = 1;
+int lapFlag = 0;
 
 int compressTimeFlag = 1;
 int decompressTimeFlag = 1;
@@ -1127,12 +1127,19 @@ int ZC_analyze_and_generateReport(char* dataSetName)
     ZC_plotComparisonCases();
     ZC_plotRateDistortion();
 
-    ZC_plotAutoCorr_DataProperty();
+	if(plotAutoCorrFlag)
+		ZC_plotAutoCorr_DataProperty();
+		
     ZC_plotAutoCorr_CompressError();
-    ZC_plotFFTAmplitude_OriginalData();
-    ZC_plotFFTAmplitude_DecompressData();
+    
+    if(plotFFTAmpFlag)
+    {
+		ZC_plotFFTAmplitude_OriginalData();
+		ZC_plotFFTAmplitude_DecompressData();
+	}
 
-    ZC_plotErrDistribtion();	
+	if(plotAbsErrPDFFlag)
+		ZC_plotErrDistribtion();	
     
     ZC_generateOverallReport(dataSetName);
 

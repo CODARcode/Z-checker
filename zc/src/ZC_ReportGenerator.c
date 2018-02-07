@@ -610,7 +610,8 @@ void ZC_generateOverallReport(char* dataSetName)
 	
 	ZC_generateErrDistributionReport(allCompressors, allCompressorCount);
 	ZC_generateErrAutoCorrReport(allCompressors, allCompressorCount);	
-	ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);
+	if(plotFFTAmpFlag)
+		ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);
 	
 	ZC_updateZCRootTexFile(dataSetName);
 	//sprintf(cmd, "cd report;make clean;make");
