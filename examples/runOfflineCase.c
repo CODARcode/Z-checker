@@ -372,6 +372,8 @@ int main(int argc, char* argv[])
 		exit(0);
 	}
 	
+	ZC_Init_NULL();
+
 	//get Rscript path if needed
 #ifdef HAVE_R
 	char R_buf[MAX_MSG_LENGTH];

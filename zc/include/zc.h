@@ -272,6 +272,7 @@ void cost_startDec();
 double cost_endDec();
 
 /*zc.h*/
+int ZC_Init_NULL();
 int ZC_Init(char *configFilePath);
 long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 

@@ -158,6 +158,13 @@ double cost_endDec()
 	return elapsed;
 }
 
+int ZC_Init_NULL()
+{
+	initStatus = 1; 
+	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
+	ecCompareDataTable = ht_create(HASHTABLE_SIZE);	
+}
+
 int ZC_Init(char *configFilePath)
 {
 	initStatus = 1; 
