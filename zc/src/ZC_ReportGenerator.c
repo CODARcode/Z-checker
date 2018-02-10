@@ -500,7 +500,7 @@ void ZC_generateResultTexFile()
 		line = createLine("\\input{tex/resultsTex/errDistribution}\n"); 
 		p = appendOneLine(p, line);
 	}
-	if(autoCorrAbsErrFlag && plotAbsErrAutoCorrFlag)
+	if(errAutoCorrFlag && plotErrAutoCorrFlag)
 	{
 		line = createLine("\\input{tex/resultsTex/errAutoCorr}\n"); 
 		p = appendOneLine(p, line);
@@ -668,7 +668,7 @@ void ZC_generateOverallReport(char* dataSetName)
 	
 	if(absErrPDFFlag && plotAbsErrPDFFlag)
 		ZC_generateErrDistributionReport(allCompressors, allCompressorCount);
-	if(autoCorrAbsErrFlag && plotAbsErrAutoCorrFlag)
+	if(errAutoCorrFlag && plotErrAutoCorrFlag)
 		ZC_generateErrAutoCorrReport(allCompressors, allCompressorCount);	
 	if(plotFFTAmpFlag)
 		ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);

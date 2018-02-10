@@ -161,8 +161,8 @@ int ZC_ReadConf() {
 	minAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:minAbsErr", 0);
 	avgAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:avgAbsErr", 0);
 	maxAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:maxAbsErr", 0);
-	autoCorrAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:autoCorrAbsErr", 0);
-	autoCorrAbsErr3DFlag = (int)iniparser_getint(ini, "COMPARE:autoCorrAbsErr3D", 0);
+	errAutoCorrFlag = (int)iniparser_getint(ini, "COMPARE:errAutoCorr", 0);
+	errAutoCorr3DFlag = (int)iniparser_getint(ini, "COMPARE:errAutoCorr3D", 0);
 	absErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:absErrPDF", 0);
 	pwrErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:pwrErrPDF", 0);
 	
@@ -190,8 +190,8 @@ int ZC_ReadConf() {
 		plotAutoCorrFlag = 	(int)iniparser_getint(ini, "PLOT:plotAutoCorr", 0);	
 		if(autocorrFlag == 0) plotAutoCorrFlag = 0;
 		plotAbsErrPDFFlag = (int)iniparser_getint(ini, "PLOT:plotAbsErrPDF", 0);
-		if(autoCorrAbsErrFlag == 0) plotAbsErrAutoCorrFlag = 0;
-		plotAbsErrAutoCorrFlag = (int)iniparser_getint(ini, "PLOT:plotABSErrAutoCorr", 0);
+		if(errAutoCorrFlag == 0) plotErrAutoCorrFlag = 0;
+		plotErrAutoCorrFlag = (int)iniparser_getint(ini, "PLOT:plotErrAutoCorr", 0);
 		plotFFTAmpFlag = (int)iniparser_getint(ini, "PLOT:plotFFTAmp", 0);
 		if(fftFlag == 0) plotFFTAmpFlag = 0;
 		plotEntropyFlag = (int)iniparser_getint(ini, "PLOT:plotEntropy", 0);
@@ -339,7 +339,7 @@ int ZC_ReadConf() {
 						}						
 					}					
 					
-					if(autoCorrAbsErrFlag)
+					if(errAutoCorrFlag)
 					{
 						sprintf(softLinkPath, "compressionResults/%s.autocorr", compResultCaseName);
 						if (access(softLinkPath, F_OK) != 0)
@@ -348,7 +348,7 @@ int ZC_ReadConf() {
 							updateLinkFullPath(tmpPathBuf, fullPathBuf);
 							sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
 							system(linkCmd);
-						}						
+						}
 					}
 		
 					if(fftFlag)

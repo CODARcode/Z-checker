@@ -59,8 +59,8 @@ int compressSizeFlag = 1;
 int minAbsErrFlag = 1;
 int avgAbsErrFlag = 1;
 int maxAbsErrFlag = 1;
-int autoCorrAbsErrFlag = 1;
-int autoCorrAbsErr3DFlag = 1;
+int errAutoCorrFlag = 1;
+int errAutoCorr3DFlag = 1;
 int absErrPDFFlag = 1;
 int pwrErrPDFFlag = 1;
 
@@ -80,7 +80,7 @@ int SSIMFlag = 1;
 
 int plotAutoCorrFlag = 1;
 int plotAbsErrPDFFlag = 1;
-int plotAbsErrAutoCorrFlag = 1;
+int plotErrAutoCorrFlag = 1;
 int plotFFTAmpFlag = 1;
 int plotEntropyFlag = 1;
 

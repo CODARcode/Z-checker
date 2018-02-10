@@ -150,8 +150,8 @@ extern int lapFlag;
 extern int minAbsErrFlag;
 extern int avgAbsErrFlag;
 extern int maxAbsErrFlag;
-extern int autoCorrAbsErrFlag;
-extern int autoCorrAbsErr3DFlag;
+extern int errAutoCorrFlag;
+extern int errAutoCorr3DFlag;
 extern int absErrPDFFlag;
 extern int pwrErrPDFFlag;
 
@@ -172,7 +172,7 @@ extern int SSIMFlag;
 extern int plotAutoCorrFlag;
 
 extern int plotAbsErrPDFFlag;
-extern int plotAbsErrAutoCorrFlag;
+extern int plotErrAutoCorrFlag;
 extern int plotFFTAmpFlag;
 extern int plotEntropyFlag;
 

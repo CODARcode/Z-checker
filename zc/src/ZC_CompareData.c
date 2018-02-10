@@ -298,10 +298,10 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	sprintf(s[11], "maxAbsErr = %.10G\n", compareResult->maxAbsErr);
 	
 	s[12] = (char*)malloc(100*sizeof(char));
-	if(autoCorrAbsErrFlag)
-		sprintf(s[12], "autoCorrAbsErr = %.10G\n", (compareResult->autoCorrAbsErr)[1]); //TODO output AUTO_CORR_SIZE coefficients
+	if(errAutoCorrFlag)
+		sprintf(s[12], "errAutoCorr = %.10G\n", (compareResult->autoCorrAbsErr)[1]); //TODO output AUTO_CORR_SIZE coefficients
 	else
-		sprintf(s[12], "autoCorrAbsErr = -2\n");
+		sprintf(s[12], "errAutoCorr = -\n");
 		
 	s[13] = (char*)malloc(100*sizeof(char));
 	sprintf(s[13], "minRelErr = %.10G\n", compareResult->minRelErr);
@@ -446,7 +446,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 		}	
 	}	
 	//write auto-correlation coefficients
-	if(autoCorrAbsErrFlag)
+	if(errAutoCorrFlag)
 	{
 		char *autocorr[AUTOCORR_SIZE+2];
 		autocorr[0] = (char*)malloc(sizeof(char)*ZC_BUFS);

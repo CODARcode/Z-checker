@@ -126,7 +126,7 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 			if (gvar == 0)
 			{
 				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autocorr[delta] = 0;
+					autocorr[delta] = 1;
 			}
 			else
 			{
@@ -288,7 +288,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 				if (cov_0*cov_1 == 0)
 				{
 					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autocorr[delta] = 0;
+						autocorr[delta] = 1;
 				}
 				else
 				{

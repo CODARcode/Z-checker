@@ -125,7 +125,7 @@ ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_
 			if (gvar == 0)
 			{
 				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autocorr[delta] = 0;
+					autocorr[delta] = 1;
 			}
 			else
 			{
@@ -287,7 +287,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 				if (cov_0*cov_1 == 0)
 				{
 					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autocorr[delta] = 0;
+						autocorr[delta] = 1;
 				}
 				else
 				{

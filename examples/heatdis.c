@@ -137,15 +137,15 @@ int main(int argc, char *argv[])
 		if(i%50==0) //control the compression frequency over time steps
 		{
 			sprintf(propName, "%s_%04d", varName, i); //make a name for the current target data property (variable_name)
+			sprintf(cmprCaseName, "%s(1E-3)", compressorName); //name the compression case
 			ZC_DataProperty* dataProperty = ZC_startCmpr(propName, ZC_DOUBLE, g, 0, 0, 0, nbLines, M); //start compression
 			cmprBytes = SZ_compress(SZ_DOUBLE, g, &cmprSize, 0, 0, 0, nbLines, M);
 			//cmprBytes = SZ_compress_args(SZ_DOUBLE, g, &cmprSize, REL, 1E-3, 1E-3, 1E-3, 0, 0, 0, 0, nbLines, M);
-			ZC_CompareData* compareResult =ZC_endCmpr(dataProperty, cmprSize); //end compression
+			ZC_CompareData* compareResult =ZC_endCmpr(dataProperty, cmprCaseName, cmprSize); //end compression
 			
-			sprintf(cmprCaseName, "%s(1E-3)", compressorName); //name the compression case
 			ZC_startDec(); //start decompression
 			decData = SZ_decompress(SZ_DOUBLE, cmprBytes, cmprSize, 0, 0, 0, nbLines, M);	
-			ZC_endDec(compareResult, cmprCaseName, decData); //end decompression			
+			ZC_endDec(compareResult, decData); //end decompression			
 
 			if(rank==0)
 			{

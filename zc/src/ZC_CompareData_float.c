@@ -82,6 +82,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	
 	double avgDiff = sumDiff/numOfElem;
 	double avgErr = sumErr/numOfElem;
+	
 	double diffRange = maxDiff - minDiff;
 	double mse = sumErrSqr/numOfElem;
 	
@@ -186,7 +187,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->err_minValue_rel = minDiff_rel;		
 	}
 
-	if (autoCorrAbsErrFlag)
+	if (errAutoCorrFlag)
 	{
 		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
@@ -205,7 +206,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 			if (covDiff == 0)
 			{
 				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autoCorrAbsErr[delta] = 0;
+					autoCorrAbsErr[delta] = 1;
 			}
 			else
 			{
@@ -272,12 +273,12 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 
 		}
         
-        autoCorrAbsErr[0] = 1;
+		autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
 	}
 
 #ifdef HAVE_FFTW3	
-	if(autoCorrAbsErr3DFlag)
+	if(errAutoCorr3DFlag)
 	{
 		switch(dim)
 		{
@@ -376,7 +377,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->ksValue = KS_test(compareResult->property->dataType, data1, data2, r5, r4, r3, r2, r1);
 	}
 	
-	if(SSIM)
+	if(SSIMFlag)
 	{
 		double* ssimResult = SSIM(compareResult->property->dataType, data1, data2, r5, r4, r3, r2, r1);
 		compareResult->lum = ssimResult[0];
@@ -633,9 +634,48 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		}		
 	}
 
-	if (autoCorrAbsErrFlag)
-	{
-		//TODO
+	if (errAutoCorrFlag)
+	{	
+		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
+		
+		double ccov[AUTOCORR_SIZE+1], gcov[AUTOCORR_SIZE+1];
+		memset(ccov, 0, sizeof(double)*(AUTOCORR_SIZE+1));
+		memset(gcov, 0, sizeof(double)*(AUTOCORR_SIZE+1));
+		
+		int delta;
+		double var = 0, gvar = 0;
+		for (i = 0; i < numOfElem; i++)
+			var += (diff[i] - global_avgDiff)*(diff[i] - global_avgDiff);
+		
+		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+		{
+			double cov = 0;
+			for (i = 0; i < numOfElem-delta; i++)
+				cov += (diff[i] - global_avgDiff)*(diff[i+delta] - global_avgDiff);
+			ccov[delta] = cov;	
+		}
+		
+		MPI_Reduce(&var, &gvar, 1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+		MPI_Reduce(ccov, gcov, AUTOCORR_SIZE+1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);		
+		
+		if(myRank==0)
+		{	
+			gvar = gvar/globalDataLength;
+			if (gvar == 0)
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autoCorrAbsErr[delta] = 1;
+			}
+			else
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					autoCorrAbsErr[delta] = gcov[delta]/(globalDataLength-nbProc*delta)/gvar;				
+				}
+			}
+			autoCorrAbsErr[0] = 1;
+			compareResult->autoCorrAbsErr = autoCorrAbsErr;					
+		}		
 	}
 
 	double p_localBuffer[3], p_globalBuffer[3];

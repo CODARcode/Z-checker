@@ -187,7 +187,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->err_minValue_rel = minDiff_rel;		
 	}
 
-	if (autoCorrAbsErrFlag)
+	if (errAutoCorrFlag)
 	{
 		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
 
@@ -206,7 +206,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 			if (covDiff == 0)
 			{
 				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autoCorrAbsErr[delta] = 0;
+					autoCorrAbsErr[delta] = 1;
 			}
 			else
 			{
@@ -273,12 +273,12 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 
 		}
         
-        autoCorrAbsErr[0] = 1;
+		autoCorrAbsErr[0] = 1;
 		compareResult->autoCorrAbsErr = autoCorrAbsErr;
 	}
 
-#ifdef HAVE_FFTW3
-	if(autoCorrAbsErr3DFlag)
+#ifdef HAVE_FFTW3	
+	if(errAutoCorr3DFlag)
 	{
 		switch(dim)
 		{
@@ -349,6 +349,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->psnr = psnr;
 	}
 
+	//the correlation between the original data values and the compression errors
 	if (valErrCorrFlag)
 	{
 		double prodSum = 0, sum1 = 0, sumDiff = 0;
@@ -410,12 +411,13 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	double sumDiff_rel = 0, sumErr_rel = 0, sumErrSqr_rel = 0;
 	
 	double err;
-	long numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);
+	long numOfElem = ZC_computeDataLength(r5, r4, r3, r2, r1);	
 		
 	if(globalDataLength <= 0)
-		MPI_Allreduce(&numOfElem, &globalDataLength, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);		
+		MPI_Allreduce(&numOfElem, &globalDataLength, 1, MPI_LONG, MPI_SUM, ZC_COMM_WORLD);
+			
 	double sumOfDiffSquare = 0;
-	long numOfElem_ = 0;
+	long numOfElem_ = 0; //used to record the number of elements for relative-error-bound cases
 
 	double *diff = (double*)malloc(numOfElem*sizeof(double));
 	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
@@ -632,9 +634,48 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		}		
 	}
 
-	if (autoCorrAbsErrFlag)
-	{
-		//TODO
+	if (errAutoCorrFlag)
+	{	
+		double *autoCorrAbsErr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
+		
+		double ccov[AUTOCORR_SIZE+1], gcov[AUTOCORR_SIZE+1];
+		memset(ccov, 0, sizeof(double)*(AUTOCORR_SIZE+1));
+		memset(gcov, 0, sizeof(double)*(AUTOCORR_SIZE+1));
+		
+		int delta;
+		double var = 0, gvar = 0;
+		for (i = 0; i < numOfElem; i++)
+			var += (diff[i] - global_avgDiff)*(diff[i] - global_avgDiff);
+		
+		for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+		{
+			double cov = 0;
+			for (i = 0; i < numOfElem-delta; i++)
+				cov += (diff[i] - global_avgDiff)*(diff[i+delta] - global_avgDiff);
+			ccov[delta] = cov;	
+		}
+		
+		MPI_Reduce(&var, &gvar, 1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+		MPI_Reduce(ccov, gcov, AUTOCORR_SIZE+1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);		
+		
+		if(myRank==0)
+		{	
+			gvar = gvar/globalDataLength;
+			if (gvar == 0)
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autoCorrAbsErr[delta] = 1;
+			}
+			else
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				{
+					autoCorrAbsErr[delta] = gcov[delta]/(globalDataLength-nbProc*delta)/gvar;				
+				}
+			}
+			autoCorrAbsErr[0] = 1;
+			compareResult->autoCorrAbsErr = autoCorrAbsErr;					
+		}		
 	}
 
 	double p_localBuffer[3], p_globalBuffer[3];
