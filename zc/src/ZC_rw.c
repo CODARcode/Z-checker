@@ -528,8 +528,9 @@ void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
 	if(toAddLineHeader==NULL)
 	{
-		printf("Error: toAddLineHeader cannot be NULL\n");
-		exit(0);
+		return;
+		//printf("Error: toAddLineHeader cannot be NULL\n");
+		//exit(0);
 	}
 	
 	if(toAddLineHeader->next==NULL)

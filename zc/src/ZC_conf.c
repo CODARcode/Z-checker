@@ -186,11 +186,16 @@ int ZC_ReadConf() {
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
 	if(checkingStatus==COMPARE_COMPRESSOR)
-	{		
+	{	
+		plotAutoCorrFlag = 	(int)iniparser_getint(ini, "PLOT:plotAutoCorr", 0);	
+		if(autocorrFlag == 0) plotAutoCorrFlag = 0;
 		plotAbsErrPDFFlag = (int)iniparser_getint(ini, "PLOT:plotAbsErrPDF", 0);
-		plotAutoCorrFlag = 	(int)iniparser_getint(ini, "PLOT:plotAutoCorr", 0);
+		if(autoCorrAbsErrFlag == 0) plotAbsErrAutoCorrFlag = 0;
+		plotAbsErrAutoCorrFlag = (int)iniparser_getint(ini, "PLOT:plotABSErrAutoCorr", 0);
 		plotFFTAmpFlag = (int)iniparser_getint(ini, "PLOT:plotFFTAmp", 0);
+		if(fftFlag == 0) plotFFTAmpFlag = 0;
 		plotEntropyFlag = (int)iniparser_getint(ini, "PLOT:plotEntropy", 0);
+		if(entropyFlag == 0) plotEntropyFlag = 0;
 		
 		checkCompressorsFlag = (int)iniparser_getint(ini, "PLOT:plotCompressionResults", 0);
 				

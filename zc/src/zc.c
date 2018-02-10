@@ -78,8 +78,9 @@ int pearsonCorrFlag = 1;
 int KS_testFlag = 1;
 int SSIMFlag = 1;
 
-int plotAbsErrPDFFlag = 1;
 int plotAutoCorrFlag = 1;
+int plotAbsErrPDFFlag = 1;
+int plotAbsErrAutoCorrFlag = 1;
 int plotFFTAmpFlag = 1;
 int plotEntropyFlag = 1;
 

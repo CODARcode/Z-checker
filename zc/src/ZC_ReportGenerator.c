@@ -257,9 +257,9 @@ void ZC_generateDataPropertyAnalysisReport()
 	}
 	
 	sprintf(varCountString, "%d", n);
-	ZC_replaceLines(texLines, "ZC_VARNUM", varCountString);
+	ZC_replaceLines(texLines, "ZCVARNUM", varCountString);
 	ZC_ReplaceStr2(varListString, "_", "\\_");
-	ZC_replaceLines(texLines, "ZC_VARLIST", varListString);
+	ZC_replaceLines(texLines, "ZCVARLIST", varListString);
 	
 	StringLine* tabLines = ZC_generatePropertyAnalysisTable(caseFiles, n);
 	int lineNumInsted = ZC_insertLines("%create property table\n", texLines, tabLines);
@@ -459,6 +459,58 @@ StringLine* ZC_generateRateCorrelationFigure()
 	return header;
 }
 
+void ZC_generateResultTexFile()
+{
+	int lineCount;
+	char* line = NULL;
+	char resultTexFile[ZC_BUFS];
+	sprintf(resultTexFile, "report/tex/results.tex");
+	printf("Processing %s\n", resultTexFile);
+	StringLine* texLines = ZC_readLines(resultTexFile, &lineCount);
+	
+	StringLine* header = createStringLineHeader();
+	StringLine* p = header; //p always points to the tail
+	if(compressSizeFlag)
+	{	
+		line = createLine("\\input{tex/resultsTex/compressionFactor}\n"); 
+		p = appendOneLine(p, line);
+	}
+	if(psnrFlag || snrFlag)
+	{	
+		line = createLine("\\input{tex/resultsTex/psnr}\n"); 
+		p = appendOneLine(p, line);
+	}
+	if(compressSizeFlag && psnrFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/rateDistortion}\n"); 
+		p = appendOneLine(p, line);
+	}
+	if(compressTimeFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/compressionRate}\n"); 
+		p = appendOneLine(p, line);
+	}
+	if(decompressTimeFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/decompressionRate}\n"); 
+		p = appendOneLine(p, line);
+	}
+	if(avgAbsErrFlag && plotAbsErrPDFFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/errDistribution}\n"); 
+		p = appendOneLine(p, line);
+	}
+	if(autoCorrAbsErrFlag && plotAbsErrAutoCorrFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/errAutoCorr}\n"); 
+		p = appendOneLine(p, line);
+	}
+	
+	ZC_appendLines(texLines, header);
+	ZC_writeLines(texLines, resultTexFile);
+	ZC_freeLines(texLines);	
+}
+
 void ZC_generateRateCorrelationReport()
 {
 	int lineCount;
@@ -590,12 +642,18 @@ void ZC_generateOverallReport(char* dataSetName)
 	
 	ZC_generateDataPropertyAnalysisReport();
 	
-	ZC_generateCompressionFactorReport();	
-	ZC_generateCompressionRateReport();
-	ZC_generateDecompressionRateReport();
-	ZC_generatePSNRReport();
-	ZC_generateRateDistortionReport();
-	ZC_generateRateCorrelationReport();
+	if(compressSizeFlag)
+		ZC_generateCompressionFactorReport();	
+	if(compressTimeFlag)
+		ZC_generateCompressionRateReport();
+	if(decompressTimeFlag)
+		ZC_generateDecompressionRateReport();
+	if(psnrFlag || snrFlag)
+		ZC_generatePSNRReport();
+	if(psnrFlag && compressSizeFlag)
+		ZC_generateRateDistortionReport();
+	if(compressSizeFlag)
+		ZC_generateRateCorrelationReport();
 
 	int i, n = 0, selectedErrorBoundCount;
 	char* caseFiles[ZC_BUFS_LONG];
@@ -608,12 +666,17 @@ void ZC_generateOverallReport(char* dataSetName)
 	
 	ZC_constructSortedSelectedErrorBounds4CmprsEelments(allCompressors, allCompressorCount);	
 	
-	ZC_generateErrDistributionReport(allCompressors, allCompressorCount);
-	ZC_generateErrAutoCorrReport(allCompressors, allCompressorCount);	
+	if(absErrPDFFlag && plotAbsErrPDFFlag)
+		ZC_generateErrDistributionReport(allCompressors, allCompressorCount);
+	if(autoCorrAbsErrFlag && plotAbsErrAutoCorrFlag)
+		ZC_generateErrAutoCorrReport(allCompressors, allCompressorCount);	
 	if(plotFFTAmpFlag)
 		ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);
 	
+	ZC_generateResultTexFile();	
+	
 	ZC_updateZCRootTexFile(dataSetName);
+	
 	//sprintf(cmd, "cd report;make clean;make");
 	//printf("%s\n", cmd);
 	//system(cmd);

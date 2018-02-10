@@ -169,8 +169,10 @@ extern int pearsonCorrFlag;
 extern int KS_testFlag;
 extern int SSIMFlag;
 
-extern int plotAbsErrPDFFlag;
 extern int plotAutoCorrFlag;
+
+extern int plotAbsErrPDFFlag;
+extern int plotAbsErrAutoCorrFlag;
 extern int plotFFTAmpFlag;
 extern int plotEntropyFlag;
 
