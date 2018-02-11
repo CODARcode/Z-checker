@@ -30,7 +30,7 @@ if [[ $option == 1 ]]; then
 
 	for file in $fileList
 	do
-		echo ./analyzeDataProperty $datatype zc.config "$dataDir/$file" $dim1 $dim2 $dim3 $dim4
+		echo ./analyzeDataProperty $file $datatype zc.config "$dataDir/$file" $dim1 $dim2 $dim3 $dim4
 		./analyzeDataProperty $file $datatype zc.config "$dataDir/$file" $dim1 $dim2 $dim3 $dim4
 	done
 else
