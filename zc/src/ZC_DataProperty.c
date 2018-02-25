@@ -307,7 +307,7 @@ complex* ZC_computeFFT(void* data, size_t n, int dataType)
 
 ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	char* varN = rmFileExtension(varName);
+	char* varN = varName;//rmFileExtension(varName);
 	ZC_DataProperty* property = NULL;
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
 	if(dataType==ZC_FLOAT)
@@ -352,12 +352,12 @@ ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, si
 	if(p==NULL)
 	{
 		ht_set(ecPropertyTable, varN, property);
-		free(varN);
+		//free(varN);
 		return property;
 	}
 	else
 	{//move property's content to p
-		free(varN);
+		//free(varN);
 		ZC_moveDataProperty(p, property);
 		return p;
 	}
