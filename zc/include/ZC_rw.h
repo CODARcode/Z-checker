@@ -53,14 +53,18 @@ int ZC_writeStrings(int string_size, char **string, char *tgtFilePath);
 
 StringLine* createStringLineHeader();
 StringLine* createOneStringLine(char* lineContent);
+StringLine* generateOneStringLine(char* lineContent);
 StringLine* appendOneLine(StringLine* tail, char* str);
 void ZC_readFirstLine(char* filePath, char* line);
 StringLine* ZC_readLines(char* filePath, int *lineCount);
 size_t ZC_writeLines(StringLine* lineHeader, char *tgtFilePath);
 void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replaceString);
+int ZC_startsWith(char* str, char* key);
+int ZC_startsWithLines(StringLine* line, char* key);
 size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader);
 void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader);
 
+void ZC_removeLines(StringLine* preLine, StringLine* endingLineToRmve);
 void ZC_freeLines(StringLine* header);
 void ZC_freeCharArrayLines(char** lines, size_t lineNum);
 

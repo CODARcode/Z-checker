@@ -392,6 +392,14 @@ StringLine* createOneStringLine(char* lineContent)
 	return header;
 }
 
+StringLine* generateOneStringLine(char* lineContent)
+{
+	StringLine* line = (StringLine*)malloc(sizeof(StringLine));
+	line->str = lineContent;
+	line->next = NULL;
+	return line;
+}
+
 StringLine* appendOneLine(StringLine* tail, char* str)
 {
 	StringLine* newLine = (StringLine*)malloc(sizeof(StringLine));
@@ -489,6 +497,18 @@ void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replac
 	}
 }
 
+int ZC_startsWith(char* str, char* key)
+{
+    int lenkey = strlen(key), lenstr = strlen(str);
+    return lenstr < lenkey ? 0 : strncmp(key, str, lenkey) == 0;
+}
+
+int ZC_startsWithLines(StringLine* line, char* key)
+{
+	char* str = line->str;
+	return ZC_startsWith(str, key);
+}
+
 size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
 	if(toAddLineHeader==NULL)
@@ -543,6 +563,15 @@ void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader)
 	
 	p->next = toAddLineHeader->next;	
 	free(toAddLineHeader);
+}
+
+void ZC_removeLines(StringLine* preLine, StringLine* endingLineToRmve)
+{
+	StringLine* nextValidLine  = endingLineToRmve->next;
+	endingLineToRmve->next = NULL;
+	StringLine* removedLines = preLine->next;
+	preLine->next = nextValidLine;
+	ZC_freeLines(removedLines);
 }
 
 void ZC_freeLines(StringLine* header)
