@@ -80,6 +80,7 @@ int ZC_ReadConf() {
     char *endianTypeString;
     char *checkingStatusString;
     char *executionModeString;
+    char *visModeString;
     dictionary *ini;
     char *par;
 
@@ -131,6 +132,12 @@ int ZC_ReadConf() {
 		executionMode = ZC_OFFLINE;
 	else
 		executionMode = ZC_ONLINE;
+		
+	visModeString = iniparser_getstring(ini, "ENV:visMode", "OFFLINE");
+	if(strcmp(visModeString, "OFFLINE")==0)
+		visMode = 0;
+	else
+		visMode = 1;
 
 	char *y = (char*)&x;
 	

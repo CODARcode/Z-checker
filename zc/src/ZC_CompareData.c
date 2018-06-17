@@ -192,7 +192,7 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 	}
 	else
 	{
-		printf("Error: dataType is wrong!\n");
+		printf("Error 1: dataType is wrong! (dataType = %d)\n", dataType);
 		exit(0);
 	}
 }
@@ -249,7 +249,7 @@ ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void 
 	}
 	else
 	{
-		printf("Error: dataType is wrong!\n");
+		printf("Error 2: dataType is wrong! (dataType == %d)\n", dataType);
 		exit(0);
 	}
 	return compareResult;

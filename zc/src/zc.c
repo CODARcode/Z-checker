@@ -25,6 +25,9 @@
 #ifdef HAVE_R
 #include "ZC_callR.h"
 #endif
+#ifdef HAVE_ONLINEVIS
+#include "zserver.h"
+#endif
 
 char rscriptPath[MAX_MSG_LENGTH];
 
@@ -126,12 +129,15 @@ char* allVarCases[20];
 MPI_Comm ZC_COMM_WORLD; 
 #endif
 
-int myRank = 1;
+int myRank = 0;
 int nbProc = 1;
 
 size_t globalDataLength = 0;
 
 int initStatus = 0; //0 means no initialization yet or already ZC_Finalize(), 1 means already ZC_Init();
+
+int visMode = 0;
+int ZSERVER_PORT = 9091;
 
 void cost_startCmpr()
 {
@@ -164,6 +170,10 @@ int ZC_Init_NULL()
 	initStatus = 1; 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);	
+#ifdef HAVE_ONLINEVIS
+	if(visMode && myRank == 0)
+		zserver_start(ZSERVER_PORT);
+#endif
 }
 
 int ZC_Init(char *configFilePath)
@@ -208,6 +218,12 @@ int ZC_Init(char *configFilePath)
 		exit(0);
 		return ZC_NSCS;		
 	}
+#endif
+
+#ifdef HAVE_ONLINEVIS
+	if(visMode && myRank == 0)
+		zserver_start(ZSERVER_PORT);
+	printf("visMode=%d\n", visMode);
 #endif
 	
 	return ZC_SCES;
@@ -325,8 +341,16 @@ ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution
 	if(compressTimeFlag)
 		cmprTime = cost_endCmpr();
 
-	ZC_CompareData* compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
-	memset(compareResult, 0, sizeof(ZC_CompareData));	
+	ZC_CompareData* compareResult = ht_get(ecCompareDataTable, solution);
+	if(compareResult==NULL)
+	{
+		compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));		
+		memset(compareResult, 0, sizeof(ZC_CompareData));	
+		ht_set(ecCompareDataTable, solution, compareResult);
+	}
+	else
+		free(compareResult->solution);
+	
 	int elemSize = dataProperty->dataType==ZC_FLOAT? 4: 8;	
 	
 	if(compressTimeFlag)
@@ -344,20 +368,13 @@ ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution
 		else
 			compareResult->rate = 32.0/compareResult->compressRatio;
 	}
+	
 	compareResult->property = dataProperty;
-	compareResult->solution = (char*)malloc(strlen(solution)+1);
-	strcpy(compareResult->solution, solution);
-	ZC_CompareData* zcc = ht_get(ecCompareDataTable, solution);
-	if(zcc==NULL)
-	{
-		ht_set(ecCompareDataTable, solution, compareResult);
-		return compareResult;
-	}
-	else
-	{//you compress one variable with the same 'solution' (or key) using the same compressor twice.
-	 //the return to be returned will use the one stored in the hash-table
-		return zcc;
-	}
+	
+	compareResult->solution = (char*)malloc(strlen(solution)+1);	
+	strcpy(compareResult->solution, solution);	
+	
+	return compareResult;
 }
 
 void ZC_startDec_offline()
@@ -383,7 +400,13 @@ void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 		exit(0);
 	}
 	
+	//MPI_Barrier(MPI_COMM_WORLD);
+	//if(myRank==0)
+	//	printf("before ZC_compareData_dec\n");
 	ZC_compareData_dec(compareResult, decData);
+	//MPI_Barrier(MPI_COMM_WORLD);
+	//if(myRank==0)
+	//	printf("after ZC_compareData_dec\n");
 	ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
 }
 
@@ -1213,6 +1236,11 @@ int ZC_Finalize()
 	// Release R environment
 	Rf_endEmbeddedR(0);
 #endif	
+#ifdef HAVE_ONLINEVIS
+	if(visMode && myRank == 0)
+		zserver_stop();
+#endif
+		
 	initStatus = 0;
 	return ZC_SCES;
 }
@@ -1394,6 +1422,7 @@ ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution,
 		endTime = MPI_Wtime();
 		cmprTime = endTime - initTime;
 	}
+	
 	ZC_CompareData* compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
 	memset(compareResult, 0, sizeof(ZC_CompareData));	
 	int elemSize = dataProperty->dataType==ZC_FLOAT? 4: 8;	
@@ -1464,7 +1493,11 @@ void ZC_endDec_online(ZC_CompareData* compareResult, void *decData)
 
 ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	ZC_DataProperty* result = NULL;
+	ZC_DataProperty* result = (ZC_DataProperty*)ht_get(ecPropertyTable, varName); //note that result->varName is the cleared string of varName.
+
+	if(result!=NULL)
+		freeDataProperty(result);
+
 #ifdef HAVE_MPI
 	if(executionMode == ZC_ONLINE)
 		result = ZC_startCmpr_online(varName, dataType, oriData, r5, r4, r3, r2, r1);
@@ -1472,17 +1505,10 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 		result = ZC_startCmpr_offline(varName, dataType, oriData, r5, r4, r3, r2, r1);
 #else
 	result = ZC_startCmpr_offline(varName, dataType, oriData, r5, r4, r3, r2, r1);
-#endif	
-	ZC_DataProperty* p = (ZC_DataProperty*)ht_get(ecPropertyTable, result->varName); //note that result->varName is the cleared string of varName.
-	if(p==NULL)
-	{
-		ht_set(ecPropertyTable, result->varName, result);
-		return result;
-	}
-	else
-	{
-		return p;
-	}
+#endif
+	ht_set(ecPropertyTable, result->varName, result);
+	
+	return result;	
 }
 
 ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, char* solution, long cmprSize)

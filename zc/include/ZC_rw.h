@@ -69,6 +69,8 @@ void ZC_freeLines(StringLine* header);
 void ZC_freeCharArrayLines(char** lines, size_t lineNum);
 
 char* rmFileExtension(char* fullFileName);
+char* getFileName(char* fullFilePath);
+char* getFileNameWithoutExtension(char* fullFilePath);
 
 void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath);
 void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, char* tgtFilePath);

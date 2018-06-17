@@ -14,6 +14,9 @@
 #include "ZC_util.h"
 #include "ZC_rw.h"
 #include "zc.h"
+#ifdef HAVE_ONLINEVIS
+#include "zserver.h"
+#endif
 
 int ZC_check_file_exists(const char *fname)
 {
@@ -374,7 +377,20 @@ int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
 	}
     
     fclose(pFile);
+    
+#ifdef HAVE_ONLINEVIS
+	if(visMode) //ZC_writeStrings() is always called by rank 0 actually, so no need to add myRank==0
+	{
+		char actualpath[256];
+        realpath(tgtFilePath, actualpath);
+		char* key = getFileName(actualpath);
+		//printf("writing pair: %s, %s\n", key, actualpath);
+		zserver_commit_file(key, actualpath);		
+		free(key);
+	}
+#endif
     return i;	
+   
 }
 
 StringLine* createStringLineHeader()
@@ -607,6 +623,30 @@ char* rmFileExtension(char* fullFileName)
 	char* b = strrchr(s, '.');
 	b[0] = '\0';
 	return s;
+}
+
+char* getFileName(char* fullFilePath)
+{
+	char buf[256] = {0};
+	char* s = (char*)malloc(256);
+	sprintf(buf, "%s", fullFilePath);
+	int i = strcspn(buf,"/");
+	if(i==strlen(buf))
+	{
+		strcpy(s, buf);
+		return s;
+	}
+	char* b = strrchr(buf, '/');
+	strcpy(s, b+1);
+	return s;
+}
+
+char* getFileNameWithoutExtension(char* fullFilePath)
+{
+	char* fileName = getFileName(fullFilePath);
+	char* result = rmFileExtension(fileName);
+	free(fileName);
+	return result;
 }
 
 void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath)

@@ -216,6 +216,9 @@ extern size_t globalDataLength;
 
 extern int initStatus; 
 
+extern int visMode;
+extern int ZSERVER_PORT;
+
 typedef union eclshort
 {
 	unsigned short svalue;
