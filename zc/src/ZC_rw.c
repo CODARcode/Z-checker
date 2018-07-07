@@ -32,7 +32,7 @@ int ZC_check_file_exists(const char *fname)
 void updateLinkFullPath(char* oriPath, char* finalPath)
 {
 	if(oriPath[0]=='/') //full path
-		finalPath = oriPath;
+		sprintf(finalPath, oriPath);
 	else
 		sprintf(finalPath, "../%s", oriPath);
 }
