@@ -7,6 +7,9 @@ endif
 if R
 AM_CFLAGS += $(R_HDR) -lR -I../R/src -DHAVE_R
 endif
+if ZSERVER
+AM_CFLAGS += $(ZSERVER_HDR) $(ZSERVER_STATIC) $(ZSERVER_LIBS) $(ZSERVER_LIB) -DHAVE_ONLINEVIS
+endif
 if MPI
 AM_CFLAGS += -DHAVE_MPI
 endif
@@ -55,6 +58,8 @@ analyzeDataProperty_online_LDADD=../zc/.libs/libzc.a -lm
 if R
 analyzeDataProperty_online_LDADD+=../R/.libs/libzccallr.a
 endif
+#heatdis_SOURCES=heatdis.c
+#heatdis_LDADD=../zc/.libs/libzc.a -lm /home/sdi/Install/sz-1.4.13-install/lib/libsz.a
 compareDataSets_online_SOURCES=compareDataSets_online.c
 compareDataSets_online_LDADD=../zc/.libs/libzc.a -lm
 if R
@@ -62,5 +67,7 @@ compareDataSets_online_LDADD+=../R/.libs/libzccallr.a
 endif
 endif
 
+if R
 all-local:
 	./setRScript.sh
+endif

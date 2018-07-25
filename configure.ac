@@ -183,35 +183,109 @@ else
 	AC_MSG_WARN([R disabled])
 fi
 
-#check for R, netcdf and fftw3
-if test "$netcdf_ok" = "yes"; then
-	if test "$fftw_ok" = "yes"; then
-		if test "$r_ok" = "yes"; then
-			LIBS="$NETCDF_LIB $FFTW3_LIB $R_LIB"
-		else
-			LIBS="$NETCDF_LIB $FFTW3_LIB"
-		fi
-	else
-		if test "$r_ok" = "yes"; then
-			LIBS="$NETCDF_LIB $R_LIB"
-		else
-			LIBS="$NETCDF_LIB"
-		fi 
+#enable online visualization (zserver)
+AC_ARG_ENABLE(zserver, [  --enable-zserver            use ZSERVER], zserver_ok=$enableval, zserver_ok=no)
+AM_CONDITIONAL([ZSERVER], [test "x$enable_zserver" = "xyes"])
+
+if test "$zserver_ok" = "yes"; then
+	AC_ARG_WITH([zserver-prefix], [AS_HELP_STRING([--with-zserver-prefix=DIR], 
+            [installation prefix for zserver])], 
+            [with_zserver_include_path=$with_zserver_prefix/include; 
+             with_zserver_lib_path=$with_zserver_prefix/lib])
+
+	AC_ARG_WITH([zserver-include-path], [AS_HELP_STRING([--with-zserver-include-path=DIR],
+            [path to the zserver directory, defaults to /usr/include])], [])
+
+	if test "x$with_zserver_include_path" = x ; then
+    		with_zserver_include_path="/usr/include"
 	fi
+
+	AC_CHECK_FILE([${with_zserver_include_path}/zserver.h], [],
+              AC_MSG_ERROR([Invalid path to zserver.h]))
+	ZSERVER_HDR="-I$with_zserver_include_path"
+
+	AC_ARG_WITH([zserver-lib-path], [AS_HELP_STRING([--with-zserver-lib-path],
+            [path to the zserver libraries, defaults to /usr/lib])], [])
+	if test "x$with_zserver_lib_path" = x ; then
+    		with_zserver_lib_path="/usr/lib"
+	fi
+	ZSERVER_LIB="-L$with_zserver_lib_path"
+	LIBS="$ZSERVER_LIB"
+
+	if test "x$BUILD_STATIC" = xyes ; then
+    		ZSERVER_STATIC="${with_zserver_lib_path}/libzserver.a"
+    		ZSERVER_LIB=
+	else
+    		ZSERVER_STATIC="-lzserver"
+	fi
+
+	AC_SUBST(ZSERVER_HDR)
+	AC_SUBST(ZSERVER_LIB)
+	AC_SUBST(ZSERVER_STATIC)
+
 else
-	if test "$fftw_ok" = "yes"; then
-		if test "$r_ok" = "yes"; then
-			LIBS="$FFTW3_LIB $R_LIB"
-		else
-			LIBS="$FFTW3_LIB"
-		fi
-	else
-		if test "$r_ok" = "yes"; then
-			LIBS="$R_LIB"
-		fi 
-	fi
+  	AC_MSG_WARN([ZSERVER disabled])
 fi
 
+
+#check for R, netcdf and fftw3
+if test "$zserver_ok" = "yes"; then
+	if test "$netcdf_ok" = "yes"; then
+		if test "$fftw_ok" = "yes"; then
+			if test "$r_ok" = "yes"; then
+				LIBS="$NETCDF_LIB $FFTW3_LIB $R_LIB $ZSERVER_LIB"
+			else
+				LIBS="$NETCDF_LIB $FFTW3_LIB $ZSERVER_LIB"
+			fi
+		else
+			if test "$r_ok" = "yes"; then
+				LIBS="$NETCDF_LIB $R_LIB $ZSERVER_LIB"
+			else
+				LIBS="$NETCDF_LIB $ZSERVER_LIB"
+			fi 
+		fi
+	else
+		if test "$fftw_ok" = "yes"; then
+			if test "$r_ok" = "yes"; then
+				LIBS="$FFTW3_LIB $R_LIB $ZSERVER_LIB"
+			else
+				LIBS="$FFTW3_LIB $ZSERVER_LIB"
+			fi
+		else
+			if test "$r_ok" = "yes"; then
+				LIBS="$R_LIB $ZSERVER_LIB"
+			fi 
+		fi
+	fi
+else
+	if test "$netcdf_ok" = "yes"; then
+		if test "$fftw_ok" = "yes"; then
+			if test "$r_ok" = "yes"; then
+				LIBS="$NETCDF_LIB $FFTW3_LIB $R_LIB"
+			else
+				LIBS="$NETCDF_LIB $FFTW3_LIB"
+			fi
+		else
+			if test "$r_ok" = "yes"; then
+				LIBS="$NETCDF_LIB $R_LIB"
+			else
+				LIBS="$NETCDF_LIB"
+			fi 
+		fi
+	else
+		if test "$fftw_ok" = "yes"; then
+			if test "$r_ok" = "yes"; then
+				LIBS="$FFTW3_LIB $R_LIB"
+			else
+				LIBS="$FFTW3_LIB"
+			fi
+		else
+			if test "$r_ok" = "yes"; then
+				LIBS="$R_LIB"
+			fi 
+		fi
+	fi
+fi
 
 #mpi
 AC_SUBST(MPI_FLAGS)

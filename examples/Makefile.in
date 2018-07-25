@@ -89,20 +89,21 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @R_TRUE@am__append_1 = $(R_HDR) -lR -I../R/src -DHAVE_R
-@MPI_TRUE@am__append_2 = -DHAVE_MPI
+@ZSERVER_TRUE@am__append_2 = $(ZSERVER_HDR) $(ZSERVER_STATIC) $(ZSERVER_LIBS) $(ZSERVER_LIB) -DHAVE_ONLINEVIS
+@MPI_TRUE@am__append_3 = -DHAVE_MPI
 bin_PROGRAMS = analyzeDataProperty$(EXEEXT) compareDataSets$(EXEEXT) \
 	generateGNUPlot$(EXEEXT) generateReport$(EXEEXT) \
 	modifyZCConfig$(EXEEXT) runOfflineCase$(EXEEXT) \
 	$(am__EXEEXT_1)
-@MPI_TRUE@am__append_3 = analyzeDataProperty_online compareDataSets_online
-@R_TRUE@am__append_4 = ../R/.libs/libzccallr.a
+@MPI_TRUE@am__append_4 = analyzeDataProperty_online compareDataSets_online
 @R_TRUE@am__append_5 = ../R/.libs/libzccallr.a
 @R_TRUE@am__append_6 = ../R/.libs/libzccallr.a
 @R_TRUE@am__append_7 = ../R/.libs/libzccallr.a
 @R_TRUE@am__append_8 = ../R/.libs/libzccallr.a
 @R_TRUE@am__append_9 = ../R/.libs/libzccallr.a
-@MPI_TRUE@@R_TRUE@am__append_10 = ../R/.libs/libzccallr.a
+@R_TRUE@am__append_10 = ../R/.libs/libzccallr.a
 @MPI_TRUE@@R_TRUE@am__append_11 = ../R/.libs/libzccallr.a
+@MPI_TRUE@@R_TRUE@am__append_12 = ../R/.libs/libzccallr.a
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -119,7 +120,7 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_analyzeDataProperty_OBJECTS = analyzeDataProperty.$(OBJEXT)
 analyzeDataProperty_OBJECTS = $(am_analyzeDataProperty_OBJECTS)
-analyzeDataProperty_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_4)
+analyzeDataProperty_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_5)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -131,28 +132,28 @@ am__analyzeDataProperty_online_SOURCES_DIST =  \
 analyzeDataProperty_online_OBJECTS =  \
 	$(am_analyzeDataProperty_online_OBJECTS)
 @MPI_TRUE@analyzeDataProperty_online_DEPENDENCIES =  \
-@MPI_TRUE@	../zc/.libs/libzc.a $(am__append_10)
+@MPI_TRUE@	../zc/.libs/libzc.a $(am__append_11)
 am_compareDataSets_OBJECTS = compareDataSets.$(OBJEXT)
 compareDataSets_OBJECTS = $(am_compareDataSets_OBJECTS)
-compareDataSets_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_5)
+compareDataSets_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_6)
 am__compareDataSets_online_SOURCES_DIST = compareDataSets_online.c
 @MPI_TRUE@am_compareDataSets_online_OBJECTS =  \
 @MPI_TRUE@	compareDataSets_online.$(OBJEXT)
 compareDataSets_online_OBJECTS = $(am_compareDataSets_online_OBJECTS)
 @MPI_TRUE@compareDataSets_online_DEPENDENCIES = ../zc/.libs/libzc.a \
-@MPI_TRUE@	$(am__append_11)
+@MPI_TRUE@	$(am__append_12)
 am_generateGNUPlot_OBJECTS = generateGNUPlot.$(OBJEXT)
 generateGNUPlot_OBJECTS = $(am_generateGNUPlot_OBJECTS)
-generateGNUPlot_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_6)
+generateGNUPlot_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_7)
 am_generateReport_OBJECTS = generateReport.$(OBJEXT)
 generateReport_OBJECTS = $(am_generateReport_OBJECTS)
-generateReport_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_7)
+generateReport_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_8)
 am_modifyZCConfig_OBJECTS = modifyZCConfig.$(OBJEXT)
 modifyZCConfig_OBJECTS = $(am_modifyZCConfig_OBJECTS)
-modifyZCConfig_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_8)
+modifyZCConfig_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_9)
 am_runOfflineCase_OBJECTS = runOfflineCase.$(OBJEXT)
 runOfflineCase_OBJECTS = $(am_runOfflineCase_OBJECTS)
-runOfflineCase_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_9)
+runOfflineCase_DEPENDENCIES = ../zc/.libs/libzc.a $(am__append_10)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -300,6 +301,9 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+ZSERVER_HDR = @ZSERVER_HDR@
+ZSERVER_LIB = @ZSERVER_LIB@
+ZSERVER_STATIC = @ZSERVER_STATIC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -354,31 +358,33 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
 @FFTW3_FALSE@AM_CFLAGS = -I../zc/include $(am__append_1) \
-@FFTW3_FALSE@	$(am__append_2)
+@FFTW3_FALSE@	$(am__append_2) $(am__append_3)
 @FFTW3_TRUE@AM_CFLAGS = -I../zc/include -lfftw3 -DHAVE_FFTW3 \
-@FFTW3_TRUE@	$(am__append_1) $(am__append_2)
+@FFTW3_TRUE@	$(am__append_1) $(am__append_2) $(am__append_3)
 analyzeDataProperty_SOURCES = analyzeDataProperty.c
-analyzeDataProperty_LDADD = ../zc/.libs/libzc.a -lm $(am__append_4)
+analyzeDataProperty_LDADD = ../zc/.libs/libzc.a -lm $(am__append_5)
 compareDataSets_SOURCES = compareDataSets.c
-compareDataSets_LDADD = ../zc/.libs/libzc.a -lm $(am__append_5)
+compareDataSets_LDADD = ../zc/.libs/libzc.a -lm $(am__append_6)
 generateGNUPlot_SOURCES = generateGNUPlot.c
-generateGNUPlot_LDADD = ../zc/.libs/libzc.a -lm $(am__append_6)
+generateGNUPlot_LDADD = ../zc/.libs/libzc.a -lm $(am__append_7)
 generateReport_SOURCES = generateReport.c
-generateReport_LDADD = ../zc/.libs/libzc.a -lm $(am__append_7)
+generateReport_LDADD = ../zc/.libs/libzc.a -lm $(am__append_8)
 #testRscript_float_SOURCES=testRscript_float.c
 #testRscript_float_LDADD=../zc/.libs/libzc.a -lm
 #testRscript_double_SOURCES=testRscript_double.c
 #testRscript_double_LDADD=../zc/.libs/libzc.a -lm
 modifyZCConfig_SOURCES = modifyZCConfig.c
-modifyZCConfig_LDADD = ../zc/.libs/libzc.a -lm $(am__append_8)
+modifyZCConfig_LDADD = ../zc/.libs/libzc.a -lm $(am__append_9)
 runOfflineCase_SOURCES = runOfflineCase.c
-runOfflineCase_LDADD = ../zc/.libs/libzc.a -lm $(am__append_9)
+runOfflineCase_LDADD = ../zc/.libs/libzc.a -lm $(am__append_10)
 @MPI_TRUE@analyzeDataProperty_online_SOURCES = analyzeDataProperty_online.c
 @MPI_TRUE@analyzeDataProperty_online_LDADD = ../zc/.libs/libzc.a -lm \
-@MPI_TRUE@	$(am__append_10)
+@MPI_TRUE@	$(am__append_11)
+#heatdis_SOURCES=heatdis.c
+#heatdis_LDADD=../zc/.libs/libzc.a -lm /home/sdi/Install/sz-1.4.13-install/lib/libsz.a
 @MPI_TRUE@compareDataSets_online_SOURCES = compareDataSets_online.c
 @MPI_TRUE@compareDataSets_online_LDADD = ../zc/.libs/libzc.a -lm \
-@MPI_TRUE@	$(am__append_11)
+@MPI_TRUE@	$(am__append_12)
 all: all-am
 
 .SUFFIXES:
@@ -623,6 +629,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
+@R_FALSE@all-local:
 all-am: Makefile $(PROGRAMS) all-local
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
@@ -747,8 +754,8 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-all-local:
-	./setRScript.sh
+@R_TRUE@all-local:
+@R_TRUE@	./setRScript.sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -98,9 +98,10 @@ host_triplet = @host@
 @FFTW3_TRUE@am__append_4 = include/3rdParty/autocorr.h include/ZC_FFTW3_math.h
 @R_TRUE@am__append_5 = -DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
 @R_TRUE@am__append_6 = include/ZC_R_math.h
-@R_TRUE@am__append_7 = ../R/.libs/libzccallr.a
-@FFTW3_TRUE@am__append_8 = src/ZC_FFTW3_math.c
-@R_TRUE@am__append_9 = src/ZC_R_math.c
+@ZSERVER_TRUE@am__append_7 = -DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
+@R_TRUE@am__append_8 = ../R/.libs/libzccallr.a
+@FFTW3_TRUE@am__append_9 = src/ZC_FFTW3_math.c
+@R_TRUE@am__append_10 = src/ZC_R_math.c
 subdir = zc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -330,6 +331,9 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+ZSERVER_HDR = @ZSERVER_HDR@
+ZSERVER_LIB = @ZSERVER_LIB@
+ZSERVER_STATIC = @ZSERVER_STATIC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -394,12 +398,14 @@ include_HEADERS = include/ZC_ByteToolkit.h include/ZC_conf.h \
 	include/ZC_DataSetHandler.h $(am__append_4) $(am__append_6)
 lib_LTLIBRARIES = libzc.la
 @MPI_FALSE@libzc_la_CFLAGS = -g -I./include $(am__append_1) \
-@MPI_FALSE@	$(am__append_2) $(am__append_3) $(am__append_5)
+@MPI_FALSE@	$(am__append_2) $(am__append_3) $(am__append_5) \
+@MPI_FALSE@	$(am__append_7)
 @MPI_TRUE@libzc_la_CFLAGS = -g -I./include -DHAVE_MPI $(am__append_1) \
-@MPI_TRUE@	$(am__append_2) $(am__append_3) $(am__append_5)
+@MPI_TRUE@	$(am__append_2) $(am__append_3) $(am__append_5) \
+@MPI_TRUE@	$(am__append_7)
 libzc_la_LDFLAGS = -version-info  0:1:0
 libzc_la_LIDADD = $(FFTW3_LIBS) $(FFTW3_LIB) $(NETCDF_LIBS) \
-	$(NETCDF_LIB) $(am__append_7)
+	$(NETCDF_LIB) $(ZSERVER_LIBS) $(ZSERVER_LIB) $(am__append_8)
 libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c \
 	src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c \
 	src/ZC_DataProperty_double.c src/ZC_DataProperty.c \
@@ -408,8 +414,8 @@ libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c \
 	src/DynamicFloatArray.c src/DynamicDoubleArray.c \
 	src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c \
 	src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c \
-	src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c $(am__append_8) \
-	$(am__append_9)
+	src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c $(am__append_9) \
+	$(am__append_10)
 all: all-am
 
 .SUFFIXES:
