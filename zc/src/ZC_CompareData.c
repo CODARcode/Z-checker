@@ -466,7 +466,8 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 		
 	}
 #ifdef HAVE_FFTW3	
-	if(autoCorrAbsErr3DFlag)
+	// if(autoCorrAbsErr3DFlag)
+	if(errAutoCorr3DFlag)
 	{
 		memset(tgtFilePath, 0, ZC_BUFS);
 		sprintf(tgtFilePath, "%s/%s:%s.ac3d", tgtWorkspaceDir, solution, varName);
