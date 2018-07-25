@@ -8,6 +8,7 @@
 .deps/
 *.dSYM/
 Makefile
+build*/
 
 analyzeDataProperty
 analyzeDataProperty_online
