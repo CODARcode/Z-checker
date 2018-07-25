@@ -38,12 +38,14 @@ if (MPI_FOUND)
 
   add_executable (compareDataSets_online compareDataSets_online.c)
   target_link_libraries (compareDataSets_online zc)
+
+  if (SZ_FOUND)
+    add_executable (heatdis heatdis.c)
+    target_link_libraries (heatdis zc ${SZ_LIBRARIES})
+  endif ()
 endif ()
 
-## needs sz
-# add_executable (heatdis heatdis.c)
-# target_link_libraries (heatdis zc)
-
-# add_executable (testdouble_CompDecomp testdouble_CompDecomp.c)
-# target_link_libraries (testdouble_CompDecomp zc)
-
+#if (SZ_FOUND)
+#  add_executable (testdouble_CompDecomp testdouble_CompDecomp.c)
+#  target_link_libraries (testdouble_CompDecomp zc)
+#endif ()

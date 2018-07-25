@@ -17,6 +17,11 @@ if (MPI_FOUND)
   add_definitions (-DHAVE_MPI)
 endif ()
 
+find_package (SZ)
+if (SZ_FOUND)
+  include_directories (${SZ_INCLUDES})
+endif ()
+
 find_package (FFTW)
 if (FFTW_FOUND)
   include_directories (${FFTW_INCLUDES})
