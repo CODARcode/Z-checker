@@ -28,6 +28,10 @@ target_link_libraries (testRscript_float zc)
 add_executable (testRscript_readBinFloat testRscript_readBinFloat.c)
 target_link_libraries (testRscript_readBinFloat zc)
 
+install (TARGETS analyzeDataProperty analyzeDataProperty_multivars compareDataSets
+  generateGNUPlot generateReport modifyZCConfig runOfflineCase
+         RUNTIME DESTINATION bin)
+
 if (MPI_FOUND)
   add_executable (analyzeDataProperty_online analyzeDataProperty_online.c)
   target_link_libraries (analyzeDataProperty_online zc)
