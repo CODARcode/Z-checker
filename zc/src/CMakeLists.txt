@@ -6,12 +6,16 @@ set (zc_sources
   ZC_ByteToolkit.c         ZC_DataProperty_double.c ZC_quicksort.c           zc.c
 )
 
+# TBA: ZC_R_math.c // R
+
 if (FFTW_FOUND)
   list (APPEND zc_sources ZC_FFTW3_math.c)
   list (APPEND zc_dependencies ${FFTW_LIBRARIES})
 endif ()
 
-# ZC_R_math.c // R
+if (Boost_FOUND)
+  list (APPEND zc_dependencies zserver)
+endif ()
 
 add_library (zc SHARED ${zc_sources})
 target_link_libraries (zc ${zc_dependencies})
