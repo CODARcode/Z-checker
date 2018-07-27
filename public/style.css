@@ -1,0 +1,13 @@
+body {
+  padding-top: 60px;
+}
+
+h3 {
+  padding-top: 60px;
+  margin-top: -60px;
+}
+
+.svg text {
+  fill: black;
+  text-anchor: end;
+}
