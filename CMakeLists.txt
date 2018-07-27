@@ -45,5 +45,5 @@ if (Boost_SYSTEM_FOUND)
   add_subdirectory (zserver)
 endif ()
 
-add_subdirectory (zc/src)
+add_subdirectory (zc)
 add_subdirectory (examples)
