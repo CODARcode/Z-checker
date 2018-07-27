@@ -102,6 +102,8 @@ void zserver_stop()
 
 void zserver_commit_file(const char *key, const char *filename)
 {
+  // fprintf(stderr, "new file committed: key=%s, filename=%s\n", key, filename);
+
   mutex.lock();
   map[key] = filename;
   mutex.unlock();

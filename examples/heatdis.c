@@ -14,7 +14,7 @@
 #include "zc.h"
 
 #define PRECISION   0.0001
-#define ITER_TIMES  1300
+#define ITER_TIMES  13000000
 #define ITER_OUT    500
 #define WORKTAG     50
 #define REDUCE      5
