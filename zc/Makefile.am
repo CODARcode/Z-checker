@@ -32,8 +32,12 @@ libzc_la_CFLAGS+=-DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
 include_HEADERS+=include/ZC_R_math.h
 endif
 
+if ZSERVER
+libzc_la_CFLAGS+=-DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
+endif
+
 libzc_la_LDFLAGS = -version-info  0:1:0
-libzc_la_LIDADD=$(FFTW3_LIBS) $(FFTW3_LIB) $(NETCDF_LIBS) $(NETCDF_LIB)
+libzc_la_LIDADD=$(FFTW3_LIBS) $(FFTW3_LIB) $(NETCDF_LIBS) $(NETCDF_LIB) $(ZSERVER_LIBS) $(ZSERVER_LIB)
 if R
 libzc_la_LIDADD+=../R/.libs/libzccallr.a
 endif
