@@ -41,7 +41,7 @@ if (MPI_FOUND)
 
   if (SZ_FOUND)
     add_executable (heatdis heatdis.c)
-    target_link_libraries (heatdis zc ${SZ_LIBRARIES})
+    target_link_libraries (heatdis zc ${SZ_LIBRARIES} ${ZLIB_LIBRARIES})
   endif ()
 endif ()
 

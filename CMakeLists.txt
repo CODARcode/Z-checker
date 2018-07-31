@@ -17,6 +17,9 @@ if (MPI_FOUND)
   add_definitions (-DHAVE_MPI)
 endif ()
 
+find_package (ZLIB REQUIRED)
+include_directories (${ZLIB_INCLUDE_DIRS})
+
 find_package (SZ)
 if (SZ_FOUND)
   include_directories (${SZ_INCLUDES})
