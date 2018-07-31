@@ -18,6 +18,6 @@ if (Boost_FOUND)
 endif ()
 
 add_library (zc SHARED ${zc_sources})
-target_link_libraries (zc ${zc_dependencies})
+target_link_libraries (zc ${zc_dependencies} m)
 
 install (TARGETS zc LIBRARY DESTINATION lib)
