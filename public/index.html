@@ -9,14 +9,46 @@
     <link rel="stylesheet" type="text/css" href="css/d3-tip.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     
-    <script src="js/jquery-3.1.1.min.js"></script>
-    <script src="js/d3.v4.min.js"></script>
-    <script src="js/d3-tip.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/highcharts.js"></script>
+    <script src="js/lib/jquery-3.1.1.min.js"></script>
+    <script src="js/lib/d3.v4.min.js"></script>
+    <script src="js/lib/d3-tip.min.js"></script>
+    <script src="js/lib/bootstrap.min.js"></script>
+    <script src="js/lib/highcharts.js"></script>
   </head>
 
   <body>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" id='connectDialog'>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id='connect-dialog-title'>Connect to Server</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id='close-dialog-cross'><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal">
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Host</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="hostAddr" placeholder="IP Address" value='localhost'>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Port</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="port" placeholder="Port" value='9001'>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id='close-dialog'>Close</button>
+            <button type="submit" class="btn btn-primary" id='connect'>Connect</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -117,9 +149,8 @@
 
       </div>
     </div>
-
-
-    <script src="master.js"></script>
-    <script src="charts.js"></script>
+  
+    <script src="js/client.js"></script>
+    <script src="js/gui.js"></script>
   </body>
 </html>
