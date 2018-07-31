@@ -35,7 +35,7 @@
               <div class="form-group">
                 <label class="col-sm-4 control-label">Port</label>
                 <div class="col-sm-8">
-                  <input type="text" class="form-control" id="port" placeholder="Port" value='9001'>
+                  <input type="text" class="form-control" id="port" placeholder="Port" value='9091'>
                 </div>
               </div>
             </form>
@@ -130,6 +130,12 @@
         </div>
 
         <div class="col-md-8" id="report">
+          <div class="slidecontainer">
+            <input type="range" min="0" max="100" value="0" class="slider" id="timestepSelector">
+            <p>timestep: <span id="timestepLabel">0</span>, maxTimestep: <span id="maxTimestepLabel">0</span></p>
+          </div>
+
+          <div id="dataProperties"></div>
           <!--
           <h3 id="FFT">FFT</h3>
           <div id="fftAmpChart"></div>
