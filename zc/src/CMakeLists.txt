@@ -13,6 +13,10 @@ if (FFTW_FOUND)
   list (APPEND zc_dependencies ${FFTW_LIBRARIES})
 endif ()
 
+if (R_FOUND)
+  list (APPEND zc_dependencies ${R_LIBRARIES})
+endif ()
+
 if (Boost_FOUND)
   list (APPEND zc_dependencies zserver)
 endif ()

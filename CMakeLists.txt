@@ -17,6 +17,12 @@ if (MPI_FOUND)
   add_definitions (-DHAVE_MPI)
 endif ()
 
+find_package (R)
+if (R_FOUND)
+  include_directories (${R_INCLUDE_DIR})
+  add_definitions (-DHAVE_R)
+endif ()
+
 find_package (SZ)
 if (SZ_FOUND)
   include_directories (${SZ_INCLUDES})
