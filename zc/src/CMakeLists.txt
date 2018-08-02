@@ -14,7 +14,7 @@ if (FFTW_FOUND)
 endif ()
 
 if (R_FOUND)
-  list (APPEND zc_dependencies ${R_LIBRARIES})
+  list (APPEND zc_dependencies ${R_LIBRARY_BASE} ${R_LIBRARY_BLAS} ${R_LIBRARY_LAPACK} ${R_LIBRARY_READLINE})
 endif ()
 
 if (Boost_FOUND)
@@ -22,6 +22,6 @@ if (Boost_FOUND)
 endif ()
 
 add_library (zc SHARED ${zc_sources})
-target_link_libraries (zc ${zc_dependencies})
+target_link_libraries (zc ${zc_dependencies} m)
 
 install (TARGETS zc LIBRARY DESTINATION lib)

@@ -23,6 +23,9 @@ if (R_FOUND)
   add_definitions (-DHAVE_R)
 endif ()
 
+find_package (ZLIB REQUIRED)
+include_directories (${ZLIB_INCLUDE_DIRS})
+
 find_package (SZ)
 if (SZ_FOUND)
   include_directories (${SZ_INCLUDES})

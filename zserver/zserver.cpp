@@ -32,8 +32,6 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
     lock.unlock();
 
     con->set_body(buffer.str()); 
-    con->set_status(websocketpp::http::status_code::ok);
-
     succ = true;
   } else if (query.find("/get?") == 0) {
     const std::string key = query.substr(query.find("?") + 1);
@@ -41,9 +39,7 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
     std::unique_lock<std::mutex> lock(mutex);
 
     if (map.find(key) != map.end()) { // found
-      mutex.lock();
       std::ifstream ifs(map[key]);
-      mutex.unlock();
      
       std::stringstream buffer;
       buffer << ifs.rdbuf();
@@ -53,11 +49,11 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
       con->set_status(websocketpp::http::status_code::ok);
       succ = true;
     }
-
-    lock.unlock();
   }
-  
-  if (!succ) {
+ 
+  if (succ) {
+    con->set_status(websocketpp::http::status_code::ok);
+  } else {
     std::string response = "<html><body>404 not found</body></html>";
     con->set_body(response);
     con->set_status(websocketpp::http::status_code::not_found);
@@ -119,7 +115,7 @@ void zserver_stop()
 
 void zserver_commit_file(const char *key, const char *filename)
 {
-  usleep(100000); // for testing only
+  usleep(500000); // for testing only
 
   // fprintf(stderr, "new file committed: key=%s, filename=%s\n", key, filename);
   std::unique_lock<std::mutex> lock(mutex);
