@@ -1376,7 +1376,7 @@ long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, siz
 ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i;
-	double min,max,valueRange,sum = 0,avg;
+	double sum = 0,avg;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);	
@@ -1397,15 +1397,11 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	if(dataType == ZC_FLOAT)
 	{
 		float* data = (float*)oriData;
-		min = data[0];
-		max = data[0];
 		ZC_genBasicProperties_float_online(data, numOfElem, property);	
 	}
 	else
 	{
 		double* data = (double*)oriData;
-		min = data[0];
-		max = data[0];
 		ZC_genBasicProperties_double_online(data, numOfElem, property);
 	}
 	

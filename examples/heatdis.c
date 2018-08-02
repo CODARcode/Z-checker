@@ -1,7 +1,7 @@
 /**
  *  @file   heatdis.c
  *  @author Sheng Di
- *  @date   Jan, 2018
+ *  @date   Aug, 2018
  *  @brief  Heat distribution code to test online Z-checker.
  */
 
@@ -14,7 +14,7 @@
 #include "zc.h"
 
 #define PRECISION   0.0001
-#define ITER_TIMES  13000000
+#define ITER_TIMES  13000
 #define ITER_OUT    500
 #define WORKTAG     50
 #define REDUCE      5
@@ -111,8 +111,9 @@ int main(int argc, char *argv[])
 		printf("Reading SZ cfg file (%s) and ZC cfg file (%s) ...\n", szCfgFile, zcCfgFile);
 
 	SZ_Init(szCfgFile); //initialization of sz
+
+	//printf("confparams_cpr->maxRangeRadius=%d\n", confparams_cpr->maxRangeRadius);
 	ZC_Init(zcCfgFile); //initialization of zc
-	
 	nbLines = (M / nbProcs)+3;
 	h = (double *) malloc(sizeof(double) * M * nbLines);
 	g = (double *) malloc(sizeof(double) * M * nbLines);
@@ -134,26 +135,27 @@ int main(int argc, char *argv[])
 	for (i = 0; i < ITER_TIMES; i++) {
 		localerror = doWork(nbProcs, rank, M, nbLines, g, h);
 		
-		if(i%50==0) //control the compression frequency over time steps
-		{
+		if(i%2==0) //control the compression frequency over time steps
+		{	
 			sprintf(propName, "%s_%04d", varName, i); //make a name for the current target data property (variable_name)
 			sprintf(cmprCaseName, "%s(1E-3)", compressorName); //name the compression case
-			ZC_DataProperty* dataProperty = ZC_startCmpr(propName, ZC_DOUBLE, g, 0, 0, 0, nbLines, M); //start compression
+
+			ZC_DataProperty* basicDataProperty = ZC_startCmpr(propName, ZC_DOUBLE, g, 0, 0, 0, nbLines, M); //start compression			
 			cmprBytes = SZ_compress(SZ_DOUBLE, g, &cmprSize, 0, 0, 0, nbLines, M);
-			//cmprBytes = SZ_compress_args(SZ_DOUBLE, g, &cmprSize, REL, 1E-3, 1E-3, 1E-3, 0, 0, 0, 0, nbLines, M);
-			ZC_CompareData* compareResult =ZC_endCmpr(dataProperty, cmprCaseName, cmprSize); //end compression
+			ZC_CompareData* compareResult =ZC_endCmpr(basicDataProperty, cmprCaseName, cmprSize); //end compression
 			
 			ZC_startDec(); //start decompression
 			decData = SZ_decompress(SZ_DOUBLE, cmprBytes, cmprSize, 0, 0, 0, nbLines, M);	
 			ZC_endDec(compareResult, decData); //end decompression			
 
+			freeDataProperty(basicDataProperty); //free the basic data property generated at current time step
+			//Bsic data property includes only basic properties such as min, max, value_range of the data, which are necessary for assessing compression quality.
+			//generate the full data property analysis results, which are optional to users. It includes more information such as entropy and autocorrelation.
+			ZC_DataProperty* fullDataProperty = ZC_genProperties(propName, ZC_DOUBLE, g, 0, 0, 0, nbLines, M);
 			if(rank==0)
-			{
-				//ZC_writeCompressionResult(compareResult, cmprCaseName, propName, "compressionResults");					
-				ZC_writeDataProperty(dataProperty, "dataProperties");
-			}
-			freeDataProperty(dataProperty); //free data property generated at current time step
-			freeCompareResult(compareResult); //free compression assessment results generated at current time step
+				ZC_writeDataProperty(fullDataProperty, "dataProperties");
+
+			freeDataProperty(fullDataProperty); //free data property generated at current time step
 			free(cmprBytes);
 			free(decData);
 		}
