@@ -64,7 +64,38 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 	
 	if(entropyFlag)
 	{
-		double absErr = 1E-3 * property->valueRange; /*TODO change fixed value to user input*/
+		double entVal = 0.0;
+		unsigned char index = 0;
+		size_t totalLen = numOfElem*sizeof(double);
+		size_t table_size = 256;
+		long *table = (long*)malloc(table_size*sizeof(long));
+		memset(table, 0, table_size*sizeof(long));
+		long *gtable = (long*)malloc(table_size*sizeof(long));
+		memset(gtable, 0, table_size*sizeof(long));
+				
+		unsigned char* bytes = (unsigned char*)data;	
+		for(i=0;i<totalLen;i++)
+		{
+			index = bytes[i];
+			table[index]++;
+		}
+		
+		MPI_Reduce(table, gtable, table_size, MPI_LONG, MPI_SUM, 0, ZC_COMM_WORLD);
+		
+		if(myRank==0)
+		{
+			for (i = 0; i<table_size; i++)
+				if (gtable[i] != 0)
+				{
+					double prob = (double)gtable[i]/globalDataLength;
+					entVal -= prob*log(prob)/log(2);
+				}
+		}
+
+		property->entropy = entVal;
+		free(table);
+		free(gtable);				
+		/*double absErr = 1E-3 * property->valueRange; //TODO change fixed value to user input
 		double entVal = 0.0;
 		size_t table_size;
 		table_size = (size_t)(property->valueRange/absErr)+1;	
@@ -79,7 +110,7 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 			index = (unsigned long)((data[i]-property->minValue)/absErr);
 			table[index]++;
 		}
- 
+   
 		MPI_Reduce(table, gtable, table_size, MPI_LONG, MPI_SUM, 0, ZC_COMM_WORLD);
  
 		if(myRank==0)
@@ -94,7 +125,7 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 
 		property->entropy = entVal;
 		free(table);
-		free(gtable);
+		free(gtable);*/
 	}
 	
 	if(autocorrFlag)
@@ -198,7 +229,30 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
     
 	if(entropyFlag)
 	{
-		double absErr = 1E-3 * valueRange; /*TODO change fixed value to user input*/
+		double entVal = 0.0;
+		unsigned char index = 0;
+		size_t totalLen = numOfElem*sizeof(double);
+		size_t table_size = 256;
+		long *table = (long*)malloc(table_size*sizeof(long));
+		memset(table, 0, table_size*sizeof(long));
+				
+		unsigned char* bytes = (unsigned char*)data;	
+		for(i=0;i<totalLen;i++)
+		{
+			index = bytes[i];
+			table[index]++;
+		}
+		
+		for (i = 0; i<table_size; i++)
+			if (table[i] != 0)
+			{
+				double prob = (double)table[i]/globalDataLength;
+				entVal -= prob*log(prob)/log(2);
+			}
+		
+		property->entropy = entVal;
+		free(table);		
+		/*double absErr = 1E-3 * valueRange; //TODO change fixed value to user input
 		double entVal = 0.0;
 		size_t table_size;
 		table_size = (size_t)(valueRange/absErr)+1;	
@@ -219,7 +273,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 			}
 
 		property->entropy = entVal;
-		free(table);
+		free(table);*/
 	}
 
 	if(autocorrFlag)
