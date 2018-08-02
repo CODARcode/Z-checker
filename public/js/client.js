@@ -16,10 +16,15 @@ var Client = (function() {
         };
       });
 
-      timestepList.sort();
+      timestepList.sort((a, b) => a - b);
 
       $("#timestepSelector").attr("max", timestepList.length);
       $("#maxTimestepLabel").html(timestepList[timestepList.length - 1]);
+    
+      // auto update
+      currentTimestep = timestepList[timestepList.length - 1];
+      Client.requestProp(currentTimestep);
+      Client.updateAutocorrPlot(currentTimestep);
     });
   };
 
@@ -34,16 +39,48 @@ var Client = (function() {
       // if (ws.readyState != 0 && ws.readyState != 1) {
       //     ws.onerror();
       // }
-    }, 3000);
+    }, 2000);
     
     // $('#loading').show();
   }
 
+  function timestepToStr(timestep) {return ('0000'+timestep).slice(-4);};
+
   Client.requestProp = function(timestep) {
-    $.get(uri + "/get?temp_" + ('0000'+timestep).slice(-4) + ".prop", function(text) {
+    $.get(uri + "/get?temp_" + timestepToStr(timestep) + ".prop", function(text) {
       $("#dataProperties").text(text);
     });
-  }
+  };
+
+  Client.updateAutocorrPlot = function(timestep) {
+    $.get(uri + "/get?sz(1E-3):temp_" + timestepToStr(timestep) + ".autocorr", function(text) {
+      var data = [];
+      var allLines = text.split(/\r\n|\n/);
+      allLines.shift();
+      allLines.forEach(function(l) {
+        var strs = l.split(" ");
+        if (strs.length == 2) {
+          data.push([+strs[0], +strs[1]]);
+        }
+      });
+
+      var json = {
+        title: {text: "autocorr"},
+        xAxis: { 
+        },
+        yAxis: {
+          title: { text: "amplitude" }
+        },
+        series: [{
+          name: "autocorr",
+          data: data
+        }],
+        credits: {enabled: false}
+      }
+
+      $("#autocorr").highcharts(json);
+    });
+  };
 
   $("#timestepSelector").change(function() {
     const i = $(this)[0].value;
@@ -51,6 +88,7 @@ var Client = (function() {
     $("#timestepLabel").html(currentTimestep);
 
     Client.requestProp(currentTimestep);
+    Client.updateAutocorrPlot(currentTimestep);
   });
 
   return Client;
