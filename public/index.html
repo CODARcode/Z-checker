@@ -9,7 +9,11 @@
     <link rel="stylesheet" type="text/css" href="css/d3-tip.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     
-    <script src="js/lib/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script
+
     <script src="js/lib/d3.v4.min.js"></script>
     <script src="js/lib/d3-tip.min.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
@@ -57,108 +61,12 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-md-2">
-          <div class="bs-sidebar affix">
-            <form role="form">
-              <div class="form-group">
 
-                <label for="dataset">Dataset</label>
-                <select class="form-control">
-                  <option value="cesm">CESM</option>
-                  <option value="cesm">HACC</option>
-                </select>
-
-                <label for="variable">Variable</label>
-                <select class="form-control">
-                  <option value="CLDHGH">CLDHGH</option>
-                  <option value="PHIS">PHIS</option>
-                </select>
-
-                <label>Compressors</label>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">SZ</label>
-                  <button type="button" class="btn btn-default">Settings...</button>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">ZFP</label>
-                  <button type="button" class="btn btn-default">Settings...</button>
-                </div>
-
-                <label>Analyses</label>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">Data Properties</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">Compressor Reports</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">FFT</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">Autocorrelation</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">Distribution</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" checked="checked" value="">Distortion</label>
-                </div>
-              </div>
-
-              <button type="button" class="btn btn-primary" id="run">Run Analysis</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="col-md-2">
-          <div class="bs-sidebar affix">
-            <ul class="nav bs-sidenav-fixed" id="menu">
-              <!--
-              <li><a href="#dp">Data Properties</a></li>
-              <li><a href="#sz">SZ Report</a></li>
-              <li><a href="#zfp">ZFP Report</a></li>
-              <li><a href="#comparison">Compressor Comparison</a></li>
-              <li><a href="#FFT">FFT</a></li>
-              <li><a href="#autocorr">Autocorrelation</a></li>
-              <li><a href="#distribution">Distribution</a></li>
-              <li><a href="#distortion">Distortion</a></li>
-              -->
-            </ul>
-          </div>
-        </div>
-
-        <div class="col-md-8" id="report">
-          <div class="slidecontainer">
-            <input type="range" min="0" max="100" value="0" class="slider" id="timestepSelector">
-            <p>timestep: <span id="timestepLabel">0</span>, maxTimestep: <span id="maxTimestepLabel">0</span></p>
-          </div>
-
-          <div id="dataProperties"></div>
-
-          <div id="autocorr"></div>
-
-          <!--
-          <h3 id="FFT">FFT</h3>
-          <div id="fftAmpChart"></div>
-
-          <h3 id="autocorr">Autocorrelation</h3>
-          <div id="autoCorrChart"></div>
-
-          <h3 id="distribution">Distribution</h3>
-          <div id="disChart"></div>
-
-          <hr>
-          <footer>
-            <p>&copy; Argonne National Labotatory</p>
-          </footer>
-          -->
-        </div>
-
-      </div>
+    <div id= "console" class="window card z-depth-3" >
+      <span class="windowTitle">Window 1</span>
+      <p>I am a draggable window</p>
     </div>
-  
+
     <script src="js/client.js"></script>
     <script src="js/gui.js"></script>
   </body>

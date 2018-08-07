@@ -29,19 +29,10 @@ var Client = (function() {
   };
 
   Client.connectToServer = function(ip, port) {
-    // console.log("connecting to server...");
     uri = 'http://' + ip + ':' + port;
 
-    Client.requestList();
-
-    setInterval(function () {
-      Client.requestList();
-      // if (ws.readyState != 0 && ws.readyState != 1) {
-      //     ws.onerror();
-      // }
-    }, 2000);
-    
-    // $('#loading').show();
+    // Client.requestList();
+    // setInterval(function() {Client.requestList();}, 2000);
   }
 
   function timestepToStr(timestep) {return ('0000'+timestep).slice(-4);};

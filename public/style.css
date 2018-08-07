@@ -11,3 +11,18 @@ h3 {
   fill: black;
   text-anchor: end;
 }
+
+
+#console{
+    width: 150px;
+    height: 150px;
+    padding: 10px;
+}
+
+span.windowTitle {
+  font-size: 50;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  font-weight: bold
+}

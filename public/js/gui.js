@@ -46,4 +46,7 @@
   $('#connectDialog').modal('show');
 })();
 
-
+$(document).ready(function() {
+  $("#console").draggable();
+  $("#console").resizable();
+});
