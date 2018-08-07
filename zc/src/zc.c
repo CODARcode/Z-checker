@@ -557,7 +557,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	ZC_writeStrings(count+1, cmprRateLines, cmpRateDataFile);
 	ZC_writeStrings(count+1, dcmprRateLines, dcmpRateDataFile);	
 	ZC_writeStrings(count+1, psnrLines, psnrDataFile);
-		
+
 	//generate GNUPLOT scripts, and plot the data by running the scripts
 	char** scriptLines = genGnuplotScript_histogram(cmpRatioKey, "txt", GNUPLOT_FONT, 1+cmpCount, "Variables", "Compression Ratio", (long)(maxCR*1.3)+1);
 	ZC_writeStrings(18, scriptLines, cmpRatioPlotFile);

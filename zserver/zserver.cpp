@@ -1,5 +1,6 @@
 #include "zserver.h"
 #include <mutex>
+#include <list>
 #include <fstream>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -12,6 +13,14 @@ static server wss;
 static std::thread *thread;
 static std::map<std::string, std::string> map;
 
+static std::map<std::string, std::list<double> > lists;
+
+static void list2json(std::stringstream &buf, const std::list<double>& list) {
+  buf << "[";
+  for (auto val : list) 
+    buf << val << ',';
+  buf << "]";
+}
 
 static void on_http(server *s, websocketpp::connection_hdl hdl) 
 {
@@ -46,7 +55,17 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
       ifs.close();
 
       con->set_body(buffer.str());
-      con->set_status(websocketpp::http::status_code::ok);
+      succ = true;
+    }
+  } else if (query.find("/data?") == 0) {
+    const std::string key = query.substr(query.find("?") + 1);
+    std::stringstream buffer;
+
+    std::unique_lock<std::mutex> lock(mutex);
+
+    if (lists.find(key) != lists.end()) {
+      list2json(buffer, lists[key]);
+      con->set_body(buffer.str());
       succ = true;
     }
   }
@@ -115,11 +134,19 @@ void zserver_stop()
 
 void zserver_commit_file(const char *key, const char *filename)
 {
-  usleep(500000); // for testing only
+  // usleep(500000); // for testing only
 
   // fprintf(stderr, "new file committed: key=%s, filename=%s\n", key, filename);
   std::unique_lock<std::mutex> lock(mutex);
   map[key] = filename;
+}
+
+void zserver_commit_val(const char* key, double val) {
+  const int limit = 500;
+  std::list<double>& list = lists[key];
+  list.push_back(val);
+  if (list.size() > limit)
+    list.pop_front();
 }
 
 } // extern "C"

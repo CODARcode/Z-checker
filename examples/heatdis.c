@@ -12,6 +12,7 @@
 #include <mpi.h>
 #include "sz.h"
 #include "zc.h"
+#include "zserver.h"
 
 #define PRECISION   0.0001
 #define ITER_TIMES  13000
@@ -137,6 +138,8 @@ int main(int argc, char *argv[])
 		
 		if(i%2==0) //control the compression frequency over time steps
 		{	
+      zserver_commit_val("timestep", i);
+
 			sprintf(propName, "%s_%04d", varName, i); //make a name for the current target data property (variable_name)
 			sprintf(cmprCaseName, "%s(1E-3)", compressorName); //name the compression case
 
