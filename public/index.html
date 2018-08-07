@@ -5,17 +5,13 @@
 
     <title>compressionVis</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/dc.min.css">
-    <link rel="stylesheet" type="text/css" href="css/d3-tip.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <script src="js/lib/d3.v4.min.js"></script>
-    <script src="js/lib/d3-tip.min.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
     <script src="js/lib/highcharts.js"></script>
   </head>
@@ -53,6 +49,7 @@
     </div><!-- /.modal -->
 
 
+    <!--
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -60,11 +57,10 @@
         </div>
       </div>
     </div>
+    -->
 
-
-    <div id= "console" class="ui-widget-content" >
-      <h4 class="ui-widget-header">PSNR</h4>
-      <div id="plot-psnr"></div>
+    <div class="ui-widget-content my-container">
+      <div id="plot-psnr" class="plot-container"></div>
     </div>
 
     <script src="js/client.js"></script>
