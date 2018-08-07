@@ -143,6 +143,8 @@ void zserver_commit_file(const char *key, const char *filename)
 
 void zserver_commit_val(const char* key, double val) {
   const int limit = 500;
+  std::unique_lock<std::mutex> lock(mutex);
+  
   std::list<double>& list = lists[key];
   list.push_back(val);
   if (list.size() > limit)
