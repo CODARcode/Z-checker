@@ -15,7 +15,7 @@
 #include "zserver.h"
 
 #define PRECISION   0.0001
-#define ITER_TIMES  13000
+#define ITER_TIMES  50000000
 #define ITER_OUT    500
 #define WORKTAG     50
 #define REDUCE      5
