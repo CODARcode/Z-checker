@@ -2,14 +2,26 @@ var Client = (function() {
   var Client = {};
   var uri = "";
 
-  var timesteps = [];
+  var plotNames = ["avgAbsErr", "avgPWRErr", "avgRelErr", "avgValue", "compressRate", 
+    "compressRatio", "compressSize", "compressTime", "decompressRate", "decompressTime", 
+    "entropy", "maxAbsErr", "maxPWRErr", "maxRelErr", "maxValue", "nrmse", "psnr", "rmse",
+    "snr"];
+
+  plotNames.forEach(function(d) {
+    $("body").append('<div class="my-container ui-widget-content"><div id="plot-' + d + '" class="plot-container"></div></div>');
+  });
+  $(".my-container").draggable({stack: ".products", zIndex: 1000});
+  $(".my-container").resizable();
 
   Client.requestList = function() {
     console.log("requesting list...");
 
     $.get(uri + "/realtime", function(text) {
       data = $.parseJSON(text);
-      Client.updatePlot("psnr", data);
+
+      plotNames.forEach(function(d) {
+        Client.updatePlot(d, data);
+      });
     });
   };
 
@@ -43,15 +55,6 @@ var Client = (function() {
 
     $("#plot-" + key).highcharts(json);
   };
-
-  $("#timestepSelector").change(function() {
-    const i = $(this)[0].value;
-    const currentTimestep = timestepList[i];
-    $("#timestepLabel").html(currentTimestep);
-
-    Client.requestProp(currentTimestep);
-    Client.updateAutocorrPlot(currentTimestep);
-  });
 
   return Client;
 })();

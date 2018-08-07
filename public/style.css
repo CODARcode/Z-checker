@@ -3,6 +3,12 @@
   text-anchor: end;
 }
 
+.my-container1 {
+    left: 0px;
+    top: 0px;
+    position:absolute;
+}
+
 .my-container {
     width: 400px;
     height: 300px;
