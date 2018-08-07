@@ -1,7 +1,8 @@
 var Client = (function() {
   var Client = {};
   var uri = "";
-  var timestepList = [];
+
+  var timesteps = [];
 
   Client.requestList = function() {
     console.log("requesting list...");

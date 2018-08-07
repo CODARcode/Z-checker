@@ -22,6 +22,17 @@ static void list2json(std::stringstream &buf, const std::list<double>& list) {
   buf << "]";
 }
 
+static void lists2json(std::stringstream &buf, std::map<std::string, std::list<double> > &lists)
+{
+  buf << "{";
+  for (auto kv : lists) {
+    buf << "\"" << kv.first << "\":";
+    list2json(buf, kv.second);
+    buf << ",\n";
+  }
+  buf << "}";
+}
+
 static void on_http(server *s, websocketpp::connection_hdl hdl) 
 {
   server::connection_ptr con = s->get_con_from_hdl(hdl);
@@ -57,17 +68,20 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
       con->set_body(buffer.str());
       succ = true;
     }
-  } else if (query.find("/data?") == 0) {
-    const std::string key = query.substr(query.find("?") + 1);
+  } else if (query.find("/realtime") == 0) {
+    // const std::string key = query.substr(query.find("?") + 1);
     std::stringstream buffer;
 
     std::unique_lock<std::mutex> lock(mutex);
+    lists2json(buffer, lists);
+    con->set_body(buffer.str());
+    succ = true;
 
-    if (lists.find(key) != lists.end()) {
-      list2json(buffer, lists[key]);
-      con->set_body(buffer.str());
-      succ = true;
-    }
+    // if (lists.find(key) != lists.end()) {
+    //   list2json(buffer, lists[key]);
+    //   con->set_body(buffer.str());
+    //   succ = true;
+    // }
   }
  
   if (succ) {
