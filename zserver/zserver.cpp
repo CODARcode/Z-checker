@@ -19,6 +19,7 @@ static void list2json(std::stringstream &buf, const std::list<double>& list) {
   buf << "[";
   for (auto val : list) 
     buf << val << ',';
+  buf.seekp(-1, std::ios_base::end);
   buf << "]";
 }
 
@@ -30,6 +31,7 @@ static void lists2json(std::stringstream &buf, std::map<std::string, std::list<d
     list2json(buf, kv.second);
     buf << ",\n";
   }
+  buf.seekp(-2, std::ios_base::end);
   buf << "}";
 }
 

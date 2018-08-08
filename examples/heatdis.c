@@ -137,7 +137,8 @@ int main(int argc, char *argv[])
 		localerror = doWork(nbProcs, rank, M, nbLines, g, h);
 		
 		if(i%2==0) //control the compression frequency over time steps
-		{	
+		{
+      usleep(100000);
       zserver_commit_val("timestep", i);
 
 			sprintf(propName, "%s_%04d", varName, i); //make a name for the current target data property (variable_name)
