@@ -3,8 +3,20 @@
   text-anchor: end;
 }
 
-#console{
-    width: 150px;
-    height: 150px;
-    padding: 10px;
+.my-container1 {
+    left: 0px;
+    top: 0px;
+    position:absolute;
+}
+
+.my-container {
+    width: 400px;
+    height: 300px;
+}
+
+.plot-container{
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    position:absolute;
 }

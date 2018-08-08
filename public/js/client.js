@@ -2,86 +2,59 @@ var Client = (function() {
   var Client = {};
   var uri = "";
 
-  var timesteps = [];
+  var plotNames = ["avgAbsErr", "avgPWRErr", "avgRelErr", "avgValue", "compressRate", 
+    "compressRatio", "compressSize", "compressTime", "decompressRate", "decompressTime", 
+    "entropy", "maxAbsErr", "maxPWRErr", "maxRelErr", "maxValue", "nrmse", "psnr", "rmse",
+    "snr"];
+
+  plotNames.forEach(function(d) {
+    $("body").append('<div class="my-container ui-widget-content"><div id="plot-' + d + '" class="plot-container"></div></div>');
+  });
+  $(".my-container").draggable({stack: ".products", zIndex: 1000});
+  $(".my-container").resizable();
 
   Client.requestList = function() {
     console.log("requesting list...");
 
-    $.get(uri + "/list", function(text) {
-      var namelist = text.split(/\r?\n/);
-      timestepList = [];
+    $.get(uri + "/realtime", function(text) {
+      data = $.parseJSON(text);
 
-      namelist.forEach(function(d) {
-        if (d.endsWith(".prop")) {
-          timestepList.push(parseInt(d.replace( /^\D+/g, '')));
-        };
+      plotNames.forEach(function(d) {
+        Client.updatePlot(d, data);
       });
-
-      timestepList.sort((a, b) => a - b);
-
-      $("#timestepSelector").attr("max", timestepList.length);
-      $("#maxTimestepLabel").html(timestepList[timestepList.length - 1]);
-    
-      // auto update
-      currentTimestep = timestepList[timestepList.length - 1];
-      Client.requestProp(currentTimestep);
-      Client.updateAutocorrPlot(currentTimestep);
     });
   };
 
   Client.connectToServer = function(ip, port) {
     uri = 'http://' + ip + ':' + port;
 
-    // Client.requestList();
-    // setInterval(function() {Client.requestList();}, 2000);
+    Client.requestList();
+    setInterval(function() {Client.requestList();}, 2000);
   }
 
-  function timestepToStr(timestep) {return ('0000'+timestep).slice(-4);};
+  Client.updatePlot = function(key, data) {
+    var mydata = [];
+    for (i=0; i<data["timestep"].length; i++) 
+      mydata.push([data["timestep"][i], data[key][i]]);
 
-  Client.requestProp = function(timestep) {
-    $.get(uri + "/get?temp_" + timestepToStr(timestep) + ".prop", function(text) {
-      $("#dataProperties").text(text);
-    });
+    var json = {
+      title: {text: key},
+      xAxis: {
+      },
+      yAxis: {
+        title: { text: key }
+      },
+      series: [{
+        name: key,
+        data: mydata,
+        animation: false,
+        showInLegend: false
+      }],
+      credits: {enabled: false}
+    }
+
+    $("#plot-" + key).highcharts(json);
   };
-
-  Client.updateAutocorrPlot = function(timestep) {
-    $.get(uri + "/get?sz(1E-3):temp_" + timestepToStr(timestep) + ".autocorr", function(text) {
-      var data = [];
-      var allLines = text.split(/\r\n|\n/);
-      allLines.shift();
-      allLines.forEach(function(l) {
-        var strs = l.split(" ");
-        if (strs.length == 2) {
-          data.push([+strs[0], +strs[1]]);
-        }
-      });
-
-      var json = {
-        title: {text: "autocorr"},
-        xAxis: { 
-        },
-        yAxis: {
-          title: { text: "amplitude" }
-        },
-        series: [{
-          name: "autocorr",
-          data: data
-        }],
-        credits: {enabled: false}
-      }
-
-      $("#autocorr").highcharts(json);
-    });
-  };
-
-  $("#timestepSelector").change(function() {
-    const i = $(this)[0].value;
-    const currentTimestep = timestepList[i];
-    $("#timestepLabel").html(currentTimestep);
-
-    Client.requestProp(currentTimestep);
-    Client.updateAutocorrPlot(currentTimestep);
-  });
 
   return Client;
 })();

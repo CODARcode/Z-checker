@@ -47,6 +47,6 @@
 })();
 
 $(document).ready(function() {
-  $("#console").draggable();
-  $("#console").resizable();
+  // $(".my-container").draggable();
+  // $(".my-container").resizable();
 });
