@@ -10,6 +10,7 @@ void zserver_stop();
 void zserver_commit_file(const char *key, const char *filename);
 
 void zserver_commit_val(const char *key, double val);
+void zserver_commit_vec(const char *key, int length, double *vals);
 
 #if __cplusplus
 }

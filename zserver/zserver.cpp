@@ -13,9 +13,10 @@ static server wss;
 static std::thread *thread;
 static std::map<std::string, std::string> map;
 
-static std::map<std::string, std::list<double> > lists;
+static std::map<std::string, std::list<double> > valueLists;
+static std::map<std::string, std::list<std::vector<double> > > vectorLists;
 
-static void list2json(std::stringstream &buf, const std::list<double>& list) {
+static void valueList2json(std::stringstream &buf, const std::list<double>& list) {
   buf << "[";
   for (auto val : list) 
     buf << val << ',';
@@ -23,12 +24,12 @@ static void list2json(std::stringstream &buf, const std::list<double>& list) {
   buf << "]";
 }
 
-static void lists2json(std::stringstream &buf, std::map<std::string, std::list<double> > &lists)
+static void valueLists2json(std::stringstream &buf, std::map<std::string, std::list<double> > &valueLists)
 {
   buf << "{";
-  for (auto kv : lists) {
+  for (auto kv : valueLists) {
     buf << "\"" << kv.first << "\":";
-    list2json(buf, kv.second);
+    valueList2json(buf, kv.second);
     buf << ",\n";
   }
   buf.seekp(-2, std::ios_base::end);
@@ -75,15 +76,9 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
     std::stringstream buffer;
 
     std::unique_lock<std::mutex> lock(mutex);
-    lists2json(buffer, lists);
+    valueLists2json(buffer, valueLists);
     con->set_body(buffer.str());
     succ = true;
-
-    // if (lists.find(key) != lists.end()) {
-    //   list2json(buffer, lists[key]);
-    //   con->set_body(buffer.str());
-    //   succ = true;
-    // }
   }
  
   if (succ) {
@@ -161,10 +156,17 @@ void zserver_commit_val(const char* key, double val) {
   const int limit = 500;
   std::unique_lock<std::mutex> lock(mutex);
   
-  std::list<double>& list = lists[key];
+  std::list<double>& list = valueLists[key];
   list.push_back(val);
   if (list.size() > limit)
     list.pop_front();
+}
+
+void zserver_commit_vec(const char* key, int length, double *val) {
+  const int limit = 500;
+  std::unique_lock<std::mutex> lock(mutex);
+
+
 }
 
 } // extern "C"
