@@ -84,10 +84,11 @@ ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_
 		
 		if(myRank==0)
 		{
+			size_t sum = globalDataLength * sizeof(float);
 			for (i = 0; i<table_size; i++)
 				if (gtable[i] != 0)
 				{
-					double prob = (double)gtable[i]/globalDataLength;
+					double prob = (double)gtable[i]/sum;
 					entVal -= prob*log(prob)/log(2);
 				}
 		}
@@ -243,10 +244,11 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 			table[index]++;
 		}
 		
+		size_t sum = globalDataLength*sizeof(float);
 		for (i = 0; i<table_size; i++)
 			if (table[i] != 0)
 			{
-				double prob = (double)table[i]/globalDataLength;
+				double prob = (double)table[i]/sum;
 				entVal -= prob*log(prob)/log(2);
 			}
 

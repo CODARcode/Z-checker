@@ -80,18 +80,23 @@ ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, siz
 			table[index]++;
 		}
 		
+		//printf("rank=%d: table[0]=%d, totalLen=%d\n", myRank, table[0], totalLen);
 		MPI_Reduce(table, gtable, table_size, MPI_LONG, MPI_SUM, 0, ZC_COMM_WORLD);
+		
 		
 		if(myRank==0)
 		{
+			size_t sum = globalDataLength * sizeof(double);
 			for (i = 0; i<table_size; i++)
 				if (gtable[i] != 0)
 				{
-					double prob = (double)gtable[i]/globalDataLength;
+					double prob = (double)gtable[i]/sum;
+					//printf("prob=%f, gtable[%d]=%d\n", prob, i, gtable[i]);
 					entVal -= prob*log(prob)/log(2);
 				}
+			//printf("entVal=%f, globalDataLength=%d, numOfElem=%d\n", entVal, globalDataLength, numOfElem);
 		}
-
+		
 		property->entropy = entVal;
 		free(table);
 		free(gtable);				
@@ -243,10 +248,11 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 			table[index]++;
 		}
 		
+		size_t sum = globalDataLength*sizeof(double);
 		for (i = 0; i<table_size; i++)
 			if (table[i] != 0)
 			{
-				double prob = (double)table[i]/globalDataLength;
+				double prob = (double)table[i]/sum;
 				entVal -= prob*log(prob)/log(2);
 			}
 		
