@@ -166,7 +166,13 @@ void zserver_commit_vec(const char* key, int length, double *val) {
   const int limit = 500;
   std::unique_lock<std::mutex> lock(mutex);
 
+  std::list<std::vector<double> > vectorList = vectorLists[key];
+  std::vector<double> vector;
+  vector.assign(val, val + length);
+  vectorList.push_back(vector);
 
+  if (vectorList.size() > limit)
+    vectorList.pop_front();
 }
 
 } // extern "C"
