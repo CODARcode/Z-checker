@@ -84,12 +84,12 @@ var Client = (function() {
       msgBuffer.push(msg);
       if (msgBuffer.length > msgLimit) 
         msgBuffer.shift();
-      if (counter ++ % 10 == 0)
-        Client.updateData(); // control frequency
+      // if (counter ++ % 10 == 0)
+      //   Client.updateData(); // control frequency
     }; 
 
     // Client.requestList();
-    // setInterval(function() {Client.requestList();}, 2000);
+    setInterval(function() {Client.updateData();}, 1000);
   }
 
   return Client;
