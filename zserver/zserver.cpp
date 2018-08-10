@@ -4,6 +4,9 @@
 #include <fstream>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+#include <json.hh>
+#include "zc.h"
+#include "ZC_DataProperty.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
@@ -15,6 +18,8 @@ static std::map<std::string, std::string> map;
 
 static std::map<std::string, std::list<double> > valueLists;
 static std::map<std::string, std::list<std::vector<double> > > vectorLists;
+
+std::list<std::string> listResults;
 
 static void valueList2json(std::stringstream &buf, const std::list<double>& list) {
   buf << "[";
@@ -77,6 +82,18 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
 
     std::unique_lock<std::mutex> lock(mutex);
     valueLists2json(buffer, valueLists);
+    con->set_body(buffer.str());
+    succ = true;
+  } else if (query.find("/all") == 0) {
+    std::unique_lock<std::mutex> lock(mutex);
+    
+    std::stringstream buffer;
+    buffer << "[";
+    for (auto str : listResults)
+      buffer << str << ",";
+    buffer.seekp(-1, std::ios_base::end);
+    buffer << "]";
+
     con->set_body(buffer.str());
     succ = true;
   }
@@ -173,6 +190,75 @@ void zserver_commit_vec(const char* key, int length, double *val) {
 
   if (vectorList.size() > limit)
     vectorList.pop_front();
+}
+
+void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareData *c)
+{
+  const int limit = 500;
+  nlohmann::json j;
+  std::unique_lock<std::mutex> lock(mutex);
+
+  // data properties
+  j["timestep"] = timestep;
+  j["varName"] = d->varName;
+  j["minValue"] = d->minValue;
+  j["maxValue"] = d->maxValue;
+  j["avgValue"] = d->avgValue;
+  j["entropy"] = d->entropy;
+
+  if (d->fftCoeff != NULL) {
+    std::vector<double> fft(FFT_SIZE*2);
+    for (int i=0; i<FFT_SIZE; i++) {
+      fft[i*2] = d->fftCoeff->Re; 
+      fft[i*2+1] = d->fftCoeff->Im;
+    }
+    j["fft"] = fft;
+  }
+
+  std::vector<double> autocorr;
+  autocorr.assign(d->autocorr, d->autocorr + AUTOCORR_SIZE);
+  j["autocorr"] = autocorr;
+  
+  // compare data
+  j["compressTime"] = c->compressTime;
+  j["compressRate"] = c->compressRate;
+  j["compressSize"] = c->compressSize;
+  j["compressRatio"] = c->compressRatio;
+  j["rate"] = c->rate;
+  j["decompressTime"] = c->decompressTime;
+  j["decompressRate"] = c->decompressRate;
+  j["minAbsErr"] = c->minAbsErr;
+  j["avgAbsErr"] = c->avgAbsErr;
+  j["maxAbsErr"] = c->maxAbsErr;
+  // autoCorrAbsErr;
+  // autoCorrAbsErr3D;
+  // absErrPDF;
+  // pwrErrPDF;
+  j["err_interval"] = c->err_interval;
+  j["err_interval_rel"] = c->err_interval_rel;
+  j["err_minValue"] = c->err_minValue;
+  j["err_minValue_rel"] = c->err_minValue_rel;
+  j["minRelErr"] = c->minRelErr;
+  j["avgRelErr"] = c->avgRelErr;
+  j["maxRelErr"] = c->maxRelErr;
+  j["minPWRErr"] = c->minPWRErr;
+  j["avgPWRErr"] = c->avgPWRErr;
+  j["maxPWRErr"] = c->maxPWRErr;
+  j["snr"] = c->snr;
+  j["rmse"] = c->rmse;
+  j["nrmse"] = c->nrmse;
+  j["psnr"] = c->psnr;
+  j["valErrCorr"] = c->valErrCorr;
+  j["pearsonCorr"] = c->pearsonCorr;
+  j["ksValue"] = c->ksValue;
+  j["lum"] = c->lum;
+  j["cont"] = c->cont;
+  j["struc"] = c->struc;
+  j["ssim"] = c->ssim;
+
+  listResults.push_back(j.dump());
+  if (listResults.size() > limit) 
+    listResults.pop_front();
 }
 
 } // extern "C"

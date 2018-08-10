@@ -139,7 +139,6 @@ int main(int argc, char *argv[])
 		if(i%2==0) //control the compression frequency over time steps
 		{
       usleep(100000);
-      zserver_commit_val("timestep", i);
 
 			sprintf(propName, "%s_%04d", varName, i); //make a name for the current target data property (variable_name)
 			sprintf(cmprCaseName, "%s(1E-3)", compressorName); //name the compression case
@@ -156,8 +155,10 @@ int main(int argc, char *argv[])
 			//Bsic data property includes only basic properties such as min, max, value_range of the data, which are necessary for assessing compression quality.
 			//generate the full data property analysis results, which are optional to users. It includes more information such as entropy and autocorrelation.
 			ZC_DataProperty* fullDataProperty = ZC_genProperties(propName, ZC_DOUBLE, g, 0, 0, 0, nbLines, M);
-			if(rank==0)
+			if(rank==0) {
+        zserver_commit(i, fullDataProperty, compareResult);
 				ZC_writeDataProperty(fullDataProperty, "dataProperties");
+      }
 
 			freeDataProperty(fullDataProperty); //free data property generated at current time step
 			free(cmprBytes);

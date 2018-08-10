@@ -532,11 +532,15 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 
 void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 {
-#if HAVE_ONLINEVIS
+#if 0
   zserver_commit_val("minValue", property->minValue);
   zserver_commit_val("maxValue", property->maxValue);
   zserver_commit_val("avgValue", property->avgValue);
   zserver_commit_val("entropy", property->entropy);
+  return;
+#endif
+  
+#if HAVE_ONLINEVIS
   return;
 #endif
 

@@ -361,7 +361,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 
 void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir)
 {
-#if HAVE_ONLINEVIS
+#if 0
   zserver_commit_val("compressTime", compareResult->compressTime);
   zserver_commit_val("compressRate", compareResult->compressRate);
   zserver_commit_val("compressRatio", compareResult->compressRatio);
@@ -382,6 +382,10 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
   zserver_commit_val("psnr", compareResult->psnr);
   zserver_commit_val("snr", compareResult->snr);
 
+  return;
+#endif
+
+#if HAVE_ONLINEVIS
   return;
 #endif
 
