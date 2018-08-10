@@ -1,6 +1,7 @@
 #include "zserver.h"
 #include <mutex>
 #include <list>
+#include <set>
 #include <fstream>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -13,13 +14,36 @@ typedef server::message_ptr message_ptr;
 
 static std::mutex mutex;
 static server wss;
-static std::thread *thread;
+static std::thread *thread, *thread1;
 static std::map<std::string, std::string> map;
 
 static std::map<std::string, std::list<double> > valueLists;
 static std::map<std::string, std::list<std::vector<double> > > vectorLists;
 
 std::list<std::string> listResults;
+
+
+// actions
+enum {ACTION_SUBSCRIBE=0, ACTION_UNSUBSCRIBE, ACTION_BROADCAST, ACTION_MESSAGE, ACTION_EXIT};
+
+struct Action {
+  Action(int t) : type(t) {}
+  Action(int t, const std::string& str_bcast) : type(t), str(str_bcast) {}
+  Action(int t, websocketpp::connection_hdl h) : type(t), hdl(h) {}
+  Action(int t, websocketpp::connection_hdl h, server::message_ptr m) : type(t), hdl(h), msg(m) {}
+
+  int type;
+  std::string str;
+  websocketpp::connection_hdl hdl;
+  server::message_ptr msg;
+};
+
+std::mutex mutex_actions;
+std::condition_variable cond_actions;
+std::queue<Action> actions;
+
+std::mutex mutex_connections;
+std::set<websocketpp::connection_hdl, std::owner_less<websocketpp::connection_hdl> > connections;
 
 static void valueList2json(std::stringstream &buf, const std::list<double>& list) {
   buf << "[";
@@ -39,6 +63,30 @@ static void valueLists2json(std::stringstream &buf, std::map<std::string, std::l
   }
   buf.seekp(-2, std::ios_base::end);
   buf << "}";
+}
+
+void on_open(server* s, websocketpp::connection_hdl hdl) {
+  {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    actions.push(Action(ACTION_SUBSCRIBE, hdl));
+  }
+  cond_actions.notify_one();
+}
+
+void on_close(server* s, websocketpp::connection_hdl hdl) {
+  {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    actions.push(Action(ACTION_UNSUBSCRIBE, hdl));
+  }
+  cond_actions.notify_one();
+}
+
+void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
+  {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    actions.push(Action(ACTION_MESSAGE, hdl, msg));
+  }
+  cond_actions.notify_one();
 }
 
 static void on_http(server *s, websocketpp::connection_hdl hdl) 
@@ -107,6 +155,35 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
   }
 }
 
+static void start_process_message()
+{
+  while (1) {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    while (actions.empty()) 
+      cond_actions.wait(lock);
+
+    Action a = actions.front();
+    actions.pop();
+    lock.unlock();
+
+    if (a.type == ACTION_SUBSCRIBE) {
+      std::unique_lock<std::mutex> lock(mutex_connections);
+      connections.insert(a.hdl);
+    } else if (a.type == ACTION_UNSUBSCRIBE) {
+      std::unique_lock<std::mutex> lock(mutex_connections);
+      connections.erase(a.hdl);
+    } else if (a.type == ACTION_MESSAGE) {
+      // fprintf(stderr, "MESSAGE!\n");
+    } else if (a.type == ACTION_BROADCAST) {
+      for (auto conn : connections) {
+        wss.send(conn, a.str, websocketpp::frame::opcode::text);
+      }
+    } else if (a.type == ACTION_EXIT) {
+      break;
+    }
+  }
+}
+
 static void start_server_thread(int port)
 {
   using websocketpp::lib::placeholders::_1;
@@ -116,15 +193,18 @@ static void start_server_thread(int port)
   try {
     // Set logging settings
     wss.set_access_channels(websocketpp::log::alevel::all);
-    wss.clear_access_channels(websocketpp::log::alevel::frame_payload);
+    // wss.clear_access_channels(websocketpp::log::alevel::frame_payload);
+    wss.clear_access_channels(websocketpp::log::alevel::all);
     wss.set_open_handshake_timeout(0); // disable timer
 
     // Initialize Asio
     wss.init_asio();
 
     // Register our message handler
-    // wss.set_message_handler(bind(&onMessage, &wss, _1, _2));
-    wss.set_http_handler(bind(&on_http, &wss, _1));
+    // wss.set_http_handler(bind(&on_http, &wss, _1));
+    wss.set_open_handler(bind(&on_open, &wss, _1));
+    wss.set_close_handler(bind(&on_close, &wss, _1));
+    wss.set_message_handler(bind(&on_message, &wss, _1, _2));
 
     // Listen on port 9002
     wss.listen(port);
@@ -150,10 +230,20 @@ extern "C" {
 void zserver_start(int port) 
 {
   thread = new std::thread(start_server_thread, port);
+  thread1 = new std::thread(start_process_message);
 }
 
 void zserver_stop()
 {
+  {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    actions.push(Action(ACTION_EXIT));
+  }
+  cond_actions.notify_one();
+
+  thread1->join();
+  delete thread1;
+
   wss.stop();
   thread->join();
   delete thread;
@@ -256,9 +346,17 @@ void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareDa
   j["struc"] = c->struc;
   j["ssim"] = c->ssim;
 
+#if 0
   listResults.push_back(j.dump());
   if (listResults.size() > limit) 
     listResults.pop_front();
+#endif
+  
+  {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    actions.push(Action(ACTION_BROADCAST, j.dump()));
+  }
+  cond_actions.notify_one();
 }
 
 } // extern "C"

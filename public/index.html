@@ -11,6 +11,11 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css" />
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.js'></script>
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
+
     <script src="js/lib/d3.v4.min.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
     <script src="js/lib/highcharts.js"></script>
@@ -21,7 +26,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title" id='connect-dialog-title'>Connect to Server</h4>
+            <h4 class="modal-title" id='connect-dialog-title'>Connect to Simulation</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id='close-dialog-cross'><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
@@ -59,7 +64,21 @@
     </div>
     -->
 
-    <script src="js/client.js"></script>
+    <div class="grid-stack">
+    </div>
+
+    <script type="text/javascript">
+    $(function () {
+        var options = {
+            cellHeight: 80,
+            verticalMargin: 10
+        };
+        $('.grid-stack').gridstack(options);
+    });
+    </script>
+
+    <!-- <script src="js/client.js"></script> -->
+    <script src="js/client1.js"></script>
     <script src="js/gui.js"></script>
   </body>
 </html>
