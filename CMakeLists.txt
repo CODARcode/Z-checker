@@ -42,6 +42,12 @@ if (NETCDF_FOUND)
   include_directories (${NETCDF_INCLUDE_DIRS})
 endif ()
 
+find_package (LevelDB)
+if (LevelDB_FOUND)
+  include_directories (${LevelDB_INCLUDE_DIR})
+  add_definitions (-DHAVE_LEVELDB)
+endif ()
+
 find_package (Threads REQUIRED)
 find_package (Boost COMPONENTS system)
 

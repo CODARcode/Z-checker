@@ -17,9 +17,6 @@ static server wss;
 static std::thread *thread, *thread1;
 static std::map<std::string, std::string> map;
 
-static std::map<std::string, std::list<double> > valueLists;
-static std::map<std::string, std::list<std::vector<double> > > vectorLists;
-
 std::list<std::string> listResults;
 
 
@@ -99,40 +96,7 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
 
   bool succ = false;
 
-  if (query.find("/list") == 0) {
-    std::stringstream buffer;
-    
-    std::unique_lock<std::mutex> lock(mutex);
-    for (auto &kv : map) 
-      buffer << kv.first << std::endl;
-    lock.unlock();
-
-    con->set_body(buffer.str()); 
-    succ = true;
-  } else if (query.find("/get?") == 0) {
-    const std::string key = query.substr(query.find("?") + 1);
-    
-    std::unique_lock<std::mutex> lock(mutex);
-
-    if (map.find(key) != map.end()) { // found
-      std::ifstream ifs(map[key]);
-     
-      std::stringstream buffer;
-      buffer << ifs.rdbuf();
-      ifs.close();
-
-      con->set_body(buffer.str());
-      succ = true;
-    }
-  } else if (query.find("/realtime") == 0) {
-    // const std::string key = query.substr(query.find("?") + 1);
-    std::stringstream buffer;
-
-    std::unique_lock<std::mutex> lock(mutex);
-    valueLists2json(buffer, valueLists);
-    con->set_body(buffer.str());
-    succ = true;
-  } else if (query.find("/all") == 0) {
+  if (query.find("/all") == 0) {
     std::unique_lock<std::mutex> lock(mutex);
     
     std::stringstream buffer;
@@ -250,38 +214,6 @@ void zserver_stop()
   // TODO
 }
 
-void zserver_commit_file(const char *key, const char *filename)
-{
-  // usleep(500000); // for testing only
-
-  // fprintf(stderr, "new file committed: key=%s, filename=%s\n", key, filename);
-  std::unique_lock<std::mutex> lock(mutex);
-  map[key] = filename;
-}
-
-void zserver_commit_val(const char* key, double val) {
-  const int limit = 500;
-  std::unique_lock<std::mutex> lock(mutex);
-  
-  std::list<double>& list = valueLists[key];
-  list.push_back(val);
-  if (list.size() > limit)
-    list.pop_front();
-}
-
-void zserver_commit_vec(const char* key, int length, double *val) {
-  const int limit = 500;
-  std::unique_lock<std::mutex> lock(mutex);
-
-  std::list<std::vector<double> > vectorList = vectorLists[key];
-  std::vector<double> vector;
-  vector.assign(val, val + length);
-  vectorList.push_back(vector);
-
-  if (vectorList.size() > limit)
-    vectorList.pop_front();
-}
-
 void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareData *c)
 {
   const int limit = 500;
@@ -345,12 +277,6 @@ void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareDa
   j["cont"] = c->cont;
   j["struc"] = c->struc;
   j["ssim"] = c->ssim;
-
-#if 0
-  listResults.push_back(j.dump());
-  if (listResults.size() > limit) 
-    listResults.pop_front();
-#endif
   
   {
     std::unique_lock<std::mutex> lock(mutex_actions);
