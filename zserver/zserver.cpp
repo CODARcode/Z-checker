@@ -9,6 +9,12 @@
 #include "zc.h"
 #include "ZC_DataProperty.h"
 
+#ifdef HAVE_LEVELDB
+#include <leveldb/db.h>
+
+static leveldb::DB* db = NULL;
+#endif
+
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
@@ -193,12 +199,24 @@ extern "C" {
 
 void zserver_start(int port) 
 {
+#if HAVE_LEVELDB
+  const std::string dbname = "/tmp/zchecker";
+  leveldb::Options options;
+  options.create_if_missing = true;
+
+  leveldb::Status status = leveldb::DB::Open(options, dbname.c_str(), &db);
+#endif
+
   thread = new std::thread(start_server_thread, port);
   thread1 = new std::thread(start_process_message);
 }
 
 void zserver_stop()
 {
+#if HAVE_LEVELDB
+  delete db;
+#endif
+
   {
     std::unique_lock<std::mutex> lock(mutex_actions);
     actions.push(Action(ACTION_EXIT));
