@@ -7,7 +7,9 @@
 #include "ZC_CompareData.h"
 #include "zc.h"
 #include "iniparser.h"
+#ifdef HAVE_ONLINEVIS
 #include "zserver.h"
+#endif
 
 void freeCompareResult_internal(ZC_CompareData* compareData)
 {
