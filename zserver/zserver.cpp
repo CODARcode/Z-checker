@@ -9,9 +9,19 @@
 #include "zc.h"
 #include "ZC_DataProperty.h"
 
-#ifdef HAVE_LEVELDB
-#include <leveldb/db.h>
+#ifdef max
+#undef max
+#endif
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef HAVE_ROCKSDB
+#include <rocksdb/db.h>
+static rocksdb::DB* db = NULL;
+#elif defined HAVE_LEVELDB
+#include <leveldb/db.h>
 static leveldb::DB* db = NULL;
 #endif
 
@@ -193,19 +203,26 @@ static void start_server_thread(int port)
   }
 }
 
+static void open_db(const std::string& dbname)
+{
+#if HAVE_ROCKSDB
+  rocksdb::Options options;
+  options.create_if_missing = true;
+  rocksdb::Status status = rocksdb::DB::Open(options, dbname.c_str(), &db);
+#elif HAVE_LEVELDB
+  leveldb::Options options;
+  options.create_if_missing = true;
+  leveldb::Status status = leveldb::DB::Open(options, dbname.c_str(), &db);
+#endif
+}
 
 ///////////////////////////////////
 extern "C" {
 
 void zserver_start(int port) 
 {
-#if HAVE_LEVELDB
   const std::string dbname = "/tmp/zchecker";
-  leveldb::Options options;
-  options.create_if_missing = true;
-
-  leveldb::Status status = leveldb::DB::Open(options, dbname.c_str(), &db);
-#endif
+  open_db(dbname);
 
   thread = new std::thread(start_server_thread, port);
   thread1 = new std::thread(start_process_message);

@@ -1,7 +1,7 @@
 # Find libleveldb.a - key/value storage system
 
 find_path(LevelDB_INCLUDE_DIR NAMES leveldb/db.h)
-find_library(LevelDB_LIBRARY NAMES libleveldb.a libleveldb.lib)
+find_library(LevelDB_LIBRARY NAMES leveldb)
 
 if(LevelDB_INCLUDE_DIR AND LevelDB_LIBRARY)
   set(LevelDB_FOUND TRUE)
