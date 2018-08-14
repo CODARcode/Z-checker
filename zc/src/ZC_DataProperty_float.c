@@ -244,7 +244,7 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 			table[index]++;
 		}
 		
-		size_t sum = globalDataLength*sizeof(float);
+		size_t sum = numOfElem*sizeof(float);
 		for (i = 0; i<table_size; i++)
 			if (table[i] != 0)
 			{
