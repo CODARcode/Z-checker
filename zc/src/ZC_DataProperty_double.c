@@ -248,7 +248,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 			table[index]++;
 		}
 		
-		size_t sum = globalDataLength*sizeof(double);
+		size_t sum = numOfElem*sizeof(double);
 		for (i = 0; i<table_size; i++)
 			if (table[i] != 0)
 			{

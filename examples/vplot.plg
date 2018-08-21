@@ -1,0 +1,11 @@
+#!/usr/bin/gnuplot
+
+set term png size 900, 900 enhanced font "Arial,10"
+set pm3d map
+set cbrange [0:probSize]
+set output filename.".png"
+set size square
+set xrange [0:probSize]
+set yrange [probSize:0]
+set palette rgbformulae 33,13,10
+splot filename

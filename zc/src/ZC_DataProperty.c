@@ -5,7 +5,9 @@
 #include "ZC_DataProperty.h"
 #include "zc.h"
 #include "iniparser.h"
+#ifdef HAVE_ONLINEVIS
 #include "zserver.h"
+#endif
 
 /* For entropy calculation */
 void hash_init(HashEntry *table, size_t table_size)
