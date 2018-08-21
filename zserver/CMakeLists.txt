@@ -9,7 +9,7 @@ elseif (LevelDB_FOUND)
   list (APPEND zserver_dependencies ${LevelDB_LIBRARY})
 endif ()
 
-add_library (zserver SHARED zserver.cpp)
+add_library (zserver zserver.cpp)
 target_link_libraries (zserver ${zserver_dependencies})
 
 # install (FILES zserver.h DESTINATION include)

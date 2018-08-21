@@ -363,30 +363,6 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 
 void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir)
 {
-#if 0
-  zserver_commit_val("compressTime", compareResult->compressTime);
-  zserver_commit_val("compressRate", compareResult->compressRate);
-  zserver_commit_val("compressRatio", compareResult->compressRatio);
-  zserver_commit_val("compressSize", compareResult->compressSize);
-  zserver_commit_val("decompressTime", compareResult->decompressTime);
-  zserver_commit_val("decompressRate", compareResult->decompressRate);
-  zserver_commit_val("minAbsErr", compareResult->minAbsErr);
-  zserver_commit_val("avgAbsErr", compareResult->avgAbsErr);
-  zserver_commit_val("maxAbsErr", compareResult->maxAbsErr);
-  zserver_commit_val("minRelErr", compareResult->minRelErr);
-  zserver_commit_val("avgRelErr", compareResult->avgRelErr);
-  zserver_commit_val("maxRelErr", compareResult->maxRelErr);
-  zserver_commit_val("minPWRErr", compareResult->minPWRErr);
-  zserver_commit_val("avgPWRErr", compareResult->avgPWRErr);
-  zserver_commit_val("maxPWRErr", compareResult->maxPWRErr);
-  zserver_commit_val("rmse", compareResult->rmse);
-  zserver_commit_val("nrmse", compareResult->nrmse);
-  zserver_commit_val("psnr", compareResult->psnr);
-  zserver_commit_val("snr", compareResult->snr);
-
-  return;
-#endif
-
 #if HAVE_ONLINEVIS
   return;
 #endif

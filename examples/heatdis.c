@@ -12,10 +12,11 @@
 #include <mpi.h>
 #include "sz.h"
 #include "zc.h"
+#include "zserver.h"
 
 #define PRECISION   0.0001
-#define ITER_TIMES  13000
-#define ITER_OUT    100
+#define ITER_TIMES  50000000
+#define ITER_OUT    500
 #define WORKTAG     50
 #define REDUCE      5
 
@@ -178,8 +179,10 @@ int main(int argc, char *argv[])
 			//Bsic data property includes only basic properties such as min, max, value_range of the data, which are necessary for assessing compression quality.
 			//generate the full data property analysis results, which are optional to users. It includes more information such as entropy and autocorrelation.
 			ZC_DataProperty* fullDataProperty = ZC_genProperties(propName, ZC_DOUBLE, g, 0, 0, 0, nbLines, M);
-			if(rank==0)
+			if(rank==0) {
 				ZC_writeDataProperty(fullDataProperty, "dataProperties");
+        zserver_commit(i, fullDataProperty, compareResult);
+      }
 
 			freeDataProperty(fullDataProperty); //free data property generated at current time step
 			free(cmprBytes);
