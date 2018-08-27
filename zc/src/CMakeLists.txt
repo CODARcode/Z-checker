@@ -22,6 +22,6 @@ if (Boost_FOUND)
 endif ()
 
 add_library (zc SHARED ${zc_sources})
-target_link_libraries (zc ${zc_dependencies} m)
+target_link_libraries (zc ${zc_dependencies} ${CMAKE_THREAD_LIBS_INIT} m)
 
 install (TARGETS zc LIBRARY DESTINATION lib)
