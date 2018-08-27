@@ -10,6 +10,9 @@ set (LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/zc/include)
 
+find_package (Threads REQUIRED)
+set (CMAKE_THREAD_PREFER_PTHREAD)
+
 find_package (MPI)
 if (MPI_FOUND)
   set (CMAKE_C_COMPILER ${MPI_C_COMPILER})
