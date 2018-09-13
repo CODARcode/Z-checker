@@ -273,7 +273,7 @@ void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareDa
 
   // data properties
   j["timestep"] = timestep;
-  j["type"] = "properties";
+  j["type"] = "stats";
   j["varName"] = d->varName;
   j["minValue"] = d->minValue;
   j["maxValue"] = d->maxValue;
