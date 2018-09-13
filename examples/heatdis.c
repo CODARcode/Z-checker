@@ -202,12 +202,16 @@ int main(int argc, char *argv[])
             }
             MPI_Gather(g+M, (nbLines-2)*M, MPI_DOUBLE, grid_ori, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             MPI_Barrier(MPI_COMM_WORLD);
-	    MPI_Gather(decData+M, (nbLines-2)*M, MPI_DOUBLE, grid_dec, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Gather(decData+M, (nbLines-2)*M, MPI_DOUBLE, grid_dec, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
             if (rank == 0) {
+              zserver_commit_field_data(grid_ori, grid_dec, (nbLines-2) * nbProcs, M);
+#if 0
             	sprintf(fn, "results/vis-ori-%d.dat", i);
                 print_solution(fn, grid_ori, (nbLines-2) * nbProcs, M);
             	sprintf(fn, "results/vis-dec-%d.dat", i);
                 print_solution(fn, grid_dec, (nbLines-2) * nbProcs, M);
+#endif
             }
         }
 
