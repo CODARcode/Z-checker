@@ -129,9 +129,9 @@ int main(int argc, char *argv[])
 	char fn[32];
 
 
-        if(rank==0)
+  if(rank==0)
 	{
-		system("mkdir -p results");
+		// system("mkdir -p results");
 		printf("Reading SZ cfg file (%s) and ZC cfg file (%s) ...\n", szCfgFile, zcCfgFile);
 	}
 	SZ_Init(szCfgFile); //initialization of sz
@@ -202,12 +202,16 @@ int main(int argc, char *argv[])
             }
             MPI_Gather(g+M, (nbLines-2)*M, MPI_DOUBLE, grid_ori, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             MPI_Barrier(MPI_COMM_WORLD);
-	    MPI_Gather(decData+M, (nbLines-2)*M, MPI_DOUBLE, grid_dec, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Gather(decData+M, (nbLines-2)*M, MPI_DOUBLE, grid_dec, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
             if (rank == 0) {
+              zserver_commit_field_data(i, (nbLines-2) * nbProcs, M, grid_ori, grid_dec);
+#if 0
             	sprintf(fn, "results/vis-ori-%d.dat", i);
                 print_solution(fn, grid_ori, (nbLines-2) * nbProcs, M);
             	sprintf(fn, "results/vis-dec-%d.dat", i);
                 print_solution(fn, grid_dec, (nbLines-2) * nbProcs, M);
+#endif
             }
         }
 

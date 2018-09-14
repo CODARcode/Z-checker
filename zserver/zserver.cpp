@@ -1,4 +1,5 @@
 #include "zserver.h"
+#include "base64.h"
 #include <mutex>
 #include <list>
 #include <set>
@@ -28,16 +29,17 @@ static leveldb::DB* db = NULL;
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
-static std::mutex mutex;
+// static std::mutex mutex;
 static server wss;
 static std::thread *thread, *thread1;
 static std::map<std::string, std::string> map;
 
-std::list<std::string> listResults;
+// std::list<std::string> listResults;
 
 
 // actions
-enum {ACTION_SUBSCRIBE=0, ACTION_UNSUBSCRIBE, ACTION_BROADCAST, ACTION_MESSAGE, ACTION_EXIT};
+enum {ACTION_SUBSCRIBE=0, ACTION_UNSUBSCRIBE, 
+  ACTION_BROADCAST, ACTION_MESSAGE, ACTION_EXIT};
 
 struct Action {
   Action(int t) : type(t) {}
@@ -113,15 +115,14 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
   bool succ = false;
 
   if (query.find("/all") == 0) {
-    std::unique_lock<std::mutex> lock(mutex);
+    // std::unique_lock<std::mutex> lock(mutex);
     
     std::stringstream buffer;
     buffer << "[";
-    for (auto str : listResults)
-      buffer << str << ",";
-    buffer.seekp(-1, std::ios_base::end);
+    // for (auto str : listResults)
+    //   buffer << str << ",";
+    // buffer.seekp(-1, std::ios_base::end);
     buffer << "]";
-
     con->set_body(buffer.str());
     succ = true;
   }
@@ -249,14 +250,30 @@ void zserver_stop()
   // TODO
 }
 
+void zserver_commit_field_data(int timestep, int W, int H, double *p, double *q)
+{
+  nlohmann::json j;
+
+  j["timestep"] = timestep;
+  j["type"] = "field";
+  j["original_data"] = base64_encode((unsigned char*)p, W*H*sizeof(double));
+  j["reconstructed_data"] = base64_encode((unsigned char*)q, W*H*sizeof(double));
+
+  {
+    std::unique_lock<std::mutex> lock(mutex_actions);
+    actions.push(Action(ACTION_BROADCAST, j.dump())); 
+  }
+  cond_actions.notify_one();
+}
+
 void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareData *c)
 {
-  const int limit = 500;
   nlohmann::json j;
-  std::unique_lock<std::mutex> lock(mutex);
+  // std::unique_lock<std::mutex> lock(mutex);
 
   // data properties
   j["timestep"] = timestep;
+  j["type"] = "stats";
   j["varName"] = d->varName;
   j["minValue"] = d->minValue;
   j["maxValue"] = d->maxValue;
