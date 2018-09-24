@@ -186,8 +186,11 @@ int ZC_Init(char *configFilePath)
 
 #ifdef HAVE_R
 	// Intialize the R environment.
-	int r_argc = 2;
-	char *r_argv[] = { "R", "--silent" };
+	char *r_argv[] = { "R", "--no-restore", "--no-save", "--gui=none", "--silent", "--vanilla"};
+	
+	int r_argc = sizeof(r_argv) / sizeof(r_argv[0]);
+		
+	//printf("r_argc = %d, r_argv[*]=%s %s %s\n", r_argc, r_argv[0], r_argv[1], r_argv[2]);
 	Rf_initEmbeddedR(r_argc, r_argv);
 	source(rscriptPath);
 #endif	
@@ -557,7 +560,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 	ZC_writeStrings(count+1, cmprRateLines, cmpRateDataFile);
 	ZC_writeStrings(count+1, dcmprRateLines, dcmpRateDataFile);	
 	ZC_writeStrings(count+1, psnrLines, psnrDataFile);
-
+		
 	//generate GNUPLOT scripts, and plot the data by running the scripts
 	char** scriptLines = genGnuplotScript_histogram(cmpRatioKey, "txt", GNUPLOT_FONT, 1+cmpCount, "Variables", "Compression Ratio", (long)(maxCR*1.3)+1);
 	ZC_writeStrings(18, scriptLines, cmpRatioPlotFile);
