@@ -29,7 +29,7 @@
 #include "zserver.h"
 #endif
 
-char rscriptPath[MAX_MSG_LENGTH];
+char *rscriptPath = NULL;
 
 int sysEndianType; //endian type of the system
 int dataEndianType; //endian type of the data
@@ -178,6 +178,10 @@ int ZC_Init_NULL()
 
 int ZC_Init(char *configFilePath)
 {
+#ifdef HAVE_R
+	rscriptPath = (char*)malloc(MAX_MSG_LENGTH);
+#endif
+
 	initStatus = 1; 
 	
 	char str[512]="", str2[512]="", str3[512]="";
@@ -192,6 +196,16 @@ int ZC_Init(char *configFilePath)
 		
 	//printf("r_argc = %d, r_argv[*]=%s %s %s\n", r_argc, r_argv[0], r_argv[1], r_argv[2]);
 	Rf_initEmbeddedR(r_argc, r_argv);
+
+#ifdef HAVE_MPI
+	if(executionMode==ZC_ONLINE)
+	{
+		printf("rscriptPath1=%s\n", rscriptPath);
+		ZC_ReplaceStr(rscriptPath, "data_analysis_script", "SSIM_pbdR_parallel");
+		printf("rscriptPath2=%s\n", rscriptPath);
+	}
+#endif
+
 	source(rscriptPath);
 #endif	
 	

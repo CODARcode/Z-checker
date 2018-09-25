@@ -187,7 +187,7 @@ int ZC_ReadConf() {
 	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
 	
 	KS_testFlag = (int)iniparser_getint(ini, "COMPARE:KS_test", 0);
-	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:SSIM", 0);
+	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);

@@ -189,6 +189,8 @@ int main(int argc, char *argv[])
 	else //=0
 		sysEndianType = BIG_ENDIAN_SYSTEM;
 
+	//printf("*y=%d, sysEndianType=%d\n", *y, sysEndianType);
+
 	size_t nbEle1 = 0, nbEle2 = 0, nbEle3 = 0, nbEle4 = 0, nbEle5 = 0, nbEle6 = 0;
 	float *f_data1 = NULL, *f_data2 = NULL, *f_data3 = NULL, *f_data4 = NULL, *f_data5 = NULL, *f_data6 = NULL;
 	double *d_data1 = NULL, *d_data2 = NULL, *d_data3 = NULL, *d_data4 = NULL, *d_data5 = NULL, *d_data6 = NULL;
@@ -223,17 +225,17 @@ int main(int argc, char *argv[])
 			usage();			
 		}
 		if(dataPath1!=NULL)
-			f_data1 = ZC_readFloatData(dataPath1, &nbEle1);
+			d_data1 = ZC_readDoubleData(dataPath1, &nbEle1);
 		if(dataPath2 != NULL)
-			f_data2 = ZC_readFloatData(dataPath2, &nbEle2);
+			d_data2 = ZC_readDoubleData(dataPath2, &nbEle2);
 		if(dataPath3 != NULL)
-			f_data3 = ZC_readFloatData(dataPath3, &nbEle3);
+			d_data3 = ZC_readDoubleData(dataPath3, &nbEle3);
 		if(dataPath4 != NULL)
-			f_data4 = ZC_readFloatData(dataPath4, &nbEle4);
+			d_data4 = ZC_readDoubleData(dataPath4, &nbEle4);
 		if(dataPath5 != NULL)
-			f_data5 = ZC_readFloatData(dataPath5, &nbEle5);
+			d_data5 = ZC_readDoubleData(dataPath5, &nbEle5);
 		if(dataPath6 != NULL)
-			f_data6 = ZC_readFloatData(dataPath6, &nbEle6);											
+			d_data6 = ZC_readDoubleData(dataPath6, &nbEle6);											
 		break;
 	}
 
@@ -396,7 +398,7 @@ int main(int argc, char *argv[])
 				ZC_callR_4_3d(funcName, dataType, r3, r2, r1, f_data1, r3, r2, r1, f_data2, r3, r2, r1, f_data3, r3, r2, r1, f_data4, &outLen, &out);
 				break;
 			case ZC_R_Double:
-				ZC_callR_4_3d(funcName, dataType, r3, r2, r1, d_data1, r3, r2, r1, d_data2, r3, r2, r1, d_data3, r3, r2, r1, f_data4, &outLen, &out);
+				ZC_callR_4_3d(funcName, dataType, r3, r2, r1, d_data1, r3, r2, r1, d_data2, r3, r2, r1, d_data3, r3, r2, r1, d_data4, &outLen, &out);
 				break;
 			}				
 			break;
@@ -485,7 +487,7 @@ int main(int argc, char *argv[])
 	
 	if(printOntoScreen)
 		for(i=0;i<outLen;i++)
-			printf("%zu %f\n", i, out[i]);
+			printf("%zu %.20G\n", i, out[i]);
 		
 	//The output results are always in double-precision.
 	if(outputPath!=NULL)

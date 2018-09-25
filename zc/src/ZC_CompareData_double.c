@@ -761,6 +761,22 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		}
 	}
 
+#ifdef HAVE_R
+	if(KS_testFlag)
+	{
+		compareResult->ksValue = KS_test(compareResult->property->dataType, data1, data2, r5, r4, r3, r2, r1);
+	}
+	
+	if(SSIMFlag)
+	{
+		double* ssimResult = SSIM3(compareResult->property->dataType, data1, data2, r5, r4, r3, r2, r1);
+		compareResult->lum = ssimResult[0];
+		compareResult->cont = ssimResult[1];
+		compareResult->struc = ssimResult[2];
+		compareResult->ssim = ssimResult[3];
+	}
+#endif
+
 	free(diff);
 	free(relDiff);	
 }

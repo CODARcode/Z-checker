@@ -94,3 +94,18 @@ double* SSIM(int dataType, void* oriData, void* decData, size_t r5, size_t r4, s
 	return out;	
 }
 
+/**
+ * Compute SSIM for two data sets (original data and decompressed data)
+ * 
+ * @return an array with 4 elements: lum,cont,struc,ssim
+ * 
+ * 
+ * */
+double* SSIM3(int dataType, void* oriData, void* decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	size_t outLen = 0;
+	double *out = NULL;
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+	ZC_R_process("SSIM3", dim, dataType, oriData, decData, r5, r4, r3, r2, r1, &outLen, &out);
+	return out;	
+}

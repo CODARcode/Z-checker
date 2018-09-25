@@ -117,7 +117,7 @@ extern "C" {
 #define ZC_OFFLINE 0
 #define ZC_ONLINE 1
 
-extern char rscriptPath[MAX_MSG_LENGTH];
+extern char *rscriptPath;
 
 extern int sysEndianType; /*endian type of the system*/
 extern int dataEndianType; /*endian type of the data*/
