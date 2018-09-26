@@ -13,8 +13,8 @@ double zc_calc_ssim_2d_float(const float *org, const float *rec,
 double zc_calc_ssim_2d_double(const double *org, const double *rec,
                   const size_t r2, const size_t r1);
                   
-void zc_calc_ssim_3d_float(const float *org, const float *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim);
-void zc_calc_ssim_3d_double(const double *org, const double *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim);
+void zc_calc_ssim_3d_float(float *org, float *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim);
+void zc_calc_ssim_3d_double(double *org, double *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim);
 #ifdef __cplusplus
 }
 #endif

@@ -392,40 +392,74 @@ double zc_calc_ssim_2d_double(const double *org, const double *rec,
 }
 
 
-void zc_calc_ssim_3d_float(const float *org, const float *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim)
+void zc_calc_ssim_3d_float(float *org, float *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim)
 {
-	size_t i = 0;
-	size_t intv = 1;
+	size_t i = 0, j = 0, counter = 0;
+	size_t intv = 1, offset = 0;
+	*min_ssim = 1;
+	*max_ssim = 0;
+	*avg_ssim = 0;
 	//just work on 10 uniformly sampled layers if r3 is a large number
-	if(r3>10)
-		intv = r3/10;
+	if(r3>20)
+		intv = r3/20;
+	size_t nbEle = r2*r1;
+	float *p, *q;
 	//perform calculation of ssim for each layer
 	for(i=0;i<r3;i+=intv)
 	{
-		double ssim = zc_calc_ssim_2d_float(org, rec, r2, r1);
+		offset = i*nbEle;
+		p = org+offset;
+		q = rec+offset;
+		double min = p[0], max = min;
+		for(j=0;j<nbEle;j++)
+		{
+			if(min>p[j])min = p[j];
+			if(max<p[j])max = p[j];
+		}	
+		if(min==max) //skip the constant dataset
+			continue;
+		counter++;
+		double ssim = zc_calc_ssim_2d_float(p, q, r2, r1);
 		if(*min_ssim>ssim) *min_ssim=ssim;
 		if(*max_ssim<ssim) *max_ssim=ssim;
 		*avg_ssim += ssim;
 	}
-	*avg_ssim=*avg_ssim/r3;
+	*avg_ssim=*avg_ssim/counter;
 }
 
-void zc_calc_ssim_3d_double(const double *org, const double *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim)
+void zc_calc_ssim_3d_double(double *org, double *rec, size_t r3, size_t r2, size_t r1, double *min_ssim, double* avg_ssim, double* max_ssim)
 {
-	size_t i = 0;
-	size_t intv = 1;
+	size_t i = 0, j = 0, counter = 0;
+	size_t intv = 1, offset = 0;
+	*min_ssim = 1;
+	*avg_ssim = 0;
+	*max_ssim = 0;
 	//just work on 10 uniformly sampled layers if r3 is a large number
-	if(r3>10)
-		intv = r3/10;
+	if(r3>20)
+		intv = r3/20;
+	size_t nbEle = r2*r1;
+	double *p, *q;		
 	//perform calculation of ssim for each layer
 	for(i=0;i<r3;i+=intv)
 	{
-		double ssim = zc_calc_ssim_2d_double(org, rec, r2, r1);
+		offset = i*nbEle;
+		p = org+offset;
+		q = rec+offset;
+		double min = p[0], max = min;
+		for(j=0;j<nbEle;j++)
+		{
+			if(min>p[j])min = p[j];
+			if(max<p[j])max = p[j];
+		}	
+		if(min==max) //skip the constant dataset
+			continue;
+		counter++;		
+		double ssim = zc_calc_ssim_2d_double(p, q, r2, r1);
 		if(*min_ssim>ssim) *min_ssim=ssim;
 		if(*max_ssim<ssim) *max_ssim=ssim;
 		*avg_ssim += ssim;
 	}
-	*avg_ssim=*avg_ssim/r3;
+	*avg_ssim=*avg_ssim/counter;
 }
 
 //TODO: 1d SSIM
