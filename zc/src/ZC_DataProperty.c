@@ -5,9 +5,6 @@
 #include "ZC_DataProperty.h"
 #include "zc.h"
 #include "iniparser.h"
-#ifdef HAVE_ONLINEVIS
-#include "zserver.h"
-#endif
 
 /* For entropy calculation */
 void hash_init(HashEntry *table, size_t table_size)
@@ -534,10 +531,6 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 
 void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 {
-#if HAVE_ONLINEVIS
-  return;
-#endif
-
 	char** s = constructDataPropertyString(property);
 	
 	DIR *dir = opendir(tgtWorkspaceDir);

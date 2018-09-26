@@ -68,6 +68,10 @@ typedef struct ZC_CompareData
 	double struc;
 	double ssim;
 	
+	double ssimImage2D_min;
+	double ssimImage2D_avg;
+	double ssimImage2D_max;
+	
 	complex *fftCoeff;	
 } ZC_CompareData;
 

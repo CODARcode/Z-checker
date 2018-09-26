@@ -12,6 +12,7 @@
 #ifdef HAVE_R
 #include "ZC_R_math.h"
 #endif
+#include "ZC_ssim.h"
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
@@ -386,6 +387,29 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->ssim = ssimResult[3];
 	}
 #endif
+
+	if(SSIMIMAGE2DFlag)
+	{
+		switch(dim)
+		{
+		case 2:
+			compareResult->ssimImage2D_avg = zc_calc_ssim_2d_float(data1, data2, r2, r1);	
+			break;
+		case 3:
+			zc_calc_ssim_3d_float(data1, data2, r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			break;
+		case 4:
+			zc_calc_ssim_3d_float(data1, data2, r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			break;
+		case 5:
+			zc_calc_ssim_3d_float(data1, data2, r5*r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			break;
+		default: //1D data is meaningless here
+			compareResult->ssimImage2D_min = 0; 
+			compareResult->ssimImage2D_avg = -1;
+			compareResult->ssimImage2D_max = -2;
+		}
+	}
 
 	free(diff);
 	free(relDiff);

@@ -168,6 +168,7 @@ extern int pearsonCorrFlag;
 
 extern int KS_testFlag;
 extern int SSIMFlag;
+extern int SSIMIMAGE2DFlag;
 
 extern int plotAutoCorrFlag;
 

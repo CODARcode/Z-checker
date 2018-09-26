@@ -267,7 +267,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult)
 {
-	char** s = (char**)malloc(30*sizeof(char*));
+	char** s = (char**)malloc(33*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -358,6 +358,29 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	s[29] = (char*)malloc(100*sizeof(char));
 	strcpy(s[29], "ssim = -\n");
 #endif
+
+	s[30] = (char*)malloc(100*sizeof(char));
+	s[31] = (char*)malloc(100*sizeof(char));
+	s[32] = (char*)malloc(100*sizeof(char));
+	if(compareResult->property->r2==0)
+	{
+		strcpy(s[30], "ssimImage2D_min = -\n");
+		strcpy(s[31], "ssimImage2D_avg = -\n");
+		strcpy(s[32], "ssimImage2D_max = -\n");
+	}
+	else if(compareResult->property->r3==0)
+	{
+		strcpy(s[30], "ssimImage2D_min = -\n");		
+		sprintf(s[31], "ssimImage2D_avg = %.10G\n", compareResult->ssimImage2D_avg);
+		strcpy(s[32], "ssimImage2D_max = -\n");
+	}
+	else
+	{
+		sprintf(s[30], "ssimImage2D_min = %.10G\n", compareResult->ssimImage2D_min);
+		sprintf(s[31], "ssimImage2D_avg = %.10G\n", compareResult->ssimImage2D_avg);
+		sprintf(s[32], "ssimImage2D_max = %.10G\n", compareResult->ssimImage2D_max);						
+	}
+
 	return s;
 }
 
@@ -366,7 +389,6 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 #if HAVE_ONLINEVIS
   return;
 #endif
-
 	char** s = constructCompareDataString(compareResult);
 	char varName_[ZC_BUFS];
 	strcpy(varName_, varName);
@@ -377,10 +399,10 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(30, s, tgtFilePath);
+	ZC_writeStrings(33, s, tgtFilePath);
 	
 	int i;
-	for(i=0;i<=29;i++)
+	for(i=0;i<=32;i++)
 		free(s[i]);
 	free(s);
 	

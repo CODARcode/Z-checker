@@ -80,6 +80,7 @@ int pearsonCorrFlag = 1;
 
 int KS_testFlag = 1;
 int SSIMFlag = 1;
+int SSIMIMAGE2DFlag = 1;
 
 int plotAutoCorrFlag = 1;
 int plotAbsErrPDFFlag = 1;

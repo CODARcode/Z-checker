@@ -188,6 +188,7 @@ int ZC_ReadConf() {
 	
 	KS_testFlag = (int)iniparser_getint(ini, "COMPARE:KS_test", 0);
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
+	SSIMIMAGE2DFlag = (int)iniparser_getint(ini, "COMPARE:ssimImage2D", 0);
 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);

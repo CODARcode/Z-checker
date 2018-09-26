@@ -17,7 +17,7 @@ extern "C" {
 void ZC_R_process(char* funName, int dim, int dataType, void* oriData, void* decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t* outLen, double** out);
 double KS_test(int dataType, void* oriData, void* decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 double* SSIM(int dataType, void* oriData, void* decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-
+double* SSIM3(int dataType, void* oriData, void* decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 #ifdef __cplusplus
 }
 #endif
