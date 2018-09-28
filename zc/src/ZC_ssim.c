@@ -17,6 +17,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "zc.h"
 
 // Google version of SSIM
 // SSIM
@@ -468,3 +469,54 @@ double zc_calc_ssim_1d_float(const float *org, const float *rec, const size_t r1
 
 double zc_calc_ssim_1d_double(const double *org, const double *rec, const size_t r1)
 {}
+
+
+//MPI
+#ifdef HAVE_MPI
+double zc_calc_ssim_2d_double_online(const double *org, const double *rec, const size_t r2, const size_t r1)
+{
+	double global_ssim = 0;
+	double local_ssim = zc_calc_ssim_2d_double(org, rec, r2, r1);
+	MPI_Reduce(&local_ssim, &global_ssim, 1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+	if(myRank==0)
+		global_ssim /= nbProc;
+	
+	return global_ssim;
+}
+
+double zc_calc_ssim_2d_float_online(const float *org, const float *rec, const size_t r2, const size_t r1)
+{
+	double global_ssim = 0;
+	double local_ssim = zc_calc_ssim_2d_float(org, rec, r2, r1);
+	MPI_Reduce(&local_ssim, &global_ssim, 1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+	if(myRank==0)
+		global_ssim /= nbProc;
+	
+	return global_ssim;
+}
+
+void zc_calc_ssim_3d_float_online(float *org, float *rec, size_t r3, size_t r2, size_t r1, double *global_min_ssim, double* global_avg_ssim, double* global_max_ssim)
+{
+	double local_min_ssim = 0, local_max_ssim = 0, local_avg_ssim = 0;
+	zc_calc_ssim_3d_float(org, rec, r3, r2, r1, &local_min_ssim, &local_avg_ssim, &local_max_ssim);
+	MPI_Reduce(&local_min_ssim, global_min_ssim, 1, MPI_DOUBLE, MPI_MIN, 0, ZC_COMM_WORLD);
+	MPI_Reduce(&local_avg_ssim, global_avg_ssim, 1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+	MPI_Reduce(&local_max_ssim, global_max_ssim, 1, MPI_DOUBLE, MPI_MAX, 0, ZC_COMM_WORLD);
+	
+	if(myRank==0)
+		*global_avg_ssim = *global_avg_ssim/nbProc;
+}
+
+void zc_calc_ssim_3d_double_online(double *org, double *rec, size_t r3, size_t r2, size_t r1, double *global_min_ssim, double* global_avg_ssim, double* global_max_ssim)
+{
+	double local_min_ssim = 0, local_max_ssim = 0, local_avg_ssim = 0;
+	zc_calc_ssim_3d_double(org, rec, r3, r2, r1, &local_min_ssim, &local_avg_ssim, &local_max_ssim);
+	MPI_Reduce(&local_min_ssim, global_min_ssim, 1, MPI_DOUBLE, MPI_MIN, 0, ZC_COMM_WORLD);
+	MPI_Reduce(&local_avg_ssim, global_avg_ssim, 1, MPI_DOUBLE, MPI_SUM, 0, ZC_COMM_WORLD);
+	MPI_Reduce(&local_max_ssim, global_max_ssim, 1, MPI_DOUBLE, MPI_MAX, 0, ZC_COMM_WORLD);
+	
+	if(myRank==0)
+		*global_avg_ssim = *global_avg_ssim/nbProc;	
+}
+
+#endif

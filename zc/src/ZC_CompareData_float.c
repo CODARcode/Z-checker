@@ -443,6 +443,8 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	double sumOfDiffSquare = 0;
 	long numOfElem_ = 0; //used to record the number of elements for relative-error-bound cases
 
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+
 	double *diff = (double*)malloc(numOfElem*sizeof(double));
 	double *relDiff = (double*)malloc(numOfElem*sizeof(double));
 
@@ -800,6 +802,29 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->ssim = ssimResult[3];
 	}
 #endif
+
+	if(SSIMIMAGE2DFlag)
+	{
+		switch(dim)
+		{
+		case 2:
+			compareResult->ssimImage2D_avg = zc_calc_ssim_2d_float_online(data1, data2, r2, r1);	
+			break;
+		case 3:
+			zc_calc_ssim_3d_float_online(data1, data2, r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			break;
+		case 4:
+			zc_calc_ssim_3d_float_online(data1, data2, r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			break;
+		case 5:
+			zc_calc_ssim_3d_float_online(data1, data2, r5*r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			break;
+		default: //1D data is meaningless here
+			compareResult->ssimImage2D_min = 0; 
+			compareResult->ssimImage2D_avg = -1;
+			compareResult->ssimImage2D_max = -2;
+		}
+	}
 
 	free(diff);
 	free(relDiff);	
