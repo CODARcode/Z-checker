@@ -38,33 +38,40 @@ void loadProperty(char* property_dir, char* fileName)
 			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
 			system(linkCmd);				
 		}
-
-		sprintf(softLinkPath, "dataProperties/%s.autocorr", propertyVarName);					
-		if (access(softLinkPath, F_OK) != 0)
-		{
-			sprintf(tmpPathBuf, "%s/%s.autocorr", property_dir, propertyVarName);
-			updateLinkFullPath(tmpPathBuf, fullPathBuf);
-			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-			system(linkCmd);
-		}
-
-		sprintf(softLinkPath, "dataProperties/%s.fft", propertyVarName);
-		if (access(softLinkPath, F_OK) != 0)
-		{					
-			sprintf(tmpPathBuf, "%s/%s.fft", property_dir, propertyVarName);
-			updateLinkFullPath(tmpPathBuf, fullPathBuf);
-			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-			system(linkCmd);								
-		}
 		
-		sprintf(softLinkPath, "dataProperties/%s.fft.amp", propertyVarName);
-		if (access(softLinkPath, F_OK) != 0)
+		if(autocorrFlag)
 		{
-			sprintf(tmpPathBuf, "%s/%s.fft.amp", property_dir, propertyVarName);
-			updateLinkFullPath(tmpPathBuf, fullPathBuf);
-			sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
-			system(linkCmd);
+			sprintf(softLinkPath, "dataProperties/%s.autocorr", propertyVarName);					
+			if (access(softLinkPath, F_OK) != 0)
+			{
+				sprintf(tmpPathBuf, "%s/%s.autocorr", property_dir, propertyVarName);
+				updateLinkFullPath(tmpPathBuf, fullPathBuf);
+				sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+				system(linkCmd);
+			}			
 		}
+
+		if(fftFlag)
+		{
+			sprintf(softLinkPath, "dataProperties/%s.fft", propertyVarName);
+			if (access(softLinkPath, F_OK) != 0)
+			{					
+				sprintf(tmpPathBuf, "%s/%s.fft", property_dir, propertyVarName);
+				updateLinkFullPath(tmpPathBuf, fullPathBuf);
+				sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+				system(linkCmd);								
+			}
+			
+			sprintf(softLinkPath, "dataProperties/%s.fft.amp", propertyVarName);
+			if (access(softLinkPath, F_OK) != 0)
+			{
+				sprintf(tmpPathBuf, "%s/%s.fft.amp", property_dir, propertyVarName);
+				updateLinkFullPath(tmpPathBuf, fullPathBuf);
+				sprintf(linkCmd, "ln -s \"%s\" \"%s\"", fullPathBuf, softLinkPath);  
+				system(linkCmd);
+			}			
+		}
+
 	}	
 	free(propertyVarName);
 }

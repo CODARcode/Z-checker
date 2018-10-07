@@ -1179,7 +1179,8 @@ int ZC_analyze_and_generateReport(char* dataSetName)
 	if(plotAutoCorrFlag)
 		ZC_plotAutoCorr_DataProperty();
 		
-    ZC_plotAutoCorr_CompressError();
+	if(errAutoCorrFlag)	
+		ZC_plotAutoCorr_CompressError();
     
     if(plotFFTAmpFlag)
     {
