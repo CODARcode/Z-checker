@@ -529,8 +529,8 @@ size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, Str
 {
 	if(toAddLineHeader==NULL)
 	{
-		printf("Error: toAddLineHeader cannot be NULL\n");
-		exit(0);
+		printf("toAddLineHeader is NULL in %s\n", keyAnnotationLine);
+		return 0;
 	}
 	
 	if(toAddLineHeader->next==NULL)
