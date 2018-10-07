@@ -34,12 +34,16 @@ int main(int argc, char * argv[])
     ZC_plotComparisonCases();
     ZC_plotRateDistortion();	
     
-    ZC_plotAutoCorr_DataProperty();
-    ZC_plotAutoCorr_CompressError();
-    ZC_plotFFTAmplitude_OriginalData();
-    ZC_plotFFTAmplitude_DecompressData();
-    
-    ZC_plotErrDistribtion();
+    if(autocorrFlag)
+		ZC_plotAutoCorr_DataProperty();
+    if(errAutoCorrFlag)
+		ZC_plotAutoCorr_CompressError();
+    if(fftFlag)
+		ZC_plotFFTAmplitude_OriginalData();	
+    if(fftFlag)
+		ZC_plotFFTAmplitude_DecompressData();
+    if(absErrPDFFlag)
+		ZC_plotErrDistribtion();
 
     ZC_Finalize();
     return 0;
