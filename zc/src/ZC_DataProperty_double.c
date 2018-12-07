@@ -7,6 +7,91 @@
 #include "iniparser.h"
 #include "ZC_FFTW3_math.h"
 
+double* ZC_compute_autocorrelation1D_double(double* data, size_t numOfElem, double avg)
+{
+	double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
+
+	size_t i = 0;
+	int delta = 0;
+
+	if (numOfElem > 4096)
+	{
+		double cov = 0;
+		for (i = 0; i < numOfElem; i++)
+			cov += (data[i] - avg)*(data[i] - avg);
+
+		cov = cov/numOfElem;
+
+		if (cov == 0)
+		{
+			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+				autocorr[delta] = 0;
+		}
+		else
+		{
+			for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
+			{
+				double sum = 0;
+
+				for (i = 0; i < numOfElem-delta; i++)
+					sum += (data[i]-avg)*(data[i+delta]-avg);
+
+				autocorr[delta] = sum/(numOfElem-delta)/cov;
+			}
+		}
+	}
+	else
+	{
+		for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+		{
+			double avg_0 = 0;
+			double avg_1 = 0;
+
+			for (i = 0; i < numOfElem-delta; i++)
+			{
+				avg_0 += data[i];
+				avg_1 += data[i+delta];
+			}
+
+			avg_0 = avg_0 / (numOfElem-delta);
+			avg_1 = avg_1 / (numOfElem-delta);
+
+			double cov_0 = 0;
+			double cov_1 = 0;
+
+			for (i = 0; i < numOfElem-delta; i++)
+			{
+				cov_0 += (data[i]-avg_0)*(data[i]-avg_0);
+				cov_1 += (data[i+delta]-avg_1)*(data[i+delta]-avg_1);
+			}
+
+			cov_0 = cov_0/(numOfElem-delta);
+			cov_1 = cov_1/(numOfElem-delta);
+
+			cov_0 = sqrt(cov_0);
+			cov_1 = sqrt(cov_1);
+
+			if (cov_0*cov_1 == 0)
+			{
+				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
+					autocorr[delta] = 1;
+			}
+			else
+			{
+				double sum = 0;
+
+				for (i = 0; i < numOfElem-delta; i++)
+					sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
+
+				autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
+			}
+		}
+	}
+
+	autocorr[0] = 1;	
+	return autocorr;
+}
+
 #ifdef HAVE_MPI
 
 void ZC_genBasicProperties_double_online(double* data, size_t numOfElem, ZC_DataProperty* property)
@@ -284,86 +369,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 
 	if(autocorrFlag)
 	{
-		double *autocorr = (double*)malloc((AUTOCORR_SIZE+1)*sizeof(double));
-
-		int delta;
-
-		if (numOfElem > 4096)
-		{
-			double cov = 0;
-			for (i = 0; i < numOfElem; i++)
-				cov += (data[i] - avg)*(data[i] - avg);
-
-			cov = cov/numOfElem;
-
-			if (cov == 0)
-			{
-				for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-					autocorr[delta] = 0;
-			}
-			else
-			{
-				for(delta = 1; delta <= AUTOCORR_SIZE; delta++)
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (data[i]-avg)*(data[i+delta]-avg);
-
-					autocorr[delta] = sum/(numOfElem-delta)/cov;
-				}
-			}
-		}
-		else
-		{
-			for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-			{
-				double avg_0 = 0;
-				double avg_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					avg_0 += data[i];
-					avg_1 += data[i+delta];
-				}
-
-				avg_0 = avg_0 / (numOfElem-delta);
-				avg_1 = avg_1 / (numOfElem-delta);
-
-				double cov_0 = 0;
-				double cov_1 = 0;
-
-				for (i = 0; i < numOfElem-delta; i++)
-				{
-					cov_0 += (data[i]-avg_0)*(data[i]-avg_0);
-					cov_1 += (data[i+delta]-avg_1)*(data[i+delta]-avg_1);
-				}
-
-				cov_0 = cov_0/(numOfElem-delta);
-				cov_1 = cov_1/(numOfElem-delta);
-
-				cov_0 = sqrt(cov_0);
-				cov_1 = sqrt(cov_1);
-
-				if (cov_0*cov_1 == 0)
-				{
-					for (delta = 1; delta <= AUTOCORR_SIZE; delta++)
-						autocorr[delta] = 1;
-				}
-				else
-				{
-					double sum = 0;
-
-					for (i = 0; i < numOfElem-delta; i++)
-						sum += (data[i]-avg_0)*(data[i+delta]-avg_1);
-
-					autocorr[delta] = sum/(numOfElem-delta)/(cov_0*cov_1);
-				}
-			}
-		}
-
-		autocorr[0] = 1;
-		property->autocorr = autocorr;
+		property->autocorr = ZC_compute_autocorrelation1D_double(data, numOfElem, avg);
 	}
 
 #ifdef HAVE_FFTW3

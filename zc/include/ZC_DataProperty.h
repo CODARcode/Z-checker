@@ -54,6 +54,9 @@ void hash_init(HashEntry *table, size_t table_size);
 size_t hash_get(HashEntry *table, unsigned long key, size_t table_size);
 void hash_put(HashEntry *table, unsigned long key, size_t table_size);
 
+double* ZC_compute_autocorrelation1D_float(float* data, size_t numOfElem, double avg);
+double* ZC_compute_autocorrelation1D_double(double* data, size_t numOfElem, double avg);
+
 int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, char* output);
 void fft(complex *v, size_t n, complex *tmp);
