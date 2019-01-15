@@ -385,7 +385,7 @@ int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
         realpath(tgtFilePath, actualpath);
 		char* key = getFileName(actualpath);
 		//printf("writing pair: %s, %s\n", key, actualpath);
-		zserver_commit_file(key, actualpath);		
+		// zserver_commit_file(key, actualpath);		
 		free(key);
 	}
 #endif
