@@ -185,11 +185,11 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 		}
 		else
 		{
-			if(fftFlag)
-				ZC_compareData_double_online(compareResult, data1, data2, r5, r4, r3, r2, r1);	
+			ZC_compareData_double_online(compareResult, data1, data2, r5, r4, r3, r2, r1);	
 		}
 #else
-		ZC_computeFFT_double_offline(compareResult, data1, data2, numOfElem);
+		if(fftFlag)
+			ZC_computeFFT_double_offline(compareResult, data1, data2, numOfElem);
 		ZC_compareData_double(compareResult, data1, data2, r5, r4, r3, r2, r1);
 #endif
 	}
