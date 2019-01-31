@@ -125,8 +125,10 @@ void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCou
         len = strlen(varCase);
         
         //remove the first "." in the varCase (e.g., FLDSC_1_1800_3600.dat.dis --> FLDSC_1_1800_3600)
-        j = strcspn(varCase,".");
+        /*j = strcspn(varCase,".");
         varCase[j]='\0';
+        varName = varCase;*/
+        removeExtension2(varCase);
         varName = varCase;
         
 		//checkAndAddStringToList(allCompressors, &allCompressorCount, compressor);//e.g., compressor=sz

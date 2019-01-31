@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+void removeExtension2(char* mystr);
+
 int startsWith(const char *pre, const char *str);
 char* createLine(char* str);
 

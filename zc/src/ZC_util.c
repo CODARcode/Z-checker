@@ -18,6 +18,26 @@ int startsWith(const char *pre, const char *str)
 		return 0;
 }
 
+/*char *removeExtension(char* mystr) {
+    char *retstr;
+    char *lastdot;
+    if (mystr == NULL)
+         return NULL;
+    if ((retstr = malloc (strlen (mystr) + 1)) == NULL)
+        return NULL;
+    strcpy (retstr, mystr);
+    lastdot = strrchr (retstr, '.');
+    if (lastdot != NULL)
+        *lastdot = '\0';
+    return retstr;
+}*/
+
+void removeExtension2(char* mystr) {
+    char* lastdot = strrchr (mystr, '.');
+    if (lastdot != NULL)
+        *lastdot = '\0';
+}
+
 char* createLine(char* str)
 {
 	char* line = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
