@@ -87,9 +87,9 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	double diffRange = maxDiff - minDiff;
 	double mse = sumErrSqr/numOfElem;
 	
-	double avgErr_rel = sumErr_rel/numOfElem;
+	//double avgErr_rel = sumErr_rel/numOfElem;
 	double diffRange_rel = maxDiff_rel - minDiff_rel;
-	double mse_rel = sumErrSqr_rel/numOfElem_;
+	//double mse_rel = sumErrSqr_rel/numOfElem_;
 	if(diffRange_rel>2*PWR_DIS_RNG_BOUND)
 	{
 		double avg = 0;//sumDiff_rel/numOfElem_;
@@ -282,7 +282,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
       	double valErrCorr = 0;
 
     	if (std1*stdDiff != 0)
-    		valErrCorr = ee/std1/stdDiff;
+			valErrCorr = ee/std1/stdDiff;
 
 		compareResult->valErrCorr = valErrCorr;
 	}

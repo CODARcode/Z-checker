@@ -39,7 +39,6 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 	}
 	
 	char dimensions[50];
-	int dim = 0;
 	size_t r5 = 0, r4 = 0, r3 = 0, r2 = 0, r1 = 0;
 	memset(dimensions, 0, 50);
 	for(i=0;i<varCaseCount;i++)
@@ -108,10 +107,8 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 
 void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCount)
 {
-	int mark = 0;
-	size_t i = 0, j = 0, len = 0;
+	size_t i = 0;
     //char buff[ZC_BUFS];
-	int compressorNum = 0, errorBoundNum = 0;
 	char *cmpCaseFile, *cmpCase, *varCase, *varName, *compressor, *errBound, *tmpErrBoundString;
 	for(i=0;i<caseCount;i++)
 	{
@@ -122,7 +119,7 @@ void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCou
         compressor = strtok(cmpCase, "(");
         tmpErrBoundString = strtok(NULL,"(");
         errBound = rtrim_C(tmpErrBoundString, ')');
-        len = strlen(varCase);
+        //strlen(varCase);
         
         //remove the first "." in the varCase (e.g., FLDSC_1_1800_3600.dat.dis --> FLDSC_1_1800_3600)
         /*j = strcspn(varCase,".");
@@ -146,7 +143,7 @@ void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor)
 	int allErrBoundCount = compressor->allErrBoundCount;
 	StringElem* selectedErrBounds = compressor->selErrBounds;
 	
-	size_t errorBoundInterval = 0, i, j;
+	size_t errorBoundInterval = 0, i;
 	size_t errBoundCount = 0;
 	StringElem sortedErrorBounds[ZC_BUFS];
 	for(i=0;i<ERRBOUND_MAX_LEN;i++)
@@ -199,7 +196,7 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 {	
 	StringLine* figHeader = NULL, *figHeader2 = NULL;
 	char caption[ZC_BUFS], figLabel[ZC_BUFS];
-	size_t i, n = 0;
+	size_t i = 0;
 	char** caseFiles = (char**)malloc(sizeof(char*)*caseNameCount);
 	for(i=0;i<caseNameCount;i++)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
@@ -264,10 +261,10 @@ void ZC_generateDataPropertyAnalysisReport()
 	ZC_replaceLines(texLines, "ZCVARLIST", varListString);
 	
 	StringLine* tabLines = ZC_generatePropertyAnalysisTable(caseFiles, n);
-	int lineNumInsted = ZC_insertLines("%create property table\n", texLines, tabLines);
+	ZC_insertLines("%create property table\n", texLines, tabLines);
 	
 	StringLine* figLines =  ZC_generateDataPropertyAnalysisFigures(caseFiles, n);
-	lineNumInsted = ZC_insertLines("%plot data properties\n", texLines, figLines);
+	ZC_insertLines("%plot data properties\n", texLines, figLines);
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);	
@@ -293,7 +290,7 @@ void ZC_generateCompressionRateReport()
 	printf("Processing %s\n", compressionRateTexFile);
 	StringLine* texLines = ZC_readLines(compressionRateTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateCompressionRateFigure();
-	int lineNumInsted = ZC_insertLines("%plot compression rate\n", texLines, figLines);
+	ZC_insertLines("%plot compression rate\n", texLines, figLines);
 	ZC_writeLines(texLines, compressionRateTexFile);
 	ZC_freeLines(texLines);
 }
@@ -318,7 +315,7 @@ void ZC_generateDecompressionRateReport()
 	printf("Processing %s\n", decompressionRateTexFile);
 	StringLine* texLines = ZC_readLines(decompressionRateTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateDecompressionRateFigure();
-	int lineNumInsted = ZC_insertLines("%plot decompression rate\n", texLines, figLines);
+	ZC_insertLines("%plot decompression rate\n", texLines, figLines);
 	ZC_writeLines(texLines, decompressionRateTexFile);
 	ZC_freeLines(texLines);	
 }
@@ -343,7 +340,7 @@ void ZC_generatePSNRReport()
 	printf("Processing %s\n", psnrTexFile);
 	StringLine* texLines = ZC_readLines(psnrTexFile, &lineCount);
 	StringLine* figLines =  ZC_generatePSNRFigure();
-	int lineNumInsted = ZC_insertLines("%plot psnr\n", texLines, figLines);
+	ZC_insertLines("%plot psnr\n", texLines, figLines);
 	ZC_writeLines(texLines, psnrTexFile);
 	ZC_freeLines(texLines);	
 }
@@ -401,7 +398,7 @@ StringLine* ZC_generateRateDistortionFigure()
 	int varCount;
 	char* varFiles[ZC_BUFS];
 	char* fileName;
-	char rateDisFile[ZC_BUFS];
+	//char rateDisFile[ZC_BUFS];
 	
 	for(i=0;i<ZC_BUFS;i++)
 		varFiles[i] = (char*)malloc(sizeof(char)*500);
@@ -430,7 +427,7 @@ void ZC_generateRateDistortionReport()
 	printf("Processing %s\n", rateDisTexFile);
 	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateRateDistortionFigure();
-	int lineNumInsted = ZC_insertLines("%plot rate distortion\n", texLines, figLines);
+	ZC_insertLines("%plot rate distortion\n", texLines, figLines);
 	ZC_writeLines(texLines, rateDisTexFile);
 	ZC_freeLines(texLines);	
 }
@@ -441,7 +438,7 @@ StringLine* ZC_generateRateCorrelationFigure()
 	int varCount;
 	char* varFiles[ZC_BUFS];
 	char* fileName;
-	char rateDisFile[ZC_BUFS];
+	//char rateDisFile[ZC_BUFS];
 
 	for(i=0;i<ZC_BUFS;i++)
 		varFiles[i] = (char*)malloc(sizeof(char)*500);
@@ -522,7 +519,7 @@ void ZC_generateRateCorrelationReport()
 	printf("Processing %s\n", rateDisTexFile);
 	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateRateCorrelationFigure();
-	int lineNumInsted = ZC_insertLines("%plot rate correlation\n", texLines, figLines);
+	ZC_insertLines("%plot rate correlation\n", texLines, figLines);
 	ZC_writeLines(texLines, rateDisTexFile);
 	ZC_freeLines(texLines);
 }
@@ -547,7 +544,7 @@ void ZC_generateCompressionFactorReport()
 	printf("Processing %s\n", compressionFactorTexFile);
 	StringLine* texLines = ZC_readLines(compressionFactorTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateCompressionFactorFigure();
-	int lineNumInsted = ZC_insertLines("%plot compression factor\n", texLines, figLines);
+	ZC_insertLines("%plot compression factor\n", texLines, figLines);
 	ZC_writeLines(texLines, compressionFactorTexFile);
 	ZC_freeLines(texLines);
 }
@@ -565,13 +562,13 @@ void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCo
 	if(absErrPDFFlag)
 	{
 		StringLine* figLines =  ZC_generateStaticAnalysisFigures("dis", allCompressors, allCompressorCount);
-		int lineNumInsted = ZC_insertLines("%plot error distribution\n", texLines, figLines);		
+		ZC_insertLines("%plot error distribution\n", texLines, figLines);		
 	}
 
 	if(pwrErrPDFFlag)
 	{
 		StringLine* figLines2 = ZC_generateStaticAnalysisFigures("pds", allCompressors, allCompressorCount);
-		int lineNumInsted = ZC_insertLines("%plot point-wise relative error distribution\n", texLines, figLines2);		
+		ZC_insertLines("%plot point-wise relative error distribution\n", texLines, figLines2);		
 	}
 	if(absErrPDFFlag || pwrErrPDFFlag)
 		ZC_writeLines(texLines, texFile);
@@ -587,7 +584,7 @@ void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompre
 	printf("Processing %s\n", texFile);
 	StringLine* texLines = ZC_readLines(texFile, &lineCount);
 	StringLine* figLines =  ZC_generateStaticAnalysisFigures("autocorr", allCompressors, allCompressorCount);
-	int lineNumInsted = ZC_insertLines("%plot error auto correlation\n", texLines, figLines);
+	ZC_insertLines("%plot error auto correlation\n", texLines, figLines);
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);	
@@ -602,7 +599,7 @@ void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int al
 	printf("Processing %s\n", texFile);
 	StringLine* texLines = ZC_readLines(texFile, &lineCount);
 	StringLine* figLines =  ZC_generateStaticAnalysisFigures("fft-amp", allCompressors, allCompressorCount);
-	int lineNumInsted = ZC_insertLines("%plot spectrum distortion\n", texLines, figLines);
+	ZC_insertLines("%plot spectrum distortion\n", texLines, figLines);
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);		
@@ -619,7 +616,7 @@ void ZC_updateZCRootTexFile(char* dataSetName)
 	ZC_ReplaceStr2(dsName, "_", "\\_");
 	sprintf(titleLineString, "\\title{Compression Assessment Report for %s}", dsName);
 	StringLine* titleLine = createOneStringLine(titleLineString);
-	int lineNumInsted = ZC_insertLines("%title_of_report\n", texLines, titleLine);
+	ZC_insertLines("%title_of_report\n", texLines, titleLine);
 	ZC_writeLines(texLines, rootTexFile);
 	ZC_freeLines(texLines);
 }
@@ -657,7 +654,7 @@ void ZC_generateOverallReport(char* dataSetName)
 	if(compressSizeFlag)
 		ZC_generateRateCorrelationReport();
 
-	int i, n = 0, selectedErrorBoundCount;
+	int i, n = 0;
 	char* caseFiles[ZC_BUFS_LONG];
 	for(i=0;i<ZC_BUFS_LONG;i++)
 		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);

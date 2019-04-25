@@ -287,8 +287,6 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 	property->numOfElem = numOfElem;
 	double min=data[0],max=data[0],sum=0,avg,valueRange;
 
-	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
-
 	for(i=0;i<numOfElem;i++)
 	{
 		if(min>data[i]) min = data[i];
@@ -375,6 +373,7 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 #ifdef HAVE_FFTW3
 	if(autocorr3DFlag)
 	{
+		int dim = ZC_computeDimension(r5, r4, r3, r2, r1);		
 		switch(dim)
 		{
 		case 1:

@@ -81,15 +81,11 @@ void loadProperty(char* property_dir, char* fileName)
 int ZC_ReadConf() {
     // Check access to EC configuration file and load dictionary
     int x = 1;
-    char sol_name[256];
-    char *modeBuf;
-    char *errBoundMode;
     char *endianTypeString;
     char *checkingStatusString;
     char *executionModeString;
     char *visModeString;
     dictionary *ini;
-    char *par;
 
     if (access(zc_cfgFile, F_OK) != 0)
     {
@@ -436,9 +432,8 @@ int ZC_LoadConf() {
 
 int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue)
 {
-	char* line, *attr; 
+	char* attr; 
 	char tmp[ZC_BUFS_LONG];
-	int i = 0;
 	StringLine* p = confLinesHeader;
 	while(p->next!=NULL)
 	{

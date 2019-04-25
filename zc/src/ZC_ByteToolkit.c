@@ -57,7 +57,7 @@ void ZC_intToBytes_bigEndian(unsigned char *b, unsigned int num)
 long ZC_bytesToLong_bigEndian(unsigned char* b) {
 	long temp = 0;
 	long res = 0;
-	int i;
+	//int i;
 
 	res <<= 8;
 	temp = b[0] & 0xff;

@@ -185,7 +185,6 @@ int ZC_Init(char *configFilePath)
 
 	initStatus = 1; 
 	
-	char str[512]="", str2[512]="", str3[512]="";
 	zc_cfgFile = configFilePath;
 	int loadFileResult = ZC_LoadConf();
 
@@ -280,7 +279,7 @@ long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 ZC_DataProperty* ZC_startCmpr_offline(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i;
-	double min,max,valueRange,sum = 0,avg;
+	double min,max,sum = 0;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
 	
@@ -355,7 +354,7 @@ ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataTy
 
 ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
 {
-	double cmprTime;
+	double cmprTime = 0;
 	if(compressTimeFlag)
 		cmprTime = cost_endCmpr();
 
@@ -796,7 +795,6 @@ char** getCompResKeyList(char* var, int* count)
 	{
 		char* tmp = (char*)malloc(strlen(cmpResKeys[i])+1);
 		sprintf(tmp, "%s",cmpResKeys[i]); 
-		char* cmpssor = strtok(tmp, ":");
 		char* varCase = strtok(NULL, ":");
 		if(strcmp(var, varCase)==0)
 			selected[j++] = cmpResKeys[i];
@@ -1290,7 +1288,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 
 ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status)
 {
-	int i, lineCount, nbVars_ = 0;
+	int lineCount, nbVars_ = 0;
 	StringLine* lines = ZC_readLines(multivarFile, &lineCount);
 	char *str, *token;
 	char delim[2];

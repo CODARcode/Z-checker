@@ -5,7 +5,7 @@
 
 size_t ZC_divide(RateDistElem* list,size_t start,size_t end)
 {
-	size_t i,j,k,pivot;
+	size_t i,j,pivot;
 	RateDistElem temp = NULL; //temp is a pointer
 
 	i = start;
@@ -37,7 +37,7 @@ size_t ZC_divide(RateDistElem* list,size_t start,size_t end)
 
 size_t ZC_divide3(RateDistElem* list,size_t start,size_t end)
 {
-	size_t i,j,k,pivot;
+	size_t i,j,pivot;
 	RateDistElem temp = NULL; //temp is a pointer
 
 	i = start;
@@ -81,7 +81,7 @@ void ZC_quick_sort(RateDistElem* list,size_t start,size_t end)
 
 size_t ZC_divide2(StringElem* list,size_t start,size_t end)
 {
-	size_t i,j,k,pivot;
+	size_t i,j,pivot;
 	StringElem temp = NULL; //temp is a pointer
 
 	i = start;

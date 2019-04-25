@@ -94,7 +94,7 @@ int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data)
 	float value;
 	new_DFA(&dfa, DynamicArrayInitLength);
 	
-	if((fp = popen(cmd, "r")) == NULL)
+	if((fp = (FILE *)popen(cmd, "r")) == NULL)
 	{
 		perror("Fail to popen\n");
 		return ZC_CMDE;
@@ -127,7 +127,7 @@ int ZC_executeCmd_GdoubleVector(char* cmd, int* count, double** data)
 	double value;
 	new_DDA(&dda, DynamicArrayInitLength);
 	
-	if((fp = popen(cmd, "r")) == NULL)
+	if((fp = (FILE *)popen(cmd, "r")) == NULL)
 	{
 		perror("Fail to popen\n");
 		return ZC_CMDE;
@@ -158,7 +158,7 @@ int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data)
 	char buf[CMD_OUTPUT_BUF] = {0};
 	float value;
 	
-	if((fp = popen(cmd, "r")) == NULL)
+	if((fp = (FILE *)popen(cmd, "r")) == NULL)
 	{
 		perror("Fail to popen\n");
 		return ZC_NSCS;
@@ -201,7 +201,7 @@ int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data)
 	char buf[CMD_OUTPUT_BUF] = {0};
 	double value;
 	
-	if((fp = popen(cmd, "r")) == NULL)
+	if((fp = (FILE *)popen(cmd, "r")) == NULL)
 	{
 		perror("Fail to popen\n");
 		return ZC_NSCS;
@@ -247,7 +247,7 @@ int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data)
 	float value;
 	new_DFA(&dfa, DynamicArrayInitLength);
 	
-	if((fp = popen(cmd, "r")) == NULL)
+	if((fp = (FILE *)popen(cmd, "r")) == NULL)
 	{
 		perror("Fail to popen\n");
 		free_DFA(dfa);
@@ -304,7 +304,7 @@ int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data)
 	double value;
 	new_DDA(&dda, DynamicArrayInitLength);
 	
-	if((fp = popen(cmd, "r")) == NULL)
+	if((fp = (FILE *)popen(cmd, "r")) == NULL)
 	{
 		perror("Fail to popen\n");
 		free_DDA(dda);

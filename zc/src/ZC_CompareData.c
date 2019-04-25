@@ -139,7 +139,6 @@ void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData)
 		printf("Error: compareResult cannot be NULL\n");
 		exit(0);
 	}
-	char* varName = compareResult->property->varName;
 	int dataType = compareResult->property->dataType;
 	void* oriData = compareResult->property->data;	
 	size_t r5 = compareResult->property->r5;
@@ -619,7 +618,6 @@ ZC_CompareData_Overall* ZC_compareData_overall()
 	double overall_maxRelErr = 0;
 
 	double overall_PSNR = 0;
-	double overall_SNR = 0;
 
 	double overall_rmse = 0;
 	double overall_nrmse = 0;

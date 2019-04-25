@@ -29,9 +29,8 @@ char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix)
 
 char* gen_includegraphicsLine2(char* epsFileName, char* subDir)
 {	
-	size_t i = 0;
 	char* tmpLine = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
-	char stringBuffer[ZC_BUFS_LONG];
+	//char stringBuffer[ZC_BUFS_LONG];
 	
 	if(subDir==NULL)
 		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.3,bb = 54 51 1127 293]{figs/{%s}.eps}}", epsFileName);

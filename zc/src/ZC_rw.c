@@ -361,7 +361,6 @@ void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
 int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
 {
 	size_t i = 0;
-	char s[ZC_BUFS];
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
     {
@@ -429,7 +428,6 @@ void ZC_readFirstLine(char* filePath, char* line)
 {
 	char buf[MAX_MSG_LENGTH] = {0};
 	memset(buf, 0, MAX_MSG_LENGTH);
-	int len = 0;
 
 	FILE *fp = fopen(filePath, "r");
 	if(fp == NULL)
@@ -449,7 +447,6 @@ StringLine* ZC_readLines(char* filePath, int *lineCount)
 {
 	char* buf;
 	//char buf[500] = {0};
-	int len = 0;
 
 	FILE *fp = fopen(filePath, "r");
 	if(fp == NULL)
@@ -572,8 +569,7 @@ void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader)
 	if(toAddLineHeader->next==NULL)
 		return;
 	
-	StringLine* p = globalLineHeader, *q;
-	int count = 0;
+	StringLine* p = globalLineHeader;
 	while(p->next!=NULL)
 		p = p->next;
 	

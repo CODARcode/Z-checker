@@ -465,10 +465,14 @@ void zc_calc_ssim_3d_double(double *org, double *rec, size_t r3, size_t r2, size
 
 //TODO: 1d SSIM
 double zc_calc_ssim_1d_float(const float *org, const float *rec, const size_t r1)
-{}
+{
+	return 0;
+}
 
 double zc_calc_ssim_1d_double(const double *org, const double *rec, const size_t r1)
-{}
+{
+	return 0;
+}
 
 
 //MPI

@@ -71,19 +71,19 @@ void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1
 	switch(dim)
 	{
 	case 1:
-		sprintf(output, "%zu\0", r1);
+		sprintf(output, "%zu", r1);
 		break;
 	case 2: 
-		sprintf(output, "%zuX%zu\0", r2, r1);
+		sprintf(output, "%zuX%zu", r2, r1);
 		break;
 	case 3: 
-		sprintf(output, "%zuX%zuX%zu\0", r3, r2, r1);
+		sprintf(output, "%zuX%zuX%zu", r3, r2, r1);
 		break;
 	case 4:
-		sprintf(output, "%zuX%zuX%zuX%zu\0", r4, r3, r2, r1);
+		sprintf(output, "%zuX%zuX%zuX%zu", r4, r3, r2, r1);
 		break;
 	case 5:
-		sprintf(output, "%zuX%zuX%zuX%zuX%zu\0", r5, r4, r3, r2, r1);
+		sprintf(output, "%zuX%zuX%zuX%zuX%zu", r5, r4, r3, r2, r1);
 		break;
 	}
 }
@@ -147,7 +147,7 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 {
 	if (r2 == 0)		// compute Laplacian of 1D data
 	{
-		size_t x, y;
+		size_t x;
 			for (x = 0; x < r1; x++) {
 				unsigned long i = max(1u, min(x, r1 - 2));
 				double fxx = 1 * data[(i - 1)] - 2 * data[(i + 0)] + 1 * data[(i + 1)];
