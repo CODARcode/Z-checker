@@ -361,7 +361,7 @@ void scan_group_SZ(hid_t gid, int errBoundMode, int nbErrBounds, char **errBound
 					{
 						//compression
 						double errBound = atof(errBounds[j]);
-						sprintf(solName, "SZ(%s)", errBounds[j]);
+						sprintf(solName, "sz_d(%s)", errBounds[j]);
 						printf("%s: field=%s, dimension: (%zu, %zu, %zu, %zu, %zu)\n", solName, fullname, dims[4], dims[3], dims[2], dims[1], dims[0]);
 						dataProperty = ZC_startCmpr(fullname, dataType, data, dims[4], dims[3], dims[2], dims[1], dims[0]);
 						bytes = SZ_compress_args(dataType, data, &outSize, errBoundMode, errBound, errBound, errBound, dims[4], dims[3], dims[2], dims[1], dims[0]);
@@ -815,7 +815,7 @@ void scan_group_ZFP(hid_t gid, int errBoundMode, int nbErrBounds, char **errBoun
 					{
 						//compression
 						double errBound = atof(errBounds[j]);
-						sprintf(solName, "ZFP(%s)", errBounds[j]);
+						sprintf(solName, "zfp(%s)", errBounds[j]);
 						printf("%s: field=%s, dimension: (%zu, %zu, %zu, %zu, %zu)\n", solName, fullname, dims[4], dims[3], dims[2], dims[1], dims[0]);
 						dataProperty = ZC_startCmpr(fullname, dataType, data, dims[4], dims[3], dims[2], dims[1], dims[0]);
 						
