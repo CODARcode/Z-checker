@@ -795,6 +795,7 @@ char** getCompResKeyList(char* var, int* count)
 	{
 		char* tmp = (char*)malloc(strlen(cmpResKeys[i])+1);
 		sprintf(tmp, "%s",cmpResKeys[i]); 
+		char* cmpssor = strtok(tmp, ":");
 		char* varCase = strtok(NULL, ":");
 		if(strcmp(var, varCase)==0)
 			selected[j++] = cmpResKeys[i];
