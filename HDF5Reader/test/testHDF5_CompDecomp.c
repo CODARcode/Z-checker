@@ -20,7 +20,7 @@
 #define hdf5_REL 1
 #define hdf5_PWR 2
 
-int errBoundMode = 0;
+int errBoundMode = hdf5_ABS;
 
 void usage()
 {
@@ -226,10 +226,10 @@ int main(int argc, char * argv[])
 	scan_group_property_analysis(grp);
 	
 	//deal with SZ
-	scan_group_SZ(grp, REL, nbErrBounds_sz, errBounds_sz);
+	scan_group_SZ(grp, errBoundMode, nbErrBounds_sz, errBounds_sz);
 	
 	//deal with ZFP
-	scan_group_ZFP(grp, REL, nbErrBounds_zfp, errBounds_zfp);
+	scan_group_ZFP(grp, errBoundMode, nbErrBounds_zfp, errBounds_zfp);
 
 	status = H5Fclose(file);
 	for(i=0;i<20;i++)
