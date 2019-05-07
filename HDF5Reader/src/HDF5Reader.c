@@ -417,7 +417,6 @@ unsigned char* zfp_compression_float(float* data, int mode, double tolerance, si
 			if(max<data[i]) max = data[i];
 		}
 		realTolerance = tolerance*(max-min);
-	
 	}
 	zfp_exec_policy exec = zfp_exec_serial;
 	unsigned char* buffer = NULL; //to store compressed data
@@ -798,7 +797,7 @@ void scan_group_ZFP(hid_t gid, int errBoundMode, int nbErrBounds, char **errBoun
 			case H5G_GROUP:
 				printf(" GROUP:\n");
 				grpid = H5Gopen(gid,memb_name);
-				scan_group_SZ(grpid, errBoundMode, nbErrBounds, errBounds);
+				scan_group_ZFP(grpid, errBoundMode, nbErrBounds, errBounds);
 				H5Gclose(grpid);
 				break;
 			case H5G_DATASET:

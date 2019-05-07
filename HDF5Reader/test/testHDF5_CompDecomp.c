@@ -18,7 +18,7 @@
 
 #define hdf5_ABS 0
 #define hdf5_REL 1
-#define hdf5_PWR 2
+#define hdf5_PWR 10
 
 int errBoundMode = hdf5_ABS;
 
