@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "HDF5Reader.h"
+#include "zc.h"
 
 void usage()
 {
