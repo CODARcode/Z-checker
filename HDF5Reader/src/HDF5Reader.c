@@ -184,17 +184,41 @@ void* getDataSet(hid_t did, int *dataType, size_t* dims)
 	float* floatData = NULL;
 	double* doubleData = NULL;
 
+	int dimension = testHDF5_computeDimension(dims[4], dims[3], dims[2], dims[1], dims[0]); 
+	printf("dimensions=\n");
+	
 	if(*dataType>=0)
 	{
-		printf("dimensions=\n");
 		int i = 0;
-		for(i=0;i<5;i++)
+		switch(dimension)
 		{
-			dims[i] = hdims[i];
-			printf("%zu ", dims[i]);		
+		case 1:
+			for(i=0;i<5;i++)
+			{
+				dims[i] = hdims[i];
+				printf("%zu ", dims[i]);
+			}
+			break;
+		case 2:
+			dims[0] = hdims[1];
+			dims[1] = hdims[0];
+			dims[2] = hdims[2];
+			dims[3] = hdims[3];
+			dims[4] = hdims[4];
+			for(i=0;i<5;i++)
+				printf("%zu ", dims[i]);
+			break;
+		case 3:
+			dims[0] = hdims[2];
+			dims[1] = hdims[1];
+			dims[2] = hdims[0];
+			dims[3] = hdims[3];
+			dims[4] = hdims[4];
+			for(i=0;i<5;i++)
+				printf("%zu ", dims[i]);
+			break;		
 		}
 		printf("\n");
-		printf("------------------\n");
 		
 		size_t nbEle = testHDF5_computeDataSize(dims[0], dims[1], dims[2], dims[3], dims[4]);		
 		
