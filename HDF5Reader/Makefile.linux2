@@ -2,9 +2,10 @@
 H5CC	= h5cc
 CC	= gcc
 
-#SZPATH          = /home/sdi/Development/z-checker-installer/z-checker-installer/SZ/sz-install
-SZPATH          = /home/sdi/Install/sz-2.1-install
-ZFPPATH          = /home/sdi/Development/z-checker-installer/z-checker-installer/zfp
+#SZPATH          = /home/sdi/Install/sz-2.1-install
+SZPATH		= ../../SZ/sz-install
+#ZFPPATH          = /home/sdi/Development/z-checker-installer/z-checker-installer/zfp
+ZFPPATH          = ../../zfp
 ZCPATH		= ../zc-install
 HDF5PATH        = /home/sdi/Install/hdf5-1.10.1-install
 
@@ -21,7 +22,7 @@ OBJS = src/HDF5Reader.o src/HDF5Selector.o
 all:	libhdf5reader.a libhdf5reader.so test/test_HDF5Reader test/testHDF5_CompDecomp_SZ test/testHDF5_CompDecomp_ZFP test/testHDF5_CompDecomp_PropertyAnalysis test/testHDF5_CompDecomp
 
 src/%.o:	src/%.c
-	$(H5CC) -DH5_USE_16_API -Dwith_SZ -Dwith_ZFP -g -O0 $(INC) $(ZCFLAG) $(SZFLAG) $(ZFPFLAG) -fPIC -c $<
+	$(H5CC) -DH5_USE_16_API -Dwith_SZ -Dwith_ZFP -g -O3 $(INC) $(ZCFLAG) $(SZFLAG) $(ZFPFLAG) -fPIC -c $<
 	mv *.o src/
 
 libhdf5reader.a:	$(OBJS)
@@ -34,16 +35,16 @@ test/test_HDF5Reader:	test/test_HDF5Reader.c
 	$(H5CC) $(INC) -o test/test_HDF5Reader test/test_HDF5Reader.c libhdf5reader.a $(SZFLAG) $(ZFPFLAG) $(ZCFLAG)
 
 test/testHDF5_CompDecomp_SZ:	test/testHDF5_CompDecomp_SZ.c
-	$(H5CC) -DH5_USE_16_API -g -O0 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp_SZ test/testHDF5_CompDecomp_SZ.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
+	$(H5CC) -DH5_USE_16_API -g -O3 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp_SZ test/testHDF5_CompDecomp_SZ.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
 
 test/testHDF5_CompDecomp_ZFP:	test/testHDF5_CompDecomp_ZFP.c
-	$(H5CC) -DH5_USE_16_API -g -O0 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp_ZFP test/testHDF5_CompDecomp_ZFP.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
+	$(H5CC) -DH5_USE_16_API -g -O3 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp_ZFP test/testHDF5_CompDecomp_ZFP.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
 
 test/testHDF5_CompDecomp_PropertyAnalysis:	test/testHDF5_CompDecomp_PropertyAnalysis.c
-	$(H5CC) -DH5_USE_16_API -g -O0 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp_PropertyAnalysis test/testHDF5_CompDecomp_PropertyAnalysis.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
+	$(H5CC) -DH5_USE_16_API -g -O3 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp_PropertyAnalysis test/testHDF5_CompDecomp_PropertyAnalysis.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
 
 test/testHDF5_CompDecomp:	test/testHDF5_CompDecomp.c
-	$(H5CC) -DH5_USE_16_API -g -O0 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp test/testHDF5_CompDecomp.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
+	$(H5CC) -DH5_USE_16_API -g -O3 $(INC) -fPIC libhdf5reader.a  -o test/testHDF5_CompDecomp test/testHDF5_CompDecomp.c $(SZFLAG) $(ZFPFLAG) $(HDF5FLAG) $(ZCFLAG)
 
 clean: 
 	rm -rf src/*.o *.a *.so test/test_HDF5Reader test/test_HDF5Reader test/testHDF5_CompDecomp_SZ test/testHDF5_CompDecomp_ZFP test/testHDF5_CompDecomp_PropertyAnalysis test/testHDF5_CompDecomp
