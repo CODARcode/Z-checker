@@ -69,8 +69,8 @@ int getDataType(hid_t tid, int *ord)
 		if(t_class == H5T_INTEGER) {
 			*ord = H5Tget_order(tid);
 			sgn = H5Tget_sign(tid);
-			printf("Integer ByteOrder= ");
-			switch (*ord) {
+			//printf("Integer ByteOrder= ");
+			/*switch (*ord) {
 			case H5T_ORDER_LE:
 				printf("LE");
 				break;
@@ -90,8 +90,8 @@ int getDataType(hid_t tid, int *ord)
 			printf(" Size= ");
 			sz = H5Tget_size(tid);
 			printf("%d", sz);
-			printf("\n");		
-		    return 0;
+			printf("\n");*/		
+		    return ZC_HDF5_INT64;
 		} else if(t_class == H5T_FLOAT) {
 			*ord = H5Tget_order(tid); //either H5T_ORDER_LE or H5T_ORDER_BE
 			sz = H5Tget_size(tid);
@@ -180,24 +180,24 @@ void* getDataSet(hid_t did, int *dataType, size_t* dims)
 	
 	hsize_t hdims[5] = {0,0,0,0,0};
 	H5Sget_simple_extent_dims(sid, hdims, NULL);
-
-	printf("dimensions=\n");
-	int i = 0;
-	for(i=0;i<5;i++)
-	{
-		dims[i] = hdims[i];
-		printf("%zu ", dims[i]);		
-	}
-	printf("\n");
-	printf("------------------\n");
-	
-	size_t nbEle = testHDF5_computeDataSize(dims[0], dims[1], dims[2], dims[3], dims[4]);
-	
-	void *result_data;
+	void *result_data = NULL;
 	float* floatData = NULL;
 	double* doubleData = NULL;
-	if(*dataType >=0)
+
+	if(*dataType>=0)
 	{
+		printf("dimensions=\n");
+		int i = 0;
+		for(i=0;i<5;i++)
+		{
+			dims[i] = hdims[i];
+			printf("%zu ", dims[i]);		
+		}
+		printf("\n");
+		printf("------------------\n");
+		
+		size_t nbEle = testHDF5_computeDataSize(dims[0], dims[1], dims[2], dims[3], dims[4]);		
+		
 		switch(*dataType)
 		{
 		case 0:
@@ -246,13 +246,9 @@ void scan_group_property_analysis(hid_t gid)
 	hid_t grpid, typeid, dsid;
 	char group_name[MAX_NAME];
 	char memb_name[MAX_NAME];
-	static char fullname[MAX_NAME] = {0};
+	char fullname[MAX_NAME] = {0};
 	len = H5Iget_name(gid, group_name, MAX_NAME);
 	ZC_HDF5_ReplaceStr(group_name, "/", "");
-	if(strlen(fullname)==0)
-		strcpy(fullname, group_name);
-	else
-		sprintf(fullname, "%s_%s", fullname, group_name);
 	printf("Group Name: %s\n",group_name);
 
 	err = H5Gget_num_objs(gid, &nobj);	
@@ -273,7 +269,7 @@ void scan_group_property_analysis(hid_t gid)
 			case H5G_DATASET:
 				printf(" DATASET:\n");
 				dsid = H5Dopen(gid,memb_name);
-				sprintf(fullname, "%s_%s", fullname, memb_name);
+				sprintf(fullname, "%s_%s", group_name, memb_name);
 				printf("fullname=%s\n", fullname);
 				//printf("memb_name=%s\n", memb_name);
 				size_t dims[5];
@@ -291,8 +287,8 @@ void scan_group_property_analysis(hid_t gid)
 					ZC_printDataProperty(property);
 					ZC_writeDataProperty(property, "dataProperties");					
 				}
-				
-				free(data);
+				if(data!=NULL)
+					free(data);
 				break;
 			default:
 				printf(" unknown?\n");
@@ -315,10 +311,6 @@ void scan_group_SZ(hid_t gid, int errBoundMode, int nbErrBounds, char **errBound
 	static char fullname[MAX_NAME] = {0};
 	len = H5Iget_name(gid, group_name, MAX_NAME);
 	ZC_HDF5_ReplaceStr(group_name, "/", "");
-	if(strlen(fullname)==0)
-		strcpy(fullname, group_name);
-	else
-		sprintf(fullname, "%s_%s", fullname, group_name);
 	printf("Group Name: %s\n",group_name);
 
 	err = H5Gget_num_objs(gid, &nobj);	
@@ -339,7 +331,7 @@ void scan_group_SZ(hid_t gid, int errBoundMode, int nbErrBounds, char **errBound
 			case H5G_DATASET:
 				printf(" DATASET:\n");
 				dsid = H5Dopen(gid,memb_name);
-				sprintf(fullname, "%s_%s", fullname, memb_name);
+				sprintf(fullname, "%s_%s", group_name, memb_name);
 				printf("fullname=%s\n", fullname);
 				//printf("memb_name=%s\n", memb_name);
 				size_t dims[5];
@@ -768,10 +760,6 @@ void scan_group_ZFP(hid_t gid, int errBoundMode, int nbErrBounds, char **errBoun
 	static char fullname[MAX_NAME] = {0};
 	len = H5Iget_name(gid, group_name, MAX_NAME);
 	ZC_HDF5_ReplaceStr(group_name, "/", "");
-	if(strlen(fullname)==0)
-		strcpy(fullname, group_name);
-	else
-		sprintf(fullname, "%s_%s", fullname, group_name);
 	printf("Group Name: %s\n",group_name);
 
 	err = H5Gget_num_objs(gid, &nobj);	
@@ -792,7 +780,7 @@ void scan_group_ZFP(hid_t gid, int errBoundMode, int nbErrBounds, char **errBoun
 			case H5G_DATASET:
 				printf(" DATASET:\n");
 				dsid = H5Dopen(gid,memb_name);
-				sprintf(fullname, "%s_%s", fullname, memb_name);
+				sprintf(fullname, "%s_%s", group_name, memb_name);
 				printf("fullname=%s\n", fullname);
 				//printf("memb_name=%s\n", memb_name);
 				size_t dims[5];

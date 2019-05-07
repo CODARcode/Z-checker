@@ -85,10 +85,12 @@ int main(int argc, char * argv[])
 			if (++i == argc)
 				usage();
 			errPath = argv[i];
+			break;
 		case 'o':
 			if (++i == argc)
 				usage();
 			outDirPath = argv[i];
+			break;
 		case 'd':
 			if (++i == argc || sscanf(argv[i], "%d", &dim) != 1)
 				usage();
