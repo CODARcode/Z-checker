@@ -133,7 +133,6 @@ int testHDF5_check(char* varName, size_t r5, size_t r4, size_t r3, size_t r2, si
 			if(hdf5Selector->dimension!=3 && hdf5Selector->dimension!=13 && hdf5Selector->dimension !=23 && hdf5Selector->dimension!=123)
 				return 0;
 			break;
-		default:
 		}	
 	}
 	
