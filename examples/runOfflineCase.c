@@ -303,7 +303,6 @@ int main(int argc, char* argv[])
 	int analysisType = -1;
 	char* buf;
 	
-	int varID = -1;
 	if(argc==1)
 	{
 		usage();
@@ -464,7 +463,7 @@ int main(int argc, char* argv[])
 	
 	if(listAllVarInfo)
 	{
-		int i = 0, n = 0;
+		int i = 0;
 		VarItem* q = varItemHeader->next;
 		while(q!=NULL)
 		{
@@ -479,8 +478,8 @@ int main(int argc, char* argv[])
 		}			
 	}
 	
-	int datatype;
-	void *oriData_v, *decData_v = NULL;
+	int datatype = 0;
+	void *oriData_v = NULL, *decData_v = NULL;
 	size_t len, oriDataSize, cmprSize = 0;
 	ComprItem* q  = NULL;
 	i = 0;
@@ -668,9 +667,8 @@ int main(int argc, char* argv[])
 						double mean2 = sum2/nbEle;
 
 						double sum3 = 0, sum4 = 0;
-						double sum = 0, prodSum = 0, relerr = 0;
+						double sum = 0, prodSum = 0;
 
-						double maxpw_relerr = 0; 
 						for (j = 0; j < nbEle; j++)
 						{
 							if (Max < oriData[j]) Max = oriData[j];
@@ -726,9 +724,8 @@ int main(int argc, char* argv[])
 						double mean2 = sum2/nbEle;
 
 						double sum3 = 0, sum4 = 0;
-						double sum = 0, prodSum = 0, relerr = 0;
+						double sum = 0, prodSum = 0;
 
-						double maxpw_relerr = 0; 
 						for (j = 0; j < nbEle; j++)
 						{
 							if (Max < oriData[j]) Max = oriData[j];
@@ -823,11 +820,9 @@ int main(int argc, char* argv[])
 
 			ZC_writeDataProperty(property, "dataProperties");
 			
-			ZC_CompareData* compareResult;
+			ZC_CompareData* compareResult = NULL;
 			//processing compression results
 			q = p->comprHeader;
-			size_t cmprSize = 0;
-			double minErr = 0, maxErr = 0, avgErr = 0, err = 0;
 			while(q->next!=NULL)
 			{
 				ComprItem* ci = q->next;
@@ -863,6 +858,11 @@ int main(int argc, char* argv[])
 						}
 						
 						compareResult = ZC_compareData(p->varName, ZC_DOUBLE, (double*)oriData_v, decData, p->dim5, p->dim4, p->dim3, p->dim2, p->dim1);			
+					}
+					else
+					{
+						printf("Error: wrong data type\n");
+						exit(0);
 					}
 
 					compareResult->compressSize = ZC_checkFileSize(ci->cmprDataFile);
