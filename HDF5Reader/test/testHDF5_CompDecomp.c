@@ -41,9 +41,9 @@ void usage()
 	printf(" 	-n <number of elements> : only the fields with >= <number of elements>\n");
 	printf("	-t <data type> : only the field with the specific data type. 0:float; 1:double\n");
 	printf("* error bounds: specifying the error bounds\n");
-	printf("	-R <value range based error bound>\n");
-	printf("	-A <absolute error bound\n");
-	printf("	-P <point-wise relative error bound\n");
+	printf("	-R: using value range based error bound\n");
+	printf("	-A: using absolute error bound\n");
+	printf("	-P: using point-wise relative error bound\n");
 	printf("* output Workspace\n");
 	printf("	-o <workspace dir>\n");
 	printf("* examples:\n");
@@ -131,18 +131,12 @@ int main(int argc, char * argv[])
 				usage();
 			break;			
 		case 'A':
-			if (++i == argc)
-				usage();
 			errBoundMode = hdf5_ABS;
 			break;
 		case 'R':
-			if (++i == argc)
-				usage();
 			errBoundMode = hdf5_REL;
 			break;
 		case 'P':
-			if (++i == argc)
-				usage();
 			errBoundMode = hdf5_PWR;
 			break;
 		default: 
