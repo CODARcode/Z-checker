@@ -6,7 +6,7 @@
 int main(int argc, char * argv[])
 {	
     size_t r5=0,r4=0,r3=0,r2=0,r1=0;
-    char dataFile[640], outputFilePath[640], oriFilePath[640];
+    char outputFilePath[640], oriFilePath[640];
     char *datatype, *cfgFile, *varName;
 
     if(argc < 4)
@@ -32,7 +32,6 @@ int main(int argc, char * argv[])
     if(argc>=10)
         r5 = atoi(argv[9]);
 
-    int numprocs, myrank;
     if(executionMode==ZC_ONLINE)
     {
 		printf("Error: you are running analyzeProperty, so please set the executionMode to OFFLINE in zc.config\n");
@@ -40,7 +39,6 @@ int main(int argc, char * argv[])
 		exit(0);
     }
 
-    //printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
     printf("[ZC] Reading ZC configuration file (%s) ...\n", cfgFile);     
     ZC_Init(cfgFile);
 	executionMode = ZC_OFFLINE;
