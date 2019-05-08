@@ -26,6 +26,7 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel, long maxYValue);
 char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
+char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1);
 
 #ifdef __cplusplus
 }

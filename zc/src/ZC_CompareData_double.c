@@ -282,8 +282,10 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
       	double valErrCorr = 0;
 
     	if (std1*stdDiff != 0)
+		{
 			valErrCorr = ee/std1/stdDiff;
-
+		}
+		
 		compareResult->valErrCorr = valErrCorr;
 	}
 

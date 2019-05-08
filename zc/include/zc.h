@@ -146,6 +146,7 @@ extern int autocorrFlag;
 extern int autocorr3DFlag;
 extern int fftFlag;
 extern int lapFlag;
+extern int plotImageFlag;
 
 extern int minAbsErrFlag;
 extern int avgAbsErrFlag;
@@ -305,6 +306,7 @@ void ZC_plotAutoCorr_DataProperty();
 void ZC_plotFFTAmplitude_OriginalData();
 void ZC_plotFFTAmplitude_DecompressData();
 void ZC_plotErrDistribtion();
+void ZC_plotSliceImage();
 
 void ZC_generateCompressionFactorReport();
 void ZC_generateRateDistortionReport();
@@ -316,6 +318,7 @@ void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int al
 void ZC_updateZCRootTexFile(char* dataSetName);
 void ZC_generateOverallReport(char* dataSetName);
 
+int ZC_analyze_and_generateReport(char* dataSetName);
 int ZC_Finalize();
 
 ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);

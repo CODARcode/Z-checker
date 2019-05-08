@@ -54,6 +54,7 @@ int autocorrFlag = 1;
 int autocorr3DFlag = 1;
 int fftFlag = 1;
 int lapFlag = 0;
+int plotImageFlag = 0;
 
 int compressTimeFlag = 1;
 int decompressTimeFlag = 1;
@@ -175,6 +176,7 @@ int ZC_Init_NULL()
 	if(visMode && myRank == 0)
 		zserver_start(ZSERVER_PORT);
 #endif
+	return 0;
 }
 
 int ZC_Init(char *configFilePath)
@@ -200,9 +202,9 @@ int ZC_Init(char *configFilePath)
 #ifdef HAVE_MPI
 	if(executionMode==ZC_ONLINE)
 	{
-		printf("rscriptPath1=%s\n", rscriptPath);
+		//printf("rscriptPath1=%s\n", rscriptPath);
 		ZC_ReplaceStr(rscriptPath, "data_analysis_script", "SSIM_pbdR_parallel");
-		printf("rscriptPath2=%s\n", rscriptPath);
+		//printf("rscriptPath2=%s\n", rscriptPath);
 	}
 #endif
 
@@ -795,7 +797,7 @@ char** getCompResKeyList(char* var, int* count)
 	{
 		char* tmp = (char*)malloc(strlen(cmpResKeys[i])+1);
 		sprintf(tmp, "%s",cmpResKeys[i]); 
-		char* cmpssor = strtok(tmp, ":");
+		strtok(tmp, ":");
 		char* varCase = strtok(NULL, ":");
 		if(strcmp(var, varCase)==0)
 			selected[j++] = cmpResKeys[i];
@@ -1162,6 +1164,23 @@ void ZC_plotErrDistribtion()
 		}		
 	}	
 }
+
+void ZC_plotSliceImage()
+{
+	size_t i;
+	char acFileName[ZC_BUFS], acCmd[ZC_BUFS_LONG];
+	char** allVarNames = ht_getAllKeys(ecPropertyTable);
+	for(i=0;i<ecPropertyTable->count;i++)
+	{
+		sprintf(acFileName, "%s", allVarNames[i]);
+		//execute .p files using system().
+		sprintf(acCmd, "cd dataProperties;gnuplot %s-oriimg.p;mv %s.oriimg.png %s-oriimg.png", acFileName, acFileName, acFileName);
+		system(acCmd);
+		sprintf(acCmd, "cd dataProperties;gnuplot %s-logimg.p;mv %s.logimg.png %s-logimg.png", acFileName, acFileName, acFileName);
+		system(acCmd);		
+	}
+}
+
 
 int ZC_analyze_and_generateReport(char* dataSetName)
 {

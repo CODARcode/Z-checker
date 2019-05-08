@@ -36,6 +36,8 @@ typedef struct ZC_DataProperty
 	size_t r1;
 	
 	void *data;
+	void* sliceImage_ori;
+	void* sliceImage_log;
 	
 	long numOfElem;
 	double minValue;
@@ -48,6 +50,7 @@ typedef struct ZC_DataProperty
 	void* autocorr3D; //double* or float*, depending on the floating type of the data
 	complex* fftCoeff; /*array of fft coefficients*/
 	double* lap;
+	
 } ZC_DataProperty;
 
 void hash_init(HashEntry *table, size_t table_size);

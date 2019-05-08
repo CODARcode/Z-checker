@@ -49,6 +49,10 @@ void ZC_writeDoubleData(double *data, size_t nbEle, char *tgtFilePath);
 void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath);
 void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath);
 
+void ZC_writeFloatData_gnuplotImage(float *data, size_t r2, size_t r1, char *tgtFilePath);
+void ZC_writeDoubleData_gnuplotImage(double *data, size_t r2, size_t r1, char *tgtFilePath);
+void ZC_writeData_genuplotImage(void *data, int dataType, size_t r2, size_t r1, char *tgtFilePath);
+
 int ZC_writeStrings(int string_size, char **string, char *tgtFilePath);
 
 StringLine* createStringLineHeader();

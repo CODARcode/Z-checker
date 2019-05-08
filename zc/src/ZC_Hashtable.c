@@ -8,6 +8,15 @@
 hashtable_t *ecPropertyTable = NULL;
 hashtable_t *ecCompareDataTable = NULL;
 
+/*char *strdup(const char *str)
+{
+    int n = strlen(str) + 1;
+    char *dup = malloc(n);
+    if(dup)
+        strcpy(dup, str);
+    return dup;
+}*/
+
 int checkStartsWith(char* str, char* key)
 {
 	int n = strlen(key);

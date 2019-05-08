@@ -354,6 +354,75 @@ void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
 	}
 }
 
+void ZC_writeFloatData_gnuplotImage(float *data, size_t r2, size_t r1, char *tgtFilePath)
+{
+	char s[64];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+   
+    size_t i = 0, j = 0;
+    for(i = 0;i<r2;i++)
+	{
+		for(j=0;j<r1;j++)
+		{
+			sprintf(s, "%f\n", data[i*r1+j]);
+			fputs(s, pFile);			
+		}
+		if(i<r2-1)
+			fputs("\n",pFile);
+	}
+    
+    fclose(pFile);	
+}
+
+void ZC_writeDoubleData_gnuplotImage(double *data, size_t r2, size_t r1, char *tgtFilePath)
+{
+	char s[64];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+   
+    size_t i = 0, j = 0;
+    for(i = 0;i<r2;i++)
+	{
+		for(j=0;j<r1;j++)
+		{
+			sprintf(s, "%f\n", data[i*r1+j]);
+			fputs(s, pFile);			
+		}
+		if(i<r2-1)
+			fputs("\n",pFile);
+	}
+    
+    fclose(pFile);	
+}
+
+void ZC_writeData_genuplotImage(void *data, int dataType, size_t r2, size_t r1, char *tgtFilePath)
+{
+	if(dataType == ZC_FLOAT)
+	{
+		float* dataArray = (float *)data;
+		ZC_writeFloatData_gnuplotImage(dataArray, r2, r1, tgtFilePath);
+	}
+	else if(dataType == ZC_DOUBLE)
+	{
+		double* dataArray = (double *)data;
+		ZC_writeDoubleData_gnuplotImage(dataArray, r2, r1, tgtFilePath);
+	}
+	else
+	{
+		printf("Error: data type cannot be the types other than ZC_FLOAT or ZC_DOUBLE\n");
+		exit(0);	
+	}
+}
+
 /**
  * 
  * @return the real number of elements

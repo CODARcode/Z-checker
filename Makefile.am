@@ -1,8 +1,5 @@
 AUTOMAKE_OPTIONS=foreign
-#if HDF5
-#SUBDIRS = HDF5Reader
-#endif
-SUBDIRS = 
+SUBDIRS =
 if NETCDF
 SUBDIRS += NetCDFReader
 endif

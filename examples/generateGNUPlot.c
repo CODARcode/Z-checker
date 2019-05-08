@@ -5,7 +5,7 @@
 
 int main(int argc, char * argv[])
 {	
-    char *zc_cfgFile, *datasetName;
+    char *zc_cfgFile;
 
     if(argc < 2)
     {
@@ -44,7 +44,8 @@ int main(int argc, char * argv[])
 		ZC_plotFFTAmplitude_DecompressData();
     if(absErrPDFFlag)
 		ZC_plotErrDistribtion();
-
+    if(plotImageFlag)
+		ZC_plotSliceImage();
     ZC_Finalize();
     return 0;
 }

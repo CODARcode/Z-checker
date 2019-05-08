@@ -194,7 +194,7 @@ void ZC_constructSortedSelectedErrorBounds4CmprsEelments(CmprsorErrBound *allCom
 
 StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNameCount)
 {	
-	StringLine* figHeader = NULL, *figHeader2 = NULL;
+	StringLine* resultHeader = NULL, *figHeader = NULL, *figHeader2 = NULL;
 	char caption[ZC_BUFS], figLabel[ZC_BUFS];
 	size_t i = 0;
 	char** caseFiles = (char**)malloc(sizeof(char*)*caseNameCount);
@@ -203,27 +203,65 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 	
 	if(autocorrFlag)
 	{
+		resultHeader = createOneStringLine("The auto-correlation results with different lags (1 through 100) are presented in Figure \ref{fig:dp-autocorr}.\n");
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-autocorr", caseNames[i]);
 		strcpy(caption, "Auto-correlation of the data");
 		strcpy(figLabel, "dp-autocorr");
 		figHeader = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
-	}		
-		
+		ZC_appendLines(resultHeader, figHeader);
+	}
+	
 	if(fftFlag)
 	{
+		StringLine* fftHeader = createOneStringLine("The amplitude values of the spectrum analysis (based on FFT) are presented in Figure \ref{fig:dp-fft-amp}. Since the amplitude value of the first spectrum coefficient is often much larger than others, we present its value on the left-corner of each figure instead of showing its bar in the figure.\n");
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-fft-amp", caseNames[i]);
 		strcpy(caption, "Amplitude of FFT Coefficients of the data");
 		strcpy(figLabel, "dp-fft-amp");
 		figHeader2 = ZC_generateVarStatFigTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);			
-	}	
+		ZC_appendLines(fftHeader, figHeader2);
+		ZC_appendLines(resultHeader, fftHeader);
+	}
 	
-	ZC_appendLines(figHeader, figHeader2);
 	for(i=0;i<caseNameCount;i++)
 		free(caseFiles[i]);
 	free(caseFiles);
-	return figHeader;
+	return resultHeader;
+}
+
+StringLine* ZC_generateDataSliceImages(char** caseNames, int caseNameCount)
+{
+	StringLine* resultHeader = NULL, *figHeader = NULL, *figHeader2 = NULL;
+	char caption[ZC_BUFS], figLabel[ZC_BUFS];
+	size_t i = 0;
+	char** caseFiles = (char**)malloc(sizeof(char*)*caseNameCount);
+	for(i=0;i<caseNameCount;i++)
+		caseFiles[i] = (char*)malloc(sizeof(char)*ZC_BUFS);
+	
+	if(plotImageFlag)
+	{
+		resultHeader = createOneStringLine("The slice images\\footnote{If the dataset is of 3D {z,y,x}, the image shown here is the middle slice, i.e., {i=z/2,j={1..y},k={1..x}}; if the dataset is of 2D {y,x}, the image shownhere is the whole image, i.e., {i={1..y},j={1..x}}.} of the datasets are presented in Figure \\ref{fig:dp-slice-ori} and Figure \\ref{fig:dp-slice-log} in original data domain and log domain, respectively.\n");
+		
+		for(i=0;i<caseNameCount;i++)
+			sprintf(caseFiles[i], "%s-oriimg", caseNames[i]);
+		strcpy(caption, "Slice Image (original domain)");
+		strcpy(figLabel, "dp-slice-ori");
+		figHeader = ZC_generateSliceImageTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);		
+		ZC_appendLines(resultHeader, figHeader);
+	
+		for(i=0;i<caseNameCount;i++)
+			sprintf(caseFiles[i], "%s-logimg", caseNames[i]);
+		strcpy(caption, "Slice Image (log domain)");
+		strcpy(figLabel, "dp-slice-log");
+		figHeader2 = ZC_generateSliceImageTexLines(caseNameCount, caseFiles, "dataProperties", caption, figLabel);			
+		ZC_appendLines(resultHeader, figHeader2);
+	}	
+	
+	for(i=0;i<caseNameCount;i++)
+		free(caseFiles[i]);
+	free(caseFiles);
+	return resultHeader;	
 }
 
 void ZC_generateDataPropertyAnalysisReport()
@@ -265,6 +303,9 @@ void ZC_generateDataPropertyAnalysisReport()
 	
 	StringLine* figLines =  ZC_generateDataPropertyAnalysisFigures(caseFiles, n);
 	ZC_insertLines("%plot data properties\n", texLines, figLines);
+	
+	StringLine* imgLines = ZC_generateDataSliceImages(caseFiles, n);
+	ZC_insertLines("%plot slice images\n", texLines, imgLines);	
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);	

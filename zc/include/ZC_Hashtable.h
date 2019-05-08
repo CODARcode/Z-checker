@@ -31,6 +31,7 @@ typedef struct hashtable_t {
 extern hashtable_t *ecPropertyTable; //ecPropertyTable contains the properties.
 extern hashtable_t *ecCompareDataTable; //ecCompareDataTable contains all compareData cases.
 
+//char *strdup(const char *str);
 int checkStartsWith(char* str, char* key);
 hashtable_t *ht_create( int capacity );
 int ht_hash( hashtable_t *hashtable, char *key );

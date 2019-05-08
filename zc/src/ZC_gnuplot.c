@@ -166,6 +166,29 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 	return lines;
 }
 
+char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1)
+{
+	char** lines = (char**)malloc(10*sizeof(char*));
+	
+	int i = 0;
+	for(i=0;i<10;i++)
+	{
+		lines[i] = (char*)malloc(250);
+		memset(lines[i], 0, 250);
+	}
+	sprintf(lines[0], "#!/usr/bin/gnuplot\n");
+	sprintf(lines[1], "set term png size 900, 900 enhanced font \"Arial,16\"\n");
+	sprintf(lines[2], "set pm3d map\n");
+	sprintf(lines[3], "#set cbrange [-4:4]\n");
+	sprintf(lines[4], "set output \"%s.png\"\n", dataFileName);
+	sprintf(lines[5], "set size square\n");
+	sprintf(lines[6], "set xrange [0:%zu]\n", r1); 
+	sprintf(lines[7], "set yrange [%zu:0]\n", r2);
+	sprintf(lines[8], "set palette rgbformulae 33,13,10\n");
+	sprintf(lines[9], "splot \"%s\"", dataFileName);
+	
+	return lines;
+}
 
 char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
 {

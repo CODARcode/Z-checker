@@ -370,10 +370,10 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 		property->autocorr = ZC_compute_autocorrelation1D_double(data, numOfElem, avg);
 	}
 
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);	
 #ifdef HAVE_FFTW3
 	if(autocorr3DFlag)
-	{
-		int dim = ZC_computeDimension(r5, r4, r3, r2, r1);		
+	{	
 		switch(dim)
 		{
 		case 1:
@@ -409,6 +409,35 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 		double *lap = (double*)malloc(numOfElem*sizeof(double));
 		computeLap(data, lap, r5, r4, r3, r2, r1);
 		property->lap = lap;
+	}
+
+	if(plotImageFlag)
+	{
+		double* data = (double*)property->data;
+		double* sliceImage_ori = NULL;
+		double* sliceImage_log = NULL;
+		if(dim==2)
+		{
+			sliceImage_ori = data;
+			sliceImage_log = (double*)malloc(sizeof(double)*property->numOfElem);
+			for(i=0;i<property->numOfElem;i++)
+				sliceImage_log[i] = log10(sliceImage_ori[i]);
+		}
+		else if(dim==3)
+		{
+			size_t sliceID = r3/2;
+			sliceImage_ori = NULL;
+			sliceImage_log = NULL;
+			size_t offset = sliceID*r1*r2;
+			size_t end = r1*r2;
+			for(i=0;i<end;i++)
+			{
+				sliceImage_ori[i] = data[offset+i];
+				sliceImage_log[i] = log10(sliceImage_ori[i]);
+			}
+		}
+		property->sliceImage_ori = sliceImage_ori;
+		property->sliceImage_log = sliceImage_log;
 	}
 
 	return property;

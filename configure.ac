@@ -8,6 +8,8 @@ AC_CONFIG_SRCDIR([zc/src/zc.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
+#: ${CFLAGS=-O3 -std=c99 -Wall}
+: ${CFLAGS=-O3 -std=gnu99 -Wall}
 
 ##
 ## MPI
@@ -30,10 +32,10 @@ fi
 ## HDF5
 ##
 
-AC_ARG_ENABLE(hdf5, [  --enable-hdf5            use HDF5], ok=$enableval, ok=no)
+AC_ARG_ENABLE(hdf5, [  --enable-hdf5            use HDF5], hdf5_ok=$enableval, hdf5_ok=no)
 AM_CONDITIONAL([HDF5], [test "x$enable_hdf5" = "xyes"])
 
-if test "$ok" = "yes"; then
+if test "$hdf5_ok" = "yes"; then
 	AC_CHECK_PROG(H5CC,h5cc,yes,no)
 if test "$H5CC" = no; then
 	AC_MSG_ERROR([Cound not find h5cc. Please install hdf5 first.])
@@ -314,6 +316,9 @@ AC_CHECK_FUNCS([memchr memset strchr strtol])
 AC_CONFIG_FILES([Makefile])
 if test "$netcdf_ok" = "yes"; then
 AC_CONFIG_FILES([NetCDFReader/Makefile])
+fi
+if test "$hdf5_ok" = "yes"; then
+AC_CONFIG_FILES([HDF5Reader/Makefile])
 fi
 if test "$r_ok" = "yes"; then
 AC_CONFIG_FILES([R/Makefile])

@@ -193,6 +193,8 @@ int ZC_ReadConf() {
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
 	SSIMIMAGE2DFlag = (int)iniparser_getint(ini, "COMPARE:ssimImage2D", 0);
 
+	plotImageFlag = (int)iniparser_getint(ini, "PLOT:plotSliceImage", 0);
+
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)

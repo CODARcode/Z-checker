@@ -26,6 +26,8 @@ void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor);
 void ZC_constructSortedSelectedErrorBounds4CmprsEelments(CmprsorErrBound *allCompressors, int allCompressorCount);
 
 StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNameCount);
+StringLine* ZC_generateDataSliceImages(char** caseNames, int caseNameCount);
+
 void ZC_generateDataPropertyAnalysisReport();
 
 StringLine* ZC_generateCompressionRateFigure();
