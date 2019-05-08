@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
 
     if(nbEle1!=nbEle2)
     {
-        printf("Error: nbEle1(%d)!=nbEle2(%d)\n",nbEle1, nbEle2);
+        printf("Error: nbEle1(%zu)!=nbEle2(%zu)\n",nbEle1, nbEle2);
         exit(0);
     }	
 
