@@ -426,14 +426,15 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 		else if(dim==3)
 		{
 			size_t sliceID = r3/2;
-			sliceImage_ori = NULL;
-			sliceImage_log = NULL;
 			size_t offset = sliceID*r1*r2;
-			size_t end = r1*r2;
-			for(i=0;i<end;i++)
+			size_t nbSliceEle = r1*r2;
+			sliceImage_ori = (double*)malloc(sizeof(double)*nbSliceEle);
+			sliceImage_log = (double*)malloc(sizeof(double)*nbSliceEle);
+
+			for(i=0;i<nbSliceEle;i++)
 			{
 				sliceImage_ori[i] = data[offset+i];
-				sliceImage_log[i] = log10(sliceImage_ori[i]);
+				sliceImage_log[i] = log10f(sliceImage_ori[i]);
 			}
 		}
 		property->sliceImage_ori = sliceImage_ori;
