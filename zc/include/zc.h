@@ -147,6 +147,10 @@ extern int autocorr3DFlag;
 extern int fftFlag;
 extern int lapFlag;
 extern int plotImageFlag;
+extern int plotDecImageFlag;
+
+extern int nbPlotCRs;
+extern float plotCRs[32]; //at most 32 compression ratios specified by users.
 
 extern int minAbsErrFlag;
 extern int avgAbsErrFlag;

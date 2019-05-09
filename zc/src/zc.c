@@ -55,6 +55,10 @@ int autocorr3DFlag = 1;
 int fftFlag = 1;
 int lapFlag = 0;
 int plotImageFlag = 0;
+int plotDecImageFlag = 0;
+
+int nbPlotCRs = 0;
+float plotCRs[32];
 
 int compressTimeFlag = 1;
 int decompressTimeFlag = 1;

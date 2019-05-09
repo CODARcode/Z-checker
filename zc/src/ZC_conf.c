@@ -194,6 +194,30 @@ int ZC_ReadConf() {
 	SSIMIMAGE2DFlag = (int)iniparser_getint(ini, "COMPARE:ssimImage2D", 0);
 
 	plotImageFlag = (int)iniparser_getint(ini, "PLOT:plotSliceImage", 0);
+	
+	plotDecImageFlag = (int)iniparser_getint(ini, "PLOT:plotDecSliceImage", 0);
+	if(plotDecImageFlag==1)
+	{
+		int i = 0;
+		char *CRBuf[32];
+		char* CRString = iniparser_getstring(ini, "PLOT:plotDecSliceCR", NULL);
+		CRBuf[i++] = strtok(CRString, " \r\n");
+		char* p = strtok(NULL, " \r\n");
+		while(p)
+		{	
+			CRBuf[i++] = p;
+			p = strtok(NULL, " \r\n");
+		}
+		nbPlotCRs = i;
+
+		printf("There are %d compression ratios specified by users for plotting: ", nbPlotCRs);			
+		for(i=0;i<nbPlotCRs;i++)
+		{
+			plotCRs[i] = atof(CRBuf[i]);
+			printf("%s ", CRBuf[i]);
+		}
+		printf("\n");
+	}	
 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);
