@@ -46,9 +46,9 @@ char* gen_includegraphicsLine3(char* epsFileName, char* subDir)
 	//char stringBuffer[ZC_BUFS_LONG];
 	
 	if(subDir==NULL)
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.34]{figs/{%s.png}.eps}}", epsFileName);
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[width=.4\textwidth]{figs/{%s.png}.eps}}", epsFileName);
 	else
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.34]{figs/%s/{%s.png}.eps}}", subDir, epsFileName);	
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[width=.4\textwidth]{figs/%s/{%s.png}.eps}}", subDir, epsFileName);	
 
 	return tmpLine;
 }
