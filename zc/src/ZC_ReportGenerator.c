@@ -203,7 +203,9 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 	
 	if(autocorrFlag)
 	{
-		resultHeader = createOneStringLine("The auto-correlation results with different lags (1 through 100) are presented in Figure \ref{fig:dp-autocorr}.\n");
+		char *preTxtBuffer = (char*)malloc(sizeof(char)*ZC_BUFS);
+		strcpy(preTxtBuffer, "The auto-correlation results with different lags (1 through 100) are presented in Figure \ref{fig:dp-autocorr}.\n");
+		resultHeader = createOneStringLine(preTxtBuffer);
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-autocorr", caseNames[i]);
 		strcpy(caption, "Auto-correlation of the data");
@@ -214,7 +216,9 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 	
 	if(fftFlag)
 	{
-		StringLine* fftHeader = createOneStringLine("The amplitude values of the spectrum analysis (based on FFT) are presented in Figure \ref{fig:dp-fft-amp}. Since the amplitude value of the first spectrum coefficient is often much larger than others, we present its value on the left-corner of each figure instead of showing its bar in the figure.\n");
+		char *preTxtBuffer = (char*)malloc(sizeof(char)*ZC_BUFS);
+		strcpy(preTxtBuffer, "The amplitude values of the spectrum analysis (based on FFT) are presented in Figure \ref{fig:dp-fft-amp}. Since the amplitude value of the first spectrum coefficient is often much larger than others, we present its value on the left-corner of each figure instead of showing its bar in the figure.\n");		
+		StringLine* fftHeader = createOneStringLine(preTxtBuffer);
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-fft-amp", caseNames[i]);
 		strcpy(caption, "Amplitude of FFT Coefficients of the data");
@@ -241,7 +245,9 @@ StringLine* ZC_generateDataSliceImages(char** caseNames, int caseNameCount)
 	
 	if(plotImageFlag)
 	{
-		resultHeader = createOneStringLine("The slice images\\footnote{If the dataset is of 3D {z,y,x}, the image shown here is the middle slice, i.e., {i=z/2,j={1..y},k={1..x}}; if the dataset is of 2D {y,x}, the image shownhere is the whole image, i.e., {i={1..y},j={1..x}}.} of the datasets are presented in Figure \\ref{fig:dp-slice-ori} and Figure \\ref{fig:dp-slice-log} in original data domain and log domain, respectively.\n");
+		char *preTxtBuffer = (char*)malloc(sizeof(char)*ZC_BUFS);
+		strcpy(preTxtBuffer, "The slice images\\footnote{If the dataset is of 3D {z,y,x}, the image shown here is the middle slice, i.e., {i=z/2,j={1..y},k={1..x}}; if the dataset is of 2D {y,x}, the image shownhere is the whole image, i.e., {i={1..y},j={1..x}}.} of the datasets are presented in Figure \\ref{fig:dp-slice-ori} and Figure \\ref{fig:dp-slice-log} in original data domain and log domain, respectively.\n");
+		resultHeader = createOneStringLine(preTxtBuffer);
 		
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-oriimg", caseNames[i]);
