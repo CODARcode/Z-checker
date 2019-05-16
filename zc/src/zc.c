@@ -743,9 +743,13 @@ void ZC_plotRateDistortion()
 			char cmd[ZC_BUFS];
 			sprintf(cmd, "gnuplot %s", fileName);
 			system(cmd);
-			
+			for(j=0;j<24;j++)
+				free(scriptLines[j]);
+			free(scriptLines);
+						
 			for(j=0;j<count+1;j++)
-				if(dataLines_psnr[j]!=NULL) free(dataLines_psnr[j]);						
+				if(dataLines_psnr[j]!=NULL) free(dataLines_psnr[j]);
+			
 		}
 		
 		char** dataLines_snr = extractRateDistortion_snr(count, cmpResList, &validLineNum);
@@ -763,6 +767,9 @@ void ZC_plotRateDistortion()
 			char cmd[ZC_BUFS];
 			sprintf(cmd, "gnuplot %s", fileName);
 			system(cmd);
+			for(j=0;j<24;j++)
+				free(scriptLines[j]);
+			free(scriptLines);			
 			
 			for(j=0;j<count+1;j++)
 				if(dataLines_snr[j]!=NULL) free(dataLines_snr[j]);						
@@ -783,7 +790,10 @@ void ZC_plotRateDistortion()
 			char cmd[ZC_BUFS];
 			sprintf(cmd, "gnuplot %s", fileName);
 			system(cmd);
-
+			for(j=0;j<24;j++)
+				free(scriptLines[j]);
+			free(scriptLines);
+			
 			for(j=0;j<count+1;j++)
 				if(dataLines_valErrCorr[j]!=NULL) free(dataLines_valErrCorr[j]);
 		}

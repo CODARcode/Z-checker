@@ -335,6 +335,58 @@ void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
+void ZC_writeData_withIndex(void *data, int dataType, size_t nbEle, char *tgtFilePath)
+{
+	size_t outSize = nbEle<1000? nbEle: 1000;
+	if(dataType==ZC_FLOAT)
+		ZC_writeFloatData_withIndex((float*)data, outSize, tgtFilePath);
+	else
+		ZC_writeDoubleData_withIndex((double*)data, outSize, tgtFilePath);
+}
+
+void ZC_writeDoubleData_withIndex(double *data, size_t nbEle, char *tgtFilePath)
+{
+	size_t i = 0;
+	char s[64];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+    
+    for(i = 0;i<nbEle;i++)
+	{
+		//sprintf(s,"%.20G\n",data[i]);
+		sprintf(s, "%zu %f\n", i, data[i]);
+		fputs(s, pFile);
+	}
+    
+    fclose(pFile);
+}
+
+void ZC_writeFloatData_withIndex(float *data, size_t nbEle, char *tgtFilePath)
+{
+	size_t i = 0;
+	char s[64];
+	FILE *pFile = fopen(tgtFilePath, "wb");
+    if (pFile == NULL)
+    {
+        printf("Failed to open input file. 3\n");
+        exit(1);
+    }
+   
+    for(i = 0;i<nbEle;i++)
+	{
+		//printf("i=%d\n",i);
+		//printf("data[i]=%f\n",data[i]);
+		sprintf(s, "%zu %f\n", i, data[i]);
+		fputs(s, pFile);
+	}
+    
+    fclose(pFile);
+}
+
 void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
 {
 	if(dataType == ZC_FLOAT)

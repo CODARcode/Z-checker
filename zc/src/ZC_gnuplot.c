@@ -60,6 +60,65 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 	return lines;
 }
 
+/**
+ * for plotting the 1D data series
+ * */
+char** genGnuplotScript_linespoints2(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
+{
+	if(columns<2)
+	{
+		printf("Error: columns cannot be less than 2.\n");
+		exit(0);
+	}
+	
+	char** lines = (char**)malloc(24*sizeof(char*));
+	char stringBuffer[ZC_BUFS_LONG];
+	
+	int i = 0;
+	for(i=0;i<24;i++)
+	{
+		lines[i] = (char*)malloc(250);
+		memset(lines[i], 0, 250);
+	}
+	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
+	sprintf(lines[1], "set output \"%s.png.eps\"\n", dataFileName); //the file name is without extension here
+	sprintf(lines[2], "set datafile missing \"-\"\n");
+	sprintf(lines[3], "set key inside top left Left reverse\n");
+	sprintf(lines[4], "\n");
+	sprintf(lines[5], "set auto x\n");
+	sprintf(lines[6], "#set yrange [0:1]\n");
+	sprintf(lines[7], "set grid y\n");
+	sprintf(lines[8], "\n");
+	
+	sprintf(lines[9], "set style line 1 lt 1 lc rgb \"blue\" lw 5\n");
+	sprintf(lines[10], "set style line 2 lt 2 lc rgb \"red\" lw 5\n");
+	sprintf(lines[11], "set style line 3 lt 3 lc rgb \"black\" lw 5\n");		
+	sprintf(lines[12], "set style line 4 lt 4 lc rgb \"green\" lw 5\n");
+	sprintf(lines[13], "set style line 5 lt 5 lc rgb \"purple\" lw 5\n");
+	sprintf(lines[14], "set style line 6 lt 6 lc rgb \"brown\" lw 5\n");
+	sprintf(lines[15], "set style line 7 lt 7 lc rgb \"orange\" lw 5\n");
+	sprintf(lines[16], "\n");
+	
+	sprintf(lines[17], "set xlabel \"%s\"\n", xlabel);	
+	sprintf(lines[18], "set ylabel \"%s\"\n", ylabel);	
+	sprintf(lines[19], "\n");
+	
+	sprintf(lines[20], "set style data linespoints\n");
+	
+	sprintf(lines[21], "set boxwidth 0.9\n");
+	sprintf(lines[22], "set xtic rotate by -45\n");
+	sprintf(lines[23], "plot '%s.%s' using 1:2 ti \"\" ls 1", dataFileName, extension);
+	
+	for(i=3;i<=columns;i++)
+	{
+		sprintf(stringBuffer, "%s, '' u 1:%d ti \"\" ls %d", lines[23], i, i-1);
+		strcpy(lines[23], stringBuffer);
+	}
+	sprintf(stringBuffer, "%s\n", lines[23]);
+	strcpy(lines[23], stringBuffer);
+	return lines;
+}
+
 char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel, long maxYValue)
 {
 	if(columns<2)

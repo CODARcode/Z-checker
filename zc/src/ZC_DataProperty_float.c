@@ -394,7 +394,14 @@ ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOf
 		float* data = (float*)property->data;
 		float* sliceImage_ori = NULL;
 		float* sliceImage_log = NULL;
-		if(dim==2)
+		if(dim==1)
+		{
+			sliceImage_ori = data;
+			sliceImage_log = (float*)malloc(sizeof(float)*property->numOfElem);
+			for(i=0;i<property->numOfElem && i<1000;i++)
+				sliceImage_log[i] = log10f(fabsf(sliceImage_ori[i]));			
+		}
+		else if(dim==2)
 		{
 			sliceImage_ori = data;
 			sliceImage_log = (float*)malloc(sizeof(float)*property->numOfElem);

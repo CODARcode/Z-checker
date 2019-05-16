@@ -599,29 +599,61 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 		memset(oriImageFile, 0, ZC_BUFS);
 		memset(logImageFile, 0, ZC_BUFS);
 
-		memset(tgtFilePath, 0, ZC_BUFS);		
-		sprintf(oriImageFile, "%s.oriimg", property->varName);
-		sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, oriImageFile);
-		ZC_writeData_genuplotImage(property->sliceImage_ori, property->dataType, property->r2, property->r1, tgtFilePath);
+		int dim = ZC_computeDimension(property->r5, property->r4, property->r3, property->r2, property->r1);
+		if(dim == 1)
+		{
+			memset(tgtFilePath, 0, ZC_BUFS);		
+			sprintf(oriImageFile, "%s.oriimg", property->varName);
+			sprintf(tgtFilePath, "%s/%s.tt", tgtWorkspaceDir, oriImageFile);			
+			
+			ZC_writeData_withIndex(property->sliceImage_ori, property->dataType, property->r1, tgtFilePath); //print only first 1000 (or less if nbEle<1000) data points
+			
+			char** scriptLines = genGnuplotScript_linespoints2(oriImageFile, "tt", GNUPLOT_FONT, 2, "Index", "Data Values");
+			sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, property->varName);
+			ZC_writeStrings(24, scriptLines, imagPlotScriptFile);
+			for(i=0;i<24;i++)
+				free(scriptLines[i]);
+			free(scriptLines);
+			
+			memset(tgtFilePath, 0, ZC_BUFS);		
+			sprintf(logImageFile, "%s.logimg", property->varName);
+			sprintf(tgtFilePath, "%s/%s.tt", tgtWorkspaceDir, logImageFile);						
+			
+			ZC_writeData_withIndex(property->sliceImage_log, property->dataType, property->r1, tgtFilePath);
+			
+			scriptLines = genGnuplotScript_linespoints2(logImageFile, "tt", GNUPLOT_FONT, 2, "Index", "log10(Data Values)");
+			sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, property->varName);
+			ZC_writeStrings(24, scriptLines, imagPlotScriptFile);
+			for(i=0;i<24;i++)
+				free(scriptLines[i]);
+			free(scriptLines);	
+		}
+		else if(dim > 1)
+		{
+			memset(tgtFilePath, 0, ZC_BUFS);		
+			sprintf(oriImageFile, "%s.oriimg", property->varName);
+			sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, oriImageFile);
+			ZC_writeData_genuplotImage(property->sliceImage_ori, property->dataType, property->r2, property->r1, tgtFilePath);
 
-		memset(tgtFilePath, 0, ZC_BUFS);
-		sprintf(logImageFile, "%s.logimg", property->varName);
-		sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, logImageFile);
-		ZC_writeData_genuplotImage(property->sliceImage_log, property->dataType, property->r2, property->r1, tgtFilePath);
-
-		sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, property->varName);
-		char** sliceImageStrs = genGnuplotScript_sliceImage(oriImageFile, property->r2, property->r1);
-		ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
-		for(i=0;i<10;i++)
-			free(sliceImageStrs[i]);
-		free(sliceImageStrs);
-		
-		sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, property->varName);
-		sliceImageStrs = genGnuplotScript_sliceImage(logImageFile, property->r2, property->r1);
-		ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
-		for(i=0;i<10;i++)
-			free(sliceImageStrs[i]);
-		free(sliceImageStrs);	
+			memset(tgtFilePath, 0, ZC_BUFS);
+			sprintf(logImageFile, "%s.logimg", property->varName);
+			sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, logImageFile);
+			ZC_writeData_genuplotImage(property->sliceImage_log, property->dataType, property->r2, property->r1, tgtFilePath);			
+			
+			sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, property->varName);
+			char** sliceImageStrs = genGnuplotScript_sliceImage(oriImageFile, property->r2, property->r1);
+			ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
+			for(i=0;i<10;i++)
+				free(sliceImageStrs[i]);
+			free(sliceImageStrs);
+			
+			sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, property->varName);
+			sliceImageStrs = genGnuplotScript_sliceImage(logImageFile, property->r2, property->r1);
+			ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
+			for(i=0;i<10;i++)
+				free(sliceImageStrs[i]);
+			free(sliceImageStrs);			
+		}
 	}
 	
 	if(dir!=NULL)

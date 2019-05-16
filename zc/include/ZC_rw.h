@@ -47,6 +47,9 @@ float *ZC_readFloatData(char *srcFilePath, size_t *nbEle);
 void ZC_writeByteData(unsigned char *bytes, size_t byteLength, char *tgtFilePath);
 void ZC_writeDoubleData(double *data, size_t nbEle, char *tgtFilePath);
 void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath);
+void ZC_writeDoubleData_withIndex(double *data, size_t nbEle, char *tgtFilePath);
+void ZC_writeFloatData_withIndex(float *data, size_t nbEle, char *tgtFilePath);
+void ZC_writeData_withIndex(void *data, int dataType, size_t nbEle, char *tgtFilePath);
 void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath);
 
 void ZC_writeFloatData_gnuplotImage(float *data, size_t r2, size_t r1, char *tgtFilePath);

@@ -416,6 +416,13 @@ ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t num
 		double* data = (double*)property->data;
 		double* sliceImage_ori = NULL;
 		double* sliceImage_log = NULL;
+		if(dim==1)
+		{
+			sliceImage_ori = data;
+			sliceImage_log = (double*)malloc(sizeof(double)*property->numOfElem);
+			for(i=0;i<property->numOfElem && i<1000;i++)
+				sliceImage_log[i] = log10(fabs(sliceImage_ori[i]));			
+		}		
 		if(dim==2)
 		{
 			sliceImage_ori = data;
