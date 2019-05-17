@@ -204,7 +204,7 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 	if(autocorrFlag)
 	{
 		char *preTxtBuffer = (char*)malloc(sizeof(char)*ZC_BUFS);
-		strcpy(preTxtBuffer, "The auto-correlation results with different lags (1 through 100) are presented in Figure \ref{fig:dp-autocorr}.\n");
+		strcpy(preTxtBuffer, "The auto-correlation results with different lags (1 through 100) are presented in Figure \\ref{fig:dp-autocorr}.\n");
 		resultHeader = createOneStringLine(preTxtBuffer);
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-autocorr", caseNames[i]);
@@ -217,7 +217,7 @@ StringLine* ZC_generateDataPropertyAnalysisFigures(char** caseNames, int caseNam
 	if(fftFlag)
 	{
 		char *preTxtBuffer = (char*)malloc(sizeof(char)*ZC_BUFS_LONG);
-		strcpy(preTxtBuffer, "The amplitude values of the spectrum analysis (based on FFT) are presented in Figure \ref{fig:dp-fft-amp}. Since the amplitude value of the first spectrum coefficient is often much larger than others, we present its value on the left-corner of each figure instead of showing its bar in the figure.\n");		
+		strcpy(preTxtBuffer, "The amplitude values of the spectrum analysis (based on FFT) are presented in Figure \\ref{fig:dp-fft-amp}. Since the amplitude value of the first spectrum coefficient is often much larger than others, we present its value on the left-corner of each figure instead of showing its bar in the figure.\n");		
 		StringLine* fftHeader = createOneStringLine(preTxtBuffer);
 		for(i=0;i<caseNameCount;i++)
 			sprintf(caseFiles[i], "%s-fft-amp", caseNames[i]);
