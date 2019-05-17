@@ -1184,11 +1184,12 @@ void ZC_plotSliceImage()
 	size_t i;
 	char acFileName[ZC_BUFS], acCmd[ZC_BUFS_LONG];
 	char** allVarNames = ht_getAllKeys(ecPropertyTable);
+	printf("ecPropertyTable->count=%d\n", ecPropertyTable->count);
 	for(i=0;i<ecPropertyTable->count;i++)
 	{
 		sprintf(acFileName, "%s", allVarNames[i]);
 		//execute .p files using system().
-		sprintf(acCmd, "cd dataProperties;gnuplot %s-oriimg.p;if [ -f %s.oriimg.png ];then mv %s.oriimg.png %s-oriimg.png;fi;if [ -f %s.oriimg.png.eps ];then mv %s.oriimg.png.eps %s-oriimg.png.eps;fi;", acFileName, acFileName, acFileName, acFileName, acFileName);
+		sprintf(acCmd, "cd dataProperties;gnuplot %s-oriimg.p;if [ -f %s.oriimg.png ];then mv %s.oriimg.png %s-oriimg.png;fi;if [ -f %s.oriimg.png.eps ];then mv %s.oriimg.png.eps %s-oriimg.png.eps;fi;", acFileName, acFileName, acFileName, acFileName, acFileName, acFileName);
 		system(acCmd);
 		sprintf(acCmd, "cd dataProperties;gnuplot %s-logimg.p;if [ -f %s.logimg.png ];then mv %s.logimg.png %s-logimg.png;fi;if [ -f %s.logimg.png.eps ];then mv %s.logimg.png.eps %s-logimg.png.eps;fi;", acFileName, acFileName, acFileName, acFileName, acFileName);
 		system(acCmd);		
