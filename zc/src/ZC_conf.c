@@ -327,6 +327,7 @@ int ZC_ReadConf() {
 			char* compare_dir = compareData_dir[i];
 			int count;
 			ZC_getFileNames(compare_dir, cmpResultFileExtension, &count, fileNames);
+			printf("There are %d files in %s\n", count, compare_dir);
 			//TODO: update the data structure  ZC_CompareData
 			for(j=0;j<count;j++)
 			{

@@ -1188,9 +1188,9 @@ void ZC_plotSliceImage()
 	{
 		sprintf(acFileName, "%s", allVarNames[i]);
 		//execute .p files using system().
-		sprintf(acCmd, "cd dataProperties;gnuplot %s-oriimg.p;mv %s.oriimg.png %s-oriimg.png;mv %s.oriimg.png.eps %s-oriimg.png.eps", acFileName, acFileName, acFileName, acFileName, acFileName);
+		sprintf(acCmd, "cd dataProperties;gnuplot %s-oriimg.p;if [ -f %s.oriimg.png ];then mv %s.oriimg.png %s-oriimg.png;fi;if [ -f %s.oriimg.png.eps ];then mv %s.oriimg.png.eps %s-oriimg.png.eps;fi;", acFileName, acFileName, acFileName, acFileName, acFileName);
 		system(acCmd);
-		sprintf(acCmd, "cd dataProperties;gnuplot %s-logimg.p;mv %s.logimg.png %s-logimg.png;mv %s.logimg.png.eps %s-logimg.png.eps", acFileName, acFileName, acFileName, acFileName, acFileName);
+		sprintf(acCmd, "cd dataProperties;gnuplot %s-logimg.p;if [ -f %s.logimg.png ];then mv %s.logimg.png %s-logimg.png;fi;if [ -f %s.logimg.png.eps ];then mv %s.logimg.png.eps %s-logimg.png.eps;fi;", acFileName, acFileName, acFileName, acFileName, acFileName);
 		system(acCmd);		
 	}
 }
