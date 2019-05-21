@@ -10,6 +10,7 @@ var Client = (function() {
   //   "entropy", "maxAbsErr", "maxPWRErr", "maxRelErr", "maxValue", "nrmse", "psnr", "rmse",
   //   "snr"];
   var plotNames = ["psnr", "rmse", "nrmse", "entropy", "avgRelErr", "avgValue", "compressTime", "decompressRate", 
+    "ssimImage2D_avg",
     "png-original", "png-decompressed"];
 
   Client.generatePlots = function() {

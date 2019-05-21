@@ -373,6 +373,7 @@ void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareDa
   j["cont"] = c->cont;
   j["struc"] = c->struc;
   j["ssim"] = c->ssim;
+  j["ssimImage2D_avg"] = c->ssimImage2D_avg;
   
   {
     std::unique_lock<std::mutex> lock(mutex_actions);
