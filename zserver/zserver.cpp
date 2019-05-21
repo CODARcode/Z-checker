@@ -9,14 +9,7 @@
 #include <json.hh>
 #include "zc.h"
 #include "ZC_DataProperty.h"
-
-#ifdef max
-#undef max
-#endif
-
-#ifdef min
-#undef min
-#endif
+#include "png_utils.hh"
 
 #ifdef HAVE_ROCKSDB
 #include <rocksdb/db.h>
@@ -24,6 +17,14 @@ static rocksdb::DB* db = NULL;
 #elif defined HAVE_LEVELDB
 #include <leveldb/db.h>
 static leveldb::DB* db = NULL;
+#endif
+
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
 #endif
 
 typedef websocketpp::server<websocketpp::config::asio> server;
@@ -251,22 +252,62 @@ void zserver_stop()
   // TODO
 }
 
+#if HAVE_PNG
+static png_mem_buffer array2png(int W, int H, double *p)
+{
+  unsigned char *buf = (unsigned char*)malloc(W*H*4);
+  double min = std::numeric_limits<double>::max(), 
+         max = std::numeric_limits<double>::min();
+  for (int i = 0; i < W*H; i ++) {
+    min = std::min(min, p[i]);
+    max = std::max(max, p[i]);
+  }
+  for (int i = 0; i < W*H; i ++) {
+    double x = (p[i] - min) / (max - min);
+    buf[i*4] = x * 255;
+    buf[i*4+1] = (1-x) * 255;
+    buf[i*4+2] = 0;
+    buf[i*4+3] = 255;
+  }
+  auto png = save_png(W, H, 8, PNG_COLOR_TYPE_RGBA, buf, 4*W, PNG_TRANSFORM_IDENTITY);
+  free(buf);
+
+  return png;
+  // FILE *fp = fopen("test.png", "wb");
+  // fwrite(png0.buffer, 1, png0.size, fp);
+  // free(png0.buffer);
+  // fclose(fp);
+}
+#endif
+
 void zserver_commit_field_data(int timestep, int W, int H, double *p, double *q)
 {
+#if HAVE_PNG
   nlohmann::json j;
 
   j["timestep"] = timestep;
   j["type"] = "field";
   j["width"] = W;
   j["height"] = H;
-  j["original_data"] = base64_encode((unsigned char*)p, W*H*sizeof(double));
-  j["reconstructed_data"] = base64_encode((unsigned char*)q, W*H*sizeof(double));
+  // j["original_data"] = base64_encode((unsigned char*)p, W*H*sizeof(double));
+  // j["reconstructed_data"] = base64_encode((unsigned char*)q, W*H*sizeof(double));
+
+  auto png0 = array2png(W, H, p), 
+       png1 = array2png(W, H, q);
+ 
+  const std::string header("data:image/png;base64, ");
+  j["original_data"] = header + base64_encode((unsigned char*)png0.buffer, png0.size);
+  j["reconstructed_data"] = header + base64_encode((unsigned char*)png1.buffer, png1.size);
+
+  free(png0.buffer);
+  free(png1.buffer);
 
   {
     std::unique_lock<std::mutex> lock(mutex_actions);
     actions.push(Action(ACTION_BROADCAST, j.dump())); 
   }
   cond_actions.notify_one();
+#endif
 }
 
 void zserver_commit(int timestep, struct ZC_DataProperty *d, struct ZC_CompareData *c)

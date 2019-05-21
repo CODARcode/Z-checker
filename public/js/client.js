@@ -9,7 +9,8 @@ var Client = (function() {
   //   "compressRatio", "compressSize", "compressTime", "decompressRate", "decompressTime", 
   //   "entropy", "maxAbsErr", "maxPWRErr", "maxRelErr", "maxValue", "nrmse", "psnr", "rmse",
   //   "snr"];
-  var plotNames = ["psnr", "rmse", "nrmse", "entropy", "avgRelErr", "avgValue", "compressTime", "decompressRate"];
+  var plotNames = ["psnr", "rmse", "nrmse", "entropy", "avgRelErr", "avgValue", "compressTime", "decompressRate", 
+    "png-original", "png-decompressed"];
 
   Client.generatePlots = function() {
     var options = {
@@ -32,6 +33,8 @@ var Client = (function() {
 
   Client.updateData = function() {
     plotNames.forEach(function(key) {
+      if (key.startsWith("png")) return;
+
       var mydata = [];
       for (i=0; i<statsBuffer.length; i++) 
         mydata.push([statsBuffer[i]["timestep"], statsBuffer[i][key]]);
@@ -86,6 +89,8 @@ var Client = (function() {
         if (statsBuffer.length > statsLimit) 
           statsBuffer.shift();
       } else if (msg.type == "field") {
+        $("#plot-png-original").html("<h3>original_data (t=" + msg.timestep + ")</h3><img src='" + msg.original_data + "' />");
+        $("#plot-png-decompressed").html("<h3>reconstructed_data (t=" + msg.timestep + ")</h3><img src='" + msg.reconstructed_data + "' />");
         console.log(msg);
       }
       // if (counter ++ % 10 == 0)

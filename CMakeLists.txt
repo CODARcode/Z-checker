@@ -58,6 +58,12 @@ else ()
   endif ()
 endif ()
 
+find_package (PNG)
+if (PNG_FOUND)
+  include_directories (${PNG_INCLUDE_DIRS})
+  add_definitions (-DHAVE_PNG)
+endif ()
+
 find_package (Threads REQUIRED)
 find_package (Boost COMPONENTS system)
 

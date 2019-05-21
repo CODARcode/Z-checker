@@ -9,6 +9,10 @@ elseif (LevelDB_FOUND)
   list (APPEND zserver_dependencies ${LevelDB_LIBRARY})
 endif ()
 
+if (PNG_FOUND)
+  list (APPEND zserver_dependencies ${PNG_LIBRARIES})
+endif ()
+
 add_library (zserver zserver.cpp base64.cpp)
 target_link_libraries (zserver ${zserver_dependencies})
 
