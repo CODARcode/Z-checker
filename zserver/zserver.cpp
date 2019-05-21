@@ -222,6 +222,7 @@ extern "C" {
 
 void zserver_start(int port) 
 {
+  fprintf(stderr, "listening to port %d!\n", port);
   const std::string dbname = "/tmp/zchecker";
   open_db(dbname);
 
@@ -256,6 +257,8 @@ void zserver_commit_field_data(int timestep, int W, int H, double *p, double *q)
 
   j["timestep"] = timestep;
   j["type"] = "field";
+  j["width"] = W;
+  j["height"] = H;
   j["original_data"] = base64_encode((unsigned char*)p, W*H*sizeof(double));
   j["reconstructed_data"] = base64_encode((unsigned char*)q, W*H*sizeof(double));
 
