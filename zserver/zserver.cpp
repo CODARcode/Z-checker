@@ -118,7 +118,7 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
   con->append_header("Access-Control-Allow-Headers", "*");
   
   std::string query = con->get_resource();
-  // fprintf(stderr, "request=%s\n", query.c_str());
+  if (query == "/") query = "/index.html";
 
   bool succ = false;
 #if 0
