@@ -10,6 +10,7 @@
 #include "zc.h"
 #include "ZC_DataProperty.h"
 #include "png_utils.hh"
+#include <cmrc/cmrc.hpp>
 
 #ifdef HAVE_ROCKSDB
 #include <rocksdb/db.h>
@@ -27,6 +28,9 @@ static leveldb::DB* db = NULL;
 #undef min
 #endif
 
+CMRC_DECLARE(zserver_public);
+auto webfs = cmrc::zserver_public::get_filesystem();
+
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
@@ -36,6 +40,8 @@ static std::thread *thread, *thread1;
 static std::map<std::string, std::string> map;
 
 // std::list<std::string> listResults;
+
+
 
 
 // actions
@@ -112,9 +118,10 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
   con->append_header("Access-Control-Allow-Headers", "*");
   
   std::string query = con->get_resource();
+  // fprintf(stderr, "request=%s\n", query.c_str());
 
   bool succ = false;
-
+#if 0
   if (query.find("/all") == 0) {
     // std::unique_lock<std::mutex> lock(mutex);
     
@@ -126,6 +133,17 @@ static void on_http(server *s, websocketpp::connection_hdl hdl)
     buffer << "]";
     con->set_body(buffer.str());
     succ = true;
+  }
+#endif
+
+  const std::string filename = "/public" + query;
+  try {
+    auto file = webfs.open(filename);
+    std::string str(file.begin(), file.end());
+    con->set_body(str);
+    succ = true;
+  } catch (...) {
+    succ = false;
   }
  
   if (succ) {
@@ -183,7 +201,7 @@ static void start_server_thread(int port)
     wss.init_asio();
 
     // Register our message handler
-    // wss.set_http_handler(bind(&on_http, &wss, _1));
+    wss.set_http_handler(bind(&on_http, &wss, _1));
     wss.set_open_handler(bind(&on_open, &wss, _1));
     wss.set_close_handler(bind(&on_close, &wss, _1));
     wss.set_message_handler(bind(&on_message, &wss, _1, _2));
