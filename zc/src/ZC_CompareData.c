@@ -5,6 +5,7 @@
 #include "ZC_util.h"
 #include "ZC_DataProperty.h"
 #include "ZC_CompareData.h"
+#include "ZC_quicksort.h"
 #include "zc.h"
 #include "iniparser.h"
 #ifdef HAVE_ONLINEVIS
@@ -36,7 +37,9 @@ int freeCompareResult(ZC_CompareData* compareData)
 	if(compareData==NULL)
 		return 0;
 	char* key = compareData->solution;
-	ZC_CompareData* found = (ZC_CompareData*)ht_freePairEntry(ecCompareDataTable, key);
+	ZC_CompareData* found = NULL;
+	if(ecCompareDataTable!=NULL)
+		found = (ZC_CompareData*)ht_freePairEntry(ecCompareDataTable, key);
 	if(found==NULL)
 	{
 		freeCompareResult_internal(compareData);
@@ -570,6 +573,8 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF);
 	
 	iniparser_freedict(ini);
+	
+	free(var);
 	return compareResult;
 }
 
@@ -717,4 +722,209 @@ ZC_CompareData_Overall* ZC_compareData_overall()
 	result->max_pearsonCorr = overall_maxPearsonCorr;
 		
 	return result;
+}
+
+
+double computeErrorSetting(double targetCR, int nbPoints, double* sortedCompressionRatios, double* errorSettings)
+{
+	double result = 0;
+	int mode = DECVIS_ERROR_LINEAR_APPROX;
+	if(mode == DECVIS_ERROR_SELECT_CLOSET)
+	{
+		int i = 0;
+		int targetIndex = 0;
+		
+		for(i=0;i<nbPoints;i++)
+		{
+			if(sortedCompressionRatios[i] >= targetCR)
+			{
+				targetIndex = i;
+				break;
+			}
+		}
+		
+		result = errorSettings[targetIndex];
+	}
+	else if(mode == DECVIS_ERROR_LINEAR_APPROX)
+	{
+		int i = 0;
+		int lower = 0, upper = 0;
+		for(i=0;i<nbPoints;i++)
+		{
+			if(sortedCompressionRatios[i] >= targetCR)
+			{
+				upper = i;
+				break;
+			}
+		}
+		if(upper>0)
+		{
+			lower = upper-1;
+			double l = sortedCompressionRatios[lower];
+			double u = sortedCompressionRatios[upper];
+			double fl = errorSettings[lower];
+			double fu = errorSettings[upper];
+			double tmp = (targetCR-l)/(u-l)*(fu-fl);
+			return fl+tmp;
+		}
+		else
+		{
+			lower = upper;
+			upper = upper + 1;
+			double l = sortedCompressionRatios[lower];
+			double u = sortedCompressionRatios[upper];
+			double fl = errorSettings[lower];
+			double fu = errorSettings[upper];
+			double a = (l-targetCR)/(u-targetCR);
+			result = (a*fu-fl)/(a-1);						
+		}
+		if(result<0)
+			result = errorSettings[lower];
+	}
+	return result;
+}
+
+void extractCRandErrorSettings(ZC_CompareData *compressionResults[], int compressionResultCount, double* compressionRatios, double* errorSettings)
+{
+	int i = 0;
+	for(i=0;i<compressionResultCount;i++)
+	{
+		compressionRatios[i] = compressionResults[i]->compressRatio;
+		errorSettings[i] = compressionResults[i]->errorBound;
+	}
+}
+
+void print_cmprVisE(CompressorCRVisElement* cmprVisE)
+{
+	printf("varName=%s cmprName=%s\n", cmprVisE->varName, cmprVisE->compressorName);
+		
+	int i = 0;
+	for(i=0;i<cmprVisE->resultCount;i++)
+		printf("%f,%f ", cmprVisE->compressionResults[i]->compressRatio, cmprVisE->compressionResults[i]->errorBound);
+	
+	printf("\n");
+	char** keys = ht_getAllKeys(cmprVisE->CRVisDataMap);
+	int count = ht_getElemCount(cmprVisE->CRVisDataMap);
+	for(i=0;i<count;i++)
+	{
+		char* compressionRatio = keys[i];
+		ZCVisDecDataElement* visEle = ht_get(cmprVisE->CRVisDataMap, compressionRatio);
+		printf("CR=%s ErrorBound=%s\n", compressionRatio, visEle->errorSetting_str);
+	}
+	free(keys);
+}
+
+/**
+ * 
+ * This function actually seems not necessary for compression/decompression of specified compressionr ratios (for dec vis)
+ * */
+StringLine* write_cmprVisE(CompressorCRVisElement* cmprVisE)
+{
+	char tmpLine[MAX_MSG_LENGTH];	
+	StringLine* header = createStringLineHeader();	
+	StringLine* p = header; //p always points to the tail
+	char* line = NULL;
+	
+	sprintf(tmpLine, "cmprName=%s\n", cmprVisE->compressorName);
+	line = createLine(tmpLine); p = appendOneLine(p, line);
+	
+	int i = 0;
+	for(i=0;i<cmprVisE->resultCount-1;i++)
+	{
+		sprintf(tmpLine, "%f,%f ", cmprVisE->compressionResults[i]->compressRatio, cmprVisE->compressionResults[i]->errorBound);
+		line = createLine(tmpLine); p = appendOneLine(p, line);
+	}
+	sprintf(tmpLine, "%f,%f\n", cmprVisE->compressionResults[i]->compressRatio, cmprVisE->compressionResults[i]->errorBound);
+	line = createLine(tmpLine); p = appendOneLine(p, line);	
+
+	char** keys = ht_getAllKeys(cmprVisE->CRVisDataMap);
+	int count = ht_getElemCount(cmprVisE->CRVisDataMap);
+	for(i=0;i<count;i++)
+	{
+		char* compressionRatio = keys[i];
+		ZCVisDecDataElement* visEle = ht_get(cmprVisE->CRVisDataMap, compressionRatio);
+		sprintf(tmpLine, "CR=%s ErrorBound=%s\n", compressionRatio, visEle->errorSetting_str);
+		line = createLine(tmpLine); p = appendOneLine(p, line);
+	}
+	free(keys);	
+	
+	return header;
+}
+
+/**
+ * 
+ * CompressorCRVisElement* cmprVisE is both input and output. 
+ * Specifically, cmprVisE->compressionResults is the input information containing compression results with different error settings
+ * cmprVisE->CRVisDataMap contains the output information such as estimated error setting based on different specified compression ratios (CR)
+ * see struct ZCVisDecDataElement for details.
+ * 
+ * */
+void ZC_itentifyErrorSettingBasedOnCR(CompressorCRVisElement* cmprVisE)
+{
+	int i = 0;
+	//sorting the compressionResults based on CR (increasing order)
+	ZC_quick_sort_vis_CR(cmprVisE->compressionResults, 0, cmprVisE->resultCount-1);
+	
+	double compressionRatios[MAX_NB_CMPR_CASES];
+	double errorSettings[MAX_NB_CMPR_CASES];
+	//TODO: extract CRs and errorSettings from the sorted cmprVisE->compressionResults
+	extractCRandErrorSettings(cmprVisE->compressionResults, cmprVisE->resultCount, compressionRatios, errorSettings);
+	
+	//perform analysis 
+	hashtable_t* crVisDataMap = cmprVisE->CRVisDataMap;
+	int keyCount = ht_getElemCount(crVisDataMap);
+	char** cr_str = ht_getAllKeys(crVisDataMap);
+	for(i=0;i<keyCount;i++)
+	{
+		char* targetCR = cr_str[i];
+		ZCVisDecDataElement* visEle = ht_get(crVisDataMap, targetCR);
+		double targetCR_ = atof(targetCR);
+		double targetErrorSetting = computeErrorSetting(targetCR_, cmprVisE->resultCount, compressionRatios, errorSettings);
+		visEle->errorSetting_str = (char*)malloc(sizeof(char)*32);
+		sprintf(visEle->errorSetting_str, "%.2G", targetErrorSetting);
+		visEle->errorSetting = atof(visEle->errorSetting_str);
+		visEle->compressionCaseName = (char*)malloc(sizeof(char)*128);
+		sprintf(visEle->compressionCaseName, "%s(%s):%s", visEle->compressorName, visEle->errorSetting_str, visEle->varName);
+	}
+	free(cr_str);
+}
+
+void free_ZCVisDecDataElement(ZCVisDecDataElement* visEle)
+{
+	if(visEle->errorSetting_str!=NULL)
+		free(visEle->errorSetting_str);
+	if(visEle->compressionCaseName!=NULL)
+		free(visEle->compressionCaseName);
+	if(visEle->sliceImage_dec_ori!=NULL)
+		free(visEle->sliceImage_dec_ori);
+	if(visEle->sliceImage_dec_log!=NULL)
+		free(visEle->sliceImage_dec_log);
+	if(visEle->compressionResult!=NULL)
+		free(visEle->compressionResult);
+	free(visEle);
+}
+
+void free_CompressorCRVisElement(CompressorCRVisElement* cmprVisE)
+{
+	//varName and compressorName are not newly allocated memory
+/*	if(cmprVisE->varName!=NULL)
+		free(cmprVisE->varName);
+	if(cmprVisE->compressorName!=NULL)
+		free(cmprVisE->compressorName);*/
+	int i = 0;
+	for(i=0;i<cmprVisE->resultCount;i++)
+		freeCompareResult(cmprVisE->compressionResults[i]);
+	int capacity = cmprVisE->CRVisDataMap->capacity;
+	for(i=0;i<capacity;i++)
+	{
+		entry_t* entry = cmprVisE->CRVisDataMap->table[i];
+		while(entry!=NULL)
+		{
+			ZCVisDecDataElement* visEle = cmprVisE->CRVisDataMap->table[i]->value;
+			free_ZCVisDecDataElement(visEle);
+			entry = entry->next;
+		}
+	}
+	ht_freeTable(cmprVisE->CRVisDataMap);
+	free(cmprVisE);
 }

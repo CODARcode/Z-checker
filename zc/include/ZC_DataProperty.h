@@ -28,6 +28,7 @@ typedef struct{real Re; real Im; real Amp;} complex;
 typedef struct ZC_DataProperty
 {
 	char* varName;
+	char* filePath;
 	int dataType; /*ZC_DOUBLE or ZC_FLOAT*/
 	size_t r5;
 	size_t r4;
@@ -72,7 +73,7 @@ int freeDataProperty(ZC_DataProperty* dataProperty);
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
-double entropy, double* autocorr, complex* fftCoeff);
+double entropy, double* autocorr, complex* fftCoeff, char* filePath);
 
 complex* ZC_computeFFT(void* data, size_t n, int dataType);
 ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);

@@ -28,6 +28,7 @@ char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontS
 char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1);
+void plotSliceImageData(char* keyName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, void* slice_data_ori, void* slice_data_log, char* tgtWorkspaceDir);
 
 #ifdef __cplusplus
 }

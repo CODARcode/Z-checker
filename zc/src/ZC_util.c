@@ -40,7 +40,7 @@ void removeExtension2(char* mystr) {
 
 char* createLine(char* str)
 {
-	char* line = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
+	char* line = (char*)malloc(sizeof(char)*(strlen(str)+1));
 	strcpy(line, str);
 	return line;
 }
@@ -463,3 +463,35 @@ void checkAndAddStringToList(char** strList, int* num, char* targetStr)
 		(*num)++;
 	}
 }
+
+int ZC_parseCompressionCase(char* compressionCase, char* compressorName, char* errorBound, char* varName)
+{
+        char* q = NULL;
+        char* delim = ":";
+        char* delim2 = "(";
+        char* delim3 = ")";
+        char first[256];
+
+		char tmp[256];
+		strcpy(tmp, compressionCase);
+        char* p=strtok(tmp,delim);
+
+        strcpy(first, p);
+        p = strtok(NULL,delim);
+        strcpy(varName,p);
+
+        p = strtok(first, delim2);
+        strcpy(compressorName, p);
+        while(p)
+        {
+                p = strtok(NULL,delim2);
+                if(p!=NULL)
+                {
+                        q = strtok(p, delim3);
+                        strcpy(errorBound, q);
+                        break;
+                }
+        }
+        return 0;
+}
+

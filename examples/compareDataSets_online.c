@@ -11,7 +11,7 @@ int main(int argc, char * argv[])
 	size_t r5=0,r4=0,r3=0,r2=0,r1=0;
 	char oriFilePath[640], decFilePath[640];
 	char *cfgFile, *compressionCase, *varName;
-
+	
 	if(argc < 8)
 	{
 		printf("Usage: compareDataSets [dataType -f or -d] [config_file] [compressionCase] [varName] [oriDataFilePath] [decDataFilePath] [dimension sizes...]\n");
@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
 	ZC_Init(cfgFile);
 
 	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
-	size_t offset;
+	size_t offset = 0;
 	switch(dim)
 	{
 	case 1:
@@ -92,7 +92,7 @@ int main(int argc, char * argv[])
 
 	if(nbEle1!=nbEle2)
 	{
-		printf("Error: nbEle1(%d)!=nbEle2(%d)\n",nbEle1, nbEle2);
+		printf("Error: nbEle1(%zu)!=nbEle2(%zu)\n",nbEle1, nbEle2);
 		exit(0);
 	}	
 	for(i=1;i<numprocs;i++)

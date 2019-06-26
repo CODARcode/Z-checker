@@ -7,6 +7,7 @@
 #include "ZC_ReportGenerator.h"
 #include "ZC_rw.h"
 #include "zc.h"
+#include <sys/stat.h>
 
 StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 {
@@ -133,6 +134,8 @@ void ZC_extractCompressorAndErrorBounds(char** compressionCaseFiles, int caseCou
 		
 		checkAndAddCmprorToList(allCompressors, &allCompressorCount, compressor, errBound);
 		checkAndAddStringToList(allVarCases, &allVarCaseCount, varName); //e.g., varName=FLDSC_1_1800_3600
+		
+		free(errBound);
 	}
 }
 
@@ -169,7 +172,7 @@ void ZC_constructSortedSelectedErrorBounds(CmprsorErrBound* compressor)
 		{
 			selectedErrBounds[errBoundCount] = (StringElem)malloc(sizeof(struct StringElem_t));
 			selectedErrBounds[errBoundCount]->str = sortedErrorBounds[i]->str;
-			selectedErrBounds[errBoundCount]->value = atof(sortedErrorBounds[i]->str);
+			selectedErrBounds[errBoundCount]->value = sortedErrorBounds[i]->value;
 			errBoundCount++;
 		}
 	}
@@ -315,6 +318,9 @@ void ZC_generateDataPropertyAnalysisReport()
 	
 	ZC_writeLines(texLines, texFile);
 	ZC_freeLines(texLines);	
+	
+	for(i=0;i<ZC_BUFS_LONG;i++)
+		free(caseFiles[i]);
 }
 
 StringLine* ZC_generateCompressionRateFigure()
@@ -459,7 +465,7 @@ StringLine* ZC_generateRateDistortionFigure()
 	StringLine* header = ZC_generateComparisonFigTexLines(varCount, varFiles, 
 	"compareCompressors", "rate-distortion_psnr", "Rate Distortion (PSNR vs. Bit-rate)");
 	
-	for(i=0;i<varCount;i++)
+	for(i=0;i<ZC_BUFS;i++)
 		free(varFiles[i]);
 	
 	return header;
@@ -499,7 +505,7 @@ StringLine* ZC_generateRateCorrelationFigure()
 	StringLine* header = ZC_generateComparisonFigTexLines(varCount, varFiles,
 	"compareCompressors", "rate-corr", "Rate Correlation (Correlation vs. Bit-rate)");
 
-	for(i=0;i<varCount;i++)
+	for(i=0;i<ZC_BUFS;i++)
 		free(varFiles[i]);
 
 	return header;
@@ -569,6 +575,51 @@ void ZC_generateRateCorrelationReport()
 	ZC_insertLines("%plot rate correlation\n", texLines, figLines);
 	ZC_writeLines(texLines, rateDisTexFile);
 	ZC_freeLines(texLines);
+}
+
+
+void ZC_generateDecVisReport()
+{
+	char tmpLine[MAX_MSG_LENGTH];	
+	StringLine* header = createStringLineHeader();	
+	StringLine* p = header; //p always points to the tail
+	char* line = NULL;
+	
+	int var_count = ht_getElemCount(ecVisDecDataTables);
+	
+	sprintf(tmpLine, "var_count=%d\n", var_count);
+	line = createLine(tmpLine); p = appendOneLine(p, line);
+	
+	char** vars = ht_getAllKeys(ecVisDecDataTables);
+	int i = 0, j = 0;
+	for(i=0;i<var_count;i++)
+	{
+		char* var = vars[i];
+		sprintf(tmpLine, "======varName:%s\n", var);
+		line = createLine(tmpLine); p = appendOneLine(p, line);
+		printf("%s\n", tmpLine);
+		
+		hashtable_t *varComprMap = ht_get(ecVisDecDataTables, var);
+		for(j=0;j<compressors_count;j++)
+		{
+			char* compressorName = compressors[j];
+			CompressorCRVisElement* cmprVisE = ht_get(varComprMap, compressorName);
+			ZC_itentifyErrorSettingBasedOnCR(cmprVisE);
+			print_cmprVisE(cmprVisE);
+			StringLine* sl = write_cmprVisE(cmprVisE);
+			p = ZC_appendLines(p, sl);
+		}
+	}
+	
+	if(ZC_checkDirExists("compareCompressors") == 0)
+		mkdir("compareCompressors", 0664);
+	ZC_writeLines(header, "compareCompressors/ecVisDecDataTables.txt");
+	ZC_freeLines(header);
+
+	plot_dec_data = 1; //the following ZC_endDec() will plot decompressed data slice.
+	
+	free(vars);
+	
 }
 
 StringLine* ZC_generateCompressionFactorFigure()
@@ -718,6 +769,9 @@ void ZC_generateOverallReport(char* dataSetName)
 		ZC_generateErrAutoCorrReport(allCompressors, allCompressorCount);	
 	if(plotFFTAmpFlag)
 		ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);
+	
+	if(plotDecImageFlag)
+		ZC_generateDecVisReport();
 	
 	ZC_generateResultTexFile();	
 	

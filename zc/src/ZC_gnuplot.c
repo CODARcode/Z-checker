@@ -225,30 +225,6 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 	return lines;
 }
 
-char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1)
-{
-	char** lines = (char**)malloc(10*sizeof(char*));
-	
-	int i = 0;
-	for(i=0;i<10;i++)
-	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
-	}
-	sprintf(lines[0], "#!/usr/bin/gnuplot\n");
-	sprintf(lines[1], "set term png size 900, 900 enhanced font \"Arial,16\"\n");
-	sprintf(lines[2], "set pm3d map\n");
-	sprintf(lines[3], "#set cbrange [-4:4]\n");
-	sprintf(lines[4], "set output \"%s.png\"\n", dataFileName);
-	sprintf(lines[5], "set size square\n");
-	sprintf(lines[6], "set xrange [0:%zu]\n", r1); 
-	sprintf(lines[7], "set yrange [%zu:0]\n", r2);
-	sprintf(lines[8], "set palette rgbformulae 33,13,10\n");
-	sprintf(lines[9], "splot \"%s\"", dataFileName);
-	
-	return lines;
-}
-
 char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
 {
 	if(columns<2)
@@ -294,4 +270,93 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 	}
 	strcat(lines[18], "\n");
 	return lines;
+}
+
+char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1)
+{
+	char** lines = (char**)malloc(10*sizeof(char*));
+	
+	int i = 0;
+	for(i=0;i<10;i++)
+	{
+		lines[i] = (char*)malloc(250);
+		memset(lines[i], 0, 250);
+	}
+	sprintf(lines[0], "#!/usr/bin/gnuplot\n");
+	sprintf(lines[1], "set term png size 900, 900 enhanced font \"Arial,16\"\n");
+	sprintf(lines[2], "set pm3d map\n");
+	sprintf(lines[3], "#set cbrange [-4:4]\n");
+	sprintf(lines[4], "set output \"%s.png\"\n", dataFileName);
+	sprintf(lines[5], "set size square\n");
+	sprintf(lines[6], "set xrange [0:%zu]\n", r1); 
+	sprintf(lines[7], "set yrange [%zu:0]\n", r2);
+	sprintf(lines[8], "set palette rgbformulae 33,13,10\n");
+	sprintf(lines[9], "splot \"%s\"", dataFileName);
+	
+	return lines;
+}
+
+void plotSliceImageData(char* keyName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, void* slice_data_ori, void* slice_data_log, char* tgtWorkspaceDir)
+{
+	int i = 0;
+	char imagPlotScriptFile[ZC_BUFS], oriImageFile[ZC_BUFS], logImageFile[ZC_BUFS];
+	char tgtFilePath[ZC_BUFS];
+	memset(oriImageFile, 0, ZC_BUFS);
+	memset(logImageFile, 0, ZC_BUFS);
+
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+	if(dim == 1)
+	{
+		memset(tgtFilePath, 0, ZC_BUFS);	
+		sprintf(oriImageFile, "%s.oriimg", keyName);
+		sprintf(tgtFilePath, "%s/%s.tt", tgtWorkspaceDir, oriImageFile);			
+		
+		ZC_writeData_withIndex(slice_data_ori, dataType, r1, tgtFilePath); //print only first 1000 (or less if nbEle<1000) data points
+		
+		char** scriptLines = genGnuplotScript_linespoints2(oriImageFile, "tt", GNUPLOT_FONT, 2, "Index", "Data Values");
+		sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, keyName);
+		ZC_writeStrings(24, scriptLines, imagPlotScriptFile);
+		for(i=0;i<24;i++)
+			free(scriptLines[i]);
+		free(scriptLines);
+		
+		memset(tgtFilePath, 0, ZC_BUFS);		
+		sprintf(logImageFile, "%s.logimg", keyName);
+		sprintf(tgtFilePath, "%s/%s.tt", tgtWorkspaceDir, logImageFile);						
+		
+		ZC_writeData_withIndex(slice_data_log, dataType, r1, tgtFilePath);
+		
+		scriptLines = genGnuplotScript_linespoints2(logImageFile, "tt", GNUPLOT_FONT, 2, "Index", "log10(Data Values)");
+		sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, keyName);
+		ZC_writeStrings(24, scriptLines, imagPlotScriptFile);
+		for(i=0;i<24;i++)
+			free(scriptLines[i]);
+		free(scriptLines);	
+	}
+	else if(dim > 1)
+	{
+		memset(tgtFilePath, 0, ZC_BUFS);		
+		sprintf(oriImageFile, "%s.oriimg", keyName);
+		sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, oriImageFile);
+		ZC_writeData_genuplotImage(slice_data_ori, dataType, r2, r1, tgtFilePath);
+
+		memset(tgtFilePath, 0, ZC_BUFS);
+		sprintf(logImageFile, "%s.logimg", keyName);
+		sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, logImageFile);
+		ZC_writeData_genuplotImage(slice_data_log, dataType, r2, r1, tgtFilePath);			
+		
+		sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, keyName);
+		char** sliceImageStrs = genGnuplotScript_sliceImage(oriImageFile, r2, r1);
+		ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
+		for(i=0;i<10;i++)
+			free(sliceImageStrs[i]);
+		free(sliceImageStrs);
+		
+		sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, keyName);
+		sliceImageStrs = genGnuplotScript_sliceImage(logImageFile, r2, r1);
+		ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
+		for(i=0;i<10;i++)
+			free(sliceImageStrs[i]);
+		free(sliceImageStrs);			
+	}	
 }

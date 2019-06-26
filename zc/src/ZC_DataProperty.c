@@ -242,9 +242,10 @@ int freeDataProperty(ZC_DataProperty* dataProperty)
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
-double entropy, double* autocorr, complex* fftCoeff)
+double entropy, double* autocorr, complex* fftCoeff, char* filePath)
 {
-	ZC_DataProperty* this = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
+	ZC_DataProperty* this = (ZC_DataProperty*)malloc(sizeof(struct ZC_DataProperty));
+	memset(this, 0, sizeof(struct ZC_DataProperty));
 	this->varName = (char*)malloc(strlen(varName)+1);
 	strcpy(this->varName,varName);
 	this->dataType = dataType;
@@ -261,6 +262,7 @@ double entropy, double* autocorr, complex* fftCoeff)
 	this->entropy = entropy;
 	this->autocorr = autocorr;
 	this->fftCoeff = fftCoeff;
+	this->filePath = filePath;
 	return this;
 }
 
@@ -453,10 +455,9 @@ void ZC_printDataProperty(ZC_DataProperty* property)
 
 char** constructDataPropertyString(ZC_DataProperty* property)
 {
-	char** s = (char**)malloc(15*sizeof(char*));
+	char** s = (char**)malloc(16*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[PROPERTY]\n");
-	
 	s[1] = (char*)malloc(100*sizeof(char));
 	sprintf(s[1], "varName = %s\n", property->varName);
 	s[2] = (char*)malloc(100*sizeof(char));
@@ -488,7 +489,15 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 		sprintf(s[14], "autocorr = %.10G\n", (property->autocorr)[1]);
 	else 
 		strcpy(s[14], "autocorr = -\n");
+	
+	s[15] = (char*)malloc(256*sizeof(char));
+	if(property->filePath!=NULL)
+		sprintf(s[15], "filePath = %s\n", property->filePath);
+	else
+		strcpy(s[15], "filePath = NULL\n");	
+	
 	return s;
+	
 }
 
 void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
@@ -539,9 +548,9 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 
 	char tgtFilePath[ZC_BUFS];
 	sprintf(tgtFilePath, "%s/%s.prop", tgtWorkspaceDir, property->varName); 
-	ZC_writeStrings(15, s, tgtFilePath);
+	ZC_writeStrings(16, s, tgtFilePath);
 	size_t i;
-	for(i=0;i<15;i++)
+	for(i=0;i<16;i++)
 		free(s[i]);
 	free(s);
 	/*write the fft coefficients and amplitudes*/
@@ -595,65 +604,7 @@ void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
 	/*write slice image*/
 	if(property->sliceImage_ori!=NULL)
 	{	
-		char imagPlotScriptFile[ZC_BUFS], oriImageFile[ZC_BUFS], logImageFile[ZC_BUFS];
-		memset(oriImageFile, 0, ZC_BUFS);
-		memset(logImageFile, 0, ZC_BUFS);
-
-		int dim = ZC_computeDimension(property->r5, property->r4, property->r3, property->r2, property->r1);
-		if(dim == 1)
-		{
-			memset(tgtFilePath, 0, ZC_BUFS);		
-			sprintf(oriImageFile, "%s.oriimg", property->varName);
-			sprintf(tgtFilePath, "%s/%s.tt", tgtWorkspaceDir, oriImageFile);			
-			
-			ZC_writeData_withIndex(property->sliceImage_ori, property->dataType, property->r1, tgtFilePath); //print only first 1000 (or less if nbEle<1000) data points
-			
-			char** scriptLines = genGnuplotScript_linespoints2(oriImageFile, "tt", GNUPLOT_FONT, 2, "Index", "Data Values");
-			sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, property->varName);
-			ZC_writeStrings(24, scriptLines, imagPlotScriptFile);
-			for(i=0;i<24;i++)
-				free(scriptLines[i]);
-			free(scriptLines);
-			
-			memset(tgtFilePath, 0, ZC_BUFS);		
-			sprintf(logImageFile, "%s.logimg", property->varName);
-			sprintf(tgtFilePath, "%s/%s.tt", tgtWorkspaceDir, logImageFile);						
-			
-			ZC_writeData_withIndex(property->sliceImage_log, property->dataType, property->r1, tgtFilePath);
-			
-			scriptLines = genGnuplotScript_linespoints2(logImageFile, "tt", GNUPLOT_FONT, 2, "Index", "log10(Data Values)");
-			sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, property->varName);
-			ZC_writeStrings(24, scriptLines, imagPlotScriptFile);
-			for(i=0;i<24;i++)
-				free(scriptLines[i]);
-			free(scriptLines);	
-		}
-		else if(dim > 1)
-		{
-			memset(tgtFilePath, 0, ZC_BUFS);		
-			sprintf(oriImageFile, "%s.oriimg", property->varName);
-			sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, oriImageFile);
-			ZC_writeData_genuplotImage(property->sliceImage_ori, property->dataType, property->r2, property->r1, tgtFilePath);
-
-			memset(tgtFilePath, 0, ZC_BUFS);
-			sprintf(logImageFile, "%s.logimg", property->varName);
-			sprintf(tgtFilePath, "%s/%s", tgtWorkspaceDir, logImageFile);
-			ZC_writeData_genuplotImage(property->sliceImage_log, property->dataType, property->r2, property->r1, tgtFilePath);			
-			
-			sprintf(imagPlotScriptFile, "%s/%s-oriimg.p", tgtWorkspaceDir, property->varName);
-			char** sliceImageStrs = genGnuplotScript_sliceImage(oriImageFile, property->r2, property->r1);
-			ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
-			for(i=0;i<10;i++)
-				free(sliceImageStrs[i]);
-			free(sliceImageStrs);
-			
-			sprintf(imagPlotScriptFile, "%s/%s-logimg.p", tgtWorkspaceDir, property->varName);
-			sliceImageStrs = genGnuplotScript_sliceImage(logImageFile, property->r2, property->r1);
-			ZC_writeStrings(10, sliceImageStrs, imagPlotScriptFile);
-			for(i=0;i<10;i++)
-				free(sliceImageStrs[i]);
-			free(sliceImageStrs);			
-		}
+		plotSliceImageData(property->varName, property->dataType, property->r5, property->r4, property->r3, property->r2, property->r1, property->sliceImage_ori, property->sliceImage_log, tgtWorkspaceDir);
 	}
 	
 	if(dir!=NULL)
@@ -701,7 +652,12 @@ ZC_DataProperty* ZC_loadDataProperty(char* propResultFile)
 	/*TODO: Read fft coefficients... (Read file)*/
 	complex* fftCoeff = NULL;
 	
+	char* filePath = iniparser_getstring(ini, "PROPERTY:filePath", NULL);
+	
 	ZC_DataProperty* property = ZC_constructDataProperty(var, dataType, r5, r4, r3, r2, r1, numOfElem, minValue, maxValue, 
-	valueRange, avgValue, entropy, autocorr_array, fftCoeff);
+	valueRange, avgValue, entropy, autocorr_array, fftCoeff, filePath);
+	
+	free(var);
+	iniparser_freedict(ini);
 	return property;
 }

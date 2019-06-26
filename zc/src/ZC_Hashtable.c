@@ -7,6 +7,13 @@
 
 hashtable_t *ecPropertyTable = NULL;
 hashtable_t *ecCompareDataTable = NULL;
+hashtable_t *ecVisDecDataTables = NULL; 
+//data structure of ecVisDecDataTables: 
+//<1:VarCount> varName(string) --> compressorCRMap;
+//	for each compressorCRMap: 
+//		compressorName(string) --> compressorCRVisElement (char* compressorName, ZC_CompareData *compressionResults[32], ht_table* CRVisDataMap);
+//		for each CRVisDataMap:
+//			CR(string) --> ZCVisDecDataElement(char* compressorName, double errorSetting, ZC_CompareData* compressionResult); see ZC_CompareData.h for details; 
 
 /*char *strdup(const char *str)
 {
@@ -101,7 +108,8 @@ void ht_set( hashtable_t *hashtable, char *key, void *value ) {
 
 	next = hashtable->table[ bin ];
 
-	while( next != NULL && next->key != NULL && strcmp( key, next->key ) > 0 ) {
+	//deal with possible conflict
+	while( next != NULL && next->key != NULL && strcmp( key, next->key ) != 0 ) {
 		last = next;
 		next = next->next;
 	}
@@ -143,7 +151,7 @@ void *ht_get( hashtable_t *hashtable, char *key ) {
 
 	/* Step through the bin, looking for our value. */
 	pair = hashtable->table[ bin ];
-	while( pair != NULL && pair->key != NULL && strcmp( key, pair->key ) > 0 ) {
+	while( pair != NULL && pair->key != NULL && strcmp( key, pair->key ) != 0 ) {
 		pair = pair->next;
 	}
 
@@ -158,9 +166,11 @@ void *ht_get( hashtable_t *hashtable, char *key ) {
 
 void ht_freeTable( hashtable_t *hashtable)
 {
+	if(hashtable==NULL)
+		return;
 	int i;
 	struct entry_t * pairEntry, * tmp;
-	for(i = 0; i < HASHTABLE_SIZE; i++ ) {
+	for(i = 0; i < hashtable->capacity; i++ ) {
 		pairEntry = hashtable->table[i];
 		while(pairEntry != NULL)
 		{	

@@ -17,15 +17,15 @@
 
 int main(int argc, char * argv[])
 {
-    int r5=0,r4=0,r3=0,r2=0,r1=0;
+    size_t r5=0,r4=0,r3=0,r2=0,r1=0;
     char outDir[640], oriFilePath[640], outputFilePath[640];
     char *cfgFile, *zcFile, *solName, *varName, *errBoundMode;
     double absErrBound;
     int errboundmode;
     if(argc < 9)
     {
-	printf("Test case: testfloat_CompDecomp [config_file] [zc.config] [solName] [varName] [errBoundMode] [absErrBound] [relErrBound] [srcFilePath] [dimension sizes...]\n");
-	printf("Example: testfloat_CompDecomp sz.config zc.config sz(1E-6) testfloat ABS 1E-6 0 testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
+	printf("Test case: testfloat_CompDecomp [config_file] [zc.config] [solName] [varName] [errBoundMode] [err bound] [srcFilePath] [dimension sizes...]\n");
+	printf("Example: testfloat_CompDecomp sz.config zc.config sz(1E-6) testfloat ABS 1E-6 testdata/x86/testfloat_8_8_128.dat 8 8 128\n");
 	exit(0);
     }
    
@@ -48,11 +48,11 @@ int main(int argc, char * argv[])
     }
     else
     {
-	echo "Error: Z-checker checking doesn't support this error bound mode: %s, but only ABS, REL, and PW_REL.\n", errBoundMode);
+	printf("Error: Z-checker checking doesn't support this error bound mode: %s, but only ABS, REL, and PW_REL.\n", errBoundMode);
 	exit(0); 
     }
 
-    absErrBound=atof(arg[6]);
+    absErrBound=atof(argv[6]);
     sprintf(oriFilePath, "%s", argv[7]);
     if(argc>=9)
 	r1 = atoi(argv[8]); //8
@@ -72,28 +72,52 @@ int main(int argc, char * argv[])
     ZC_Init(zcFile);
  
     sprintf(outputFilePath, "%s.sz", oriFilePath);
-   
-    int nbEle, status = SZ_SCES;
+  
+    size_t nbEle; 
+    int status = SZ_SCES;
     float *data = readFloatData(oriFilePath, &nbEle, &status);
    
-    int outSize; 
+    size_t outSize; 
     ZC_DataProperty* dataProperty = ZC_startCmpr(varName, ZC_FLOAT, data, r5, r4, r3, r2, r1);
     
-    unsigned char *bytes = SZ_compress_args(SZ_FLOAT, data, &outSize, errboundmode, absErrBound, absErrBound, r5, r4, r3, r2, r1);
+    unsigned char *bytes = SZ_compress_args(SZ_FLOAT, data, &outSize, errboundmode, absErrBound, absErrBound, absErrBound, r5, r4, r3, r2, r1);
     //unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
-    ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, outSize);
+    ZC_CompareData* compareResult = ZC_endCmpr(dataProperty, solName, outSize);
     //writeByteData(bytes, outSize, outputFilePath, &status);
    
     ZC_startDec();
     float *decData = SZ_decompress(SZ_FLOAT, bytes, outSize, r5, r4, r3, r2, r1);
-    ZC_endDec(compareResult, solName, decData);
+    ZC_endDec(compareResult, decData);
     //ZC_endDec(compareResult, "sz(1E-7)", decData);
- 
+
     freeDataProperty(dataProperty);
     freeCompareResult(compareResult);
     free(data);
     free(bytes);
     free(decData);
+
+    printf("second\n");
+
+    data = readFloatData(oriFilePath, &nbEle, &status);
+   
+    dataProperty = ZC_startCmpr(varName, ZC_FLOAT, data, r5, r4, r3, r2, r1);
+    
+    bytes = SZ_compress_args(SZ_FLOAT, data, &outSize, errboundmode, absErrBound, absErrBound, absErrBound, r5, r4, r3, r2, r1);
+    //unsigned char *bytes = SZ_compress(SZ_FLOAT, data, &outSize, r5, r4, r3, r2, r1);
+    compareResult = ZC_endCmpr(dataProperty, solName, outSize);
+    //writeByteData(bytes, outSize, outputFilePath, &status);
+   
+    ZC_startDec();
+    decData = SZ_decompress(SZ_FLOAT, bytes, outSize, r5, r4, r3, r2, r1);
+    ZC_endDec(compareResult, decData);
+    //ZC_endDec(compareResult, "sz(1E-7)", decData);
+
+    freeDataProperty(dataProperty);
+    freeCompareResult(compareResult);
+    free(data);
+    free(bytes);
+    free(decData);
+
     printf("done\n");
     
     SZ_Finalize();

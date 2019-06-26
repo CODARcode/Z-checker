@@ -7,7 +7,8 @@
 int main(int argc, char * argv[])
 {	
     size_t r5=0,r4=0,r3=0,r2=0,r1=0;
-    char dataFile[640], outputFilePath[640], oriFilePath[640];
+    //char dataFile[640], outputFilePath[640]; 
+    char oriFilePath[640];
     char *datatype, *cfgFile, *varName;
 
     if(argc < 4)
@@ -45,7 +46,7 @@ int main(int argc, char * argv[])
     ZC_Init(cfgFile);
 
 	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
-	size_t offset;
+	size_t offset = 0;
 	switch(dim)
 	{
 	case 1:
@@ -72,7 +73,7 @@ int main(int argc, char * argv[])
 	
     long globalLength = ZC_computeDataLength_online(r5,r4,r3,r2,r1);
     if(myrank==0)
-	    printf("globalLength = %d, %d\n", globalLength, globalDataLength);
+	    printf("globalLength = %ld, %zu\n", globalLength, globalDataLength);
     size_t nbEle;
     ZC_DataProperty* property = NULL;
     if(strcmp(datatype, "-f")==0)

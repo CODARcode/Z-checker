@@ -58,7 +58,8 @@ int plotImageFlag = 0;
 int plotDecImageFlag = 0;
 
 int nbPlotCRs = 0;
-float plotCRs[32];
+char *plotCRs_str[MAX_VIS_DEC_CRS];
+float plotCRs[MAX_VIS_DEC_CRS]; //store the compression ratios to align between compressors
 
 int compressTimeFlag = 1;
 int decompressTimeFlag = 1;
@@ -93,7 +94,7 @@ int plotErrAutoCorrFlag = 1;
 int plotFFTAmpFlag = 1;
 int plotEntropyFlag = 1;
 
-int checkCompressorsFlag = 1; //corresponding to plotCompressionResult flag in ec.config
+int checkCompressorsFlag = 1; //corresponding to plotCompressionResult flag in zc.config
 
 int generateReportFlag = 1;
 char *reportTemplateDir;
@@ -130,6 +131,10 @@ CmprsorErrBound allCompressors[CMPR_MAX_LEN];
 //char* allErrorBounds[20];
 int allVarCaseCount = 0;
 char* allVarCases[20];
+
+int plot_dec_data = 0; 
+
+int nbVars; //deprecated (originally, I want to traverse variables when loading compressionResults in ZC_Conf.c)
 
 #ifdef HAVE_MPI
 MPI_Comm ZC_COMM_WORLD; 
@@ -423,13 +428,98 @@ void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 		exit(0);
 	}
 	
-	//MPI_Barrier(MPI_COMM_WORLD);
-	//if(myRank==0)
-	//	printf("before ZC_compareData_dec\n");
 	ZC_compareData_dec(compareResult, decData);
-	//MPI_Barrier(MPI_COMM_WORLD);
-	//if(myRank==0)
-	//	printf("after ZC_compareData_dec\n");
+	
+	//plot decompressed data (2d) or slice (3d) 
+	if(plot_dec_data)
+	{
+		char* solution = compareResult->solution;
+		int dataType = compareResult->property->dataType;
+		size_t r5 = compareResult->property->r5;
+		size_t r4 = compareResult->property->r4;
+		size_t r3 = compareResult->property->r3;
+		size_t r2 = compareResult->property->r2;
+		size_t r1 = compareResult->property->r1;
+		int dim = ZC_computeDimension(r5, r4, r3, r2, r1); 
+		
+		size_t i = 0;
+		//compute slice_data_ori and slice_data_log based on decData
+		if(dataType==ZC_FLOAT)
+		{
+			float* dec_data = (float*)decData;
+			float* sliceImage_ori = NULL;
+			float* sliceImage_log = NULL;
+			if(dim==1)
+			{
+				sliceImage_ori = dec_data;
+				sliceImage_log = (float*)malloc(sizeof(float)*r1);
+				for(i=0;i<r1 && i<1000;i++)
+					sliceImage_log[i] = log10f(fabsf(sliceImage_ori[i]));			
+			}
+			else if(dim==2)
+			{
+				size_t nbEle = r1*r2;
+				sliceImage_ori = dec_data;
+				sliceImage_log = (float*)malloc(sizeof(float)*nbEle);
+				for(i=0;i<nbEle;i++)
+					sliceImage_log[i] = log10f(fabsf(sliceImage_ori[i]));
+			}
+			else if(dim==3)
+			{
+				size_t sliceID = r3/2;
+				size_t offset = sliceID*r1*r2;
+				size_t nbSliceEle = r1*r2;
+				sliceImage_ori = (float*)malloc(sizeof(float)*nbSliceEle);
+				sliceImage_log = (float*)malloc(sizeof(float)*nbSliceEle);
+
+				for(i=0;i<nbSliceEle;i++)
+				{
+					sliceImage_ori[i] = dec_data[offset+i];
+					sliceImage_log[i] = log10f(fabsf(sliceImage_ori[i]));
+				}
+			}
+			plotSliceImageData(solution, dataType, r5, r4, r3, r2, r1, sliceImage_ori, sliceImage_log, "compressionResults");
+		}
+		else
+		{
+			double* sliceImage_ori = NULL;
+			double* sliceImage_log = NULL;
+			double* dec_data = (double*)decData;
+			if(dim==1)
+			{
+				sliceImage_ori = dec_data;
+				sliceImage_log = (float*)malloc(sizeof(float)*r1);
+				for(i=0;i<r1 && i<1000;i++)
+					sliceImage_log[i] = log10(fabs(sliceImage_ori[i]));			
+			}
+			else if(dim==2)
+			{
+				size_t nbEle = r1*r2;
+				sliceImage_ori = dec_data;
+				sliceImage_log = (double*)malloc(sizeof(double)*nbEle);
+				for(i=0;i<nbEle;i++)
+					sliceImage_log[i] = log10(fabs(sliceImage_ori[i]));
+			}
+			else if(dim==3)
+			{
+				size_t sliceID = r3/2;
+				size_t offset = sliceID*r1*r2;
+				size_t nbSliceEle = r1*r2;
+				sliceImage_ori = (double*)malloc(sizeof(double)*nbSliceEle);
+				sliceImage_log = (double*)malloc(sizeof(double)*nbSliceEle);
+
+				for(i=0;i<nbSliceEle;i++)
+				{
+					sliceImage_ori[i] = dec_data[offset+i];
+					sliceImage_log[i] = log10(fabs(sliceImage_ori[i]));
+				}
+			}
+			
+			plotSliceImageData(solution, dataType, r5, r4, r3, r2, r1, sliceImage_ori, sliceImage_log, "compressionResults");			
+		}
+
+	}
+
 	ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
 }
 
@@ -1231,12 +1321,42 @@ int ZC_analyze_and_generateReport(char* dataSetName)
 
 int ZC_Finalize()
 {
+	size_t i =0, j=0;	
 	if(initStatus==0)
 	{
 		printf("Error: ZC_finalize: you cannot perform ZC_Finalize() before ZC_Init().\n");
 		printf("Hint: ZC_Finalize() cannot be performed multiple times in a row without corresponding ZC_Init().\n");
 		return ZC_NSCS;
 	}
+	
+	//free ecVisDecDataTables; Note: ecVisDecDataTables has to be freed before freeing ecPropertyTable
+	if(plotDecImageFlag)
+	{
+		int var_capacity = ecVisDecDataTables->capacity;
+		for(i=0;i<var_capacity;i++)
+		{
+			entry_t* varEntry = ecVisDecDataTables->table[i];
+			while(varEntry!=NULL)
+			{
+				hashtable_t *varComprMap = varEntry->value;
+				int cmpr_capacity = varComprMap->capacity;
+				for(j=0;j<cmpr_capacity;j++)
+				{
+					entry_t* varEntry2 = varComprMap->table[j];
+					if(varEntry2!=NULL)
+					{
+						CompressorCRVisElement* cmprVisE = varEntry2->value;
+						free_CompressorCRVisElement(cmprVisE);
+						varEntry2=varEntry2->next;
+					}
+				}
+				ht_freeTable(varComprMap); //Bug: just freed once, but there are four mem allocations (ecVisDecDataTablescount=4)
+				varEntry = varEntry->next;
+			}
+		}
+	}
+	ht_freeTable(ecVisDecDataTables);	
+	
 	//free hashtable memory
 	if(ecPropertyTable!=NULL)
 	{
@@ -1270,17 +1390,28 @@ int ZC_Finalize()
 	}
 	if(reportTemplateDir!=NULL)
 		free(reportTemplateDir);
+	
 	//free compressor_errBounds_elements
-	size_t i =0, j=0;
 	for(i=0;i<allCompressorCount;i++)
 	{
-		for(j=0;j<allCompressors[i].allErrBoundCount;j++)
+		CmprsorErrBound compressor = allCompressors[i];
+		for(j=0;j<compressor.allErrBoundCount;j++)
 		{
-			free(allCompressors[i].allErrBounds[j]->str);//Don't need to free selErrBounds[j] because it's pointing allErrBounds[j]
-			free(allCompressors[i].allErrBounds[j]);
+			free(compressor.allErrBounds[j]->str);
+			free(compressor.allErrBounds[j]);
 		}
-		free(allCompressors[i].allErrBounds);
-		free(allCompressors[i].selErrBounds);	
+		free(compressor.allErrBounds);
+		
+		for(j=0;j<compressor.selErrBoundCount;j++)
+			free(compressor.selErrBounds[j]);			
+			
+		free(compressor.selErrBounds);	
+	}
+	
+	for(i=0;i<MAX_VIS_DEC_CRS;i++)
+	{
+		if(plotCRs_str[i]!=NULL)
+			free(plotCRs_str[i]);
 	}
 	
 #ifdef HAVE_R
@@ -1426,8 +1557,6 @@ long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, siz
 
 ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	size_t i;
-	double sum = 0,avg;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);	

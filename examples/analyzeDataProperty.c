@@ -39,6 +39,7 @@ int main(int argc, char * argv[])
 		exit(0);
     }
 
+    //printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
     printf("[ZC] Reading ZC configuration file (%s) ...\n", cfgFile);     
     ZC_Init(cfgFile);
 	executionMode = ZC_OFFLINE;
@@ -55,6 +56,8 @@ int main(int argc, char * argv[])
 		double *data = ZC_readDoubleData(oriFilePath, &nbEle);
 		property = ZC_genProperties(varName, ZC_DOUBLE, data, r5, r4, r3, r2, r1);
     }
+    
+    property->filePath = oriFilePath;
 	
     ZC_printDataProperty(property);
 	

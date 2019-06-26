@@ -11,14 +11,23 @@
 #define _ZC_CompareData_H
 
 #include "ZC_DataProperty.h"
+#include "ZC_Hashtable.h"
+#include "ZC_rw.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define MAX_NB_CMPR_CASES 64
+#define MAX_VIS_DEC_CRS 64
+
+#define DECVIS_ERROR_SELECT_CLOSET 0
+#define DECVIS_ERROR_LINEAR_APPROX 1
+
 typedef struct ZC_CompareData
 {	
 	char* solution; //the key string of the ZC_CompareData
+	double errorBound;
 	ZC_DataProperty* property;
 	
 	void* dec_data;
@@ -122,6 +131,31 @@ typedef struct ZC_CompareData_Overall
 	double max_pearsonCorr;
 } ZC_CompareData_Overall;
 
+typedef struct ZCVisDecDataElement
+{
+	char* varName; //filled when initialized
+	char* compressorName; //filled when initialized
+	ZC_DataProperty* dataProperty; //filled when initialized
+	
+	double errorSetting; //to be filled after analysis
+	char* errorSetting_str;
+	char* compressionCaseName; //to be filled after analysis
+	void* sliceImage_dec_ori; //decompressed data for original domain - to be filled after analysis
+	void* sliceImage_dec_log; //decompressed data for log domain - to be filled after analysis
+	
+	ZC_CompareData* compressionResult; //to be filled after analysis
+	
+} ZCVisDecDataElement;
+
+typedef struct CompressorCRVisElement
+{
+	int resultCount;
+	char* varName;
+	char* compressorName;
+	ZC_CompareData *compressionResults[MAX_NB_CMPR_CASES];
+	hashtable_t* CRVisDataMap;
+} CompressorCRVisElement;
+
 int freeCompareResult(ZC_CompareData* compareData);
 void freeCompareResult_internal(ZC_CompareData* compareData);
 
@@ -146,6 +180,13 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile);
 
 ZC_CompareData_Overall* ZC_compareData_overall();
+
+double computeErrorSetting(double targetCR, int nbPoints, double* compressionRatios, double* errorSettings);
+void print_cmprVisE(CompressorCRVisElement* cmprVisE);
+StringLine* write_cmprVisE(CompressorCRVisElement* cmprVisE);
+void ZC_itentifyErrorSettingBasedOnCR(CompressorCRVisElement* cmprVisE);
+void free_ZCVisDecDataElement(ZCVisDecDataElement* visEle);
+void free_CompressorCRVisElement(CompressorCRVisElement* cmprVisE);
 
 //mpi interfaces
 void ZC_compareData_float_online(ZC_CompareData* compareResult, float* data1, float* data2, 

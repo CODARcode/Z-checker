@@ -30,6 +30,7 @@ typedef struct StringLine
 } StringLine;
 
 int ZC_check_file_exists(const char *fname);
+int ZC_checkDirExists(const char *dir);
 void updateLinkFullPath(char* oriPath, char* finalPath);
 int ZC_checkExtension(char* str, char* extension);
 void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames);
@@ -69,7 +70,7 @@ void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replac
 int ZC_startsWith(char* str, char* key);
 int ZC_startsWithLines(StringLine* line, char* key);
 size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader);
-void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader);
+StringLine* ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader);
 
 void ZC_removeLines(StringLine* preLine, StringLine* endingLineToRmve);
 void ZC_freeLines(StringLine* header);

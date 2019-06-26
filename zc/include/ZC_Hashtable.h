@@ -10,8 +10,6 @@
 #ifndef _ZC_Hashtable_H
 #define _ZC_Hashtable_H
 
-#include "zc.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,6 +28,7 @@ typedef struct hashtable_t {
 
 extern hashtable_t *ecPropertyTable; //ecPropertyTable contains the properties.
 extern hashtable_t *ecCompareDataTable; //ecCompareDataTable contains all compareData cases.
+extern hashtable_t *ecVisDecDataTables; //ecVisDecDataTables contains the required error bound settings for visualization of decompressed data
 
 //char *strdup(const char *str);
 int checkStartsWith(char* str, char* key);

@@ -6,7 +6,7 @@
  *  (C) 2015 by Mathematics and Computer Science (MCS), Argonne National Laboratory.
  *      See COPYRIGHT in top-level directory.
  */
-
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +27,18 @@ int ZC_check_file_exists(const char *fname)
         return 1;
     }
     return 0;
+}
+
+int ZC_checkDirExists(const char *dir)
+{
+	DIR* dir_ = opendir(dir);
+	if (dir_) {
+		/* Directory exists. */
+		closedir(dir_);
+		return 1;
+	} else {
+		return 0;
+	}	
 }
 
 void updateLinkFullPath(char* oriPath, char* finalPath)
@@ -81,6 +93,7 @@ void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileName
 		}
 	}
 	*fileCount = i;
+	closedir(dir_);
 }
 
 
@@ -678,24 +691,33 @@ size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, Str
 	return count;
 }
 
-void ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader)
+/**
+ * 
+ * return: the tail element
+ * */
+StringLine* ZC_appendLines(StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
 	if(toAddLineHeader==NULL)
 	{
-		return;
+		return NULL;
 		//printf("Error: toAddLineHeader cannot be NULL\n");
 		//exit(0);
 	}
 	
 	if(toAddLineHeader->next==NULL)
-		return;
+		return NULL;
 	
 	StringLine* p = globalLineHeader;
 	while(p->next!=NULL)
 		p = p->next;
 	
-	p->next = toAddLineHeader->next;	
+	p->next = toAddLineHeader->next;
+	
+	while(p->next!=NULL)
+		p = p->next;
+		
 	free(toAddLineHeader);
+	return p;
 }
 
 void ZC_removeLines(StringLine* preLine, StringLine* endingLineToRmve)

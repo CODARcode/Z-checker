@@ -456,7 +456,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	double global_diffRange = global_maxDiff - global_minDiff;
 	double global_mse = global_sumErrSqr/globalDataLength;
 	
-	double global_avgErr_rel = global_sumErr_rel/global_numOfElem_;
+	//double global_avgErr_rel = global_sumErr_rel/global_numOfElem_;
 	double global_avgDiff = global_sumDiff/globalDataLength;
 	
 	double global_diffRange_rel = global_maxDiff_rel - global_minDiff_rel;

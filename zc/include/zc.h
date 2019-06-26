@@ -95,6 +95,7 @@ extern "C" {
 
 #define MAX_MSG_LENGTH 1024
 
+#define HASHTABLE_SIZE_SMALL 64
 #define HASHTABLE_SIZE 65536
 
 #define CMD_OUTPUT_BUF 200
@@ -150,7 +151,8 @@ extern int plotImageFlag;
 extern int plotDecImageFlag;
 
 extern int nbPlotCRs;
-extern float plotCRs[32]; //at most 32 compression ratios specified by users.
+extern char *plotCRs_str[MAX_VIS_DEC_CRS];
+extern float plotCRs[MAX_VIS_DEC_CRS]; //at most 32 compression ratios specified by users.
 
 extern int minAbsErrFlag;
 extern int avgAbsErrFlag;
@@ -251,6 +253,8 @@ typedef struct RateDistElem_t
 	double psnr;
 	double maxAbsErr;
 	double compressRate;
+	double errorBound;
+	ZC_CompareData* cmprResult;
 } *RateDistElem;
 
 typedef struct StringElem_t
@@ -276,6 +280,10 @@ extern CmprsorErrBound allCompressors[CMPR_MAX_LEN];
 //extern char* allErrorBounds[20];
 extern int allVarCaseCount;
 extern char* allVarCases[20];
+
+extern int plot_dec_data;
+
+extern int nbVars;
 
 void cost_startCmpr();
 double cost_EndCmpr();

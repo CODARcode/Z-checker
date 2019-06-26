@@ -17,7 +17,7 @@
 #include "ZC_rw.h"
 #include "ZC_DataProperty.h"
 
-void loadProperty(char* property_dir, char* fileName)
+ZC_DataProperty* loadProperty(char* property_dir, char* fileName)
 {
 	char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS_LONG], linkCmd[ZC_BUFS_LONG];
 	
@@ -71,9 +71,101 @@ void loadProperty(char* property_dir, char* fileName)
 				system(linkCmd);
 			}			
 		}
-
+		p = property;
 	}	
 	free(propertyVarName);
+	return p;
+}
+
+/***
+ * 
+ * load_ecVisDecDataTables() is developed for the compression/decompression to be launched by compressor (based on specified compression ratios)
+ * 
+ * */
+int load_ecVisDecDataTables()
+{
+	char buffer[256];
+	char* tableFile = "compareCompressors/ecVisDecDataTables.txt";
+	int lineCount = 0;
+	StringLine* header = ZC_readLines(tableFile, &lineCount);
+	int varCount = 0;
+	
+	ecVisDecDataTables = ht_create(HASHTABLE_SIZE_SMALL); //64 entries
+	
+	ZC_readFirstLine(tableFile, buffer);//read meta data line: var_count=4
+	char* tmpStr = strtok(buffer, "=");
+	tmpStr = strtok(NULL, "=");
+	varCount = atoi(tmpStr);
+	
+	hashtable_t* varComprMap = NULL;
+	CompressorCRVisElement* cmprVisE = NULL;
+	
+	char* varName = NULL;
+	StringLine* p = header->next;
+	while(p!=NULL)
+	{
+		strcpy(buffer, p->str);
+		if(ZC_startsWith(buffer, "=====varName"))
+		{
+			strtok(buffer, ":");
+
+			tmpStr = strtok(NULL, ":");
+			varName = createLine(tmpStr);
+			
+			varComprMap = ht_create(HASHTABLE_SIZE_SMALL);
+			ht_set(ecVisDecDataTables, varName, varComprMap);
+		}
+		else if(ZC_startsWith(buffer, "cmprName"))
+		{
+			strcpy(buffer, p->str);
+			strtok(buffer, "=");
+			tmpStr = strtok(NULL, "=");
+			char* compressorName = createLine(tmpStr);
+			
+			cmprVisE = (CompressorCRVisElement*)malloc(sizeof(struct CompressorCRVisElement));
+			memset(cmprVisE, 0, sizeof(struct CompressorCRVisElement));
+			cmprVisE->varName = varName; 
+			cmprVisE->compressorName = compressorName;
+			cmprVisE->CRVisDataMap = ht_create(HASHTABLE_SIZE_SMALL);
+			ht_set(varComprMap, compressorName, cmprVisE);			
+		}
+		else if(ZC_startsWith(buffer, "CR")) //data lines: such as CR=20 ErrorBound=0.00082
+		{
+			hashtable_t* map = cmprVisE->CRVisDataMap;
+			
+			ZCVisDecDataElement* visEle = (ZCVisDecDataElement*) malloc(sizeof(struct ZCVisDecDataElement));
+			memset(visEle, 0, sizeof(struct ZCVisDecDataElement));			
+			
+			strcpy(buffer, p->str);
+			char first[256], second[256];
+			char* q = strtok(buffer, " ");
+			strcpy(first, q);
+			
+			q = strtok(NULL, " ");
+			strcpy(second, q);
+			
+			strtok(first, "=");
+			char* compressionRatio = strtok(NULL, "=");
+			
+			strtok(second, "=");
+			char* errorSetting = createLine(strtok(NULL, "="));
+			
+			visEle->varName = cmprVisE->varName;
+			visEle->compressorName = cmprVisE->compressorName;
+			//visEle->dataProperty = prop;
+
+			visEle->errorSetting_str = errorSetting; 
+			visEle->errorSetting = atof(errorSetting);
+			
+			sprintf(buffer, "%s(%s):%s", visEle->compressorName, visEle->errorSetting_str, visEle->varName);
+			visEle->compressionCaseName = createLine(buffer);
+			
+			ht_set(map,compressionRatio, visEle);
+		}
+		p = p->next;
+	}
+	
+	return varCount;
 }
 
  
@@ -195,32 +287,44 @@ int ZC_ReadConf() {
 
 	plotImageFlag = (int)iniparser_getint(ini, "PLOT:plotSliceImage", 0);
 	
+	memset(plotCRs_str, 0, MAX_VIS_DEC_CRS);
+	
 	plotDecImageFlag = (int)iniparser_getint(ini, "PLOT:plotDecSliceImage", 0);
 	if(plotDecImageFlag==1)
 	{
 		int i = 0;
-		char *CRBuf[32];
+		char* p = NULL;
 		char* CRString = iniparser_getstring(ini, "PLOT:plotDecSliceCR", NULL);
-		CRBuf[i++] = strtok(CRString, " \r\n");
-		char* p = strtok(NULL, " \r\n");
+		
+		plotCRs_str[i] = (char*)malloc(MAX_VIS_DEC_CRS);//support the length of the string for the error bound is at most MAX_VIS_DEC_CRS chars
+		p = strtok(CRString, " \r\n");
+		strcpy(plotCRs_str[i], p);
+		i++;
+		
 		while(p)
 		{	
-			CRBuf[i++] = p;
 			p = strtok(NULL, " \r\n");
+			if(p!=NULL)
+			{
+				plotCRs_str[i] = (char*)malloc(MAX_NB_CMPR_CASES);
+				strcpy(plotCRs_str[i++], p);				
+			}
 		}
+		
 		nbPlotCRs = i;
 
 		printf("There are %d compression ratios specified by users for plotting: ", nbPlotCRs);			
 		for(i=0;i<nbPlotCRs;i++)
 		{
-			plotCRs[i] = atof(CRBuf[i]);
-			printf("%s ", CRBuf[i]);
+			plotCRs[i] = atof(plotCRs_str[i]);
+			printf("%s ", plotCRs_str[i]);
 		}
 		printf("\n");
 	}	
 
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);
+	
 	//if(plotAutoCorrFlag || plotEntropyFlag || plotAbsErrPDFFlag || checkCompressorsFlag)
 	if(checkingStatus==COMPARE_COMPRESSOR)
 	{	
@@ -254,7 +358,7 @@ int ZC_ReadConf() {
 		char *p;
 		char *compressorsBuf[20]; //to compare at most 20 compressors
 		
-		int i = 0, j;
+		int i = 0, j = 0, k = 0;
 		compressorsBuf[i++] = strtok(compressorsString, " \r\n");
 		p = strtok(NULL, " \r\n");
 		while(p)
@@ -287,11 +391,51 @@ int ZC_ReadConf() {
 		for(i=0;i<ZC_BUFS_LONG;i++)
 			fileNames[i] = (char*)malloc(500);		
 		//load property info from current directory (in Z-checker)
+		
+		ecVisDecDataTables = ht_create(HASHTABLE_SIZE_SMALL); //64 entries						
 		int count;
 		property_dir = "dataProperties";
 		ZC_getFileNames(property_dir, propertyExtension, &count, fileNames);
 		for(j=0;j<count;j++)
-			loadProperty(property_dir, fileNames[j]);
+		{
+			ZC_DataProperty* prop = loadProperty(property_dir, fileNames[j]);
+
+			if(plotDecImageFlag)
+			{	
+				hashtable_t *varComprMap = ht_get(ecVisDecDataTables, prop->varName);
+				if(varComprMap==NULL)  //double-gurantee no duplicated entries
+				{
+					nbVars++; //record number of variables
+					
+					varComprMap = ht_create(HASHTABLE_SIZE_SMALL);
+					ht_set(ecVisDecDataTables, prop->varName, varComprMap);
+								
+					//traverse all the CRs required by users
+					for(k=0;k<compressors_count;k++)
+					{
+						char* compressorName = compressors[k];
+						
+						CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)malloc(sizeof(struct CompressorCRVisElement));
+						memset(cmprVisE, 0, sizeof(struct CompressorCRVisElement));
+						cmprVisE->varName = prop->varName;
+						cmprVisE->compressorName = compressorName;
+						cmprVisE->CRVisDataMap = ht_create(HASHTABLE_SIZE_SMALL);
+						ht_set(varComprMap, compressorName, cmprVisE);
+						
+						for(i=0;i<nbPlotCRs;i++)
+						{
+							ZCVisDecDataElement* visEle = (ZCVisDecDataElement*) malloc(sizeof(struct ZCVisDecDataElement));
+							memset(visEle, 0, sizeof(struct ZCVisDecDataElement));
+							visEle->varName = prop->varName;
+							visEle->dataProperty = prop;
+							visEle->compressorName = compressorName;
+												
+							ht_set(cmprVisE->CRVisDataMap, plotCRs_str[i], visEle);
+						}
+					}					
+				}
+			}
+		}
 		
 		//load property info from compressor-directories
 		for(i=0;i<compressors_count;i++)
@@ -332,6 +476,7 @@ int ZC_ReadConf() {
 			for(j=0;j<count;j++)
 			{
 				char* compResultCaseName = rmFileExtension(fileNames[j]);
+				
 				ZC_CompareData* p = (ZC_CompareData*)ht_get(ecCompareDataTable, compResultCaseName);
 				if(p==NULL)
 				{				
@@ -340,10 +485,25 @@ int ZC_ReadConf() {
 					//free(compResultCaseName);
 					
 					ZC_CompareData* compare = ZC_loadCompressionResult(tmpPathBuf);
+					p = compare;
 					compare->solution = (char*)malloc(strlen(compResultCaseName)+1);
 					strcpy(compare->solution, compResultCaseName);
 					
 					ht_set(ecCompareDataTable, compResultCaseName, compare);
+					//TODO: extract the error bound from the compResultCaseName, e.g., zfp(1E-2):CLDHGH_1_1800_3600
+					if(plotDecImageFlag)
+					{
+						char compressorName[64];
+						char errorBound[64];
+						char varName[128];
+						ZC_parseCompressionCase(compResultCaseName, compressorName, errorBound, varName);
+						
+						hashtable_t* varCmprMap = ht_get(ecVisDecDataTables, varName);
+						CompressorCRVisElement* cmprVisE = ht_get(varCmprMap, compressorName);
+						compare->errorBound = atof(errorBound);						
+						cmprVisE->compressionResults[cmprVisE->resultCount++] = compare;
+					}
+
 					
 					sprintf(softLinkPath, "compressionResults/%s", fileNames[j]);					
 					if (access(softLinkPath, F_OK) != 0)
@@ -410,6 +570,7 @@ int ZC_ReadConf() {
 						}											
 					}									
 				}
+				
 				free(compResultCaseName);
 			}	
 		}
@@ -427,7 +588,7 @@ int ZC_ReadConf() {
 		}
 		else
 			reportTemplateDir = NULL;
-	}																																																																																																													
+	}
 	
 	ZC_versionNumber[0] = ZC_VER_MAJOR; //0
 	ZC_versionNumber[1] = ZC_VER_MINOR; //5

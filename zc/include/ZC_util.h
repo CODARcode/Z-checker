@@ -24,6 +24,8 @@ char* strcat_new(char *s1, char *s2);
 void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* compressorName, char* errBound);
 void checkAndAddStringToList(char** strList, int* num, char* targetStr);
 
+int ZC_parseCompressionCase(char* compressionCase, char* compressorName, char* errorBound, char* varName);
+
 #ifdef __cplusplus
 }
 #endif
