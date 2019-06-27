@@ -923,7 +923,7 @@ void free_CompressorCRVisElement(CompressorCRVisElement* cmprVisE)
 		entry_t* entry = cmprVisE->CRVisDataMap->table[i];
 		while(entry!=NULL)
 		{
-			ZCVisDecDataElement* visEle = cmprVisE->CRVisDataMap->table[i]->value;
+			ZCVisDecDataElement* visEle = entry->value;
 			free_ZCVisDecDataElement(visEle);
 			entry = entry->next;
 		}

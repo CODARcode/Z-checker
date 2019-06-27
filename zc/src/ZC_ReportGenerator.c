@@ -847,11 +847,12 @@ void ZC_generateOverallReport(char* dataSetName)
 		ZC_generateDecVisReport();
 		
 		header = ZC_readLines("zc.config", &lineCount);
-		modifyZCConfig(header, "checkingStatus", "ANALYZE_DATA");
+		modifyZCConfig(header, "checkingStatus", "COMPARE_COMPRESSOR");
 		ZC_writeLines(header, "zc.config");
 		ZC_freeLines(header);
 		
-		strcpy(cmd, "cd dataProperties;pngFileList=`ls *.png`;for file in $pngFileList;do sam2p $file ${file}.eps;done");
+		strcpy(cmd, "cd compressionResults;gnuplot *.p;for file in `ls *.png`;do echo converting ${file} to ${file}.eps;cp \"$file\" tmp.png;sam2p tmp.png tmp.eps;mv tmp.eps ${file}.eps;done");
+		system(cmd);
 	}
 	
 	ZC_generateResultTexFile();	

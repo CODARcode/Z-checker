@@ -20,5 +20,6 @@ int main(int argc, char* argv[])
 	StringLine* header = ZC_readLines(configFile, &lineCount);	
 	modifyZCConfig(header, targetAttr, value);
 	ZC_writeLines(header, configFile);
+	ZC_freeLines(header);
 	return 0;
 }
