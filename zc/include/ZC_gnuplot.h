@@ -29,6 +29,7 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel);
 char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1);
 void plotSliceImageData(char* keyName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, void* slice_data_ori, void* slice_data_log, char* tgtWorkspaceDir);
+void ZC_executeCompDecomp_vis(char* solName, char* varName, char* cmdTemplate, int dataType, char* inputDataPath, char* errorBound, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 #ifdef __cplusplus
 }

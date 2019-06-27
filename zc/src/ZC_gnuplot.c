@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "ZC_util.h"
 #include "ZC_gnuplot.h"
 #include "zc.h"
 
@@ -359,4 +360,40 @@ void plotSliceImageData(char* keyName, int dataType, size_t r5, size_t r4, size_
 			free(sliceImageStrs[i]);
 		free(sliceImageStrs);			
 	}	
+}
+
+void ZC_executeCompDecomp_vis(char* solName, char* varName, char* cmdTemplate, int dataType, char* inputDataPath, char* errorBound, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	char buffer[256];
+	char cmdLine[512]; 
+	strcpy(cmdLine, cmdTemplate);
+	if(dataType==ZC_FLOAT)
+		ZC_ReplaceStr(cmdLine, "DATATYPE", "-f");
+	else
+		ZC_ReplaceStr(cmdLine, "DATATYPE", "-d");
+	
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+	switch(dim)
+	{
+	case 1:
+		sprintf(buffer, "%zu", r1);
+		ZC_ReplaceStr(cmdLine, "R1", buffer);
+		break;
+	case 2:
+		sprintf(buffer, "%zu %zu", r1, r2);
+		ZC_ReplaceStr(cmdLine, "R1 R2", buffer);
+		break;
+	case 3:
+		sprintf(buffer, "%zu %zu %zu", r1, r2, r3);
+		ZC_ReplaceStr(cmdLine, "R1 R2 R3", buffer);
+		break;
+	}
+	
+	ZC_ReplaceStr(cmdLine, "SOLUTION", solName);
+	ZC_ReplaceStr(cmdLine, "VARNAME", varName);
+	ZC_ReplaceStr(cmdLine, "INPUTDATAPATH", inputDataPath);
+	ZC_ReplaceStr(cmdLine, "ERRORBOUND", errorBound);
+	
+	printf("execute compression/decompression: %s\n", cmdLine);
+	system(cmdLine);
 }

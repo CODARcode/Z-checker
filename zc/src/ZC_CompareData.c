@@ -55,14 +55,14 @@ int freeCompareResult(ZC_CompareData* compareData)
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
-double* autoCorrAbsErr, double* absErrPDF)
+double* autoCorrAbsErr, double* absErrPDF, int compressionMode)
 {
 	ZC_CompareData* result = (ZC_CompareData*)malloc(sizeof(struct ZC_CompareData));
 	memset(result, 0, sizeof(struct ZC_CompareData));
 
 	//TODO: get the dataProperty based on varName from the hashtable.
 	result->property = (ZC_DataProperty*)ht_get(ecPropertyTable, varName);
-	
+	result->compressionMode = compressionMode;
 	result->dec_data = NULL;
 	result->compressTime = compressTime;
 	result->compressRate = compressRate;
@@ -269,7 +269,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult)
 {
-	char** s = (char**)malloc(33*sizeof(char*));
+	char** s = (char**)malloc(34*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -383,6 +383,8 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 		sprintf(s[32], "ssimImage2D_max = %.10G\n", compareResult->ssimImage2D_max);						
 	}
 
+	s[33] = (char*)malloc(100*sizeof(char));
+	sprintf(s[33], "compressionMode = %d\n", compareResult->compressionMode);
 	return s;
 }
 
@@ -401,10 +403,10 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(33, s, tgtFilePath);
+	ZC_writeStrings(34, s, tgtFilePath);
 	
 	int i;
-	for(i=0;i<=32;i++)
+	for(i=0;i<=33;i++)
 		free(s[i]);
 	free(s);
 	
@@ -536,6 +538,7 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	char* var = (char*)malloc(ZC_BUFS);
 	snprintf(var, ZC_BUFS,"%s", par);
 	
+	int compressionMode = (int)iniparser_getint(ini, "COMPARE:compressionMode", 0);
 	double compressTime = (double)iniparser_getdouble(ini, "COMPARE:compressTime", 0);
 	double compressRate = (double)iniparser_getdouble(ini, "COMPARE:compressRate", 0);
 	double compressRatio = (double)iniparser_getdouble(ini, "COMPARE:compressRatio", 0);
@@ -570,7 +573,7 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	ZC_CompareData* compareResult = ZC_constructCompareResult(var, 
 	compressTime, compressRate, compressRatio, rate, 
 	compressSize, decompressTime, decompressRate, minAbsErr, avgAbsErr, maxAbsErr, minRelErr, avgRelErr, maxRelErr, 
-	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF);
+	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF, compressionMode);
 	
 	iniparser_freedict(ini);
 	

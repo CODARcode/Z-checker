@@ -653,9 +653,10 @@ ZC_DataProperty* ZC_loadDataProperty(char* propResultFile)
 	complex* fftCoeff = NULL;
 	
 	char* filePath = iniparser_getstring(ini, "PROPERTY:filePath", NULL);
+	char* filePathStr = createLine(filePath);
 	
 	ZC_DataProperty* property = ZC_constructDataProperty(var, dataType, r5, r4, r3, r2, r1, numOfElem, minValue, maxValue, 
-	valueRange, avgValue, entropy, autocorr_array, fftCoeff, filePath);
+	valueRange, avgValue, entropy, autocorr_array, fftCoeff, filePathStr);
 	
 	free(var);
 	iniparser_freedict(ini);

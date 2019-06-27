@@ -24,11 +24,16 @@ extern "C" {
 #define DECVIS_ERROR_SELECT_CLOSET 0
 #define DECVIS_ERROR_LINEAR_APPROX 1
 
+#define ZC_ABS 0
+#define ZC_REL 1
+
 typedef struct ZC_CompareData
 {	
 	char* solution; //the key string of the ZC_CompareData
 	double errorBound;
 	ZC_DataProperty* property;
+	
+	int compressionMode; //ZC_REL or ZC_ABS
 	
 	void* dec_data;
 	double compressTime;
@@ -162,7 +167,7 @@ void freeCompareResult_internal(ZC_CompareData* compareData);
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
-double* autoCorrAbsErr, double* absErrPDF);
+double* autoCorrAbsErr, double* absErrPDF, int compressionMode);
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);

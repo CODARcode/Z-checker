@@ -118,6 +118,20 @@ extern "C" {
 #define ZC_OFFLINE 0
 #define ZC_ONLINE 1
 
+#define CMD_SZ_ZC_VIS_ABS_1D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -1 R1 -v VARNAME -k \"SOLUTION\" -C zc.config -M ABS -A ERRORBOUND"
+#define CMD_SZ_ZC_VIS_ABS_2D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -2 R1 R2 -v VARNAME -k \"SOLUTION\" -C zc.config -M ABS -A ERRORBOUND"
+#define CMD_SZ_ZC_VIS_ABS_3D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -3 R1 R2 R3 -v VARNAME -k \"SOLUTION\" -C zc.config -M ABS -A ERRORBOUND"
+#define CMD_SZ_ZC_VIS_REL_1D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -1 R1 -v VARNAME -k \"SOLUTION\" -C zc.config -M REL -R ERRORBOUND"
+#define CMD_SZ_ZC_VIS_REL_2D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -2 R1 R2 -v VARNAME -k \"SOLUTION\" -C zc.config -M REL -R ERRORBOUND"
+#define CMD_SZ_ZC_VIS_REL_3D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -3 R1 R2 R3 -v VARNAME -k \"SOLUTION\" -C zc.config -M REL -R ERRORBOUND"
+#define CMD_ZFP_ZC_VIS_ABS_1D "./zfp-zc-vis -s DATATYPE -a ERRORBOUND -1 R1 -i INPUTDATAPATH -k \"SOLUTION\" -v VARNAME"
+#define CMD_ZFP_ZC_VIS_ABS_2D "./zfp-zc-vis -s DATATYPE -a ERRORBOUND -2 R1 R2 -i INPUTDATAPATH -k \"SOLUTION\" -v VARNAME"
+#define CMD_ZFP_ZC_VIS_ABS_3D "./zfp-zc-vis -s DATATYPE -a ERRORBOUND -3 R1 R2 R3 -i INPUTDATAPATH -k \"SOLUTION\" -v VARNAME"
+#define CMD_ZFP_ZC_VIS_REL_1D "./zfp-zc-vis -s DATATYPE -a ERRORBOUND -1 R1 -i INPUTDATAPATH -k \"SOLUTION\" -v VARNAME -l"
+#define CMD_ZFP_ZC_VIS_REL_2D "./zfp-zc-vis -s DATATYPE -a ERRORBOUND -2 R1 R2 -i INPUTDATAPATH -k \"SOLUTION\" -v VARNAME -l"
+#define CMD_ZFP_ZC_VIS_REL_3D "./zfp-zc-vis -s DATATYPE -a ERRORBOUND -3 R1 R2 R3 -i INPUTDATAPATH -k \"SOLUTION\" -v VARNAME -l"
+
+
 extern char *rscriptPath;
 
 extern int sysEndianType; /*endian type of the system*/

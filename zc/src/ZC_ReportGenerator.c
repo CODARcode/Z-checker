@@ -577,6 +577,72 @@ void ZC_generateRateCorrelationReport()
 	ZC_freeLines(texLines);
 }
 
+char* selectCmdTemplate(int compressionMode, int dim)
+{
+	char* cmdTemplate = (char*)malloc(512);
+	
+	if(compressionMode==ZC_ABS)
+	{
+		switch(dim)
+		{
+		case 1:
+			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_1D);
+			break;
+		case 2:
+			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_2D);
+			break;
+		case 3:
+			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_3D);
+			break;
+		}
+	}
+	else //ZC_REL
+	{
+		switch(dim)
+		{
+		case 1:
+			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_1D);
+			break;
+		case 2:
+			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_2D);
+			break;
+		case 3:
+			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_3D);
+			break;
+		}
+	}	
+	return cmdTemplate;
+}
+
+void ZC_executeCompDecomp_basedon_CmprVisE(CompressorCRVisElement* cmprVisE)
+{
+	char buffer[512];
+	int k = 0;
+	char* varName = cmprVisE->varName;
+	char* cmprName = cmprVisE->compressorName;
+	
+	int compressionMode = cmprVisE->compressionResults[0]->compressionMode; //cmprVisE->compressionResults[0] will never be NULL
+	
+	int crCount = ht_getElemCount(cmprVisE->CRVisDataMap);
+	char** crs = ht_getAllKeys(cmprVisE->CRVisDataMap);
+	for(k=0;k<crCount;k++)
+	{
+		char* cr = crs[k];
+		ZCVisDecDataElement* decEle = ht_get(cmprVisE->CRVisDataMap, cr);
+		char* errSetting = decEle->errorSetting_str;
+		sprintf(buffer, "%s(%s)", cmprName, errSetting);
+		ZC_DataProperty* property = decEle->dataProperty;
+		int dim = ZC_computeDimension(property->r5, property->r4, property->r3, property->r2, property->r1);
+		
+		char* cmdTemplate = selectCmdTemplate(compressionMode, dim);
+		char* inputDataPath = property->filePath;
+		int dataType = property->dataType;
+		
+		ZC_executeCompDecomp_vis(buffer, varName, cmdTemplate, dataType, inputDataPath, errSetting, property->r5, property->r4, property->r3, property->r2, property->r1);
+		
+		free(cmdTemplate);
+	}	
+}
 
 void ZC_generateDecVisReport()
 {
@@ -608,6 +674,9 @@ void ZC_generateDecVisReport()
 			print_cmprVisE(cmprVisE);
 			StringLine* sl = write_cmprVisE(cmprVisE);
 			p = ZC_appendLines(p, sl);
+			
+			//Perform compression and decompression based on required error bound and generate slice images	
+			ZC_executeCompDecomp_basedon_CmprVisE(cmprVisE);
 		}
 	}
 	
@@ -616,10 +685,7 @@ void ZC_generateDecVisReport()
 	ZC_writeLines(header, "compareCompressors/ecVisDecDataTables.txt");
 	ZC_freeLines(header);
 
-	plot_dec_data = 1; //the following ZC_endDec() will plot decompressed data slice.
-	
 	free(vars);
-	
 }
 
 StringLine* ZC_generateCompressionFactorFigure()
@@ -771,7 +837,20 @@ void ZC_generateOverallReport(char* dataSetName)
 		ZC_generateSpectrumDistortionReport(allCompressors, allCompressorCount);
 	
 	if(plotDecImageFlag)
+	{
+        int lineCount;
+        StringLine* header = ZC_readLines("zc.config", &lineCount);
+        modifyZCConfig(header, "checkingStatus", "PROBE_COMPRESSOR");
+        ZC_writeLines(header, "zc.config");
+		ZC_freeLines(header);
+		
 		ZC_generateDecVisReport();
+		
+		header = ZC_readLines("zc.config", &lineCount);
+		modifyZCConfig(header, "checkingStatus", "ANALYZE_DATA");
+		ZC_writeLines(header, "zc.config");
+		ZC_freeLines(header);		
+	}
 	
 	ZC_generateResultTexFile();	
 	

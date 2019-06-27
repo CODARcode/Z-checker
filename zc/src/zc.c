@@ -414,6 +414,9 @@ void ZC_startDec_offline()
 void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 {
 	char* solution = compareResult->solution;
+	char* varName = compareResult->property->varName;	
+	char keyName[256];
+	sprintf(keyName, "%s:%s", solution, varName);
 	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
 	if(decompressTimeFlag)
 	{
@@ -433,7 +436,6 @@ void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 	//plot decompressed data (2d) or slice (3d) 
 	if(plot_dec_data)
 	{
-		char* solution = compareResult->solution;
 		int dataType = compareResult->property->dataType;
 		size_t r5 = compareResult->property->r5;
 		size_t r4 = compareResult->property->r4;
@@ -478,7 +480,7 @@ void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 					sliceImage_log[i] = log10f(fabsf(sliceImage_ori[i]));
 				}
 			}
-			plotSliceImageData(solution, dataType, r5, r4, r3, r2, r1, sliceImage_ori, sliceImage_log, "compressionResults");
+			plotSliceImageData(keyName, dataType, r5, r4, r3, r2, r1, sliceImage_ori, sliceImage_log, "compressionResults");
 		}
 		else
 		{
@@ -515,12 +517,12 @@ void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 				}
 			}
 			
-			plotSliceImageData(solution, dataType, r5, r4, r3, r2, r1, sliceImage_ori, sliceImage_log, "compressionResults");			
+			plotSliceImageData(keyName, dataType, r5, r4, r3, r2, r1, sliceImage_ori, sliceImage_log, "compressionResults");			
 		}
 
 	}
 
-	ZC_writeCompressionResult(compareResult, solution, compareResult->property->varName, "compressionResults");
+	ZC_writeCompressionResult(compareResult, solution, varName, "compressionResults");
 }
 
 void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
@@ -1330,7 +1332,7 @@ int ZC_Finalize()
 	}
 	
 	//free ecVisDecDataTables; Note: ecVisDecDataTables has to be freed before freeing ecPropertyTable
-	if(plotDecImageFlag)
+	if(plotDecImageFlag && ecVisDecDataTables!=NULL)
 	{
 		int var_capacity = ecVisDecDataTables->capacity;
 		for(i=0;i<var_capacity;i++)
@@ -1354,8 +1356,8 @@ int ZC_Finalize()
 				varEntry = varEntry->next;
 			}
 		}
+		ht_freeTable(ecVisDecDataTables);	
 	}
-	ht_freeTable(ecVisDecDataTables);	
 	
 	//free hashtable memory
 	if(ecPropertyTable!=NULL)
@@ -1443,7 +1445,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	zcv = (ZC_CompareData*)ht_get(ecCompareDataTable, name);
 	if(zcv==NULL)
 	{
-		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
+		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
 		zcv->property = property;
 		zcv->dec_data = NULL;
 	}

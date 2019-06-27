@@ -290,7 +290,7 @@ int ZC_ReadConf() {
 	memset(plotCRs_str, 0, MAX_VIS_DEC_CRS);
 	
 	plotDecImageFlag = (int)iniparser_getint(ini, "PLOT:plotDecSliceImage", 0);
-	if(plotDecImageFlag==1)
+	if(plotDecImageFlag==1 && plot_dec_data == 0)
 	{
 		int i = 0;
 		char* p = NULL;
