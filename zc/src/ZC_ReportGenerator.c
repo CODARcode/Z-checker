@@ -849,7 +849,9 @@ void ZC_generateOverallReport(char* dataSetName)
 		header = ZC_readLines("zc.config", &lineCount);
 		modifyZCConfig(header, "checkingStatus", "ANALYZE_DATA");
 		ZC_writeLines(header, "zc.config");
-		ZC_freeLines(header);		
+		ZC_freeLines(header);
+		
+		strcpy(cmd, "cd dataProperties;pngFileList=`ls *.png`;for file in $pngFileList;do sam2p $file ${file}.eps;done");
 	}
 	
 	ZC_generateResultTexFile();	

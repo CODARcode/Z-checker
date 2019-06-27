@@ -1287,6 +1287,11 @@ void ZC_plotSliceImage()
 	}
 }
 
+void ZC_plotDecSliceImage()
+{
+	//TODO
+}
+
 
 int ZC_analyze_and_generateReport(char* dataSetName)
 {
