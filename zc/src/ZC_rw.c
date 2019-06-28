@@ -29,6 +29,13 @@ int ZC_check_file_exists(const char *fname)
     return 0;
 }
 
+int ZC_check_eps_file_exists(char* fileNameWithoutExtension, char* dir)
+{
+	char buffer[512];
+	sprintf(buffer, "%s/%s.png.eps", dir, fileNameWithoutExtension);
+	return ZC_check_file_exists(buffer);
+}
+
 int ZC_checkDirExists(const char *dir)
 {
 	DIR* dir_ = opendir(dir);
@@ -689,6 +696,28 @@ size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, Str
 			p = p->next;
 	}
 	return count;
+}
+
+StringLine* ZC_appendOneLine(StringLine* globalLineHeader, StringLine* stringLine)
+{
+	if(stringLine==NULL)
+	{
+		return NULL;
+	}
+	
+	if(stringLine->next==NULL)
+		return NULL;
+	
+	StringLine* p = globalLineHeader;
+	while(p->next!=NULL)
+		p = p->next;
+	
+	p->next = stringLine;
+	
+	while(p->next!=NULL)
+		p = p->next;
+	
+	return p;	
 }
 
 /**

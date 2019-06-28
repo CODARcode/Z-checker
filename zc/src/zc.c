@@ -490,7 +490,7 @@ void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData)
 			if(dim==1)
 			{
 				sliceImage_ori = dec_data;
-				sliceImage_log = (float*)malloc(sizeof(float)*r1);
+				sliceImage_log = (double*)malloc(sizeof(double)*r1);
 				for(i=0;i<r1 && i<1000;i++)
 					sliceImage_log[i] = log10(fabs(sliceImage_ori[i]));			
 			}

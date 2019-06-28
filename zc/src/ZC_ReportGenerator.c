@@ -547,6 +547,11 @@ void ZC_generateResultTexFile()
 		line = createLine("\\input{tex/resultsTex/decompressionRate}\n"); 
 		p = appendOneLine(p, line);
 	}
+	if(plotDecImageFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/decCompressionVis}\n");
+		p = appendOneLine(p, line);
+	}
 	if(avgAbsErrFlag && plotAbsErrPDFFlag)
 	{
 		line = createLine("\\input{tex/resultsTex/errDistribution}\n"); 
@@ -577,40 +582,78 @@ void ZC_generateRateCorrelationReport()
 	ZC_freeLines(texLines);
 }
 
-char* selectCmdTemplate(int compressionMode, int dim)
+char* selectCmdTemplate(char* compressorName, int compressionMode, int dim)
 {
 	char* cmdTemplate = (char*)malloc(512);
 	
-	if(compressionMode==ZC_ABS)
+	if(strcmp(compressorName, "zfp")==0)
 	{
-		switch(dim)
+		if(compressionMode==ZC_ABS)
 		{
-		case 1:
-			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_1D);
-			break;
-		case 2:
-			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_2D);
-			break;
-		case 3:
-			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_3D);
-			break;
+			switch(dim)
+			{
+			case 1:
+				strcpy(cmdTemplate, CMD_ZFP_ZC_VIS_ABS_1D);
+				break;
+			case 2:
+				strcpy(cmdTemplate, CMD_ZFP_ZC_VIS_ABS_2D);
+				break;
+			case 3:
+				strcpy(cmdTemplate, CMD_ZFP_ZC_VIS_ABS_3D);
+				break;
+			}
 		}
+		else //ZC_REL
+		{
+			switch(dim)
+			{
+			case 1:
+				strcpy(cmdTemplate, CMD_ZFP_ZC_VIS_REL_1D);
+				break;
+			case 2:
+				strcpy(cmdTemplate, CMD_ZFP_ZC_VIS_REL_2D);
+				break;
+			case 3:
+				strcpy(cmdTemplate, CMD_ZFP_ZC_VIS_REL_3D);
+				break;
+			}
+		}			
 	}
-	else //ZC_REL
+	else //sz_d
 	{
-		switch(dim)
+		if(compressionMode==ZC_ABS)
 		{
-		case 1:
-			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_1D);
-			break;
-		case 2:
-			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_2D);
-			break;
-		case 3:
-			strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_3D);
-			break;
+			switch(dim)
+			{
+			case 1:
+				strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_1D);
+				break;
+			case 2:
+				strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_2D);
+				break;
+			case 3:
+				strcpy(cmdTemplate, CMD_SZ_ZC_VIS_ABS_3D);
+				break;
+			}
 		}
-	}	
+		else //ZC_REL
+		{
+			switch(dim)
+			{
+			case 1:
+				strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_1D);
+				break;
+			case 2:
+				strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_2D);
+				break;
+			case 3:
+				strcpy(cmdTemplate, CMD_SZ_ZC_VIS_REL_3D);
+				break;
+			}
+		}			
+	}
+	
+
 	return cmdTemplate;
 }
 
@@ -635,7 +678,7 @@ void ZC_executeCompDecomp_basedon_CmprVisE(CompressorCRVisElement* cmprVisE)
 		ZC_DataProperty* property = decEle->dataProperty;
 		int dim = ZC_computeDimension(property->r5, property->r4, property->r3, property->r2, property->r1);
 		
-		char* cmdTemplate = selectCmdTemplate(compressionMode, dim);
+		char* cmdTemplate = selectCmdTemplate(cmprName, compressionMode, dim);
 		char* inputDataPath = property->filePath;
 		int dataType = property->dataType;
 		
@@ -796,11 +839,12 @@ StringLine* ZC_generateDecSliceImageReport()
 	int varCount = ht_getElemCount(ecVisDecDataTables);
 	char** varNames = ht_getAllKeys(ecVisDecDataTables);
 
-	StringLine* resultHeader = NULL;	
+	StringLine* resultHeader = NULL, *p = NULL; //p points to the tail	
 
 	char *preTxtBuffer = (char*)malloc(sizeof(char)*ZC_BUFS_SUPER_LONG);
 	strcpy(preTxtBuffer, "The slice images of the decompressed datasets are presented in the following figures. \n");
 	resultHeader = createOneStringLine(preTxtBuffer);
+	p = resultHeader->next;
 
 	for(i=0;i<varCount;i++)
 	{	
@@ -813,13 +857,14 @@ StringLine* ZC_generateDecSliceImageReport()
 			int compressorCount = ht_getElemCount(varComprMap);
 
 			char *epsImageFiles[32]; //at most 256 eps files put in a figure
-			char *subFigureTitles[32];									
+			char *subFigureTitles[32];
+			
+			char* str_ = (char*)malloc(512);
+			sprintf(str_, "%%original data: var[%d]=%s,CR[%d]=%s----------------------------\n", i, varName, j, CR);
+			p = appendOneLine(p, str_);
+							
 			for(k=0;k<compressorCount;k++)
-			{
-				strcpy(str, "%------------------------------\n");
-				StringLine* line = createOneStringLine(str);
-				ZC_appendLines(resultHeader, line);
-				
+			{	
 				char* compressorName = compressorNames[k];
 				
 				CompressorCRVisElement* cmprVisE = ht_get(varComprMap, compressorName);
@@ -829,30 +874,32 @@ StringLine* ZC_generateDecSliceImageReport()
 
 				sprintf(str, "compressionResults/%s.cmp", compressionCaseName);
 				
+				printf("loading compression results from %s\n", str);
 				visEle->compressionResult = ZC_loadCompressionResult(str);
 
+				double compressionRatio = visEle->compressionResult->compressRatio;
 				double psnr = visEle->compressionResult->psnr;
 				double ssim2d = visEle->compressionResult->ssimImage2D_avg;
 				
-				sprintf(str, "%s,psnr=%f,ssim=%f", compressionCaseName, psnr, ssim2d);
+				sprintf(str, "%s,cr=%f,psnr=%f,ssim=%f", compressionCaseName, compressionRatio, psnr, ssim2d);
 				subFigureTitles[k] = createLine(str);
 				
-				sprintf(str, "figs/compressionResults/{%s.oriimg.png}.eps", compressionCaseName);
+				sprintf(str, "%s.oriimg", compressionCaseName);
 				epsImageFiles[k] = createLine(str);				
+			
 			}
 			sprintf(caption, "Slice Images of Decompressed Data (ori) with CR=%s (%s)", CR, varName);
-			sprintf(figLabel, "fig:dec-slice-ori-cr%s", CR);
+			sprintf(figLabel, "dec-slice-ori-cr%s", CR);
 			StringLine* figHeader = ZC_generateSliceImageTexLines(compressorCount, epsImageFiles, subFigureTitles, "compressionResults", caption, figLabel);	
-			ZC_appendLines(resultHeader, figHeader);
+			p = ZC_appendLines(p, figHeader);
 
 			//log domain
-
+			str_ = (char*)malloc(512);
+			sprintf(str_, "%%log domain: var[%d]=%s,CR[%d]=%s----------------------------\n", i, varName, j, CR);
+			p = appendOneLine(p, str_);
+			
 			for(k=0;k<compressorCount;k++)
-			{
-				strcpy(str, "%------------------------------\n");
-				StringLine* line = createOneStringLine(str);
-				ZC_appendLines(resultHeader, line);
-				
+			{	
 				char* compressorName = compressorNames[k];
 				
 				CompressorCRVisElement* cmprVisE = ht_get(varComprMap, compressorName);
@@ -862,22 +909,23 @@ StringLine* ZC_generateDecSliceImageReport()
 
 				sprintf(str, "compressionResults/%s.cmp", compressionCaseName);
 				
+				printf("loading compression results from %s\n", str);
 				visEle->compressionResult = ZC_loadCompressionResult(str);
 
+				double compressionRatio = visEle->compressionResult->compressRatio;
 				double psnr = visEle->compressionResult->psnr;
 				double ssim2d = visEle->compressionResult->ssimImage2D_avg;
 				
-				sprintf(str, "%s,psnr=%f,ssim=%f", compressionCaseName, psnr, ssim2d);
+				sprintf(str, "%s,cr=%f,psnr=%f,ssim=%f", compressionCaseName, compressionRatio, psnr, ssim2d);
 				subFigureTitles[k] = createLine(str);
 				
-				sprintf(str, "figs/compressionResults/{%s.oriimg.png}.eps", compressionCaseName);
+				sprintf(str, "%s.logimg", compressionCaseName);
 				epsImageFiles[k] = createLine(str);				
 			}
 			sprintf(caption, "Slice Images of Decompressed Data (log) with CR=%s (%s)", CR, varName);
-			sprintf(figLabel, "fig:dec-slice-log-cr%s", CR);
+			sprintf(figLabel, "dec-slice-log-cr%s", CR);
 			figHeader = ZC_generateSliceImageTexLines(compressorCount, epsImageFiles, subFigureTitles, "compressionResults", caption, figLabel);	
-			ZC_appendLines(resultHeader, figHeader);
-
+			p = ZC_appendLines(p, figHeader);
 
 		}
 	}

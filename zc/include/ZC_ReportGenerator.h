@@ -39,7 +39,7 @@ void ZC_generateDecompressionRateReport();
 StringLine* ZC_generatePSNRFigure();
 void ZC_generatePSNRReport();
 
-char* selectCmdTemplate(int compressionMode, int dim);
+char* selectCmdTemplate(char* compressorName, int compressionMode, int dim);
 void ZC_executeCompDecomp_basedon_CmprVisE(CompressorCRVisElement* cmprVisE);
 void ZC_generateDecVisData();
 

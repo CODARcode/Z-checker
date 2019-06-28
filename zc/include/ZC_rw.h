@@ -30,6 +30,7 @@ typedef struct StringLine
 } StringLine;
 
 int ZC_check_file_exists(const char *fname);
+int ZC_check_eps_file_exists(char* fileNameWithoutExtension, char* dir);
 int ZC_checkDirExists(const char *dir);
 void updateLinkFullPath(char* oriPath, char* finalPath);
 int ZC_checkExtension(char* str, char* extension);

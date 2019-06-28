@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "ZC_rw.h"
 #include "ZC_util.h"
 #include "ZC_latex.h"
 #include "zc.h"
@@ -113,15 +114,27 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
 	
 	size_t i = 0;
+	int sucCount = 0;
 	for(i=0;i<epsFileNum;i++)
 	{
 		strcpy(caseName, epsFileNames[i]);
+		
+		if(!ZC_check_eps_file_exists(epsFileNames[i], subDir))
+			continue;
+		
+		sucCount++;
 		ZC_ReplaceStr2(caseName, "_", "\\_");
 		sprintf(tmpLine, "\\subfigure[{%s}]\n", caseName);
 		line = createLine(tmpLine); p = appendOneLine(p, line);
 		line = createLine("{\n"); p = appendOneLine(p, line);
 		line = gen_includegraphicsLine2(epsFileNames[i], subDir); p = appendOneLine(p, line);
 		line = createLine("}\n"); p = appendOneLine(p, line);
+	}
+	
+	if(sucCount==0)
+	{
+		ZC_freeLines(header);
+		return NULL;
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
