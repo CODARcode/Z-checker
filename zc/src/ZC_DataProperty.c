@@ -2,6 +2,7 @@
 #include <math.h>
 #include <assert.h>
 #include <sys/stat.h>
+#include "ZC_util.h"
 #include "ZC_DataProperty.h"
 #include "zc.h"
 #include "iniparser.h"

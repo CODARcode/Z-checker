@@ -41,7 +41,7 @@ void ZC_generatePSNRReport();
 
 char* selectCmdTemplate(int compressionMode, int dim);
 void ZC_executeCompDecomp_basedon_CmprVisE(CompressorCRVisElement* cmprVisE);
-void ZC_generateDecVisReport();
+void ZC_generateDecVisData();
 
 StringLine* ZC_generateCompressionFactorFigure();
 

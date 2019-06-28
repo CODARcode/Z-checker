@@ -136,7 +136,7 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	return header;
 }
 
-StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, char* subDir, char* caption, char* figLabel)
+StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, char** subFigureTitles, char* subDir, char* caption, char* figLabel)
 {
 	char caseName[ZC_BUFS_LONG];
 	char tmpLine[MAX_MSG_LENGTH];
@@ -147,7 +147,7 @@ StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, c
 	size_t i = 0;
 	for(i=0;i<epsFileNum;i++)
 	{
-		strcpy(caseName, epsFileNames[i]);
+		strcpy(caseName, subFigureTitles[i]);
 		ZC_ReplaceStr2(caseName, "_", "\\_");
 		sprintf(tmpLine, "\\subfigure[{%s}]\n", caseName);
 		line = createLine(tmpLine); p = appendOneLine(p, line);

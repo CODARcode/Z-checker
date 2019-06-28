@@ -342,6 +342,7 @@ void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompre
 void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
 
 void ZC_updateZCRootTexFile(char* dataSetName);
+StringLine* ZC_generateDecSliceImageReport();
 void ZC_generateOverallReport(char* dataSetName);
 
 int ZC_analyze_and_generateReport(char* dataSetName);
