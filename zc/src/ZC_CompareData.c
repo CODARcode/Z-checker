@@ -55,7 +55,8 @@ int freeCompareResult(ZC_CompareData* compareData)
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
-double* autoCorrAbsErr, double* absErrPDF, int compressionMode)
+double* autoCorrAbsErr, double* absErrPDF, int compressionMode, 
+double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max)
 {
 	ZC_CompareData* result = (ZC_CompareData*)malloc(sizeof(struct ZC_CompareData));
 	memset(result, 0, sizeof(struct ZC_CompareData));
@@ -88,6 +89,9 @@ double* autoCorrAbsErr, double* absErrPDF, int compressionMode)
 	result->absErrPDF = absErrPDF;
 	result->pwrErrPDF = NULL;
 	result->fftCoeff = NULL;
+	result->ssimImage2D_min = ssimImage2D_min;
+	result->ssimImage2D_avg = ssimImage2D_avg;
+	result->ssimImage2D_max = ssimImage2D_max;
 	return result;
 }
 
@@ -570,10 +574,15 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	//TODO: Read more data from distribution-of-err file (zfp-test2.dis) for filling PDF
 	double* absErrPDF = NULL;
 		
+	double ssimImage2D_min = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_min", 0);	
+	double ssimImage2D_avg = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_avg", 0);	
+	double ssimImage2D_max = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_max", 0);	
+		
 	ZC_CompareData* compareResult = ZC_constructCompareResult(var, 
 	compressTime, compressRate, compressRatio, rate, 
 	compressSize, decompressTime, decompressRate, minAbsErr, avgAbsErr, maxAbsErr, minRelErr, avgRelErr, maxRelErr, 
-	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF, compressionMode);
+	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF, compressionMode, 
+	ssimImage2D_min, ssimImage2D_avg, ssimImage2D_max);
 	
 	iniparser_freedict(ini);
 	

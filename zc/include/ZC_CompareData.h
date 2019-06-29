@@ -167,7 +167,8 @@ void freeCompareResult_internal(ZC_CompareData* compareData);
 ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, double compressRate, double compressRatio, double rate,
 size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
-double* autoCorrAbsErr, double* absErrPDF, int compressionMode);
+double* autoCorrAbsErr, double* absErrPDF, int compressionMode, 
+double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max);
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);

@@ -114,27 +114,16 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
 	
 	size_t i = 0;
-	int sucCount = 0;
 	for(i=0;i<epsFileNum;i++)
 	{
 		strcpy(caseName, epsFileNames[i]);
 		
-		if(!ZC_check_eps_file_exists(epsFileNames[i], subDir))
-			continue;
-		
-		sucCount++;
 		ZC_ReplaceStr2(caseName, "_", "\\_");
 		sprintf(tmpLine, "\\subfigure[{%s}]\n", caseName);
 		line = createLine(tmpLine); p = appendOneLine(p, line);
 		line = createLine("{\n"); p = appendOneLine(p, line);
 		line = gen_includegraphicsLine2(epsFileNames[i], subDir); p = appendOneLine(p, line);
 		line = createLine("}\n"); p = appendOneLine(p, line);
-	}
-	
-	if(sucCount==0)
-	{
-		ZC_freeLines(header);
-		return NULL;
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
@@ -157,9 +146,14 @@ StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, c
 	StringLine* p = header; //p always points to the tail
 	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
 	
+	int sucCount = 0;
 	size_t i = 0;
 	for(i=0;i<epsFileNum;i++)
 	{
+		if(!ZC_check_eps_file_exists(epsFileNames[i], subDir))
+			continue;
+		
+		sucCount++;
 		strcpy(caseName, subFigureTitles[i]);
 		ZC_ReplaceStr2(caseName, "_", "\\_");
 		sprintf(tmpLine, "\\subfigure[{%s}]\n", caseName);
@@ -167,6 +161,12 @@ StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, c
 		line = createLine("{\n"); p = appendOneLine(p, line);
 		line = gen_includegraphicsLine3(epsFileNames[i], subDir); p = appendOneLine(p, line);
 		line = createLine("}\n"); p = appendOneLine(p, line);
+	}
+
+	if(sucCount==0)
+	{
+		ZC_freeLines(header);
+		return NULL;
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
