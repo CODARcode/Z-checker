@@ -882,7 +882,7 @@ StringLine* ZC_generateDecSliceImageReport()
 				if(SSIMIMAGE2DFlag)
 				{
 					double ssim2d = visEle->compressionResult->ssimImage2D_avg;
-					sprintf(str, "%s,\newline cr=%f,psnr=%f,ssim=%f", compressionCaseName, compressionRatio, psnr, ssim2d);
+					sprintf(str, "%s, cr=%f,psnr=%f,ssim=%f", compressionCaseName, compressionRatio, psnr, ssim2d);
 				}
 				else
 					sprintf(str, "%s,cr=%f,psnr=%f", compressionCaseName, compressionRatio, psnr);
@@ -922,7 +922,7 @@ StringLine* ZC_generateDecSliceImageReport()
 				if(SSIMIMAGE2DFlag)
 				{
 					double ssim2d = visEle->compressionResult->ssimImage2D_avg;
-					sprintf(str, "%s,\newline cr=%f,psnr=%f,ssim=%f", compressionCaseName, compressionRatio, psnr, ssim2d);
+					sprintf(str, "%s, cr=%f,psnr=%f,ssim=%f", compressionCaseName, compressionRatio, psnr, ssim2d);
 				}
 				else
 					sprintf(str, "%s,cr=%f,psnr=%f", compressionCaseName, compressionRatio, psnr);				
