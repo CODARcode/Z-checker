@@ -27,13 +27,17 @@ mkdir $caseName
 #make
 
 cp examples/*.sh $caseName
-cp examples/modifyZCConfig $caseName
-cp examples/analyzeDataProperty $caseName
-cp examples/compareDataSets $caseName
-cp examples/generateGNUPlot $caseName
-cp examples/generateReport $caseName
-cp examples/testRscript* $caseName
-cp examples/zc.config $caseName
-cp examples/README $caseName
+cd $caseName
+ln -s ../examples/modifyZCConfig modifyZCConfig
+ln -s ../examples/analyzeDataProperty analyzeDataProperty
+ln -s ../examples/compareDataSets compareDataSets
+ln -s ../examples/generateGNUPlot generateGNUPlot
+ln -s ../examples/generateReport generateReport
+ln -s ../examples/testRscript_double testRscript_double
+ln -s ../examples/testRscript_float testRscript_float
+ln -s ../examples/testRscript_readBinFloat testRscript_readBinFloat
+ln -s ../examples/zc.config zc.config
+ln -s ../examples/README README
 
+cd -
 echo A new workspace directory $caseName has been created in Z-checker.
