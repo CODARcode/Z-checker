@@ -376,6 +376,7 @@ void scan_group_SZ(hid_t gid, int errBoundMode, int nbErrBounds, char **errBound
 					for(j=0;j<nbErrBounds;j++)
 					{
 						//compression
+						//SZ_Init(NULL);
 						double errBound = atof(errBounds[j]);
 						sprintf(solName, "sz_d(%s)", errBounds[j]);
 						printf("%s: field=%s, dimension: (%zu, %zu, %zu, %zu, %zu)\n", solName, fullname, dims[4], dims[3], dims[2], dims[1], dims[0]);
@@ -390,6 +391,7 @@ void scan_group_SZ(hid_t gid, int errBoundMode, int nbErrBounds, char **errBound
 						freeCompareResult(compareResult);
 						free(bytes);
 						free(decData);
+						//SZ_Finalize();
 					}					
 				}
 				free(data);
@@ -553,8 +555,12 @@ float* zfp_decompression_float(unsigned char* bytes, size_t outSize, size_t r5, 
     }
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
-    
-	zfp_stream_set_execution(zfp, exec);		
+   
+    if (!zfp_read_header(zfp, field, ZFP_HEADER_FULL)) {
+	fprintf(stderr, "incorrect or missing header\n");
+    }
+
+    zfp_stream_set_execution(zfp, exec);		
 
     size_t rawsize = typesize * nbEle;
     float* fo = malloc(rawsize);
@@ -726,7 +732,12 @@ double* zfp_decompression_double(unsigned char* bytes, size_t outSize, size_t r5
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
     
-	zfp_stream_set_execution(zfp, exec);		
+    if (!zfp_read_header(zfp, field, ZFP_HEADER_FULL)) {
+	fprintf(stderr, "incorrect or missing header\n");
+	//exit(0);
+    }
+
+    zfp_stream_set_execution(zfp, exec);		
 
     size_t rawsize = typesize * nbEle;
     double* fo = malloc(rawsize);
