@@ -556,9 +556,7 @@ float* zfp_decompression_float(unsigned char* bytes, size_t outSize, size_t r5, 
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
    
-    if (!zfp_read_header(zfp, field, ZFP_HEADER_FULL)) {
-	fprintf(stderr, "incorrect or missing header\n");
-    }
+    zfp_read_header(zfp, field, ZFP_HEADER_FULL);
 
     zfp_stream_set_execution(zfp, exec);		
 
@@ -654,14 +652,10 @@ unsigned char* zfp_compression_double(double* data, int mode, double tolerance, 
       exit(0);
     }
     zfp_stream_set_bit_stream(zfp, stream);
-	zfp_stream_rewind(zfp);
+    zfp_stream_rewind(zfp);
 
-    /*if (!zfp_write_header(zfp, field, ZFP_HEADER_FULL)) {
-      fprintf(stderr, "cannot write header\n");
-      exit(0);
-    }*/
-	
-	size_t zfpsize = zfp_compress(zfp, field);	
+    size_t zfpsize = zfp_compress(zfp, field);	
+    
     if (zfpsize == 0) {
       fprintf(stderr, "compression failed\n");
       exit(0);
@@ -732,10 +726,7 @@ double* zfp_decompression_double(unsigned char* bytes, size_t outSize, size_t r5
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
     
-    if (!zfp_read_header(zfp, field, ZFP_HEADER_FULL)) {
-	fprintf(stderr, "incorrect or missing header\n");
-	//exit(0);
-    }
+    zfp_read_header(zfp, field, ZFP_HEADER_FULL);
 
     zfp_stream_set_execution(zfp, exec);		
 
