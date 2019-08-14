@@ -556,7 +556,7 @@ float* zfp_decompression_float(unsigned char* bytes, size_t outSize, size_t r5, 
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
    
-    zfp_read_header(zfp, field, ZFP_HEADER_FULL);
+    //zfp_read_header(zfp, field, ZFP_HEADER_FULL);
 
     zfp_stream_set_execution(zfp, exec);		
 
@@ -726,7 +726,7 @@ double* zfp_decompression_double(unsigned char* bytes, size_t outSize, size_t r5
     zfp_stream_set_bit_stream(zfp, stream);
     zfp_stream_rewind(zfp);
     
-    zfp_read_header(zfp, field, ZFP_HEADER_FULL);
+    //zfp_read_header(zfp, field, ZFP_HEADER_FULL);
 
     zfp_stream_set_execution(zfp, exec);		
 
