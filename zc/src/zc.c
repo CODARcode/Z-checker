@@ -1593,7 +1593,11 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	}
 	
 	if(compressTimeFlag)
-		initTime = MPI_Wtime();
+	{
+		MPI_Barrier(ZC_COMM_WORLD);
+		if(myRank==0)
+			initTime = MPI_Wtime();
+	}
 	return property;
 }
 
@@ -1602,8 +1606,12 @@ ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution,
 	double cmprTime = 0;
 	if(compressTimeFlag)
 	{
-		endTime = MPI_Wtime();
-		cmprTime = endTime - initTime;
+		MPI_Barrier(ZC_COMM_WORLD);
+		if(myRank==0)
+		{
+			endTime = MPI_Wtime();
+			cmprTime = endTime - initTime;
+		}
 	}
 	
 	ZC_CompareData* compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));
@@ -1612,8 +1620,11 @@ ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution,
 	
 	if(compressTimeFlag)
 	{
-		compareResult->compressTime = cmprTime;
-		compareResult->compressRate = dataProperty->numOfElem*elemSize/cmprTime; //in B/s (dataProperty->numOfElem here means globalDataLength) 
+		if(myRank==0)
+		{
+			compareResult->compressTime = cmprTime;
+			compareResult->compressRate = dataProperty->numOfElem*elemSize/cmprTime; //in B/s (dataProperty->numOfElem here means globalDataLength) 
+		}
 	}
 
 	if(compressSizeFlag)
@@ -1647,7 +1658,11 @@ ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution,
 void ZC_startDec_online()
 {
 	if(decompressTimeFlag)
-		initTime = MPI_Wtime();
+	{
+		MPI_Barrier(ZC_COMM_WORLD);
+		if(myRank==0)
+			initTime = MPI_Wtime();
+	}
 }
 
 void ZC_endDec_online(ZC_CompareData* compareResult, void *decData)
@@ -1656,9 +1671,13 @@ void ZC_endDec_online(ZC_CompareData* compareResult, void *decData)
 	int elemSize = compareResult->property->dataType==ZC_FLOAT? 4: 8;	
 	if(decompressTimeFlag)
 	{
-		endTime = MPI_Wtime();
-		compareResult->decompressTime = endTime - initTime;  //in seconds
-		compareResult->decompressRate = compareResult->property->numOfElem*elemSize/compareResult->decompressTime; // in B/s		
+		MPI_Barrier(ZC_COMM_WORLD);
+		if(myRank==0)
+		{
+			endTime = MPI_Wtime();
+			compareResult->decompressTime = endTime - initTime;  //in seconds
+			compareResult->decompressRate = compareResult->property->numOfElem*elemSize/compareResult->decompressTime; // in B/s		
+		}
 	}
 
 	if(compareResult==NULL)
