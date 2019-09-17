@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 	g = (double *) malloc(sizeof(double) * M * nbLines);
 	grid_ori = (double *) malloc(sizeof(double *) * M * (nbLines-2) * nbProcs);
 	grid_dec = (double *) malloc(sizeof(double *) * M * (nbLines-2) * nbProcs);
-	
+
 	initData(nbLines, M, rank, g);
 	
 	if (rank == 0) {
@@ -186,7 +186,6 @@ int main(int argc, char *argv[])
 
 			freeDataProperty(fullDataProperty); //free data property generated at current time step
 			free(cmprBytes);
-			free(decData);
 		}
 		
 		if ((i%REDUCE) == 0) {
@@ -196,30 +195,31 @@ int main(int argc, char *argv[])
 			break;
 		}
 
-        if ((i%ITER_OUT) == 0) {
-            if (rank == 0) {
-                printf("Step : %d, current error = %f; target = %f\n", i, globalerror, PRECISION);
-            }
-            MPI_Gather(g+M, (nbLines-2)*M, MPI_DOUBLE, grid_ori, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-	    MPI_Barrier(MPI_COMM_WORLD);
-	    MPI_Gather(decData+M, (nbLines-2)*M, MPI_DOUBLE, grid_dec, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            if (rank == 0) {
-            	if(ZC_checkDirExists("results")==0)
-			system("results");
-		sprintf(fn, "results/vis-ori-%04d.dat", i);
-                print_solution(fn, grid_ori, (nbLines-2) * nbProcs, M);
-            	sprintf(fn, "results/vis-dec-%04d.dat", i);
-                print_solution(fn, grid_dec, (nbLines-2) * nbProcs, M);
-		
-		//int status = 0;
-		//sprintf(fn, "ori-%d.dat", i);
-		//writeDoubleData_inBytes(grid_ori, M*(nbLines-2)*nbProcs, fn, &status);
-            }
-        }
+		if ((i%ITER_OUT) == 0) 
+		{
+			if (rank == 0) {
+				printf("Step : %d, current error = %f; target = %f\n", i, globalerror, PRECISION);
+			}
+			MPI_Gather(g+M, (nbLines-2)*M, MPI_DOUBLE, grid_ori, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+			MPI_Barrier(MPI_COMM_WORLD);
+			MPI_Gather(decData+M, (nbLines-2)*M, MPI_DOUBLE, grid_dec, (nbLines-2)*M, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+			if (rank == 0) {
+				if(ZC_checkDirExists("results")==0)
+				system("results");
+				sprintf(fn, "results/vis-ori-%04d.dat", i);
+				print_solution(fn, grid_ori, (nbLines-2) * nbProcs, M);
+				sprintf(fn, "results/vis-dec-%04d.dat", i);
+				print_solution(fn, grid_dec, (nbLines-2) * nbProcs, M);
+			
+			//int status = 0;
+			//sprintf(fn, "ori-%d.dat", i);
+			//writeDoubleData_inBytes(grid_ori, M*(nbLines-2)*nbProcs, fn, &status);
+			}
+		}
 
+		if(i%2==0)
+			free(decData);
 	}
-
-
 
 	free(h);
 	free(g);
