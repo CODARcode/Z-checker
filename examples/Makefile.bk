@@ -23,7 +23,7 @@ ZCFLAG 	= -I$(ZCPATH)/include $(ZCPATH)/lib/libzc.a -lm #$(ZCPATH)/lib/libzccall
 SZFLAG  = -I$(SZPATH)/include $(SZPATH)/lib/libSZ.a $(SZPATH)/lib/libzlib.a $(SZPATH)/lib/libzstd.a
 ZSFLAG  = -I$(ZSERVERPATH)/include -L$(ZSERVERPATH)/lib -lzserver
 ##   TARGETS
-all: 		heatdis runOfflineCase analyzeDataProperty analyzeDataProperty_multivars compareDataSets generateGNUPlot 
+all: 		heatdis_without_zserver runOfflineCase analyzeDataProperty analyzeDataProperty_multivars compareDataSets generateGNUPlot #heatdis 
 
 analyzeDataProperty_multivars:	analyzeDataProperty_multivars.c
 	$(MPICC) -g -o analyzeDataProperty_multivars analyzeDataProperty_multivars.c $(ZCFLAG) $(ZSFLAG)
@@ -40,9 +40,13 @@ generateGNUPlot:	generateGNUPlot.c
 runOfflineCase:		runOfflineCase.c
 	$(MPICC) -g -O0 -o runOfflineCase runOfflineCase.c $(ZCFLAG) $(ZSFLAG)
 
+#heatdis is with zserver
 heatdis:		heatdis.c
 	$(MPICC) -g -O0 -o heatdis heatdis.c $(ZCFLAG) $(SZFLAG) $(ZSFLAG)
 
+heatdis_without_zserver:		heatdis_without_zserver.c
+	$(MPICC) -g -O0 -o heatdis_without_zserver heatdis_without_zserver.c $(ZCFLAG) $(SZFLAG)
+
 clean:
-	rm -f heatdis runOfflineCase analyzeDataProperty analyzeDataProperty_multivars compareDataSets generateGNUPlot
+	rm -f heatdis heatdis_without_zserver runOfflineCase analyzeDataProperty analyzeDataProperty_multivars compareDataSets generateGNUPlot
 
