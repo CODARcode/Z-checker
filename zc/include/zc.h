@@ -10,6 +10,7 @@
 #ifndef _ZC_H
 #define _ZC_H
 
+#include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -54,9 +55,6 @@ extern "C" {
 #define ZC_NSCS -1 /* not successful*/
 #define ZC_CMDE -2 /*command execution error*/
 #define ZC_FOPF -3 /*Failed to open input file*/
-
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define min(a,b) ((a) < (b) ? (a) : (b))
 
 #define ZC_BUFS 128
 #define ZC_BUFS_LONG 1024

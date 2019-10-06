@@ -150,7 +150,7 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 	{
 		size_t x;
 			for (x = 0; x < r1; x++) {
-				unsigned long i = max(1u, min(x, r1 - 2));
+				unsigned long i = fmax(1u, fmin(x, r1 - 2));
 				double fxx = 1 * data[(i - 1)] - 2 * data[(i + 0)] + 1 * data[(i + 1)];
 				double ddf = fxx;
 				lap[x] = ddf;
@@ -160,9 +160,9 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 	{
 		size_t x, y;
 		for (y = 0; y < r2; y++) {
-			unsigned long j = max(1u, min(y, r2 - 2));
+			unsigned long j = fmax(1u, fmin(y, r2 - 2));
 			for (x = 0; x < r1; x++) {
-				unsigned long i = max(1u, min(x, r1 - 2));
+				unsigned long i = fmax(1u, fmin(x, r1 - 2));
 				double fxx = +1 * data[(i - 1) + r1 * (j + 0)]
 						-2 * data[(i + 0) + r1 * (j + 0)]
 								+1 * data[(i + 1) + r1 * (j + 0)];
@@ -178,11 +178,11 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 	{
 		size_t x, y, z;
 		for (z = 0; z < r3; z++) {
-			unsigned long k = max(1u, min(z, r3 - 2));
+			unsigned long k = fmax(1u, fmin(z, r3 - 2));
 			for (y = 0; y < r2; y++) {
-				unsigned long j = max(1u, min(y, r2 - 2));
+				unsigned long j = fmax(1u, fmin(y, r2 - 2));
 				for (x = 0; x < r1; x++) {
-					unsigned long i = max(1u, min(x, r1 - 2));
+					unsigned long i = fmax(1u, fmin(x, r1 - 2));
 					double fxx = +1 * data[(i - 1) + r1 * ((j + 0) + r2 * (k + 0))]
 											   -2 * data[(i + 0) + r1 * ((j + 0) + r2 * (k + 0))]
 															 +1 * data[(i + 1) + r1 * ((j + 0) + r2 * (k + 0))];
