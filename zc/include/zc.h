@@ -60,10 +60,10 @@ extern "C" {
 #define ZC_BUFS_LONG 1024
 #define ZC_BUFS_SUPER_LONG 131072
 
-#define ZC_VERNUM 0x0010
+#define ZC_VERNUM 0x0040
 #define ZC_VER_MAJOR 0
-#define ZC_VER_MINOR 1
-#define ZC_VER_BUILD 3
+#define ZC_VER_MINOR 4
+#define ZC_VER_BUILD 0
 #define ZC_VER_REVISION 0
 
 #define PDF_INTERVALS 2000
