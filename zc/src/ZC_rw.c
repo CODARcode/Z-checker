@@ -859,3 +859,245 @@ void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, char* tgtFilePath)
 	ZC_writeByteData(bytes, byteLength, tgtFilePath);
 	free(bytes);
 }
+
+void ZC_writeShortData_inBytes(short *states, size_t stateLength, char *tgtFilePath)
+{
+	size_t byteLength = stateLength*2;
+	unsigned char* bytes = (unsigned char*)malloc(byteLength*sizeof(char));
+	ZC_convertShortArrayToBytes(states, stateLength, bytes);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_writeUShortData_inBytes(unsigned short *states, size_t stateLength, char *tgtFilePath)
+{
+	size_t byteLength = stateLength*2;
+	unsigned char* bytes = (unsigned char*)malloc(byteLength*sizeof(char));
+	ZC_convertUShortArrayToBytes(states, stateLength, bytes);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_writeIntData_inBytes(int *states, size_t stateLength, char *tgtFilePath)
+{
+	size_t byteLength = stateLength*4;
+	unsigned char* bytes = (unsigned char*)malloc(byteLength*sizeof(char));
+	ZC_convertIntArrayToBytes(states, stateLength, bytes);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_writeUIntData_inBytes(unsigned int *states, size_t stateLength, char *tgtFilePath)
+{
+	size_t byteLength = stateLength*4;
+	unsigned char* bytes = (unsigned char*)malloc(byteLength*sizeof(char));
+	ZC_convertUIntArrayToBytes(states, stateLength, bytes);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_writeLongData_inBytes(long *states, size_t stateLength, char *tgtFilePath)
+{
+	size_t byteLength = stateLength*8;
+	unsigned char* bytes = (unsigned char*)malloc(byteLength*sizeof(char));
+	ZC_convertLongArrayToBytes(states, stateLength, bytes);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_writeULongData_inBytes(unsigned long *states, size_t stateLength, char *tgtFilePath)
+{
+	size_t byteLength = stateLength*8;
+	unsigned char* bytes = (unsigned char*)malloc(byteLength*sizeof(char));
+	ZC_convertULongArrayToBytes(states, stateLength, bytes);
+	ZC_writeByteData(bytes, byteLength, tgtFilePath);
+	free(bytes);
+}
+
+void ZC_convertShortArrayToBytes(short* states, size_t stateLength, unsigned char* bytes)
+{
+	eclint16 ls;
+	size_t i;
+	if(sysEndianType==dataEndianType)
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			ls.svalue = states[i];
+			bytes[i*2] = ls.byte[0];
+			bytes[i*2+1] = ls.byte[1];
+		}		
+	}
+	else
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			ls.svalue = states[i];
+			bytes[i*2] = ls.byte[1];
+			bytes[i*2+1] = ls.byte[0];
+		}			
+	}
+}
+
+void ZC_convertUShortArrayToBytes(unsigned short* states, size_t stateLength, unsigned char* bytes)
+{
+	eclint16 ls;
+	size_t i;
+	if(sysEndianType==dataEndianType)
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			ls.usvalue = states[i];
+			bytes[i*2] = ls.byte[0];
+			bytes[i*2+1] = ls.byte[1];
+		}		
+	}
+	else
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			ls.usvalue = states[i];
+			bytes[i*2] = ls.byte[1];
+			bytes[i*2+1] = ls.byte[0];
+		}			
+	}
+}
+
+void ZC_convertIntArrayToBytes(int* states, size_t stateLength, unsigned char* bytes)
+{
+	eclint32 ls;
+	size_t index = 0;
+	size_t i;
+	if(sysEndianType==dataEndianType)
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 2; //==i*4
+			ls.ivalue = states[i];
+			bytes[index] = ls.byte[0];
+			bytes[index+1] = ls.byte[1];
+			bytes[index+2] = ls.byte[2];
+			bytes[index+3] = ls.byte[3];
+		}		
+	}
+	else
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 2; //==i*4
+			ls.ivalue = states[i];
+			bytes[index] = ls.byte[3];
+			bytes[index+1] = ls.byte[2];
+			bytes[index+2] = ls.byte[1];
+			bytes[index+3] = ls.byte[0];
+		}			
+	}
+}
+
+void ZC_convertUIntArrayToBytes(unsigned int* states, size_t stateLength, unsigned char* bytes)
+{
+	eclint32 ls;
+	size_t index = 0;
+	size_t i;
+	if(sysEndianType==dataEndianType)
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 2; //==i*4
+			ls.uivalue = states[i];
+			bytes[index] = ls.byte[0];
+			bytes[index+1] = ls.byte[1];
+			bytes[index+2] = ls.byte[2];
+			bytes[index+3] = ls.byte[3];
+		}		
+	}
+	else
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 2; //==i*4
+			ls.uivalue = states[i];
+			bytes[index] = ls.byte[3];
+			bytes[index+1] = ls.byte[2];
+			bytes[index+2] = ls.byte[1];
+			bytes[index+3] = ls.byte[0];
+		}			
+	}
+}
+
+void ZC_convertLongArrayToBytes(long* states, size_t stateLength, unsigned char* bytes)
+{
+	eclint64 ls;
+	size_t index = 0;
+	size_t i;
+	if(sysEndianType==dataEndianType)
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 3; //==i*8
+			ls.lvalue = states[i];
+			bytes[index] = ls.byte[0];
+			bytes[index+1] = ls.byte[1];
+			bytes[index+2] = ls.byte[2];
+			bytes[index+3] = ls.byte[3];
+			bytes[index+4] = ls.byte[4];
+			bytes[index+5] = ls.byte[5];
+			bytes[index+6] = ls.byte[6];
+			bytes[index+7] = ls.byte[7];	
+		}		
+	}
+	else
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 3; //==i*8
+			ls.lvalue = states[i];
+			bytes[index] = ls.byte[7];
+			bytes[index+1] = ls.byte[6];
+			bytes[index+2] = ls.byte[5];
+			bytes[index+3] = ls.byte[4];
+			bytes[index+4] = ls.byte[3];
+			bytes[index+5] = ls.byte[2];
+			bytes[index+6] = ls.byte[1];
+			bytes[index+7] = ls.byte[0];	
+		}			
+	}
+}
+
+void ZC_convertULongArrayToBytes(unsigned long* states, size_t stateLength, unsigned char* bytes)
+{
+	eclint64 ls;
+	size_t index = 0;
+	size_t i;
+	if(sysEndianType==dataEndianType)
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 3; //==i*8
+			ls.ulvalue = states[i];
+			bytes[index] = ls.byte[0];
+			bytes[index+1] = ls.byte[1];
+			bytes[index+2] = ls.byte[2];
+			bytes[index+3] = ls.byte[3];
+			bytes[index+4] = ls.byte[4];
+			bytes[index+5] = ls.byte[5];
+			bytes[index+6] = ls.byte[6];
+			bytes[index+7] = ls.byte[7];			
+		}		
+	}
+	else
+	{
+		for(i=0;i<stateLength;i++)
+		{
+			index = i << 3; //==i*8
+			ls.ulvalue = states[i];
+			bytes[index] = ls.byte[7];
+			bytes[index+1] = ls.byte[6];
+			bytes[index+2] = ls.byte[5];
+			bytes[index+3] = ls.byte[4];
+			bytes[index+4] = ls.byte[3];
+			bytes[index+5] = ls.byte[2];
+			bytes[index+6] = ls.byte[1];
+			bytes[index+7] = ls.byte[0];	
+		}			
+	}
+}

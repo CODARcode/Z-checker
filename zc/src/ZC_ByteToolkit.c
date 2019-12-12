@@ -128,7 +128,7 @@ int ZC_floatToOSEndianInt(float value)
  * */
 short ZC_bytesToShort(unsigned char* bytes)
 {
-	eclshort buf;
+	eclint16 buf;
 	memcpy(buf.byte, bytes, 2);
 	
 	return buf.svalue;

@@ -60,10 +60,10 @@ extern "C" {
 #define ZC_BUFS_LONG 1024
 #define ZC_BUFS_SUPER_LONG 131072
 
-#define ZC_VERNUM 0x0040
+#define ZC_VERNUM 0x0030
 #define ZC_VER_MAJOR 0
-#define ZC_VER_MINOR 4
-#define ZC_VER_BUILD 0
+#define ZC_VER_MINOR 3
+#define ZC_VER_BUILD 1
 #define ZC_VER_REVISION 0
 
 #define PDF_INTERVALS 2000
@@ -239,11 +239,26 @@ extern int initStatus;
 extern int visMode;
 extern int ZSERVER_PORT;
 
-typedef union eclshort
+typedef union eclint16
 {
-	unsigned short svalue;
+	short svalue;
+	unsigned short usvalue;
 	unsigned char byte[2];
-} eclshort;
+} eclint16;
+
+typedef union eclint32
+{
+	int ivalue;
+	unsigned int uivalue;
+	unsigned char byte[4];
+} eclint32;
+
+typedef union eclint64
+{
+	long lvalue;
+	unsigned long ulvalue;
+	unsigned char byte[8];
+} eclint64;
 
 typedef union ecldouble
 {

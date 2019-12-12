@@ -84,6 +84,20 @@ char* getFileNameWithoutExtension(char* fullFilePath);
 void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath);
 void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, char* tgtFilePath);
 
+void ZC_writeShortData_inBytes(short *states, size_t stateLength, char *tgtFilePath);
+void ZC_writeUShortData_inBytes(unsigned short *states, size_t stateLength, char *tgtFilePath);
+void ZC_writeIntData_inBytes(int *states, size_t stateLength, char *tgtFilePath);
+void ZC_writeUIntData_inBytes(unsigned int *states, size_t stateLength, char *tgtFilePath);
+void ZC_writeLongData_inBytes(long *states, size_t stateLength, char *tgtFilePath);
+void ZC_writeULongData_inBytes(unsigned long *states, size_t stateLength, char *tgtFilePath);
+
+void ZC_convertShortArrayToBytes(short* states, size_t stateLength, unsigned char* bytes);
+void ZC_convertUShortArrayToBytes(unsigned short* states, size_t stateLength, unsigned char* bytes);
+void ZC_convertIntArrayToBytes(int* states, size_t stateLength, unsigned char* bytes);
+void ZC_convertUIntArrayToBytes(unsigned int* states, size_t stateLength, unsigned char* bytes);
+void ZC_convertLongArrayToBytes(long* states, size_t stateLength, unsigned char* bytes);
+void ZC_convertULongArrayToBytes(unsigned long* states, size_t stateLength, unsigned char* bytes);
+
 #ifdef __cplusplus
 }
 #endif
