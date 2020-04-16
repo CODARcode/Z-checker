@@ -87,6 +87,10 @@ typedef struct ZC_CompareData
 	double ssimImage2D_max;
 	
 	complex *fftCoeff;	
+	
+	double derivativeOrder1;
+	double derivativeOrder2;
+	
 } ZC_CompareData;
 
 typedef struct ZC_CompareData_Overall

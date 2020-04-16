@@ -284,6 +284,9 @@ int ZC_ReadConf() {
 	KS_testFlag = (int)iniparser_getint(ini, "COMPARE:KS_test", 0);
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
 	SSIMIMAGE2DFlag = (int)iniparser_getint(ini, "COMPARE:ssimImage2D", 0);
+	
+	derivativeOrder1Flag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder1", 0);
+	derivativeOrder2Flag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder2", 0);
 
 	plotImageFlag = (int)iniparser_getint(ini, "PLOT:plotSliceImage", 0);
 	

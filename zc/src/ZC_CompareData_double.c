@@ -328,6 +328,28 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		}
 	}
 
+
+	//dimensions: r5, r4, r3, r2, r1, data1, data2 --> compareResult->derivativeOrder1 and compareResult->derivativeOrder2
+	if(derivativeOrder1Flag)
+	{
+		int status = 0; //0: normal , 1: abnormal
+		//compareResult->derivativeOrder1 = zc_calc_derivative_order1_float(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+		{
+			//handle the exception.
+		}
+	}
+
+	if(derivativeOrder2Flag)
+	{
+		int status = 0;
+		//compareResult->derivativeOrder2 = zc_calc_derivative_order2_float(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+		{
+			//handle the exception.
+		}
+	}
+
 	free(diff);
 	free(relDiff);
 

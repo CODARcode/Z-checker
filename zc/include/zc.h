@@ -189,6 +189,9 @@ extern int KS_testFlag;
 extern int SSIMFlag;
 extern int SSIMIMAGE2DFlag;
 
+extern int derivativeOrder1Flag;
+extern int derivativeOrder2Flag;
+
 extern int plotAutoCorrFlag;
 
 extern int plotAbsErrPDFFlag;

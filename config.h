@@ -18,7 +18,7 @@
 #define HAVE_MALLOC 1
 
 /* Define to 1 if you have the <malloc.h> header file. */
-/* #undef HAVE_MALLOC_H */
+#define HAVE_MALLOC_H 1
 
 /* Define to 1 if you have the `memchr' function. */
 #define HAVE_MEMCHR 1
@@ -82,7 +82,7 @@
 #define PACKAGE_NAME "Z-CHECKER"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Z-CHECKER 0.1"
+#define PACKAGE_STRING "Z-CHECKER 0.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "z-checker"
@@ -91,13 +91,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.1"
+#define PACKAGE_VERSION "0.2"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 /* Define to rpl_malloc if the replacement function should be used. */
 /* #undef malloc */

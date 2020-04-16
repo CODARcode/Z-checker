@@ -88,6 +88,9 @@ int KS_testFlag = 1;
 int SSIMFlag = 1;
 int SSIMIMAGE2DFlag = 1;
 
+int derivativeOrder1Flag = 1;
+int derivativeOrder2Flag = 1;
+
 int plotAutoCorrFlag = 1;
 int plotAbsErrPDFFlag = 1;
 int plotErrAutoCorrFlag = 1;
