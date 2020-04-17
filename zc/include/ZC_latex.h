@@ -17,13 +17,13 @@
 extern "C" {
 #endif
 
-char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix);
-char* gen_includegraphicsLine2(char* epsFileName, char* subDir);
-char* gen_includegraphicsLine3(char* epsFileName, char* subDir);
-StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* subDir, char* prefix, char* caption);
-StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, char* subDir, char* caption, char* figLabel);
-StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, char** subFigureTitles, char* subDir, char* caption, char* figLabel);
-StringLine* ZC_generateSimpleTableTexLines(int rows, int columns, char** cases, char** keys, char*** cells, char* caption, char* tabLabel);
+char* gen_includegraphicsLine(char* comparisonCase, const char* subDir, const char* prefix);
+char* gen_includegraphicsLine2(const char* epsFileName, const char* subDir);
+char* gen_includegraphicsLine3(const char* epsFileName, const char* subDir);
+StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, const char* subDir, const char* prefix, const char* caption);
+StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, const char* subDir, const char* caption, const char* figLabel);
+StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, char** subFigureTitles, const char* subDir, const char* caption, const char* figLabel);
+StringLine* ZC_generateSimpleTableTexLines(int rows, int columns, char** cases, char** keys, char*** cells, const char* caption, const char* tabLabel);
 
 
 #ifdef __cplusplus

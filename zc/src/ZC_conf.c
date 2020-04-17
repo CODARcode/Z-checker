@@ -17,7 +17,7 @@
 #include "ZC_rw.h"
 #include "ZC_DataProperty.h"
 
-ZC_DataProperty* loadProperty(char* property_dir, char* fileName)
+ZC_DataProperty* loadProperty(const char* property_dir, const char* fileName)
 {
 	char tmpPathBuf[ZC_BUFS_LONG], fullPathBuf[ZC_BUFS_LONG], softLinkPath[ZC_BUFS_LONG], linkCmd[ZC_BUFS_LONG];
 	
@@ -85,7 +85,8 @@ ZC_DataProperty* loadProperty(char* property_dir, char* fileName)
 int load_ecVisDecDataTables()
 {
 	char buffer[256];
-	char* tableFile = "compareCompressors/ecVisDecDataTables.txt";
+	char tableFile[100]; 
+	strcpy(tableFile, "compareCompressors/ecVisDecDataTables.txt");
 	int lineCount = 0;
 	StringLine* header = ZC_readLines(tableFile, &lineCount);
 	int varCount = 0;
@@ -227,9 +228,12 @@ int ZC_ReadConf() {
 		executionMode = ZC_OFFLINE;
 	else
 		executionMode = ZC_ONLINE;
-		
-	visModeString = iniparser_getstring(ini, "ENV:visMode", "OFFLINE");
-	if(strcmp(visModeString, "OFFLINE")==0)
+	
+	
+	char OFFLINE_STR[100];
+	strcpy(OFFLINE_STR, "OFFLINE");	
+	visModeString = iniparser_getstring(ini, "ENV:visMode", OFFLINE_STR);
+	if(strcmp(visModeString, OFFLINE_STR)==0)
 		visMode = 0;
 	else
 		visMode = 1;
@@ -397,15 +401,14 @@ int ZC_ReadConf() {
 		
 		ecVisDecDataTables = ht_create(HASHTABLE_SIZE_SMALL); //64 entries						
 		int count;
-		property_dir = "dataProperties";
 		ZC_getFileNames(property_dir, propertyExtension, &count, fileNames);
 		for(j=0;j<count;j++)
 		{
-			ZC_DataProperty* prop = loadProperty(property_dir, fileNames[j]);
+			ZC_DataProperty* prop = loadProperty("dataProperties", fileNames[j]);
 
 			if(plotDecImageFlag)
 			{	
-				hashtable_t *varComprMap = ht_get(ecVisDecDataTables, prop->varName);
+				hashtable_t *varComprMap = (hashtable_t*)ht_get(ecVisDecDataTables, prop->varName);
 				if(varComprMap==NULL)  //double-gurantee no duplicated entries
 				{
 					nbVars++; //record number of variables
@@ -501,8 +504,8 @@ int ZC_ReadConf() {
 						char varName[128];
 						ZC_parseCompressionCase(compResultCaseName, compressorName, errorBound, varName);
 						
-						hashtable_t* varCmprMap = ht_get(ecVisDecDataTables, varName);
-						CompressorCRVisElement* cmprVisE = ht_get(varCmprMap, compressorName);
+						hashtable_t* varCmprMap = (hashtable_t*)ht_get(ecVisDecDataTables, varName);
+						CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varCmprMap, compressorName);
 						compare->errorBound = atof(errorBound);						
 						cmprVisE->compressionResults[cmprVisE->resultCount++] = compare;
 					}
@@ -621,7 +624,7 @@ int ZC_LoadConf() {
     return res;
 }
 
-int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue)
+int modifyZCConfig(StringLine* confLinesHeader, const char* targetAttribute, const char* newStringValue)
 {
 	char* attr; 
 	char tmp[ZC_BUFS_LONG];

@@ -5,7 +5,7 @@
 #include "ZC_gnuplot.h"
 #include "zc.h"
 
-char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
+char** genGnuplotScript_linespoints(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel)
 {
 	if(columns<2)
 	{
@@ -64,7 +64,7 @@ char** genGnuplotScript_linespoints(char* dataFileName, char* extension, int fon
 /**
  * for plotting the 1D data series
  * */
-char** genGnuplotScript_linespoints2(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
+char** genGnuplotScript_linespoints2(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel)
 {
 	if(columns<2)
 	{
@@ -120,7 +120,7 @@ char** genGnuplotScript_linespoints2(char* dataFileName, char* extension, int fo
 	return lines;
 }
 
-char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel, long maxYValue)
+char** genGnuplotScript_histogram(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel, long maxYValue)
 {
 	if(columns<2)
 	{
@@ -171,7 +171,7 @@ char** genGnuplotScript_histogram(char* dataFileName, char* extension, int fontS
 	return lines;
 }
 
-char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
+char** genGnuplotScript_lines(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel)
 {
 	if(columns<2)
 	{
@@ -226,7 +226,7 @@ char** genGnuplotScript_lines(char* dataFileName, char* extension, int fontSize,
 	return lines;
 }
 
-char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontSize, int columns, char* xlabel, char* ylabel)
+char** genGnuplotScript_fillsteps(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel)
 {
 	if(columns<2)
 	{
@@ -273,7 +273,7 @@ char** genGnuplotScript_fillsteps(char* dataFileName, char* extension, int fontS
 	return lines;
 }
 
-char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1)
+char** genGnuplotScript_sliceImage(const char* dataFileName, size_t r2, size_t r1)
 {
 	char** lines = (char**)malloc(10*sizeof(char*));
 	
@@ -297,7 +297,7 @@ char** genGnuplotScript_sliceImage(char* dataFileName, size_t r2, size_t r1)
 	return lines;
 }
 
-void plotSliceImageData(char* keyName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, void* slice_data_ori, void* slice_data_log, char* tgtWorkspaceDir)
+void plotSliceImageData(const char* keyName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, void* slice_data_ori, void* slice_data_log, const char* tgtWorkspaceDir)
 {
 	int i = 0;
 	char imagPlotScriptFile[ZC_BUFS], oriImageFile[ZC_BUFS], logImageFile[ZC_BUFS];
@@ -362,7 +362,7 @@ void plotSliceImageData(char* keyName, int dataType, size_t r5, size_t r4, size_
 	}	
 }
 
-void ZC_executeCompDecomp_vis(char* solName, char* varName, char* cmdTemplate, int dataType, char* inputDataPath, char* errorBound, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+void ZC_executeCompDecomp_vis(const char* solName, const char* varName, const char* cmdTemplate, int dataType, const char* inputDataPath, const char* errorBound, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	char buffer[256];
 	char cmdLine[512]; 

@@ -392,7 +392,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	return s;
 }
 
-void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, char* tgtWorkspaceDir)
+void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, const char* tgtWorkspaceDir)
 {
 #if HAVE_ONLINEVIS
   return;
@@ -428,7 +428,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 			char *ss[2];
 			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
 			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
-			ss[1] = "0 1\n";
+			strcpy(ss[1],"0 1\n");
 			ZC_writeStrings(2, ss, tgtFilePath);
 			free(ss[0]);	
 		}
@@ -461,7 +461,7 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 			char *ss[2];
 			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
 			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
-			ss[1] = "0 1\n";
+			strcpy(ss[1],"0 1\n");
 			ZC_writeStrings(2, ss, tgtFilePath);
 			free(ss[0]);	
 		}
@@ -611,7 +611,7 @@ ZC_CompareData_Overall* ZC_compareData_overall()
 		entry_t* t = ecCompareDataTable->table[i];
 		while(t!=NULL)
 		{
-			compressDataList[j++] = t->value;
+			compressDataList[j++] = (ZC_CompareData*)t->value;
 			t = t->next;
 		}
 	}
@@ -820,7 +820,7 @@ void print_cmprVisE(CompressorCRVisElement* cmprVisE)
 	for(i=0;i<count;i++)
 	{
 		char* compressionRatio = keys[i];
-		ZCVisDecDataElement* visEle = ht_get(cmprVisE->CRVisDataMap, compressionRatio);
+		ZCVisDecDataElement* visEle = (ZCVisDecDataElement*)ht_get(cmprVisE->CRVisDataMap, compressionRatio);
 		printf("CR=%s ErrorBound=%s\n", compressionRatio, visEle->errorSetting_str);
 	}
 	free(keys);
@@ -854,7 +854,7 @@ StringLine* write_cmprVisE(CompressorCRVisElement* cmprVisE)
 	for(i=0;i<count;i++)
 	{
 		char* compressionRatio = keys[i];
-		ZCVisDecDataElement* visEle = ht_get(cmprVisE->CRVisDataMap, compressionRatio);
+		ZCVisDecDataElement* visEle = (ZCVisDecDataElement*) ht_get(cmprVisE->CRVisDataMap, compressionRatio);
 		sprintf(tmpLine, "CR=%s ErrorBound=%s\n", compressionRatio, visEle->errorSetting_str);
 		line = createLine(tmpLine); p = appendOneLine(p, line);
 	}
@@ -889,7 +889,7 @@ void ZC_itentifyErrorSettingBasedOnCR(CompressorCRVisElement* cmprVisE)
 	for(i=0;i<keyCount;i++)
 	{
 		char* targetCR = cr_str[i];
-		ZCVisDecDataElement* visEle = ht_get(crVisDataMap, targetCR);
+		ZCVisDecDataElement* visEle = (ZCVisDecDataElement*)ht_get(crVisDataMap, targetCR);
 		double targetCR_ = atof(targetCR);
 		double targetErrorSetting = computeErrorSetting(targetCR_, cmprVisE->resultCount, compressionRatios, errorSettings);
 		visEle->errorSetting_str = (char*)malloc(sizeof(char)*32);
@@ -932,7 +932,7 @@ void free_CompressorCRVisElement(CompressorCRVisElement* cmprVisE)
 		entry_t* entry = cmprVisE->CRVisDataMap->table[i];
 		while(entry!=NULL)
 		{
-			ZCVisDecDataElement* visEle = entry->value;
+			ZCVisDecDataElement* visEle = (ZCVisDecDataElement*)entry->value;
 			free_ZCVisDecDataElement(visEle);
 			entry = entry->next;
 		}

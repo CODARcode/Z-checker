@@ -85,8 +85,8 @@ int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source);
 void ZC_printDataProperty(ZC_DataProperty* property);
 char** constructDataPropertyString(ZC_DataProperty* property);
 
-void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir);
-void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir);
+void ZC_writeFFTResults(char* varName, complex* fftCoeff, const char* tgtWorkspaceDir);
+void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir);
 ZC_DataProperty* ZC_loadDataProperty(char* propResultFile);
 
 //online interfaces

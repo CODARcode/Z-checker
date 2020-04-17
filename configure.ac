@@ -2,13 +2,19 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(Z-CHECKER, 0.3, sdi1@anl.gov)
+AC_INIT(Z-CHECKER, 0.4, sdi1@anl.gov)
 AM_INIT_AUTOMAKE([foreign -Wall -Werror subdir-objects])
 AC_CONFIG_SRCDIR([zc/src/zc.c])
 AC_CONFIG_HEADERS([config.h])
 
+AC_LANG(C++)
+AC_PROG_CXX
+AC_PROG_CC
+
 # Checks for programs.
 #: ${CFLAGS=-O3 -std=c99 -Wall}
+#: ${CFLAGS=-O3 -std=gnu99 -Wall}
+: ${CXXFLAGS=-O3 -Wall}
 : ${CFLAGS=-O3 -std=gnu99 -Wall}
 
 ##
@@ -19,11 +25,13 @@ AC_ARG_ENABLE(mpi, [  --enable-mpi            use MPI], ok=$enableval, ok=no)
 AM_CONDITIONAL([MPI], [test "x$enable_mpi" = "xyes"])
 
 if test "$ok" = "yes"; then
+	#AC_CHECK_PROG(MPICXX,mpicxx,yes,no)
 	AC_CHECK_PROG(MPICC,mpicc,yes,no)
 if test "$MPICC" = no; then
 	AC_MSG_ERROR([Cound not find mpicc. Please install mpi library first.])
 else
 	CC=mpicc
+	#CC=mpic++
 	MPI_FLAGS="-DHAVE_MPI"
 fi
 fi

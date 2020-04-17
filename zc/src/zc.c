@@ -372,7 +372,7 @@ ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution
 	if(compressTimeFlag)
 		cmprTime = cost_endCmpr();
 
-	ZC_CompareData* compareResult = ht_get(ecCompareDataTable, solution);
+	ZC_CompareData* compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, solution);
 	if(compareResult==NULL)
 	{
 		compareResult = (ZC_CompareData*)malloc(sizeof(ZC_CompareData));		
@@ -597,7 +597,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 		{
 			char* compressorName = compressorCases[j];
 			sprintf(compVarCase, "%s:%s", compressorName, key);
-			ZC_CompareData* compressResult = ht_get(ecCompareDataTable, compVarCase);
+			ZC_CompareData* compressResult = (ZC_CompareData*)ht_get(ecCompareDataTable, compVarCase);
 			if(compressResult==NULL)
 			{
 				printf("Error: compressResult==NULL. %s cannot be found in compression result\n", compVarCase);
@@ -763,7 +763,7 @@ void ZC_plotCompressionRatio()
 	//TODO: traverse all the property-variables through the propertyTable
 	char** keys = ht_getAllKeys(ecPropertyTable);
 	char* dataLines[count+1];
-	dataLines[0] = "data";
+	strcpy(dataLines[0], "data");
 	for(i=0;i<compressors_count;i++)
 		sprintf(dataLines[0], "%s %s", dataLines[0], compressors[i]);
 	sprintf(dataLines[0], "%s\n", dataLines[0]);
@@ -781,7 +781,7 @@ void ZC_plotCompressionRatio()
 		{
 			char* compressorName = compressors[j];
 			sprintf(compVarCase, "%s:%s", compressorName, key);
-			ZC_CompareData* compressResult = ht_get(ecCompareDataTable, compVarCase);
+			ZC_CompareData* compressResult = (ZC_CompareData*)ht_get(ecCompareDataTable, compVarCase);
 			if(compressResult==NULL)
 			{
 				printf("Error: compressResult==NULL. %s cannot be found in compression result\n", compVarCase);
@@ -1348,14 +1348,14 @@ int ZC_Finalize()
 			entry_t* varEntry = ecVisDecDataTables->table[i];
 			while(varEntry!=NULL)
 			{
-				hashtable_t *varComprMap = varEntry->value;
+				hashtable_t *varComprMap = (hashtable_t*)varEntry->value;
 				int cmpr_capacity = varComprMap->capacity;
 				for(j=0;j<cmpr_capacity;j++)
 				{
 					entry_t* varEntry2 = varComprMap->table[j];
 					if(varEntry2!=NULL)
 					{
-						CompressorCRVisElement* cmprVisE = varEntry2->value;
+						CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)varEntry2->value;
 						free_CompressorCRVisElement(cmprVisE);
 						varEntry2=varEntry2->next;
 					}
@@ -1377,7 +1377,7 @@ int ZC_Finalize()
 		{
 			char* key = keys[i];
 
-			ZC_DataProperty* property = ht_get(ecPropertyTable, key);
+			ZC_DataProperty* property = (ZC_DataProperty*)ht_get(ecPropertyTable, key);
 			freeDataProperty_internal(property);
 			//free(key);
 		}		
@@ -1392,7 +1392,7 @@ int ZC_Finalize()
 		for(i=0;i<count;i++)
 		{
 			char* key = keys[i];
-			ZC_CompareData* c = ht_get(ecCompareDataTable, key);
+			ZC_CompareData* c = (ZC_CompareData*)ht_get(ecCompareDataTable, key);
 			freeCompareResult_internal(c);
 		}
 		free(keys);
@@ -1442,7 +1442,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	ZC_CompareData* zcv = NULL;
 	if(ecPropertyTable==NULL)
 		ecPropertyTable = ht_create(HASHTABLE_SIZE);
-	ZC_DataProperty* property = ht_get(ecPropertyTable, name);
+	ZC_DataProperty* property = (ZC_DataProperty*)ht_get(ecPropertyTable, name);
 	if(property==NULL)
 	{
 		property = ZC_genProperties(name, dataType, oriData, r5, r4, r3, r2, r1);
@@ -1645,7 +1645,7 @@ ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution,
 	compareResult->property = dataProperty;
 	compareResult->solution = (char*)malloc(strlen(solution)+1);
 	strcpy(compareResult->solution, solution);
-	ZC_CompareData* zcc = ht_get(ecCompareDataTable, solution);
+	ZC_CompareData* zcc = (ZC_CompareData*)ht_get(ecCompareDataTable, solution);
 	if(zcc==NULL)
 	{
 		ht_set(ecCompareDataTable, solution, zcc);

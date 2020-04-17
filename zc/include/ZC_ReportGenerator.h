@@ -39,13 +39,13 @@ void ZC_generateDecompressionRateReport();
 StringLine* ZC_generatePSNRFigure();
 void ZC_generatePSNRReport();
 
-char* selectCmdTemplate(char* compressorName, int compressionMode, int dim);
+char* selectCmdTemplate(const char* compressorName, int compressionMode, int dim);
 void ZC_executeCompDecomp_basedon_CmprVisE(CompressorCRVisElement* cmprVisE);
 void ZC_generateDecVisData();
 
 StringLine* ZC_generateCompressionFactorFigure();
 
-StringLine* ZC_generateStaticAnalysisFigures(char* metricType, CmprsorErrBound *allCompressors, int allCompressorCount);
+StringLine* ZC_generateStaticAnalysisFigures(const char* metricType, CmprsorErrBound *allCompressors, int allCompressorCount);
 
 #ifdef __cplusplus
 }

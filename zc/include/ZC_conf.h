@@ -23,11 +23,11 @@
 extern "C" {
 #endif
 
-ZC_DataProperty* loadProperty(char* property_dir, char* fileName);
+ZC_DataProperty* loadProperty(const char* property_dir, const char* fileName);
 int load_ecVisDecDataTables();
 int ZC_ReadConf();
 int ZC_LoadConf();
-int modifyZCConfig(StringLine* confLinesHeader, char* targetAttribute, char* newStringValue);
+int modifyZCConfig(StringLine* confLinesHeader, const char* targetAttribute, const char* newStringValue);
 
 #ifdef __cplusplus
 }

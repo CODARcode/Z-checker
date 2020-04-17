@@ -245,26 +245,26 @@ ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
 double entropy, double* autocorr, complex* fftCoeff, char* filePath)
 {
-	ZC_DataProperty* this = (ZC_DataProperty*)malloc(sizeof(struct ZC_DataProperty));
-	memset(this, 0, sizeof(struct ZC_DataProperty));
-	this->varName = (char*)malloc(strlen(varName)+1);
-	strcpy(this->varName,varName);
-	this->dataType = dataType;
-	this->r5 = r5;
-	this->r4 = r4;
-	this->r3 = r3;
-	this->r2 = r2;
-	this->r1 = r1;
-	this->numOfElem = numOfElem;
-	this->minValue = minValue;
-	this->maxValue = maxValue;
-	this->valueRange = valueRange;
-	this->avgValue = avgValue;
-	this->entropy = entropy;
-	this->autocorr = autocorr;
-	this->fftCoeff = fftCoeff;
-	this->filePath = filePath;
-	return this;
+	ZC_DataProperty* self = (ZC_DataProperty*)malloc(sizeof(struct ZC_DataProperty));
+	memset(self, 0, sizeof(struct ZC_DataProperty));
+	self->varName = (char*)malloc(strlen(varName)+1);
+	strcpy(self->varName,varName);
+	self->dataType = dataType;
+	self->r5 = r5;
+	self->r4 = r4;
+	self->r3 = r3;
+	self->r2 = r2;
+	self->r1 = r1;
+	self->numOfElem = numOfElem;
+	self->minValue = minValue;
+	self->maxValue = maxValue;
+	self->valueRange = valueRange;
+	self->avgValue = avgValue;
+	self->entropy = entropy;
+	self->autocorr = autocorr;
+	self->fftCoeff = fftCoeff;
+	self->filePath = filePath;
+	return self;
 }
 
 complex* ZC_computeFFT(void* data, size_t n, int dataType)
@@ -501,7 +501,7 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	
 }
 
-void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
+void ZC_writeFFTResults(char* varName, complex* fftCoeff, const char* tgtWorkspaceDir)
 {
 	size_t i;
 	char tgtFilePath[ZC_BUFS] = {0};
@@ -539,7 +539,7 @@ void ZC_writeFFTResults(char* varName, complex* fftCoeff, char* tgtWorkspaceDir)
 	}
 }
 
-void ZC_writeDataProperty(ZC_DataProperty* property, char* tgtWorkspaceDir)
+void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir)
 {
 	char** s = constructDataPropertyString(property);
 	

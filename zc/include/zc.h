@@ -60,9 +60,9 @@ extern "C" {
 #define ZC_BUFS_LONG 1024
 #define ZC_BUFS_SUPER_LONG 131072
 
-#define ZC_VERNUM 0x0030
+#define ZC_VERNUM 0x0040
 #define ZC_VER_MAJOR 0
-#define ZC_VER_MINOR 3
+#define ZC_VER_MINOR 4
 #define ZC_VER_BUILD 1
 #define ZC_VER_REVISION 0
 
@@ -369,12 +369,12 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status);
 
 //The following executeCmd_xxx interfaces are depreated. (Please see [ZC_package]/R/ for how to call R scripts from Z-checker instead. 
-int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data);
-int ZC_executeCmd_GdoubleVector(char* cmd, int* count, double** data);
-int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data);
-int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data);
-int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data);
-int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data);
+int ZC_executeCmd_GfloatVector(const char* cmd, int* count, float** data);
+int ZC_executeCmd_GdoubleVector(const char* cmd, int* count, double** data);
+int ZC_executeCmd_RfloatVector(const char* cmd, int* count, float** data);
+int ZC_executeCmd_RdoubleVector(const char* cmd, int* count, double** data);
+int ZC_executeCmd_RfloatMatrix(const char* cmd, int* m, int* n, float** data);
+int ZC_executeCmd_RdoubleMatrix(const char* cmd, int* m, int* n, double** data);
 
 //online interfaces
 long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);

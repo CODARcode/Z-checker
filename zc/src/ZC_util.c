@@ -38,7 +38,7 @@ void removeExtension2(char* mystr) {
         *lastdot = '\0';
 }
 
-char* createLine(char* str)
+char* createLine(const char* str)
 {
 	char* line = (char*)malloc(sizeof(char)*(strlen(str)+1));
 	strcpy(line, str);
@@ -86,7 +86,7 @@ char* rtrim_C(char *s, char c)
 }
 
 
-int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data)
+int ZC_executeCmd_GfloatVector(const char* cmd, int* count, float** data)
 {
 	FILE *fp;
 	char buf[CMD_OUTPUT_BUF] = {0};
@@ -119,7 +119,7 @@ int ZC_executeCmd_GfloatVector(char* cmd, int* count, float** data)
 	return ZC_SCES;
 }
 
-int ZC_executeCmd_GdoubleVector(char* cmd, int* count, double** data)
+int ZC_executeCmd_GdoubleVector(const char* cmd, int* count, double** data)
 {
 	FILE *fp;
 	char buf[CMD_OUTPUT_BUF] = {0};
@@ -152,7 +152,7 @@ int ZC_executeCmd_GdoubleVector(char* cmd, int* count, double** data)
 	return ZC_SCES;
 }
 
-int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data)
+int ZC_executeCmd_RfloatVector(const char* cmd, int* count, float** data)
 {
 	FILE *fp;
 	char buf[CMD_OUTPUT_BUF] = {0};
@@ -164,7 +164,8 @@ int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data)
 		return ZC_NSCS;
 	}
 
-	char* delim = "\t ";
+	char delim[3];
+	strcpy(delim, "\t ");
 	char* p = NULL;
 	if(fgets(buf, CMD_OUTPUT_BUF, fp)!=NULL)
 	{
@@ -195,7 +196,7 @@ int ZC_executeCmd_RfloatVector(char* cmd, int* count, float** data)
 	return ZC_SCES;
 }
 
-int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data)
+int ZC_executeCmd_RdoubleVector(const char* cmd, int* count, double** data)
 {
 	FILE *fp;
 	char buf[CMD_OUTPUT_BUF] = {0};
@@ -207,7 +208,8 @@ int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data)
 		return ZC_NSCS;
 	}
 
-	char* delim = "\t ";
+	char delim[3];
+	strcpy(delim, "\t ");
 	char* p = NULL;
 	if(fgets(buf, CMD_OUTPUT_BUF, fp)!=NULL)
 	{
@@ -238,7 +240,7 @@ int ZC_executeCmd_RdoubleVector(char* cmd, int* count, double** data)
 	return ZC_SCES;
 }
 
-int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data)
+int ZC_executeCmd_RfloatMatrix(const char* cmd, int* m, int* n, float** data)
 {
 	int status = ZC_SCES;
 	FILE *fp;
@@ -254,7 +256,8 @@ int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data)
 		return ZC_CMDE;
 	}
 	size_t i = 0, j = 0;
-	char* delim = "\t ";
+	char delim[3];
+	strcpy(delim, "\t ");
 	char* p = NULL;
 	for(i=0;fgets(buf, CMD_OUTPUT_BUF, fp) != NULL;i++)
 	{
@@ -295,7 +298,7 @@ int ZC_executeCmd_RfloatMatrix(char* cmd, int* m, int* n, float** data)
 	return status;
 }
 
-int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data)
+int ZC_executeCmd_RdoubleMatrix(const char* cmd, int* m, int* n, double** data)
 {
 	int status = ZC_SCES;
 	FILE *fp;
@@ -311,7 +314,8 @@ int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data)
 		return ZC_CMDE;
 	}
 	size_t i = 0, j = 0;
-	char* delim = "\t ";
+	char delim[3];
+	strcpy(delim, "\t ");
 	char* p = NULL;
 	for(i=0;fgets(buf, CMD_OUTPUT_BUF, fp) != NULL;i++)
 	{
@@ -352,7 +356,7 @@ int ZC_executeCmd_RdoubleMatrix(char* cmd, int* m, int* n, double** data)
 	return status;
 }
 
-int ZC_ReplaceStr(char *sSrc, char *sMatchStr, char *sReplaceStr)
+int ZC_ReplaceStr(char *sSrc, const char *sMatchStr, const char *sReplaceStr)
 {
 	int  StringLen;
 	char caNewString[MAX_MSG_LENGTH];
@@ -382,16 +386,16 @@ int ZC_ReplaceStr(char *sSrc, char *sMatchStr, char *sReplaceStr)
  * For example, ZC_ReplaceStr2("test_1", "_", "\\\\_");
  * Note: the sSrc, sMatchStr, and SReplaceStr should not contain "!".
  * */
-int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr)
+int ZC_ReplaceStr2(char *sSrc, const char *sMatchStr, const char *sReplaceStr)
 {
 	ZC_ReplaceStr(sSrc, sMatchStr, "!");
 	ZC_ReplaceStr(sSrc, "!", sReplaceStr);	
 	return 0;
 }
 
-char* strcat_new(char *s1, char *s2)
+char* strcat_new(const char *s1, const char *s2)
 {
-    char *result = malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
+    char *result = (char*)malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
     //in real code you would check for errors in malloc here
     if (result == NULL) exit (1);
 
@@ -401,7 +405,7 @@ char* strcat_new(char *s1, char *s2)
     return result;
 }
 
-void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* compressorName, char* errBound)
+void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, const char* compressorName, const char* errBound)
 {
 	int mark = 0;
 	size_t i = 0, j = 0, errBoundIndex = 0;
@@ -443,7 +447,7 @@ void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* co
 	}
 }
 
-void checkAndAddStringToList(char** strList, int* num, char* targetStr)
+void checkAndAddStringToList(char** strList, int* num, const char* targetStr)
 {
 	size_t i = 0;
 	int mark = 0;
@@ -467,9 +471,12 @@ void checkAndAddStringToList(char** strList, int* num, char* targetStr)
 int ZC_parseCompressionCase(char* compressionCase, char* compressorName, char* errorBound, char* varName)
 {
         char* q = NULL;
-        char* delim = ":";
-        char* delim2 = "(";
-        char* delim3 = ")";
+        
+		char delim[3], delim2[3], delim3[3];
+		strcpy(delim, ":");
+		strcpy(delim2, "(");
+		strcpy(delim3, ")");       
+
         char first[256];
 
 		char tmp[256];

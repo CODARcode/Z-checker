@@ -10,19 +10,19 @@ extern "C" {
 void removeExtension2(char* mystr);
 
 int startsWith(const char *pre, const char *str);
-char* createLine(char* str);
+char* createLine(const char* str);
 
 void ltrim(char *s);
 void rtrim(char *s);
 void trim(char *s);
 char* rtrim_C(char *s, char c);
 
-int ZC_ReplaceStr(char *sSrc, char *sMatchStr, char *sReplaceStr);
-int ZC_ReplaceStr2(char *sSrc, char *sMatchStr, char *sReplaceStr);
+int ZC_ReplaceStr(char *sSrc, const char *sMatchStr, const char *sReplaceStr);
+int ZC_ReplaceStr2(char *sSrc, const char *sMatchStr, const char *sReplaceStr);
 
-char* strcat_new(char *s1, char *s2);
-void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, char* compressorName, char* errBound);
-void checkAndAddStringToList(char** strList, int* num, char* targetStr);
+char* strcat_new(const char *s1, const char *s2);
+void checkAndAddCmprorToList(CmprsorErrBound* compressorList, int* num, const char* compressorName, const char* errBound);
+void checkAndAddStringToList(char** strList, int* num, const char* targetStr);
 
 int ZC_parseCompressionCase(char* compressionCase, char* compressorName, char* errorBound, char* varName);
 

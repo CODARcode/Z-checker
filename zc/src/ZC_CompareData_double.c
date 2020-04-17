@@ -333,7 +333,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	if(derivativeOrder1Flag)
 	{
 		int status = 0; //0: normal , 1: abnormal
-		//compareResult->derivativeOrder1 = zc_calc_derivative_order1_float(data1, data2, dim, r4, r3, r2, r1, &status);
+		//compareResult->derivativeOrder1 = zc_calc_derivative_order1_double(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
 		{
 			//handle the exception.
@@ -343,7 +343,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	if(derivativeOrder2Flag)
 	{
 		int status = 0;
-		//compareResult->derivativeOrder2 = zc_calc_derivative_order2_float(data1, data2, dim, r4, r3, r2, r1, &status);
+		//compareResult->derivativeOrder2 = zc_calc_derivative_order2_double(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
 		{
 			//handle the exception.

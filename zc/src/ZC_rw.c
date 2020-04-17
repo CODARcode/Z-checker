@@ -29,7 +29,7 @@ int ZC_check_file_exists(const char *fname)
     return 0;
 }
 
-int ZC_check_eps_file_exists(char* fileNameWithoutExtension, char* dir)
+int ZC_check_eps_file_exists(const char* fileNameWithoutExtension, const char* dir)
 {
 	char buffer[512];
 	sprintf(buffer, "%s/%s.png.eps", dir, fileNameWithoutExtension);
@@ -48,7 +48,7 @@ int ZC_checkDirExists(const char *dir)
 	}	
 }
 
-void updateLinkFullPath(char* oriPath, char* finalPath)
+void updateLinkFullPath(const char* oriPath, char* finalPath)
 {
 	if(oriPath[0]=='/') //full path
 		sprintf(finalPath, oriPath);
@@ -56,7 +56,7 @@ void updateLinkFullPath(char* oriPath, char* finalPath)
 		sprintf(finalPath, "../%s", oriPath);
 }
 
-int ZC_checkExtension(char* str, char* extension)
+int ZC_checkExtension(char* str, const char* extension)
 {
 	char* l = strrchr(str, '.');
 	if(l==NULL)
@@ -71,7 +71,7 @@ int ZC_checkExtension(char* str, char* extension)
  * 
  * Note: char** fileNames should be allocated beforehand before calling this function.
  * */
-void ZC_getFileNames(char* dir, char* extension, int *fileCount, char** fileNames)
+void ZC_getFileNames(const char* dir, const char* extension, int *fileCount, char** fileNames)
 {
 	size_t i;
 	
@@ -141,7 +141,7 @@ void ZC_symTransform_4bytes(unsigned char data[4])
 	data[2] = tmp;
 }
 
-size_t ZC_checkFileSize(char *srcFilePath)
+size_t ZC_checkFileSize(const char *srcFilePath)
 {
 	size_t filesize;
 	FILE *pFile = fopen(srcFilePath, "rb");
@@ -156,7 +156,7 @@ size_t ZC_checkFileSize(char *srcFilePath)
     return filesize;
 }
 
-unsigned char *ZC_readByteData(char *srcFilePath, size_t *byteLength)
+unsigned char *ZC_readByteData(const char *srcFilePath, size_t *byteLength)
 {
 	FILE *pFile = fopen(srcFilePath, "rb");
     if (pFile == NULL)
@@ -181,7 +181,7 @@ unsigned char *ZC_readByteData(char *srcFilePath, size_t *byteLength)
     return byteBuf;
 }
 
-double *ZC_readDoubleData(char *srcFilePath, size_t *nbEle)
+double *ZC_readDoubleData(const char *srcFilePath, size_t *nbEle)
 {
 	if(dataEndianType==sysEndianType)
 	{
@@ -210,7 +210,7 @@ double *ZC_readDoubleData(char *srcFilePath, size_t *nbEle)
 	}
 }
 
-float *ZC_readFloatData(char *srcFilePath, size_t *nbEle)
+float *ZC_readFloatData(const char *srcFilePath, size_t *nbEle)
 {
 	if(dataEndianType==sysEndianType)
 	{
@@ -239,7 +239,7 @@ float *ZC_readFloatData(char *srcFilePath, size_t *nbEle)
 	}
 }
 
-double *ZC_readDoubleData_systemEndian(char *srcFilePath, size_t *nbEle)
+double *ZC_readDoubleData_systemEndian(const char *srcFilePath, size_t *nbEle)
 {
 	size_t inSize;
 	FILE *pFile = fopen(srcFilePath, "rb");
@@ -266,7 +266,7 @@ double *ZC_readDoubleData_systemEndian(char *srcFilePath, size_t *nbEle)
     return daBuf;
 }
 
-float *ZC_readFloatData_systemEndian(char *srcFilePath, size_t *nbEle)
+float *ZC_readFloatData_systemEndian(const char *srcFilePath, size_t *nbEle)
 {
 	size_t inSize;
 	FILE *pFile = fopen(srcFilePath, "rb");
@@ -299,7 +299,7 @@ float *ZC_readFloatData_systemEndian(char *srcFilePath, size_t *nbEle)
     return daBuf;
 }
 
-void ZC_writeByteData(unsigned char *bytes, size_t byteLength, char *tgtFilePath)
+void ZC_writeByteData(unsigned char *bytes, size_t byteLength, const char *tgtFilePath)
 {
 	FILE *pFile = fopen(tgtFilePath, "wb");
     if (pFile == NULL)
@@ -312,7 +312,7 @@ void ZC_writeByteData(unsigned char *bytes, size_t byteLength, char *tgtFilePath
     fclose(pFile);
 }
 
-void ZC_writeDoubleData(double *data, size_t nbEle, char *tgtFilePath)
+void ZC_writeDoubleData(double *data, size_t nbEle, const char *tgtFilePath)
 {
 	size_t i = 0;
 	char s[64];
@@ -333,7 +333,7 @@ void ZC_writeDoubleData(double *data, size_t nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath)
+void ZC_writeFloatData(float *data, size_t nbEle, const char *tgtFilePath)
 {
 	size_t i = 0;
 	char s[64];
@@ -355,7 +355,7 @@ void ZC_writeFloatData(float *data, size_t nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeData_withIndex(void *data, int dataType, size_t nbEle, char *tgtFilePath)
+void ZC_writeData_withIndex(void *data, int dataType, size_t nbEle, const char *tgtFilePath)
 {
 	size_t outSize = nbEle<1000? nbEle: 1000;
 	if(dataType==ZC_FLOAT)
@@ -364,7 +364,7 @@ void ZC_writeData_withIndex(void *data, int dataType, size_t nbEle, char *tgtFil
 		ZC_writeDoubleData_withIndex((double*)data, outSize, tgtFilePath);
 }
 
-void ZC_writeDoubleData_withIndex(double *data, size_t nbEle, char *tgtFilePath)
+void ZC_writeDoubleData_withIndex(double *data, size_t nbEle, const char *tgtFilePath)
 {
 	size_t i = 0;
 	char s[64];
@@ -385,7 +385,7 @@ void ZC_writeDoubleData_withIndex(double *data, size_t nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeFloatData_withIndex(float *data, size_t nbEle, char *tgtFilePath)
+void ZC_writeFloatData_withIndex(float *data, size_t nbEle, const char *tgtFilePath)
 {
 	size_t i = 0;
 	char s[64];
@@ -407,7 +407,7 @@ void ZC_writeFloatData_withIndex(float *data, size_t nbEle, char *tgtFilePath)
     fclose(pFile);
 }
 
-void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
+void ZC_writeData(void *data, int dataType, size_t nbEle, const char *tgtFilePath)
 {
 	if(dataType == ZC_FLOAT)
 	{
@@ -426,7 +426,7 @@ void ZC_writeData(void *data, int dataType, size_t nbEle, char *tgtFilePath)
 	}
 }
 
-void ZC_writeFloatData_gnuplotImage(float *data, size_t r2, size_t r1, char *tgtFilePath)
+void ZC_writeFloatData_gnuplotImage(float *data, size_t r2, size_t r1, const char *tgtFilePath)
 {
 	char s[64];
 	FILE *pFile = fopen(tgtFilePath, "wb");
@@ -451,7 +451,7 @@ void ZC_writeFloatData_gnuplotImage(float *data, size_t r2, size_t r1, char *tgt
     fclose(pFile);	
 }
 
-void ZC_writeDoubleData_gnuplotImage(double *data, size_t r2, size_t r1, char *tgtFilePath)
+void ZC_writeDoubleData_gnuplotImage(double *data, size_t r2, size_t r1, const char *tgtFilePath)
 {
 	char s[64];
 	FILE *pFile = fopen(tgtFilePath, "wb");
@@ -476,7 +476,7 @@ void ZC_writeDoubleData_gnuplotImage(double *data, size_t r2, size_t r1, char *t
     fclose(pFile);	
 }
 
-void ZC_writeData_genuplotImage(void *data, int dataType, size_t r2, size_t r1, char *tgtFilePath)
+void ZC_writeData_genuplotImage(void *data, int dataType, size_t r2, size_t r1, const char *tgtFilePath)
 {
 	if(dataType == ZC_FLOAT)
 	{
@@ -499,7 +499,7 @@ void ZC_writeData_genuplotImage(void *data, int dataType, size_t r2, size_t r1, 
  * 
  * @return the real number of elements
  * */
-int ZC_writeStrings(int string_size, char **string, char *tgtFilePath)
+int ZC_writeStrings(int string_size, char **string, const char *tgtFilePath)
 {
 	size_t i = 0;
 	FILE *pFile = fopen(tgtFilePath, "wb");
@@ -565,7 +565,7 @@ StringLine* appendOneLine(StringLine* tail, char* str)
 	return newLine;
 }
 
-void ZC_readFirstLine(char* filePath, char* line)
+void ZC_readFirstLine(const char* filePath, char* line)
 {
 	char buf[MAX_MSG_LENGTH] = {0};
 	memset(buf, 0, MAX_MSG_LENGTH);
@@ -584,7 +584,7 @@ void ZC_readFirstLine(char* filePath, char* line)
 	fclose(fp);	
 }
 
-StringLine* ZC_readLines(char* filePath, int *lineCount)
+StringLine* ZC_readLines(const char* filePath, int *lineCount)
 {
 	char* buf;
 	//char buf[500] = {0};
@@ -620,7 +620,7 @@ StringLine* ZC_readLines(char* filePath, int *lineCount)
  * 
  * @return the final number of lines
  * */
-size_t ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
+size_t ZC_writeLines(StringLine* lineHeader, const char *tgtFilePath)
 {
 	size_t i = 0;
 	FILE *pFile = fopen(tgtFilePath, "wb");
@@ -641,7 +641,7 @@ size_t ZC_writeLines(StringLine* lineHeader, char *tgtFilePath)
     return i;	
 }
 
-void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replaceString)
+void ZC_replaceLines(StringLine* originalLines, const char* matchKeyword, const char* replaceString)
 {
 	StringLine* p = originalLines;
 	while(p->next!=NULL)
@@ -651,19 +651,19 @@ void ZC_replaceLines(StringLine* originalLines, char* matchKeyword, char* replac
 	}
 }
 
-int ZC_startsWith(char* str, char* key)
+int ZC_startsWith(char* str, const char* key)
 {
     int lenkey = strlen(key), lenstr = strlen(str);
     return lenstr < lenkey ? 0 : strncmp(key, str, lenkey) == 0;
 }
 
-int ZC_startsWithLines(StringLine* line, char* key)
+int ZC_startsWithLines(StringLine* line, const char* key)
 {
 	char* str = line->str;
 	return ZC_startsWith(str, key);
 }
 
-size_t ZC_insertLines(char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
+size_t ZC_insertLines(const char* keyAnnotationLine, StringLine* globalLineHeader, StringLine* toAddLineHeader)
 {
 	if(toAddLineHeader==NULL)
 	{
@@ -781,7 +781,7 @@ void ZC_freeCharArrayLines(char** lines, size_t lineNum)
 	free(lines);
 }
 
-char* rmFileExtension(char* fullFileName)
+char* rmFileExtension(const char* fullFileName)
 {
 	char* s = (char*)malloc(ZC_BUFS);
 	sprintf(s, "%s", fullFileName);
@@ -793,7 +793,7 @@ char* rmFileExtension(char* fullFileName)
 	return s;
 }
 
-char* getFileName(char* fullFilePath)
+char* getFileName(const char* fullFilePath)
 {
 	char buf[256] = {0};
 	char* s = (char*)malloc(256);
@@ -809,7 +809,7 @@ char* getFileName(char* fullFilePath)
 	return s;
 }
 
-char* getFileNameWithoutExtension(char* fullFilePath)
+char* getFileNameWithoutExtension(const char* fullFilePath)
 {
 	char* fileName = getFileName(fullFilePath);
 	char* result = rmFileExtension(fileName);
@@ -817,7 +817,7 @@ char* getFileNameWithoutExtension(char* fullFilePath)
 	return result;
 }
 
-void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath)
+void ZC_writeFloatData_inBytes(float *data, size_t nbEle, const char* tgtFilePath)
 {
 	size_t i = 0;
 	eclfloat buf;
@@ -836,7 +836,7 @@ void ZC_writeFloatData_inBytes(float *data, size_t nbEle, char* tgtFilePath)
 	free(bytes);
 }
 
-void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, char* tgtFilePath)
+void ZC_writeDoubleData_inBytes(double *data, size_t nbEle, const char* tgtFilePath)
 {
 	size_t i = 0, index = 0;
 	ecldouble buf;

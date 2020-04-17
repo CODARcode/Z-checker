@@ -71,11 +71,14 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 		
 		ZC_constructDimString(r5, r4, r3, r2, r1, dimensions);
 		
-		minValue = iniparser_getstring(ini, "PROPERTY:minValue", "0");
-		avgValue = iniparser_getstring(ini, "PROPERTY:avgValue", "0");
-		maxValue = iniparser_getstring(ini, "PROPERTY:maxValue", "0");
-		valueRange = iniparser_getstring(ini, "PROPERTY:valueRange", "0");
-		entropy = iniparser_getstring(ini, "PROPERTY:entropy", "0");
+		char ZERO_STR[2];
+		strcpy(ZERO_STR,"0");
+		
+		minValue = iniparser_getstring(ini, "PROPERTY:minValue", ZERO_STR);
+		avgValue = iniparser_getstring(ini, "PROPERTY:avgValue", ZERO_STR);
+		maxValue = iniparser_getstring(ini, "PROPERTY:maxValue", ZERO_STR);
+		valueRange = iniparser_getstring(ini, "PROPERTY:valueRange", ZERO_STR);
+		entropy = iniparser_getstring(ini, "PROPERTY:entropy", ZERO_STR);
 		
 		//sprintf(rowTexLine, "\\hline %d & %f & %s & %s & %s & %s & %s \\\\", numOfElem, size_inMB, minValue, avgValue, maxValue, valueRange, entropy);
 		strcpy(cells[i][0], dimensions);
@@ -398,7 +401,7 @@ void ZC_generatePSNRReport()
 	ZC_freeLines(texLines);	
 }
 
-StringLine* ZC_generateStaticAnalysisFigures(char* metricType, 
+StringLine* ZC_generateStaticAnalysisFigures(const char* metricType, 
 CmprsorErrBound *allCompressors, int allCompressorCount)
 {
 	size_t i, j, k, n = 0;// n: numOfEpsFiles
@@ -582,7 +585,7 @@ void ZC_generateRateCorrelationReport()
 	ZC_freeLines(texLines);
 }
 
-char* selectCmdTemplate(char* compressorName, int compressionMode, int dim)
+char* selectCmdTemplate(const char* compressorName, int compressionMode, int dim)
 {
 	char* cmdTemplate = (char*)malloc(512);
 	
@@ -672,7 +675,7 @@ void ZC_executeCompDecomp_basedon_CmprVisE(CompressorCRVisElement* cmprVisE)
 	for(k=0;k<crCount;k++)
 	{
 		char* cr = crs[k];
-		ZCVisDecDataElement* decEle = ht_get(cmprVisE->CRVisDataMap, cr);
+		ZCVisDecDataElement* decEle = (ZCVisDecDataElement*)ht_get(cmprVisE->CRVisDataMap, cr);
 		char* errSetting = decEle->errorSetting_str;
 		sprintf(buffer, "%s(%s)", cmprName, errSetting);
 		ZC_DataProperty* property = decEle->dataProperty;
@@ -711,11 +714,11 @@ void ZC_generateDecVisData()
 		line = createLine(tmpLine); p = appendOneLine(p, line);
 		printf("%s\n", tmpLine);
 		
-		hashtable_t *varComprMap = ht_get(ecVisDecDataTables, var);
+		hashtable_t *varComprMap = (hashtable_t*)ht_get(ecVisDecDataTables, var);
 		for(j=0;j<compressors_count;j++)
 		{
 			char* compressorName = compressors[j];
-			CompressorCRVisElement* cmprVisE = ht_get(varComprMap, compressorName);
+			CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varComprMap, compressorName);
 			ZC_itentifyErrorSettingBasedOnCR(cmprVisE);
 			print_cmprVisE(cmprVisE);
 			StringLine* sl = write_cmprVisE(cmprVisE);
@@ -849,7 +852,7 @@ StringLine* ZC_generateDecSliceImageReport()
 	for(i=0;i<varCount;i++)
 	{	
 		char* varName = varNames[i];
-		hashtable_t *varComprMap = ht_get(ecVisDecDataTables, varName);
+		hashtable_t *varComprMap = (hashtable_t*)ht_get(ecVisDecDataTables, varName);
 		for(j = 0;j<nbPlotCRs;j++)
 		{			
 			char* CR = plotCRs_str[j];
@@ -867,8 +870,8 @@ StringLine* ZC_generateDecSliceImageReport()
 			{	
 				char* compressorName = compressorNames[k];
 				
-				CompressorCRVisElement* cmprVisE = ht_get(varComprMap, compressorName);
-				ZCVisDecDataElement* visEle = ht_get(cmprVisE->CRVisDataMap, CR);
+				CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varComprMap, compressorName);
+				ZCVisDecDataElement* visEle = (ZCVisDecDataElement*)ht_get(cmprVisE->CRVisDataMap, CR);
 				char* compressionCaseName = visEle->compressionCaseName;
 				//char* errorSetting_str = visEle->errorSetting_str;
 
@@ -906,8 +909,8 @@ StringLine* ZC_generateDecSliceImageReport()
 			{	
 				char* compressorName = compressorNames[k];
 				
-				CompressorCRVisElement* cmprVisE = ht_get(varComprMap, compressorName);
-				ZCVisDecDataElement* visEle = ht_get(cmprVisE->CRVisDataMap, CR);
+				CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varComprMap, compressorName);
+				ZCVisDecDataElement* visEle = (ZCVisDecDataElement*)ht_get(cmprVisE->CRVisDataMap, CR);
 				char* compressionCaseName = visEle->compressionCaseName;
 				//char* errorSetting_str = visEle->errorSetting_str;
 

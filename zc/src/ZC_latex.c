@@ -6,7 +6,7 @@
 #include "ZC_latex.h"
 #include "zc.h"
 
-char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix)
+char* gen_includegraphicsLine(char* comparisonCase, const char* subDir, const char* prefix)
 {	
 	size_t i = 0;
 	char* tmpLine = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
@@ -28,7 +28,7 @@ char* gen_includegraphicsLine(char* comparisonCase, char* subDir, char* prefix)
 	return tmpLine;
 }
 
-char* gen_includegraphicsLine2(char* epsFileName, char* subDir)
+char* gen_includegraphicsLine2(const char* epsFileName, const char* subDir)
 {	
 	char* tmpLine = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
 	//char stringBuffer[ZC_BUFS_LONG];
@@ -41,7 +41,7 @@ char* gen_includegraphicsLine2(char* epsFileName, char* subDir)
 	return tmpLine;
 }
 
-char* gen_includegraphicsLine3(char* epsFileName, char* subDir)
+char* gen_includegraphicsLine3(const char* epsFileName, const char* subDir)
 {	
 	char* tmpLine = (char*)malloc(sizeof(char)*MAX_MSG_LENGTH);
 	//char stringBuffer[ZC_BUFS_LONG];
@@ -54,7 +54,7 @@ char* gen_includegraphicsLine3(char* epsFileName, char* subDir)
 	return tmpLine;
 }
 
-StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* subDir, char* prefix, char* caption)
+StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, const char* subDir, const char* prefix, const char* caption)
 {
 	char caseName[ZC_BUFS_LONG];
 	char tmpLine[MAX_MSG_LENGTH];
@@ -95,8 +95,10 @@ StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* su
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
-	ZC_ReplaceStr2(caption, "_", "\\_");
-	sprintf(tmpLine, "\\caption{%s}\n", caption);
+	char caption_[100];
+	strcpy(caption_, caption);
+	ZC_ReplaceStr2(caption_, "_", "\\_");
+	sprintf(tmpLine, "\\caption{%s}\n", caption_);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	sprintf(tmpLine, "\\label{fig:%s}\n", prefix);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
@@ -105,7 +107,7 @@ StringLine* ZC_generateComparisonFigTexLines(int caseNum, char** cases, char* su
 	return header;
 }
 
-StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, char* subDir, char* caption, char* figLabel)
+StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, const char* subDir, const char* caption, const char* figLabel)
 {
 	char caseName[ZC_BUFS_LONG];
 	char tmpLine[MAX_MSG_LENGTH];
@@ -127,8 +129,12 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
-	ZC_ReplaceStr2(caption, "_", "\\_");
-	sprintf(tmpLine, "\\caption{%s}\n", caption);
+	
+	char caption_[100];
+	strcpy(caption_, caption);
+	ZC_ReplaceStr2(caption_, "_", "\\_");
+	sprintf(tmpLine, "\\caption{%s}\n", caption_);
+	
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	sprintf(tmpLine, "\\label{fig:%s}\n", figLabel);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
@@ -138,7 +144,7 @@ StringLine* ZC_generateVarStatFigTexLines(int epsFileNum, char** epsFileNames, c
 	return header;
 }
 
-StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, char** subFigureTitles, char* subDir, char* caption, char* figLabel)
+StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, char** subFigureTitles, const char* subDir, const char* caption, const char* figLabel)
 {
 	char caseName[ZC_BUFS_LONG];
 	char tmpLine[MAX_MSG_LENGTH];
@@ -170,8 +176,11 @@ StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, c
 	}
 
 	line = createLine("\\vspace{-2mm}\n"); p = appendOneLine(p, line);
-	ZC_ReplaceStr2(caption, "_", "\\_");
-	sprintf(tmpLine, "\\caption{%s}\n", caption);
+	char caption_[100];
+	strcpy(caption_, caption);
+	ZC_ReplaceStr2(caption_, "_", "\\_");
+	sprintf(tmpLine, "\\caption{%s}\n", caption_);
+
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	sprintf(tmpLine, "\\label{fig:%s}\n", figLabel);
 	line = createLine(tmpLine); p = appendOneLine(p, line);
@@ -181,14 +190,16 @@ StringLine* ZC_generateSliceImageTexLines(int epsFileNum, char** epsFileNames, c
 	return header;
 }
 
-StringLine* ZC_generateSimpleTableTexLines(int rows, int columns, char** cases, char** keys, char*** cells, char* caption, char* tabLabel)
+StringLine* ZC_generateSimpleTableTexLines(int rows, int columns, char** cases, char** keys, char*** cells, const char* caption, const char* tabLabel)
 {
 	size_t i = 0, j = 0;
 	char tmpLine[MAX_MSG_LENGTH], buf[MAX_MSG_LENGTH], caseName[MAX_MSG_LENGTH];	
 	StringLine* header = createStringLineHeader();
 	StringLine* p = header;
 	char* line = createLine("\\begin{table*}[ht]\n"); p = appendOneLine(p, line);
-	sprintf(tmpLine, "\\caption{%s} \\centering\n", caption);
+	
+	sprintf(tmpLine, "\\caption{%s} \\centering\n", caption);	
+	
 	line = createLine(tmpLine); p = appendOneLine(p, line);
 	line = createLine("\\scriptsize\n"); p = appendOneLine(p, line);
 	strcpy(tmpLine, "\\begin{tabular}{|c");
