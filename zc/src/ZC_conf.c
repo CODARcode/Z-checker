@@ -401,7 +401,7 @@ int ZC_ReadConf() {
 		
 		ecVisDecDataTables = ht_create(HASHTABLE_SIZE_SMALL); //64 entries						
 		int count;
-		ZC_getFileNames(property_dir, propertyExtension, &count, fileNames);
+		ZC_getFileNames("dataProperties", propertyExtension, &count, fileNames);
 		for(j=0;j<count;j++)
 		{
 			ZC_DataProperty* prop = loadProperty("dataProperties", fileNames[j]);
