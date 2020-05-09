@@ -273,7 +273,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult)
 {
-	char** s = (char**)malloc(34*sizeof(char*));
+	char** s = (char**)malloc(38*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -388,7 +388,31 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	}
 
 	s[33] = (char*)malloc(100*sizeof(char));
-	sprintf(s[33], "compressionMode = %d\n", compareResult->compressionMode);
+	if(derivativeOrder1_psnrFlag)
+		sprintf(s[33], "derivativeOrder1_psnr = %.10G\n", compareResult->derivativeOrder1_psnr);
+	else
+		sprintf(s[33], "derivativeOrder1_psnr = -\n", compareResult->derivativeOrder1_psnr);
+	
+	s[34] = (char*)malloc(100*sizeof(char));	
+	if(derivativeOrder2_psnrFlag)
+		sprintf(s[34], "derivativeOrder2_psnr = %.10G\n", compareResult->derivativeOrder2_psnr);	
+	else
+		sprintf(s[34], "derivativeOrder2_psnr = -\n", compareResult->derivativeOrder2_psnr);		
+
+	s[35] = (char*)malloc(100*sizeof(char));
+	if(derivativeOrder1_ssimFlag)
+		sprintf(s[35], "derivativeOrder1_ssim = %.10G\n", compareResult->derivativeOrder1_ssim);
+	else
+		sprintf(s[35], "derivativeOrder1_ssim = -\n", compareResult->derivativeOrder1_ssim);
+	
+	s[36] = (char*)malloc(100*sizeof(char));
+	if(derivativeOrder2_ssimFlag)
+		sprintf(s[36], "derivativeOrder2_ssim = %.10G\n", compareResult->derivativeOrder2_ssim);	
+	else
+		sprintf(s[36], "derivativeOrder2_ssim = -\n", compareResult->derivativeOrder2_ssim);	
+
+	s[37] = (char*)malloc(100*sizeof(char));
+	sprintf(s[37], "compressionMode = %d\n", compareResult->compressionMode);
 	return s;
 }
 
@@ -404,13 +428,11 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	DIR *dir = opendir(tgtWorkspaceDir);
 	if(dir==NULL)
 		mkdir(tgtWorkspaceDir,0775);
-	
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(34, s, tgtFilePath);
-	
+	ZC_writeStrings(38, s, tgtFilePath);
 	int i;
-	for(i=0;i<=33;i++)
+	for(i=0;i<=37;i++)
 		free(s[i]);
 	free(s);
 	

@@ -14,7 +14,9 @@
 #endif
 #include "ZC_ssim.h"
 
-void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
+#include "matrix.hpp"
+
+void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i = 0;
@@ -281,11 +283,11 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
     	double ee = prodSum/numOfElem;
       	double valErrCorr = 0;
 
-    	if (std1*stdDiff != 0)
-		{
+    	if(std1*stdDiff != 0)
+    	{	
 			valErrCorr = ee/std1/stdDiff;
 		}
-		
+
 		compareResult->valErrCorr = valErrCorr;
 	}
 
@@ -310,16 +312,16 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		switch(dim)
 		{
 		case 2:
-			compareResult->ssimImage2D_avg = zc_calc_ssim_2d_double(data1, data2, r2, r1);	
+			compareResult->ssimImage2D_avg = zc_calc_ssim_2d_float(data1, data2, r2, r1);	
 			break;
 		case 3:
-			zc_calc_ssim_3d_double(data1, data2, r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			zc_calc_ssim_3d_float(data1, data2, r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
 			break;
 		case 4:
-			zc_calc_ssim_3d_double(data1, data2, r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			zc_calc_ssim_3d_float(data1, data2, r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
 			break;
 		case 5:
-			zc_calc_ssim_3d_double(data1, data2, r5*r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			zc_calc_ssim_3d_float(data1, data2, r5*r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
 			break;
 		default: //1D data is meaningless here
 			compareResult->ssimImage2D_min = 0; 
@@ -328,36 +330,54 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		}
 	}
 
-
 	//dimensions: r5, r4, r3, r2, r1, data1, data2 --> compareResult->derivativeOrder1 and compareResult->derivativeOrder2
 	if(derivativeOrder1_psnrFlag)
 	{
 		int status = 0; //0: normal , 1: abnormal
-		//compareResult->derivativeOrder1 = zc_calc_derivative_order1_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_float(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder1_psnr = zc_calc_metric_der_order1_psnr_float(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
-		{
-			//handle the exception.
-		}
+			compareResult->derivativeOrder1_psnr = -1; //invalid dimension settings for this metric
 	}
-
+	
 	if(derivativeOrder2_psnrFlag)
 	{
-		int status = 0;
-		//compareResult->derivativeOrder2 = zc_calc_derivative_order2_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		int status = 0; //0: normal , 1: abnormal
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_float(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder2_psnr = zc_calc_metric_der_order2_psnr_float(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
-		{
-			//handle the exception.
-		}
-	}
+			compareResult->derivativeOrder2_psnr = -1; //invalid dimension settings for this metric
+	}	
+
+	if(derivativeOrder1_ssimFlag)
+	{
+		int status = 0; //0: normal , 1: abnormal
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_float(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder1_ssim = zc_calc_metric_der_order1_ssim_float(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+			compareResult->derivativeOrder1_ssim = -1; //invalid dimension settings for this metric
+	}	
+	
+	if(derivativeOrder2_ssimFlag)
+	{
+		int status = 0; //0: normal , 1: abnormal
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_float(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder2_ssim = zc_calc_metric_der_order2_ssim_float(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+			compareResult->derivativeOrder2_ssim = -1; //invalid dimension settings for this metric
+	}		
 
 	free(diff);
 	free(relDiff);
-
 }
 
 #ifdef HAVE_MPI
 
-void ZC_compareData_double_online(ZC_CompareData* compareResult, double* data1, double* data2, 
+void ZC_compareData_float_online(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i = 0;
@@ -747,16 +767,16 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		switch(dim)
 		{
 		case 2:
-			compareResult->ssimImage2D_avg = zc_calc_ssim_2d_double_online(data1, data2, r2, r1);	
+			compareResult->ssimImage2D_avg = zc_calc_ssim_2d_float_online(data1, data2, r2, r1);	
 			break;
 		case 3:
-			zc_calc_ssim_3d_double_online(data1, data2, r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			zc_calc_ssim_3d_float_online(data1, data2, r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
 			break;
 		case 4:
-			zc_calc_ssim_3d_double_online(data1, data2, r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			zc_calc_ssim_3d_float_online(data1, data2, r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
 			break;
 		case 5:
-			zc_calc_ssim_3d_double_online(data1, data2, r5*r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
+			zc_calc_ssim_3d_float_online(data1, data2, r5*r4*r3, r2, r1, &(compareResult->ssimImage2D_min), &(compareResult->ssimImage2D_avg), &(compareResult->ssimImage2D_max));
 			break;
 		default: //1D data is meaningless here
 			compareResult->ssimImage2D_min = 0; 

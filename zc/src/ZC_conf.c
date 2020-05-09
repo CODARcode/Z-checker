@@ -208,19 +208,22 @@ int ZC_ReadConf() {
 		printf("Error: Wrong dataEndianType: please set it correctly in zc.config.\n");
 		exit(0);
 	}
-	checkingStatusString = iniparser_getstring(ini, "ENV:checkingStatus", NULL);
-	if(strcmp(checkingStatusString, "PROBE_COMPRESSOR")==0 || strcmp(checkingStatusString, "probe_compressor")==0)
-		checkingStatus = PROBE_COMPRESSOR;
-	else if(strcmp(checkingStatusString, "ANALYZE_DATA")==0 || strcmp(checkingStatusString, "analyze_data")==0)
-		checkingStatus = ANALYZE_DATA;
-	else if(strcmp(checkingStatusString, "COMPARE_COMPRESSOR")==0 || strcmp(checkingStatusString, "compare_compressor")==0)
-		checkingStatus = COMPARE_COMPRESSOR;
-	else
+	if(checkingStatus!=-1) //this means that the checkingStatus has been set externally, e.g., in analyzeDataProperty.c
 	{
-		checkingStatus = -1;
-		printf("Error: Wrong checking status in the configuration setting. \n");
-		printf("Example: checkingStatus = PROBE_COMPRESSOR, ANALYZE_DATA, COMPARE_COMPRESSOR\n");
-		exit(0);
+		checkingStatusString = iniparser_getstring(ini, "ENV:checkingStatus", NULL);
+		if(strcmp(checkingStatusString, "PROBE_COMPRESSOR")==0 || strcmp(checkingStatusString, "probe_compressor")==0)
+			checkingStatus = PROBE_COMPRESSOR;
+		else if(strcmp(checkingStatusString, "ANALYZE_DATA")==0 || strcmp(checkingStatusString, "analyze_data")==0)
+			checkingStatus = ANALYZE_DATA;
+		else if(strcmp(checkingStatusString, "COMPARE_COMPRESSOR")==0 || strcmp(checkingStatusString, "compare_compressor")==0)
+			checkingStatus = COMPARE_COMPRESSOR;
+		else
+		{
+			checkingStatus = -1;
+			printf("Error: Wrong checking status in the configuration setting. \n");
+			printf("Example: checkingStatus = PROBE_COMPRESSOR, ANALYZE_DATA, COMPARE_COMPRESSOR\n");
+			exit(0);
+		}
 	}	
 
 	executionModeString = iniparser_getstring(ini, "ENV:executionMode", NULL);
@@ -289,8 +292,10 @@ int ZC_ReadConf() {
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
 	SSIMIMAGE2DFlag = (int)iniparser_getint(ini, "COMPARE:ssimImage2D", 0);
 	
-	derivativeOrder1Flag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder1", 0);
-	derivativeOrder2Flag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder2", 0);
+	derivativeOrder1_psnrFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder1_psnr", 0);
+	derivativeOrder2_psnrFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder2_psnr", 0);
+	derivativeOrder1_ssimFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder1_ssim", 0);
+	derivativeOrder2_ssimFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder2_ssim", 0);	
 
 	plotImageFlag = (int)iniparser_getint(ini, "PLOT:plotSliceImage", 0);
 	

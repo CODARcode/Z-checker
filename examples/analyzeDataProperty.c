@@ -41,8 +41,9 @@ int main(int argc, char * argv[])
 
     //printf("myrank=%d, cfgFile=%s\n", myrank, cfgFile);
     printf("[ZC] Reading ZC configuration file (%s) ...\n", cfgFile);     
+    checkingStatus = ANALYZE_DATA;
     ZC_Init(cfgFile);
-	executionMode = ZC_OFFLINE;
+    executionMode = ZC_OFFLINE;
 	
     size_t nbEle;
     ZC_DataProperty* property = NULL;

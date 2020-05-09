@@ -42,9 +42,9 @@ int main(int argc, char * argv[])
     printf("cfgFile=%s\n", cfgFile);
     printf("oriFilePath=%s\n", oriFilePath);
     printf("decFilePath=%s\n", decFilePath);
+    checkingStatus = COMPARE_COMPRESSOR;
     ZC_Init(cfgFile);
     executionMode = ZC_OFFLINE;
-
 
     size_t nbEle1, nbEle2;
     float *data1 = ZC_readFloatData(oriFilePath, &nbEle1);

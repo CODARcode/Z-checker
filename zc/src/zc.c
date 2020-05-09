@@ -34,7 +34,7 @@ char *rscriptPath = NULL;
 int sysEndianType; //endian type of the system
 int dataEndianType; //endian type of the data
 
-int checkingStatus; //0 refers to probe_compressor, 1 refers to analyze_data, and 2 indicates compare_compressor
+int checkingStatus = -1; //0 refers to probe_compressor, 1 refers to analyze_data, and 2 indicates compare_compressor
 int executionMode = 0;
 //char *ZC_workspaceDir;
 
@@ -88,8 +88,10 @@ int KS_testFlag = 1;
 int SSIMFlag = 1;
 int SSIMIMAGE2DFlag = 1;
 
-int derivativeOrder1Flag = 1;
-int derivativeOrder2Flag = 1;
+int derivativeOrder1_psnrFlag = 1;
+int derivativeOrder2_psnrFlag = 1;
+int derivativeOrder1_ssimFlag = 1;
+int derivativeOrder2_ssimFlag = 1;
 
 int plotAutoCorrFlag = 1;
 int plotAbsErrPDFFlag = 1;

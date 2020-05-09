@@ -63,7 +63,7 @@ extern "C" {
 #define ZC_VERNUM 0x0040
 #define ZC_VER_MAJOR 0
 #define ZC_VER_MINOR 4
-#define ZC_VER_BUILD 1
+#define ZC_VER_BUILD 2
 #define ZC_VER_REVISION 0
 
 #define PDF_INTERVALS 2000
@@ -189,8 +189,10 @@ extern int KS_testFlag;
 extern int SSIMFlag;
 extern int SSIMIMAGE2DFlag;
 
-extern int derivativeOrder1Flag;
-extern int derivativeOrder2Flag;
+extern int derivativeOrder1_psnrFlag;
+extern int derivativeOrder2_psnrFlag;
+extern int derivativeOrder1_ssimFlag;
+extern int derivativeOrder2_ssimFlag;
 
 extern int plotAutoCorrFlag;
 

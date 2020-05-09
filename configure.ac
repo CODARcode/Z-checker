@@ -21,17 +21,18 @@ AC_PROG_CC
 ## MPI
 ##
 
+#CC=g++
+
 AC_ARG_ENABLE(mpi, [  --enable-mpi            use MPI], ok=$enableval, ok=no)
 AM_CONDITIONAL([MPI], [test "x$enable_mpi" = "xyes"])
 
 if test "$ok" = "yes"; then
-	#AC_CHECK_PROG(MPICXX,mpicxx,yes,no)
 	AC_CHECK_PROG(MPICC,mpicc,yes,no)
 if test "$MPICC" = no; then
 	AC_MSG_ERROR([Cound not find mpicc. Please install mpi library first.])
 else
 	CC=mpicc
-	#CC=mpic++
+	CXX=mpicxx
 	MPI_FLAGS="-DHAVE_MPI"
 fi
 fi

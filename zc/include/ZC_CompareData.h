@@ -88,8 +88,10 @@ typedef struct ZC_CompareData
 	
 	complex *fftCoeff;	
 	
-	double derivativeOrder1;
-	double derivativeOrder2;
+	double derivativeOrder1_psnr;
+	double derivativeOrder2_psnr;
+	double derivativeOrder1_ssim;
+	double derivativeOrder2_ssim;
 	
 } ZC_CompareData;
 

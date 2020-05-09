@@ -14,6 +14,8 @@
 #endif
 #include "ZC_ssim.h"
 
+#include "matrix.hpp"
+
 void ZC_compareData_double(ZC_CompareData* compareResult, double* data1, double* data2,
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {

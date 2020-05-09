@@ -93,15 +93,20 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @HDF5_TRUE@am__append_1 = -DHAVE_HDF5
-@NETCDF_TRUE@am__append_2 = -DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
-@FFTW3_TRUE@am__append_3 = -DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
-@FFTW3_TRUE@am__append_4 = include/3rdParty/autocorr.h include/ZC_FFTW3_math.h
-@R_TRUE@am__append_5 = -DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
-@R_TRUE@am__append_6 = include/ZC_R_math.h
-@ZSERVER_TRUE@am__append_7 = -DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
-@R_TRUE@am__append_8 = ../R/.libs/libzccallr.a
-@FFTW3_TRUE@am__append_9 = src/ZC_FFTW3_math.c
-@R_TRUE@am__append_10 = src/ZC_R_math.c
+@HDF5_TRUE@am__append_2 = -DHAVE_HDF5
+@NETCDF_TRUE@am__append_3 = -DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
+@NETCDF_TRUE@am__append_4 = -DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
+@FFTW3_TRUE@am__append_5 = -DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
+@FFTW3_TRUE@am__append_6 = -DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
+@FFTW3_TRUE@am__append_7 = include/3rdParty/autocorr.h include/ZC_FFTW3_math.h
+@R_TRUE@am__append_8 = -DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
+@R_TRUE@am__append_9 = -DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
+@R_TRUE@am__append_10 = include/ZC_R_math.h
+@ZSERVER_TRUE@am__append_11 = -DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
+@ZSERVER_TRUE@am__append_12 = -DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
+@R_TRUE@am__append_13 = ../R/.libs/libzccallr.a
+@FFTW3_TRUE@am__append_14 = src/ZC_FFTW3_math.c
+@R_TRUE@am__append_15 = src/ZC_R_math.c
 subdir = zc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -146,13 +151,14 @@ libzc_la_LIBADD =
 am__libzc_la_SOURCES_DIST = src/ZC_ByteToolkit.c src/ZC_gnuplot.c \
 	src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c \
 	src/ZC_DataProperty_double.c src/ZC_DataProperty.c \
-	src/ZC_CompareData_float.c src/ZC_CompareData_double.c \
+	src/ZC_CompareData_float.cpp src/ZC_CompareData_double.cpp \
 	src/ZC_CompareData.c src/DynamicIntArray.c \
 	src/DynamicFloatArray.c src/DynamicDoubleArray.c \
 	src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c \
 	src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c \
 	src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c src/ZC_ssim.c \
-	src/ZC_FFTW3_math.c src/ZC_R_math.c
+	src/zc_derivativeMetrics.cpp src/ZC_FFTW3_math.c \
+	src/ZC_R_math.c
 am__dirstamp = $(am__leading_dot)dirstamp
 @FFTW3_TRUE@am__objects_1 = src/libzc_la-ZC_FFTW3_math.lo
 @R_TRUE@am__objects_2 = src/libzc_la-ZC_R_math.lo
@@ -173,15 +179,16 @@ am_libzc_la_OBJECTS = src/libzc_la-ZC_ByteToolkit.lo \
 	src/libzc_la-ZC_conf.lo src/libzc_la-dictionary.lo \
 	src/libzc_la-ZC_util.lo src/libzc_la-zc.lo \
 	src/libzc_la-ZC_DataSetHandler.lo src/libzc_la-ZC_ssim.lo \
-	$(am__objects_1) $(am__objects_2)
+	src/libzc_la-zc_derivativeMetrics.lo $(am__objects_1) \
+	$(am__objects_2)
 libzc_la_OBJECTS = $(am_libzc_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-libzc_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libzc_la_CFLAGS) \
-	$(CFLAGS) $(libzc_la_LDFLAGS) $(LDFLAGS) -o $@
+libzc_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(libzc_la_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -216,6 +223,24 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 SOURCES = $(libzc_la_SOURCES)
 DIST_SOURCES = $(am__libzc_la_SOURCES_DIST)
 am__can_run_installinfo = \
@@ -231,7 +256,10 @@ am__include_HEADERS_DIST = include/ZC_ByteToolkit.h include/ZC_conf.h \
 	include/DynamicDoubleArray.h include/DynamicByteArray.h \
 	include/dictionary.h include/zc.h include/iniparser.h \
 	include/ZC_util.h include/ZC_ReportGenerator.h \
-	include/ZC_DataSetHandler.h include/ZC_ssim.h \
+	include/ZC_DataSetHandler.h include/ZC_ssim.h include/der.hpp \
+	include/idx.hpp include/matrix.hpp include/m_basic.hpp \
+	include/m_der.hpp include/m_der_metrics.hpp include/m_norm.hpp \
+	include/norm.hpp include/others.hpp include/ssim.hpp \
 	include/3rdParty/autocorr.h include/ZC_FFTW3_math.h \
 	include/ZC_R_math.h
 HEADERS = $(include_HEADERS)
@@ -269,6 +297,10 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -341,6 +373,7 @@ abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -396,32 +429,41 @@ include_HEADERS = include/ZC_ByteToolkit.h include/ZC_conf.h \
 	include/DynamicDoubleArray.h include/DynamicByteArray.h \
 	include/dictionary.h include/zc.h include/iniparser.h \
 	include/ZC_util.h include/ZC_ReportGenerator.h \
-	include/ZC_DataSetHandler.h include/ZC_ssim.h $(am__append_4) \
-	$(am__append_6)
+	include/ZC_DataSetHandler.h include/ZC_ssim.h include/der.hpp \
+	include/idx.hpp include/matrix.hpp include/m_basic.hpp \
+	include/m_der.hpp include/m_der_metrics.hpp include/m_norm.hpp \
+	include/norm.hpp include/others.hpp include/ssim.hpp \
+	$(am__append_7) $(am__append_10)
 lib_LTLIBRARIES = libzc.la
 @MPI_FALSE@libzc_la_CFLAGS = -g -I./include $(am__append_1) \
-@MPI_FALSE@	$(am__append_2) $(am__append_3) $(am__append_5) \
-@MPI_FALSE@	$(am__append_7)
+@MPI_FALSE@	$(am__append_3) $(am__append_5) $(am__append_8) \
+@MPI_FALSE@	$(am__append_11)
 @MPI_TRUE@libzc_la_CFLAGS = -g -I./include -DHAVE_MPI $(am__append_1) \
-@MPI_TRUE@	$(am__append_2) $(am__append_3) $(am__append_5) \
-@MPI_TRUE@	$(am__append_7)
+@MPI_TRUE@	$(am__append_3) $(am__append_5) $(am__append_8) \
+@MPI_TRUE@	$(am__append_11)
+@MPI_FALSE@libzc_la_CPPFLAGS = -g -I./include $(am__append_2) \
+@MPI_FALSE@	$(am__append_4) $(am__append_6) $(am__append_9) \
+@MPI_FALSE@	$(am__append_12)
+@MPI_TRUE@libzc_la_CPPFLAGS = -g -I./include -DHAVE_MPI \
+@MPI_TRUE@	$(am__append_2) $(am__append_4) $(am__append_6) \
+@MPI_TRUE@	$(am__append_9) $(am__append_12)
 libzc_la_LDFLAGS = -version-info  0:1:0
 libzc_la_LIDADD = $(FFTW3_LIBS) $(FFTW3_LIB) $(NETCDF_LIBS) \
-	$(NETCDF_LIB) $(ZSERVER_LIBS) $(ZSERVER_LIB) $(am__append_8)
+	$(NETCDF_LIB) $(ZSERVER_LIBS) $(ZSERVER_LIB) $(am__append_13)
 libzc_la_SOURCES = src/ZC_ByteToolkit.c src/ZC_gnuplot.c \
 	src/ZC_Hashtable.c src/iniparser.c src/ZC_DataProperty_float.c \
 	src/ZC_DataProperty_double.c src/ZC_DataProperty.c \
-	src/ZC_CompareData_float.c src/ZC_CompareData_double.c \
+	src/ZC_CompareData_float.cpp src/ZC_CompareData_double.cpp \
 	src/ZC_CompareData.c src/DynamicIntArray.c \
 	src/DynamicFloatArray.c src/DynamicDoubleArray.c \
 	src/DynamicByteArray.c src/ZC_latex.c src/ZC_ReportGenerator.c \
 	src/ZC_quicksort.c src/ZC_rw.c src/ZC_conf.c src/dictionary.c \
 	src/ZC_util.c src/zc.c src/ZC_DataSetHandler.c src/ZC_ssim.c \
-	$(am__append_9) $(am__append_10)
+	src/zc_derivativeMetrics.cpp $(am__append_14) $(am__append_15)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -539,13 +581,15 @@ src/libzc_la-ZC_DataSetHandler.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-ZC_ssim.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/libzc_la-zc_derivativeMetrics.lo: src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-ZC_FFTW3_math.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/libzc_la-ZC_R_math.lo: src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 
 libzc.la: $(libzc_la_OBJECTS) $(libzc_la_DEPENDENCIES) $(EXTRA_libzc_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libzc_la_LINK) -rpath $(libdir) $(libzc_la_OBJECTS) $(libzc_la_LIBADD) $(LIBS)
+	$(AM_V_CXXLD)$(libzc_la_LINK) -rpath $(libdir) $(libzc_la_OBJECTS) $(libzc_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -581,6 +625,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-dictionary.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-iniparser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-zc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/libzc_la-zc_derivativeMetrics.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -607,186 +652,217 @@ distclean-compile:
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 src/libzc_la-ZC_ByteToolkit.lo: src/ZC_ByteToolkit.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_ByteToolkit.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_ByteToolkit.Tpo -c -o src/libzc_la-ZC_ByteToolkit.lo `test -f 'src/ZC_ByteToolkit.c' || echo '$(srcdir)/'`src/ZC_ByteToolkit.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_ByteToolkit.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_ByteToolkit.Tpo -c -o src/libzc_la-ZC_ByteToolkit.lo `test -f 'src/ZC_ByteToolkit.c' || echo '$(srcdir)/'`src/ZC_ByteToolkit.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_ByteToolkit.Tpo src/$(DEPDIR)/libzc_la-ZC_ByteToolkit.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_ByteToolkit.c' object='src/libzc_la-ZC_ByteToolkit.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_ByteToolkit.lo `test -f 'src/ZC_ByteToolkit.c' || echo '$(srcdir)/'`src/ZC_ByteToolkit.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_ByteToolkit.lo `test -f 'src/ZC_ByteToolkit.c' || echo '$(srcdir)/'`src/ZC_ByteToolkit.c
 
 src/libzc_la-ZC_gnuplot.lo: src/ZC_gnuplot.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_gnuplot.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_gnuplot.Tpo -c -o src/libzc_la-ZC_gnuplot.lo `test -f 'src/ZC_gnuplot.c' || echo '$(srcdir)/'`src/ZC_gnuplot.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_gnuplot.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_gnuplot.Tpo -c -o src/libzc_la-ZC_gnuplot.lo `test -f 'src/ZC_gnuplot.c' || echo '$(srcdir)/'`src/ZC_gnuplot.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_gnuplot.Tpo src/$(DEPDIR)/libzc_la-ZC_gnuplot.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_gnuplot.c' object='src/libzc_la-ZC_gnuplot.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_gnuplot.lo `test -f 'src/ZC_gnuplot.c' || echo '$(srcdir)/'`src/ZC_gnuplot.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_gnuplot.lo `test -f 'src/ZC_gnuplot.c' || echo '$(srcdir)/'`src/ZC_gnuplot.c
 
 src/libzc_la-ZC_Hashtable.lo: src/ZC_Hashtable.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_Hashtable.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_Hashtable.Tpo -c -o src/libzc_la-ZC_Hashtable.lo `test -f 'src/ZC_Hashtable.c' || echo '$(srcdir)/'`src/ZC_Hashtable.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_Hashtable.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_Hashtable.Tpo -c -o src/libzc_la-ZC_Hashtable.lo `test -f 'src/ZC_Hashtable.c' || echo '$(srcdir)/'`src/ZC_Hashtable.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_Hashtable.Tpo src/$(DEPDIR)/libzc_la-ZC_Hashtable.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_Hashtable.c' object='src/libzc_la-ZC_Hashtable.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_Hashtable.lo `test -f 'src/ZC_Hashtable.c' || echo '$(srcdir)/'`src/ZC_Hashtable.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_Hashtable.lo `test -f 'src/ZC_Hashtable.c' || echo '$(srcdir)/'`src/ZC_Hashtable.c
 
 src/libzc_la-iniparser.lo: src/iniparser.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-iniparser.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-iniparser.Tpo -c -o src/libzc_la-iniparser.lo `test -f 'src/iniparser.c' || echo '$(srcdir)/'`src/iniparser.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-iniparser.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-iniparser.Tpo -c -o src/libzc_la-iniparser.lo `test -f 'src/iniparser.c' || echo '$(srcdir)/'`src/iniparser.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-iniparser.Tpo src/$(DEPDIR)/libzc_la-iniparser.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/iniparser.c' object='src/libzc_la-iniparser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-iniparser.lo `test -f 'src/iniparser.c' || echo '$(srcdir)/'`src/iniparser.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-iniparser.lo `test -f 'src/iniparser.c' || echo '$(srcdir)/'`src/iniparser.c
 
 src/libzc_la-ZC_DataProperty_float.lo: src/ZC_DataProperty_float.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty_float.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Tpo -c -o src/libzc_la-ZC_DataProperty_float.lo `test -f 'src/ZC_DataProperty_float.c' || echo '$(srcdir)/'`src/ZC_DataProperty_float.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty_float.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Tpo -c -o src/libzc_la-ZC_DataProperty_float.lo `test -f 'src/ZC_DataProperty_float.c' || echo '$(srcdir)/'`src/ZC_DataProperty_float.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Tpo src/$(DEPDIR)/libzc_la-ZC_DataProperty_float.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataProperty_float.c' object='src/libzc_la-ZC_DataProperty_float.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty_float.lo `test -f 'src/ZC_DataProperty_float.c' || echo '$(srcdir)/'`src/ZC_DataProperty_float.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty_float.lo `test -f 'src/ZC_DataProperty_float.c' || echo '$(srcdir)/'`src/ZC_DataProperty_float.c
 
 src/libzc_la-ZC_DataProperty_double.lo: src/ZC_DataProperty_double.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty_double.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Tpo -c -o src/libzc_la-ZC_DataProperty_double.lo `test -f 'src/ZC_DataProperty_double.c' || echo '$(srcdir)/'`src/ZC_DataProperty_double.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty_double.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Tpo -c -o src/libzc_la-ZC_DataProperty_double.lo `test -f 'src/ZC_DataProperty_double.c' || echo '$(srcdir)/'`src/ZC_DataProperty_double.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Tpo src/$(DEPDIR)/libzc_la-ZC_DataProperty_double.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataProperty_double.c' object='src/libzc_la-ZC_DataProperty_double.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty_double.lo `test -f 'src/ZC_DataProperty_double.c' || echo '$(srcdir)/'`src/ZC_DataProperty_double.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty_double.lo `test -f 'src/ZC_DataProperty_double.c' || echo '$(srcdir)/'`src/ZC_DataProperty_double.c
 
 src/libzc_la-ZC_DataProperty.lo: src/ZC_DataProperty.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty.Tpo -c -o src/libzc_la-ZC_DataProperty.lo `test -f 'src/ZC_DataProperty.c' || echo '$(srcdir)/'`src/ZC_DataProperty.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataProperty.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataProperty.Tpo -c -o src/libzc_la-ZC_DataProperty.lo `test -f 'src/ZC_DataProperty.c' || echo '$(srcdir)/'`src/ZC_DataProperty.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataProperty.Tpo src/$(DEPDIR)/libzc_la-ZC_DataProperty.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataProperty.c' object='src/libzc_la-ZC_DataProperty.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty.lo `test -f 'src/ZC_DataProperty.c' || echo '$(srcdir)/'`src/ZC_DataProperty.c
-
-src/libzc_la-ZC_CompareData_float.lo: src/ZC_CompareData_float.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData_float.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Tpo -c -o src/libzc_la-ZC_CompareData_float.lo `test -f 'src/ZC_CompareData_float.c' || echo '$(srcdir)/'`src/ZC_CompareData_float.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_CompareData_float.c' object='src/libzc_la-ZC_CompareData_float.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_CompareData_float.lo `test -f 'src/ZC_CompareData_float.c' || echo '$(srcdir)/'`src/ZC_CompareData_float.c
-
-src/libzc_la-ZC_CompareData_double.lo: src/ZC_CompareData_double.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData_double.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Tpo -c -o src/libzc_la-ZC_CompareData_double.lo `test -f 'src/ZC_CompareData_double.c' || echo '$(srcdir)/'`src/ZC_CompareData_double.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_CompareData_double.c' object='src/libzc_la-ZC_CompareData_double.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_CompareData_double.lo `test -f 'src/ZC_CompareData_double.c' || echo '$(srcdir)/'`src/ZC_CompareData_double.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataProperty.lo `test -f 'src/ZC_DataProperty.c' || echo '$(srcdir)/'`src/ZC_DataProperty.c
 
 src/libzc_la-ZC_CompareData.lo: src/ZC_CompareData.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData.Tpo -c -o src/libzc_la-ZC_CompareData.lo `test -f 'src/ZC_CompareData.c' || echo '$(srcdir)/'`src/ZC_CompareData.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_CompareData.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData.Tpo -c -o src/libzc_la-ZC_CompareData.lo `test -f 'src/ZC_CompareData.c' || echo '$(srcdir)/'`src/ZC_CompareData.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_CompareData.c' object='src/libzc_la-ZC_CompareData.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_CompareData.lo `test -f 'src/ZC_CompareData.c' || echo '$(srcdir)/'`src/ZC_CompareData.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_CompareData.lo `test -f 'src/ZC_CompareData.c' || echo '$(srcdir)/'`src/ZC_CompareData.c
 
 src/libzc_la-DynamicIntArray.lo: src/DynamicIntArray.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicIntArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicIntArray.Tpo -c -o src/libzc_la-DynamicIntArray.lo `test -f 'src/DynamicIntArray.c' || echo '$(srcdir)/'`src/DynamicIntArray.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicIntArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicIntArray.Tpo -c -o src/libzc_la-DynamicIntArray.lo `test -f 'src/DynamicIntArray.c' || echo '$(srcdir)/'`src/DynamicIntArray.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-DynamicIntArray.Tpo src/$(DEPDIR)/libzc_la-DynamicIntArray.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/DynamicIntArray.c' object='src/libzc_la-DynamicIntArray.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicIntArray.lo `test -f 'src/DynamicIntArray.c' || echo '$(srcdir)/'`src/DynamicIntArray.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicIntArray.lo `test -f 'src/DynamicIntArray.c' || echo '$(srcdir)/'`src/DynamicIntArray.c
 
 src/libzc_la-DynamicFloatArray.lo: src/DynamicFloatArray.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicFloatArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicFloatArray.Tpo -c -o src/libzc_la-DynamicFloatArray.lo `test -f 'src/DynamicFloatArray.c' || echo '$(srcdir)/'`src/DynamicFloatArray.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicFloatArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicFloatArray.Tpo -c -o src/libzc_la-DynamicFloatArray.lo `test -f 'src/DynamicFloatArray.c' || echo '$(srcdir)/'`src/DynamicFloatArray.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-DynamicFloatArray.Tpo src/$(DEPDIR)/libzc_la-DynamicFloatArray.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/DynamicFloatArray.c' object='src/libzc_la-DynamicFloatArray.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicFloatArray.lo `test -f 'src/DynamicFloatArray.c' || echo '$(srcdir)/'`src/DynamicFloatArray.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicFloatArray.lo `test -f 'src/DynamicFloatArray.c' || echo '$(srcdir)/'`src/DynamicFloatArray.c
 
 src/libzc_la-DynamicDoubleArray.lo: src/DynamicDoubleArray.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicDoubleArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicDoubleArray.Tpo -c -o src/libzc_la-DynamicDoubleArray.lo `test -f 'src/DynamicDoubleArray.c' || echo '$(srcdir)/'`src/DynamicDoubleArray.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicDoubleArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicDoubleArray.Tpo -c -o src/libzc_la-DynamicDoubleArray.lo `test -f 'src/DynamicDoubleArray.c' || echo '$(srcdir)/'`src/DynamicDoubleArray.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-DynamicDoubleArray.Tpo src/$(DEPDIR)/libzc_la-DynamicDoubleArray.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/DynamicDoubleArray.c' object='src/libzc_la-DynamicDoubleArray.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicDoubleArray.lo `test -f 'src/DynamicDoubleArray.c' || echo '$(srcdir)/'`src/DynamicDoubleArray.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicDoubleArray.lo `test -f 'src/DynamicDoubleArray.c' || echo '$(srcdir)/'`src/DynamicDoubleArray.c
 
 src/libzc_la-DynamicByteArray.lo: src/DynamicByteArray.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicByteArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicByteArray.Tpo -c -o src/libzc_la-DynamicByteArray.lo `test -f 'src/DynamicByteArray.c' || echo '$(srcdir)/'`src/DynamicByteArray.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-DynamicByteArray.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-DynamicByteArray.Tpo -c -o src/libzc_la-DynamicByteArray.lo `test -f 'src/DynamicByteArray.c' || echo '$(srcdir)/'`src/DynamicByteArray.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-DynamicByteArray.Tpo src/$(DEPDIR)/libzc_la-DynamicByteArray.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/DynamicByteArray.c' object='src/libzc_la-DynamicByteArray.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicByteArray.lo `test -f 'src/DynamicByteArray.c' || echo '$(srcdir)/'`src/DynamicByteArray.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-DynamicByteArray.lo `test -f 'src/DynamicByteArray.c' || echo '$(srcdir)/'`src/DynamicByteArray.c
 
 src/libzc_la-ZC_latex.lo: src/ZC_latex.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_latex.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_latex.Tpo -c -o src/libzc_la-ZC_latex.lo `test -f 'src/ZC_latex.c' || echo '$(srcdir)/'`src/ZC_latex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_latex.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_latex.Tpo -c -o src/libzc_la-ZC_latex.lo `test -f 'src/ZC_latex.c' || echo '$(srcdir)/'`src/ZC_latex.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_latex.Tpo src/$(DEPDIR)/libzc_la-ZC_latex.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_latex.c' object='src/libzc_la-ZC_latex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_latex.lo `test -f 'src/ZC_latex.c' || echo '$(srcdir)/'`src/ZC_latex.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_latex.lo `test -f 'src/ZC_latex.c' || echo '$(srcdir)/'`src/ZC_latex.c
 
 src/libzc_la-ZC_ReportGenerator.lo: src/ZC_ReportGenerator.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_ReportGenerator.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Tpo -c -o src/libzc_la-ZC_ReportGenerator.lo `test -f 'src/ZC_ReportGenerator.c' || echo '$(srcdir)/'`src/ZC_ReportGenerator.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_ReportGenerator.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Tpo -c -o src/libzc_la-ZC_ReportGenerator.lo `test -f 'src/ZC_ReportGenerator.c' || echo '$(srcdir)/'`src/ZC_ReportGenerator.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Tpo src/$(DEPDIR)/libzc_la-ZC_ReportGenerator.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_ReportGenerator.c' object='src/libzc_la-ZC_ReportGenerator.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_ReportGenerator.lo `test -f 'src/ZC_ReportGenerator.c' || echo '$(srcdir)/'`src/ZC_ReportGenerator.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_ReportGenerator.lo `test -f 'src/ZC_ReportGenerator.c' || echo '$(srcdir)/'`src/ZC_ReportGenerator.c
 
 src/libzc_la-ZC_quicksort.lo: src/ZC_quicksort.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_quicksort.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_quicksort.Tpo -c -o src/libzc_la-ZC_quicksort.lo `test -f 'src/ZC_quicksort.c' || echo '$(srcdir)/'`src/ZC_quicksort.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_quicksort.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_quicksort.Tpo -c -o src/libzc_la-ZC_quicksort.lo `test -f 'src/ZC_quicksort.c' || echo '$(srcdir)/'`src/ZC_quicksort.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_quicksort.Tpo src/$(DEPDIR)/libzc_la-ZC_quicksort.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_quicksort.c' object='src/libzc_la-ZC_quicksort.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_quicksort.lo `test -f 'src/ZC_quicksort.c' || echo '$(srcdir)/'`src/ZC_quicksort.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_quicksort.lo `test -f 'src/ZC_quicksort.c' || echo '$(srcdir)/'`src/ZC_quicksort.c
 
 src/libzc_la-ZC_rw.lo: src/ZC_rw.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_rw.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_rw.Tpo -c -o src/libzc_la-ZC_rw.lo `test -f 'src/ZC_rw.c' || echo '$(srcdir)/'`src/ZC_rw.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_rw.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_rw.Tpo -c -o src/libzc_la-ZC_rw.lo `test -f 'src/ZC_rw.c' || echo '$(srcdir)/'`src/ZC_rw.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_rw.Tpo src/$(DEPDIR)/libzc_la-ZC_rw.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_rw.c' object='src/libzc_la-ZC_rw.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_rw.lo `test -f 'src/ZC_rw.c' || echo '$(srcdir)/'`src/ZC_rw.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_rw.lo `test -f 'src/ZC_rw.c' || echo '$(srcdir)/'`src/ZC_rw.c
 
 src/libzc_la-ZC_conf.lo: src/ZC_conf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_conf.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_conf.Tpo -c -o src/libzc_la-ZC_conf.lo `test -f 'src/ZC_conf.c' || echo '$(srcdir)/'`src/ZC_conf.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_conf.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_conf.Tpo -c -o src/libzc_la-ZC_conf.lo `test -f 'src/ZC_conf.c' || echo '$(srcdir)/'`src/ZC_conf.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_conf.Tpo src/$(DEPDIR)/libzc_la-ZC_conf.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_conf.c' object='src/libzc_la-ZC_conf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_conf.lo `test -f 'src/ZC_conf.c' || echo '$(srcdir)/'`src/ZC_conf.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_conf.lo `test -f 'src/ZC_conf.c' || echo '$(srcdir)/'`src/ZC_conf.c
 
 src/libzc_la-dictionary.lo: src/dictionary.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-dictionary.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-dictionary.Tpo -c -o src/libzc_la-dictionary.lo `test -f 'src/dictionary.c' || echo '$(srcdir)/'`src/dictionary.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-dictionary.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-dictionary.Tpo -c -o src/libzc_la-dictionary.lo `test -f 'src/dictionary.c' || echo '$(srcdir)/'`src/dictionary.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-dictionary.Tpo src/$(DEPDIR)/libzc_la-dictionary.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/dictionary.c' object='src/libzc_la-dictionary.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-dictionary.lo `test -f 'src/dictionary.c' || echo '$(srcdir)/'`src/dictionary.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-dictionary.lo `test -f 'src/dictionary.c' || echo '$(srcdir)/'`src/dictionary.c
 
 src/libzc_la-ZC_util.lo: src/ZC_util.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_util.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_util.Tpo -c -o src/libzc_la-ZC_util.lo `test -f 'src/ZC_util.c' || echo '$(srcdir)/'`src/ZC_util.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_util.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_util.Tpo -c -o src/libzc_la-ZC_util.lo `test -f 'src/ZC_util.c' || echo '$(srcdir)/'`src/ZC_util.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_util.Tpo src/$(DEPDIR)/libzc_la-ZC_util.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_util.c' object='src/libzc_la-ZC_util.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_util.lo `test -f 'src/ZC_util.c' || echo '$(srcdir)/'`src/ZC_util.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_util.lo `test -f 'src/ZC_util.c' || echo '$(srcdir)/'`src/ZC_util.c
 
 src/libzc_la-zc.lo: src/zc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-zc.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-zc.Tpo -c -o src/libzc_la-zc.lo `test -f 'src/zc.c' || echo '$(srcdir)/'`src/zc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-zc.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-zc.Tpo -c -o src/libzc_la-zc.lo `test -f 'src/zc.c' || echo '$(srcdir)/'`src/zc.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-zc.Tpo src/$(DEPDIR)/libzc_la-zc.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/zc.c' object='src/libzc_la-zc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-zc.lo `test -f 'src/zc.c' || echo '$(srcdir)/'`src/zc.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-zc.lo `test -f 'src/zc.c' || echo '$(srcdir)/'`src/zc.c
 
 src/libzc_la-ZC_DataSetHandler.lo: src/ZC_DataSetHandler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataSetHandler.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Tpo -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_DataSetHandler.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Tpo -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Tpo src/$(DEPDIR)/libzc_la-ZC_DataSetHandler.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_DataSetHandler.c' object='src/libzc_la-ZC_DataSetHandler.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_DataSetHandler.lo `test -f 'src/ZC_DataSetHandler.c' || echo '$(srcdir)/'`src/ZC_DataSetHandler.c
 
 src/libzc_la-ZC_ssim.lo: src/ZC_ssim.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_ssim.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_ssim.Tpo -c -o src/libzc_la-ZC_ssim.lo `test -f 'src/ZC_ssim.c' || echo '$(srcdir)/'`src/ZC_ssim.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_ssim.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_ssim.Tpo -c -o src/libzc_la-ZC_ssim.lo `test -f 'src/ZC_ssim.c' || echo '$(srcdir)/'`src/ZC_ssim.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_ssim.Tpo src/$(DEPDIR)/libzc_la-ZC_ssim.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_ssim.c' object='src/libzc_la-ZC_ssim.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_ssim.lo `test -f 'src/ZC_ssim.c' || echo '$(srcdir)/'`src/ZC_ssim.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_ssim.lo `test -f 'src/ZC_ssim.c' || echo '$(srcdir)/'`src/ZC_ssim.c
 
 src/libzc_la-ZC_FFTW3_math.lo: src/ZC_FFTW3_math.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_FFTW3_math.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Tpo -c -o src/libzc_la-ZC_FFTW3_math.lo `test -f 'src/ZC_FFTW3_math.c' || echo '$(srcdir)/'`src/ZC_FFTW3_math.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_FFTW3_math.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Tpo -c -o src/libzc_la-ZC_FFTW3_math.lo `test -f 'src/ZC_FFTW3_math.c' || echo '$(srcdir)/'`src/ZC_FFTW3_math.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Tpo src/$(DEPDIR)/libzc_la-ZC_FFTW3_math.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_FFTW3_math.c' object='src/libzc_la-ZC_FFTW3_math.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_FFTW3_math.lo `test -f 'src/ZC_FFTW3_math.c' || echo '$(srcdir)/'`src/ZC_FFTW3_math.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_FFTW3_math.lo `test -f 'src/ZC_FFTW3_math.c' || echo '$(srcdir)/'`src/ZC_FFTW3_math.c
 
 src/libzc_la-ZC_R_math.lo: src/ZC_R_math.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_R_math.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_R_math.Tpo -c -o src/libzc_la-ZC_R_math.lo `test -f 'src/ZC_R_math.c' || echo '$(srcdir)/'`src/ZC_R_math.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -MT src/libzc_la-ZC_R_math.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_R_math.Tpo -c -o src/libzc_la-ZC_R_math.lo `test -f 'src/ZC_R_math.c' || echo '$(srcdir)/'`src/ZC_R_math.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_R_math.Tpo src/$(DEPDIR)/libzc_la-ZC_R_math.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ZC_R_math.c' object='src/libzc_la-ZC_R_math.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_R_math.lo `test -f 'src/ZC_R_math.c' || echo '$(srcdir)/'`src/ZC_R_math.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(libzc_la_CFLAGS) $(CFLAGS) -c -o src/libzc_la-ZC_R_math.lo `test -f 'src/ZC_R_math.c' || echo '$(srcdir)/'`src/ZC_R_math.c
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+src/libzc_la-ZC_CompareData_float.lo: src/ZC_CompareData_float.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/libzc_la-ZC_CompareData_float.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Tpo -c -o src/libzc_la-ZC_CompareData_float.lo `test -f 'src/ZC_CompareData_float.cpp' || echo '$(srcdir)/'`src/ZC_CompareData_float.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData_float.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ZC_CompareData_float.cpp' object='src/libzc_la-ZC_CompareData_float.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/libzc_la-ZC_CompareData_float.lo `test -f 'src/ZC_CompareData_float.cpp' || echo '$(srcdir)/'`src/ZC_CompareData_float.cpp
+
+src/libzc_la-ZC_CompareData_double.lo: src/ZC_CompareData_double.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/libzc_la-ZC_CompareData_double.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Tpo -c -o src/libzc_la-ZC_CompareData_double.lo `test -f 'src/ZC_CompareData_double.cpp' || echo '$(srcdir)/'`src/ZC_CompareData_double.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Tpo src/$(DEPDIR)/libzc_la-ZC_CompareData_double.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/ZC_CompareData_double.cpp' object='src/libzc_la-ZC_CompareData_double.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/libzc_la-ZC_CompareData_double.lo `test -f 'src/ZC_CompareData_double.cpp' || echo '$(srcdir)/'`src/ZC_CompareData_double.cpp
+
+src/libzc_la-zc_derivativeMetrics.lo: src/zc_derivativeMetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/libzc_la-zc_derivativeMetrics.lo -MD -MP -MF src/$(DEPDIR)/libzc_la-zc_derivativeMetrics.Tpo -c -o src/libzc_la-zc_derivativeMetrics.lo `test -f 'src/zc_derivativeMetrics.cpp' || echo '$(srcdir)/'`src/zc_derivativeMetrics.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libzc_la-zc_derivativeMetrics.Tpo src/$(DEPDIR)/libzc_la-zc_derivativeMetrics.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/zc_derivativeMetrics.cpp' object='src/libzc_la-zc_derivativeMetrics.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzc_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/libzc_la-zc_derivativeMetrics.lo `test -f 'src/zc_derivativeMetrics.cpp' || echo '$(srcdir)/'`src/zc_derivativeMetrics.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
