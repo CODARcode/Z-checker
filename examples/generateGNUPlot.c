@@ -23,6 +23,7 @@ int main(int argc, char * argv[])
     modifyZCConfig(header, "checkingStatus", "COMPARE_COMPRESSOR");
     ZC_writeLines(header, zc_cfgFile);
 
+    checkingStatus = COMPARE_COMPRESSOR;
     ZC_Init(zc_cfgFile);
     if(checkingStatus!=COMPARE_COMPRESSOR)
     {
