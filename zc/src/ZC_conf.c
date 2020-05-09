@@ -208,7 +208,7 @@ int ZC_ReadConf() {
 		printf("Error: Wrong dataEndianType: please set it correctly in zc.config.\n");
 		exit(0);
 	}
-	if(checkingStatus!=-1) //this means that the checkingStatus has been set externally, e.g., in analyzeDataProperty.c
+	if(checkingStatus==-1) //this means that the checkingStatus has been set externally, e.g., in analyzeDataProperty.c
 	{
 		checkingStatusString = iniparser_getstring(ini, "ENV:checkingStatus", NULL);
 		if(strcmp(checkingStatusString, "PROBE_COMPRESSOR")==0 || strcmp(checkingStatusString, "probe_compressor")==0)
