@@ -47,6 +47,10 @@ StringLine* ZC_generateCompressionFactorFigure();
 
 StringLine* ZC_generateStaticAnalysisFigures(const char* metricType, CmprsorErrBound *allCompressors, int allCompressorCount);
 
+StringLine* ZC_generateRateDistortionFigure();
+
+StringLine* ZC_generateRateDerivativesFigure();
+
 #ifdef __cplusplus
 }
 #endif

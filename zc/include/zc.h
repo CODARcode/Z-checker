@@ -358,6 +358,7 @@ void ZC_plotSliceImage();
 
 void ZC_generateCompressionFactorReport();
 void ZC_generateRateDistortionReport();
+void ZC_generateRateDerivativesReport();
 void ZC_generateRateCorrelationReport();
 void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
 void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompressorCount);
