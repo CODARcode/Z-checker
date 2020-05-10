@@ -493,7 +493,10 @@ StringLine* ZC_generateRateDerivativesFigure()
 		free(fileName);
 	}
 	
-	StringLine* header = NULL, header2 = NULL, header3 = NULL, header4 = NULL;
+	StringLine* header = NULL; 
+	StringLine* header2 = NULL; 
+	StringLine* header3 = NULL; 
+	StringLine* header4 = NULL;
 	
 	if(derivativeOrder1_psnrFlag)
 		header = ZC_generateComparisonFigTexLines(varCount, varFiles, 
