@@ -56,7 +56,8 @@ ZC_CompareData* ZC_constructCompareResult(char* varName, double compressTime, do
 size_t compressSize, double decompressTime, double decompressRate, double minAbsErr, double avgAbsErr, double maxAbsErr, 
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF, int compressionMode, 
-double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max)
+double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max, 
+double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim)
 {
 	ZC_CompareData* result = (ZC_CompareData*)malloc(sizeof(struct ZC_CompareData));
 	memset(result, 0, sizeof(struct ZC_CompareData));
@@ -92,6 +93,10 @@ double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max)
 	result->ssimImage2D_min = ssimImage2D_min;
 	result->ssimImage2D_avg = ssimImage2D_avg;
 	result->ssimImage2D_max = ssimImage2D_max;
+	result->derivativeOrder1_psnr = derivativeOrder1_psnr;
+	result->derivativeOrder2_psnr = derivativeOrder2_psnr;
+	result->derivativeOrder1_ssim = derivativeOrder1_ssim;
+	result->derivativeOrder2_ssim = derivativeOrder2_ssim;
 	return result;
 }
 
@@ -598,13 +603,18 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 		
 	double ssimImage2D_min = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_min", 0);	
 	double ssimImage2D_avg = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_avg", 0);	
-	double ssimImage2D_max = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_max", 0);	
+	double ssimImage2D_max = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_max", 0);
+	
+	double derivativeOrder1_psnr = (double)iniparser_getdouble(ini, "COMPARE:derivativeOrder1_psnr", -1);	
+	double derivativeOrder2_psnr = (double)iniparser_getdouble(ini, "COMPARE:derivativeOrder2_psnr", -1);
+	double derivativeOrder1_ssim = (double)iniparser_getdouble(ini, "COMPARE:derivativeOrder1_ssim", -1);
+	double derivativeOrder2_ssim = (double)iniparser_getdouble(ini, "COMPARE:derivativeOrder2_ssim", -1);
 		
 	ZC_CompareData* compareResult = ZC_constructCompareResult(var, 
 	compressTime, compressRate, compressRatio, rate, 
 	compressSize, decompressTime, decompressRate, minAbsErr, avgAbsErr, maxAbsErr, minRelErr, avgRelErr, maxRelErr, 
 	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF, compressionMode, 
-	ssimImage2D_min, ssimImage2D_avg, ssimImage2D_max);
+	ssimImage2D_min, ssimImage2D_avg, ssimImage2D_max, derivativeOrder1_psnr, derivativeOrder2_psnr, derivativeOrder1_ssim, derivativeOrder2_ssim);
 	
 	iniparser_freedict(ini);
 	

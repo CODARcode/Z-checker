@@ -899,6 +899,95 @@ void ZC_plotRateDistortion()
 	}
 }
 
+void ZC_plotRateDistortion_1st_derivative_psnr()
+{
+	if(compressors_count==0)
+	{
+		printf("Error: compressors_count==0.\n Please run ZC_Init(config) first.\n");
+		exit(0);
+	}
+	size_t i, j;
+	
+	//select variables
+	char** variables = ht_getAllKeys(ecPropertyTable);
+	for(i=0;i<ecPropertyTable->count;i++)
+	{
+		int count, validLineNum; //count: the number of test-cases
+		char** cmpResList = getCompResKeyList(variables[i], &count);
+		char** dataLines_psnr = extractRateDistortion_psnr(count, cmpResList, &validLineNum);
+		if(dataLines_psnr!=NULL&&validLineNum>0)
+		{
+			char fileName[ZC_BUFS];
+			sprintf(fileName, "rate-distortion_psnr_%s.txt", variables[i]);
+			ZC_writeStrings(count+1, dataLines_psnr, fileName);		
+			
+			//TODO: generate the GNUPLOT script.
+			sprintf(fileName, "rate-distortion_psnr_%s", variables[i]);
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "PSNR");
+			sprintf(fileName, "rate-distortion_psnr_%s.p", variables[i]);
+			ZC_writeStrings(24, scriptLines, fileName);
+			char cmd[ZC_BUFS];
+			sprintf(cmd, "gnuplot %s", fileName);
+			system(cmd);
+			for(j=0;j<24;j++)
+				free(scriptLines[j]);
+			free(scriptLines);
+						
+			for(j=0;j<count+1;j++)
+				if(dataLines_psnr[j]!=NULL) free(dataLines_psnr[j]);
+			
+		}
+		
+		char** dataLines_snr = extractRateDistortion_snr(count, cmpResList, &validLineNum);
+		if(dataLines_snr!=NULL&&validLineNum>0)
+		{
+			char fileName[ZC_BUFS];
+			sprintf(fileName, "rate-distortion_snr_%s.txt", variables[i]);
+			ZC_writeStrings(count+1, dataLines_snr, fileName);		
+			
+			//TODO: generate the GNUPLOT script.
+			sprintf(fileName, "rate-distortion_snr_%s", variables[i]);
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Distortion");
+			sprintf(fileName, "rate-distortion_snr_%s.p", variables[i]);
+			ZC_writeStrings(24, scriptLines, fileName);
+			char cmd[ZC_BUFS];
+			sprintf(cmd, "gnuplot %s", fileName);
+			system(cmd);
+			for(j=0;j<24;j++)
+				free(scriptLines[j]);
+			free(scriptLines);			
+			
+			for(j=0;j<count+1;j++)
+				if(dataLines_snr[j]!=NULL) free(dataLines_snr[j]);						
+		}
+
+		char** dataLines_valErrCorr = extractRateCorrelation(count, cmpResList, &validLineNum);
+		if(dataLines_valErrCorr!=NULL&&validLineNum>0)
+		{
+			char fileName[ZC_BUFS];
+			sprintf(fileName, "rate-corr_%s.txt", variables[i]);
+			ZC_writeStrings(count+1, dataLines_valErrCorr, fileName);
+
+			//TODO: generate the GNUPLOT script.
+			sprintf(fileName, "rate-corr_%s", variables[i]);
+			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Correlation");
+			sprintf(fileName, "rate-corr_%s.p", variables[i]);
+			ZC_writeStrings(24, scriptLines, fileName);
+			char cmd[ZC_BUFS];
+			sprintf(cmd, "gnuplot %s", fileName);
+			system(cmd);
+			for(j=0;j<24;j++)
+				free(scriptLines[j]);
+			free(scriptLines);
+			
+			for(j=0;j<count+1;j++)
+				if(dataLines_valErrCorr[j]!=NULL) free(dataLines_valErrCorr[j]);
+		}
+		
+		free(cmpResList);
+	}
+}
+
 char** getCompResKeyList(char* var, int* count)
 {
 	size_t i, j = 0;
@@ -1455,7 +1544,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	zcv = (ZC_CompareData*)ht_get(ecCompareDataTable, name);
 	if(zcv==NULL)
 	{
-		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
+		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
 		zcv->property = property;
 		zcv->dec_data = NULL;
 	}

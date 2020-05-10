@@ -344,6 +344,7 @@ char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validL
 char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineNum);
 void ZC_plotRateDistortion();
+void ZC_plotRateDistortion_1st_derivative_psnr();
 
 void ZC_plotAutoCorr_CompressError();
 void ZC_plotAutoCorr_DataProperty();
