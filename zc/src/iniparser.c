@@ -411,6 +411,7 @@ int iniparser_getint(dictionary * d, const char * key, int notfound)
 
     str = iniparser_getstring(d, key, INI_INVALID_KEY);
     if (str==INI_INVALID_KEY) return notfound ;
+    if(strcmp(str, "-")==0) return notfound;
     return (int)strtol(str, NULL, 0);
 }
 
@@ -432,6 +433,7 @@ long iniparser_getlint(dictionary * d, const char * key, int notfound)
 
     str = iniparser_getstring(d, key, INI_INVALID_KEY);
     if (str==INI_INVALID_KEY) return notfound ;
+    if(strcmp(str, "-")==0) return notfound;
     return strtol(str, NULL, 0);
 }
 
@@ -454,6 +456,7 @@ double iniparser_getdouble(dictionary * d, const char * key, double notfound)
 
     str = iniparser_getstring(d, key, INI_INVALID_KEY);
     if (str==INI_INVALID_KEY) return notfound ;
+    if(strcmp(str, "-")==0) return notfound;
     return atof(str);
 }
 

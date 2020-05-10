@@ -343,8 +343,11 @@ char** getCompResKeyList(char* var, int* count);
 char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_psnr(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative2_psnr(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_ssim(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative2_ssim(int totalCount, char** cmpResList, int* validLineNum);
 void ZC_plotRateDistortion();
-void ZC_plotRateDistortion_1st_derivative_psnr();
 
 void ZC_plotAutoCorr_CompressError();
 void ZC_plotAutoCorr_DataProperty();
