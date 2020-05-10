@@ -501,40 +501,33 @@ StringLine* ZC_generateRateDerivativesFigure()
 	if(derivativeOrder1_psnrFlag)
 		header = ZC_generateComparisonFigTexLines(varCount, varFiles, 
 			"compareCompressors", "rate-rate-distortion_derv1_psnr", "Rate Distortion (Derivative(1st Order)-PSNR vs. Bit-rate)");
-
 	if(derivativeOrder2_psnrFlag)
 		header2 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
 			"compareCompressors", "rate-rate-distortion_derv2_psnr", "Rate Distortion (Derivative(2nd Order)-PSNR vs. Bit-rate)");	
-
 	if(derivativeOrder1_ssimFlag)
 		header3 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
 			"compareCompressors", "rate-rate-distortion_derv1_ssim", "Rate Distortion (Derivative(1st Order)-SSIM vs. Bit-rate)");	
-	
 	if(derivativeOrder2_ssimFlag)
 		header4 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
 			"compareCompressors", "rate-rate-distortion_derv2_ssim", "Rate Distortion (Derivative(2nd Order)-SSIM vs. Bit-rate)");	
-	
 	if(header != NULL)
 	{
 		ZC_appendLines(header, header2);
 		ZC_appendLines(header, header3);
 		ZC_appendLines(header, header4);
 	}
-	
-	if(header2 != NULL)
+	else if(header2 != NULL)
 	{
 		ZC_appendLines(header2, header3);
 		ZC_appendLines(header2, header4);		
 		header = header2;
 	}
-
-	if(header3 != NULL)
+	else if(header3 != NULL)
 	{
 		ZC_appendLines(header3, header4);		
 		header = header3;	
 	}
-		
-	if(header4 != NULL)
+	else if(header4 != NULL)
 	{
 		header = header4;	
 	}	
