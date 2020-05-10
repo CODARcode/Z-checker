@@ -500,16 +500,16 @@ StringLine* ZC_generateRateDerivativesFigure()
 	
 	if(derivativeOrder1_psnrFlag)
 		header = ZC_generateComparisonFigTexLines(varCount, varFiles, 
-			"compareCompressors", "rate-rate-distortion_derv1_psnr", "Rate Distortion (Derivative(1st Order)-PSNR vs. Bit-rate)");
+			"compareCompressors", "rate-distortion_derv1_psnr", "Rate Distortion (Derivative(1st Order)-PSNR vs. Bit-rate)");
 	if(derivativeOrder2_psnrFlag)
 		header2 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
-			"compareCompressors", "rate-rate-distortion_derv2_psnr", "Rate Distortion (Derivative(2nd Order)-PSNR vs. Bit-rate)");	
+			"compareCompressors", "rate-distortion_derv2_psnr", "Rate Distortion (Derivative(2nd Order)-PSNR vs. Bit-rate)");	
 	if(derivativeOrder1_ssimFlag)
 		header3 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
-			"compareCompressors", "rate-rate-distortion_derv1_ssim", "Rate Distortion (Derivative(1st Order)-SSIM vs. Bit-rate)");	
+			"compareCompressors", "rate-distortion_derv1_ssim", "Rate Distortion (Derivative(1st Order)-SSIM vs. Bit-rate)");	
 	if(derivativeOrder2_ssimFlag)
 		header4 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
-			"compareCompressors", "rate-rate-distortion_derv2_ssim", "Rate Distortion (Derivative(2nd Order)-SSIM vs. Bit-rate)");	
+			"compareCompressors", "rate-distortion_derv2_ssim", "Rate Distortion (Derivative(2nd Order)-SSIM vs. Bit-rate)");	
 	if(header != NULL)
 	{
 		ZC_appendLines(header, header2);
