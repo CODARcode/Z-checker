@@ -941,7 +941,7 @@ void ZC_plotRateDistortion()
 				if(dataLines_derv2_psnr[j]!=NULL) free(dataLines_derv2_psnr[j]);						
 		}
 
-		char** dataLines_derv1_ssim = extractRateDistortion_Derivative2_psnr(count, cmpResList, &validLineNum);
+		char** dataLines_derv1_ssim = extractRateDistortion_Derivative1_ssim(count, cmpResList, &validLineNum);
 		if(dataLines_derv1_ssim!=NULL&&validLineNum>0)
 		{
 			char fileName[ZC_BUFS];
@@ -964,7 +964,7 @@ void ZC_plotRateDistortion()
 				if(dataLines_derv1_ssim[j]!=NULL) free(dataLines_derv1_ssim[j]);						
 		}
 
-		char** dataLines_derv2_ssim = extractRateDistortion_Derivative2_psnr(count, cmpResList, &validLineNum);
+		char** dataLines_derv2_ssim = extractRateDistortion_Derivative2_ssim(count, cmpResList, &validLineNum);
 		if(dataLines_derv2_ssim!=NULL&&validLineNum>0)
 		{
 			char fileName[ZC_BUFS];
