@@ -1,20 +1,20 @@
 AUTOMAKE_OPTIONS=foreign
 if FFTW3
-AM_CFLAGS = -I../zc/include -lfftw3 -DHAVE_FFTW3
+AM_CPPFLAGS = -I../zc/include -lfftw3 -DHAVE_FFTW3
 else
-AM_CFLAGS = -I../zc/include
+AM_CPPFLAGS = -I../zc/include
 endif
 if R
-AM_CFLAGS += $(R_HDR) -lR -I../R/src -DHAVE_R
+AM_CPPFLAGS += $(R_HDR) -lR -I../R/src -DHAVE_R
 endif
 if ZSERVER
-AM_CFLAGS += $(ZSERVER_HDR) $(ZSERVER_STATIC) $(ZSERVER_LIBS) $(ZSERVER_LIB) -DHAVE_ONLINEVIS
+AM_CPPFLAGS += $(ZSERVER_HDR) $(ZSERVER_STATIC) $(ZSERVER_LIBS) $(ZSERVER_LIB) -DHAVE_ONLINEVIS
 endif
 if MPI
-AM_CFLAGS += -DHAVE_MPI
+AM_CPPFLAGS += -DHAVE_MPI
 endif
 
-bin_PROGRAMS=modifyZCConfig analyzeDataProperty compareDataSets generateGNUPlot generateReport runOfflineCase
+bin_PROGRAMS=modifyZCConfig analyzeDataProperty compareDataSets generateGNUPlot generateReport runOfflineCase derAnalyzer
 
 if MPI
 bin_PROGRAMS+=analyzeDataProperty_online compareDataSets_online
@@ -50,6 +50,10 @@ modifyZCConfig_LDADD+=../R/.libs/libzccallr.a
 endif
 runOfflineCase_SOURCES=runOfflineCase.c
 runOfflineCase_LDADD=-lzc -L../zc/.libs -lm
+
+derAnalyzer_SOURCES=derAnalyzer.cpp
+derAnalyzer_LDADD=-lzc -L../zc/.libs -lm
+
 if R
 runOfflineCase_LDADD+=../R/.libs/libzccallr.a
 endif
