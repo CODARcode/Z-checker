@@ -334,6 +334,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	{			
 		int status = 0;
 		zc_analyze_der_order1_float(data1, data2, dim, r4, r3, r2, r1, &status, 
+		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),  //AMG: This line needs fixing!
 		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),
 		&(compareResult->psnrDx), &(compareResult->psnrDy), &(compareResult->psnrDz), &(compareResult->psnrDt),
 		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));

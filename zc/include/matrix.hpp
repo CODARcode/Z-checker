@@ -180,12 +180,14 @@ double zc_calc_metric_der_order2_psnr_double(double *data1, double *data2,
     
 void zc_analyze_der_order1_float(float *data1, float *data2,
   size_t dim, size_t r4, size_t r3, size_t r2, size_t r1, int *status,
+  double *maxDx, double *maxDy, double *maxDz, double *maxDt,  //Max of dx, dy, dx, dt
   double *maxErrDx, double *maxErrDy, double *maxErrDz, double *maxErrDt,  //Max error of dx, dy, dx, dt
   double *psnrDx, double *psnrDy, double *psnrDz, double *psnrDt,  //PSNR of dx, dy, dx, dt
   double *ssimDx, double *ssimDy, double *ssimDz, double *ssimDt  //SSIM of dx, dy, dx, dt
   );
 void zc_analyze_der_order1_double(double *data1, double *data2,
   size_t dim, size_t r4, size_t r3, size_t r2, size_t r1, int *status,
+  double *maxDx, double *maxDy, double *maxDz, double *maxDt,  //Max of dx, dy, dx, dt
   double *maxErrDx, double *maxErrDy, double *maxErrDz, double *maxErrDt,  //Max error of dx, dy, dx, dt
   double *psnrDx, double *psnrDy, double *psnrDz, double *psnrDt,  //PSNR of dx, dy, dx, dt
   double *ssimDx, double *ssimDy, double *ssimDz, double *ssimDt  //SSIM of dx, dy, dx, dt
