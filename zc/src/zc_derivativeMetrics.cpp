@@ -281,28 +281,34 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
   
   *status=-1;
   
+  int minDim;
+  if(derivative1_sep_maxDiffFlag)
+    minDim=2+ssimSize;
+  else
+    minDim=3;
+    
   if(dim<1){
     cout<<"ERROR: Dimension less than 1!"<<endl;
     *status=1;
     return;
-  }else if(dim==1 && r1<3){
-    cout<<"ERROR: dim=1, but r1<3."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }if(dim==1 && r1<minDim){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
-  }else if(dim==2 && (r1<3 || r2<3)){
-    cout<<"ERROR: dim=1, but { r1<3 or r2<3 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==2 && (r1<minDim || r2<minDim)){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" or r2<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
-  }else if(dim==3 && (r1<3 || r2<3 || r3<3)){
-    cout<<"ERROR: dim=1, but { r1<3 or r2<3 or r3<3 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==3 && (r1<minDim || r2<minDim || r3<minDim)){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" or r2<"<<minDim<<" or r3<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
-  }else if(dim==4 && (r1<3 || r2<3 || r3<3 || r4<3)){
-    cout<<"ERROR: dim=1, but { r1<3 or r2<3 or r3<3 or r4<3 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==4 && (r1<minDim || r2<minDim || r3<minDim || r4<minDim)){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" or r2<"<<minDim<<" or r3<"<<minDim<<" or r4<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
   }else if(dim>4){
@@ -500,24 +506,24 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
     cout<<"ERROR: Dimension less than 1!"<<endl;
     *status=1;
     return;
-  }else if(dim==1 && r1<3){
-    cout<<"ERROR: dim=1, but r1<3."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==1 && r1<5){
+    cout<<"ERROR: dim=1, but r1<5."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
     *status=1;
     return;
-  }else if(dim==2 && (r1<3 || r2<3)){
-    cout<<"ERROR: dim=1, but { r1<3 or r2<3 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==2 && (r1<5 || r2<5)){
+    cout<<"ERROR: dim=1, but { r1<5 or r2<5 }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
     *status=1;
     return;
-  }else if(dim==3 && (r1<3 || r2<3 || r3<3)){
-    cout<<"ERROR: dim=1, but { r1<3 or r2<3 or r3<3 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==3 && (r1<5 || r2<5 || r3<5)){
+    cout<<"ERROR: dim=1, but { r1<5 or r2<5 or r3<5 }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
     *status=1;
     return;
-  }else if(dim==4 && (r1<3 || r2<3 || r3<3 || r4<3)){
-    cout<<"ERROR: dim=1, but { r1<3 or r2<3 or r3<3 or r4<3 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 PSNR analysis require every valid dimension to be at least 3."<<endl;
+  }else if(dim==4 && (r1<5 || r2<5 || r3<5 || r4<5)){
+    cout<<"ERROR: dim=1, but { r1<5 or r2<5 or r3<5 or r4<5 }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
     *status=1;
     return;
   }else if(dim>4){

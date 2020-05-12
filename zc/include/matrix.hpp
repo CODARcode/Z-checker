@@ -113,6 +113,7 @@ public:
 //others.hpp:
   double PSNR(matrix &other);
   dT maxDiff(matrix &other);
+  double sobolevNorm_s1_p2(matrix &other);  //The sobolevNorm between two matrices
 //others.hpp-
   
   //FOR DEBUGGING ONLY
