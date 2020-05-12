@@ -292,6 +292,10 @@ int ZC_ReadConf() {
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
 	SSIMIMAGE2DFlag = (int)iniparser_getint(ini, "COMPARE:ssimImage2D", 0);
 	
+	derivative1_sep_maxDiffFlag = (int)iniparser_getint(ini, "COMPARE:derivative1_sep_maxDiff", 0);
+	derivative1_sep_psnrFlag = (int)iniparser_getint(ini, "COMPARE:derivative1_sep_psnr", 0);
+	derivative1_sep_ssimFlag = (int)iniparser_getint(ini, "COMPARE:derivative1_sep_ssim", 0);	
+	
 	derivativeOrder1_psnrFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder1_psnr", 0);
 	derivativeOrder2_psnrFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder2_psnr", 0);
 	derivativeOrder1_ssimFlag = (int)iniparser_getint(ini, "COMPARE:derivativeOrder1_ssim", 0);

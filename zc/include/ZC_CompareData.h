@@ -88,6 +88,21 @@ typedef struct ZC_CompareData
 	
 	complex *fftCoeff;	
 	
+	//separate analysis for all the derivative matrices along different dimensions
+	double maxErrDx;
+	double maxErrDy; 
+	double maxErrDz; 
+	double maxErrDt;  //Max error of dx, dy, dx, dt
+	double psnrDx; 
+	double psnrDy; 
+	double psnrDz; 
+	double psnrDt;  //PSNR of dx, dy, dx, dt
+	double ssimDx; 
+	double ssimDy; 
+	double ssimDz; 
+	double ssimDt;	
+	
+	//aggregated analysis for the derivatives
 	double derivativeOrder1_psnr;
 	double derivativeOrder2_psnr;
 	double derivativeOrder1_ssim;
@@ -175,6 +190,8 @@ size_t compressSize, double decompressTime, double decompressRate, double minAbs
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF, int compressionMode, 
 double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max, 
+double maxErrDx, double maxErrDy, double maxErrDz, double maxErrDt, double psnrDx, double psnrDy, double psnrDz, double psnrDt, 
+double ssimDx, double ssimDy, double ssimDz, double ssimDt, 
 double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim);
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 

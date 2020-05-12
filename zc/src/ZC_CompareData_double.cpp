@@ -331,25 +331,54 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	}
 
 
+	if(derivative1_sep_maxDiffFlag || derivative1_sep_psnrFlag || derivative1_sep_ssimFlag)
+	{	
+		int status = 0;
+		zc_analyze_der_order1_double(data1, data2, dim, r4, r3, r2, r1, &status, 
+		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),
+		&(compareResult->psnrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDt), &(compareResult->maxErrDz),
+		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));
+	}
+
 	//dimensions: r5, r4, r3, r2, r1, data1, data2 --> compareResult->derivativeOrder1 and compareResult->derivativeOrder2
 	if(derivativeOrder1_psnrFlag)
 	{
 		int status = 0; //0: normal , 1: abnormal
-		//compareResult->derivativeOrder1 = zc_calc_derivative_order1_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_double(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder1_psnr = zc_calc_metric_der_order1_psnr_double(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
-		{
-			//handle the exception.
-		}
+			compareResult->derivativeOrder1_psnr = -1; //invalid dimension settings for this metric
 	}
-
+	
 	if(derivativeOrder2_psnrFlag)
 	{
-		int status = 0;
-		//compareResult->derivativeOrder2 = zc_calc_derivative_order2_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		int status = 0; //0: normal , 1: abnormal
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_double(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder2_psnr = zc_calc_metric_der_order2_psnr_double(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
-		{
-			//handle the exception.
-		}
+			compareResult->derivativeOrder2_psnr = -1; //invalid dimension settings for this metric
+	}	
+
+	if(derivativeOrder1_ssimFlag)
+	{
+		int status = 0; //0: normal , 1: abnormal
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_double(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder1_ssim = zc_calc_metric_der_order1_ssim_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+			compareResult->derivativeOrder1_ssim = -1; //invalid dimension settings for this metric
+	}	
+	
+	if(derivativeOrder2_ssimFlag)
+	{
+		int status = 0; //0: normal , 1: abnormal
+		
+		//double der_Order1_PSNR_Metric=zc_calc_metric_der_order1_psnr_double(data1,lossyData,nDims,dim3,dim2,dim1,dim0,&status);
+		compareResult->derivativeOrder2_ssim = zc_calc_metric_der_order2_ssim_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+			compareResult->derivativeOrder2_ssim = -1; //invalid dimension settings for this metric
 	}
 
 	free(diff);

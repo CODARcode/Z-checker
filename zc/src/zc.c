@@ -88,10 +88,14 @@ int KS_testFlag = 1;
 int SSIMFlag = 1;
 int SSIMIMAGE2DFlag = 1;
 
-int derivativeOrder1_psnrFlag = 1;
-int derivativeOrder2_psnrFlag = 1;
-int derivativeOrder1_ssimFlag = 1;
-int derivativeOrder2_ssimFlag = 1;
+int derivative1_sep_maxDiffFlag = 0; //separate calculation for three matrices
+int derivative1_sep_psnrFlag = 0; //separate calculation for three matrices
+int derivative1_sep_ssimFlag = 0; //separate calculation for three matrices
+
+int derivativeOrder1_psnrFlag = 0;
+int derivativeOrder2_psnrFlag = 0;
+int derivativeOrder1_ssimFlag = 0;
+int derivativeOrder2_ssimFlag = 0;
 
 int plotAutoCorrFlag = 1;
 int plotAbsErrPDFFlag = 1;
@@ -1864,7 +1868,8 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	zcv = (ZC_CompareData*)ht_get(ecCompareDataTable, name);
 	if(zcv==NULL)
 	{
-		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
+		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
 		zcv->property = property;
 		zcv->dec_data = NULL;
 	}

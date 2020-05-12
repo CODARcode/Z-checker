@@ -11,37 +11,37 @@ include_HEADERS=include/ZC_ByteToolkit.h include/ZC_conf.h include/ZC_gnuplot.h 
 
 lib_LTLIBRARIES=libzc.la
 if MPI
-libzc_la_CFLAGS=-g -I./include -DHAVE_MPI
+#libzc_la_CFLAGS=-g -I./include -DHAVE_MPI
 libzc_la_CPPFLAGS=-g -I./include -DHAVE_MPI
 else
-libzc_la_CFLAGS=-g -I./include
+#libzc_la_CFLAGS=-g -I./include
 libzc_la_CPPFLAGS=-g -I./include
 endif
 
 if HDF5
-libzc_la_CFLAGS+=-DHAVE_HDF5
+#libzc_la_CFLAGS+=-DHAVE_HDF5
 libzc_la_CPPFLAGS+=-DHAVE_HDF5
 endif
 
 if NETCDF
-libzc_la_CFLAGS+=-DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
+#libzc_la_CFLAGS+=-DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
 libzc_la_CPPFLAGS+=-DHAVE_NETCDF $(NETCDF_HDR) $(NETCDF_STATIC)
 endif
 
 if FFTW3
-libzc_la_CFLAGS+=-DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
+#libzc_la_CFLAGS+=-DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
 libzc_la_CPPFLAGS+=-DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
 include_HEADERS+=include/3rdParty/autocorr.h include/ZC_FFTW3_math.h
 endif
 
 if R
-libzc_la_CFLAGS+=-DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
+#libzc_la_CFLAGS+=-DHAVE_R $(R_HDR) $(R_STATIC) -I../R/src
 libzc_la_CPPFLAGS+=-DHAVE_FFTW3 $(FFTW3_HDR) $(FFTW3_STATIC)
 include_HEADERS+=include/ZC_R_math.h
 endif
 
 if ZSERVER
-libzc_la_CFLAGS+=-DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
+#libzc_la_CFLAGS+=-DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
 libzc_la_CPPFLAGS+=-DHAVE_ONLINEVIS $(ZSERVER_HDR) $(ZSERVER_STATIC)
 endif
 

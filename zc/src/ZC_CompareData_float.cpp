@@ -330,6 +330,15 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		}
 	}
 
+	if(derivative1_sep_maxDiffFlag || derivative1_sep_psnrFlag || derivative1_sep_ssimFlag)
+	{			
+		int status = 0;
+		zc_analyze_der_order1_float(data1, data2, dim, r4, r3, r2, r1, &status, 
+		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),
+		&(compareResult->psnrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDt), &(compareResult->maxErrDz),
+		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));
+	}
+
 	//dimensions: r5, r4, r3, r2, r1, data1, data2 --> compareResult->derivativeOrder1 and compareResult->derivativeOrder2
 	if(derivativeOrder1_psnrFlag)
 	{
