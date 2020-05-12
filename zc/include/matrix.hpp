@@ -42,6 +42,8 @@ public:
   matrix(int _nDim, int _size0, int _size1, int _size2, int _size3);
   ~matrix();
   
+  void deallocate();
+  
   void initialize(int _nDim, int _size0);
   void initialize(int _nDim, int _size0, int _size1);
   void initialize(int _nDim, int _size0, int _size1, int _size2);
@@ -110,6 +112,7 @@ public:
 
 //others.hpp:
   double PSNR(matrix &other);
+  dT maxDiff(matrix &other);
 //others.hpp-
   
   //FOR DEBUGGING ONLY
@@ -139,7 +142,7 @@ public:
   void m_der_4d_dim2_v1(matrix &res);
   void m_der_4d_dim3_v1(matrix &res);
 
-  //v2 : Central difference : data[i+1]-data[i-1]
+  //v2 : Central difference : (data[i+1]-data[i-1])/2
   void m_der_1d_v2(matrix &res);
   void m_der_2d_dim0_v2(matrix &res);
   void m_der_2d_dim1_v2(matrix &res);

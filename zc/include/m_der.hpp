@@ -284,8 +284,6 @@ void matrix<dT>::m_der_4d_dim2_v2(matrix<dT> &res){
       }
     }
   }
-  
-  return res;
 }
 
 template <typename dT>

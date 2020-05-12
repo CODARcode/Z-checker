@@ -59,6 +59,11 @@ matrix<dT>::matrix(int _nDim, int _size0, int _size1, int _size2, int _size3){
 
 template <typename dT>
 matrix<dT>::~matrix(){
+  deallocate();
+}
+
+template <typename dT>
+void matrix<dT>::deallocate(){
   if(data!=NULL)
     delete [] data;
 }
