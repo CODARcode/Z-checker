@@ -282,7 +282,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
   *status=-1;
   
   int minDim;
-  if(derivative1_sep_maxDiffFlag)
+  if(derivativeOrder1_sep_maxDiffFlag)
     minDim=2+ssimSize;
   else
     minDim=3;
@@ -332,7 +332,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
   if(dim==1){
     orig.m_der_1d_v2(odx);
     lossy.m_der_1d_v2(ldx);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=0;
       *maxErrDz=0;
@@ -343,7 +343,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=0;
       *psnrDz=0;
@@ -354,7 +354,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_1d_windowed(ldx, ssimSize, ssimShift);
       *ssimDy=0;
       *ssimDz=0;
@@ -370,7 +370,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
     orig.m_der_2d_dim1_v2(ody);
     lossy.m_der_2d_dim0_v2(ldx);
     lossy.m_der_2d_dim1_v2(ldy);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=0;
@@ -381,7 +381,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=ody.PSNR(ldy);
       *psnrDz=0;
@@ -392,7 +392,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_2d_windowed(ldx, ssimSize, ssimSize, ssimShift, ssimShift);
       *ssimDy=ody.SSIM_2d_windowed(ldy, ssimSize, ssimSize, ssimShift, ssimShift);
       *ssimDz=0;
@@ -410,7 +410,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
     lossy.m_der_3d_dim0_v2(ldx);
     lossy.m_der_3d_dim1_v2(ldy);
     lossy.m_der_3d_dim2_v2(ldz);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
@@ -421,7 +421,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=ody.PSNR(ldy);
       *psnrDz=odz.PSNR(ldz);
@@ -432,7 +432,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_3d_windowed(ldx, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift);
       *ssimDy=ody.SSIM_3d_windowed(ldy, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift);
       *ssimDz=odz.SSIM_3d_windowed(ldz, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift);
@@ -452,7 +452,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
     lossy.m_der_4d_dim1_v2(ldy);
     lossy.m_der_4d_dim2_v2(ldz);
     lossy.m_der_4d_dim3_v2(ldt);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
@@ -463,7 +463,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=ody.PSNR(ldy);
       *psnrDz=odz.PSNR(ldz);
@@ -474,7 +474,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_4d_windowed(ldx, ssimSize, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift, ssimShift);
       *ssimDy=ody.SSIM_4d_windowed(ldy, ssimSize, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift, ssimShift);
       *ssimDz=odz.SSIM_4d_windowed(ldz, ssimSize, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift, ssimShift);
@@ -547,7 +547,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
   if(dim==1){
     orig.m_der_1d_v2(odx);
     lossy.m_der_1d_v2(ldx);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=0;
       *maxErrDz=0;
@@ -558,7 +558,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=0;
       *psnrDz=0;
@@ -569,7 +569,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_1d_windowed(ldx, ssimSize, ssimShift);
       *ssimDy=0;
       *ssimDz=0;
@@ -585,7 +585,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
     orig.m_der_2d_dim1_v2(ody);
     lossy.m_der_2d_dim0_v2(ldx);
     lossy.m_der_2d_dim1_v2(ldy);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=0;
@@ -596,7 +596,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=ody.PSNR(ldy);
       *psnrDz=0;
@@ -607,7 +607,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_2d_windowed(ldx, ssimSize, ssimSize, ssimShift, ssimShift);
       *ssimDy=ody.SSIM_2d_windowed(ldy, ssimSize, ssimSize, ssimShift, ssimShift);
       *ssimDz=0;
@@ -625,7 +625,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
     lossy.m_der_3d_dim0_v2(ldx);
     lossy.m_der_3d_dim1_v2(ldy);
     lossy.m_der_3d_dim2_v2(ldz);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
@@ -636,7 +636,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=ody.PSNR(ldy);
       *psnrDz=odz.PSNR(ldz);
@@ -647,7 +647,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_3d_windowed(ldx, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift);
       *ssimDy=ody.SSIM_3d_windowed(ldy, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift);
       *ssimDz=odz.SSIM_3d_windowed(ldz, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift);
@@ -667,7 +667,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
     lossy.m_der_4d_dim1_v2(ldy);
     lossy.m_der_4d_dim2_v2(ldz);
     lossy.m_der_4d_dim3_v2(ldt);
-    if(derivative1_sep_maxDiffFlag){
+    if(derivativeOrder1_sep_maxDiffFlag){
       *maxErrDx=odx.maxDiff(ldx);
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
@@ -678,7 +678,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDz=0;
       *maxErrDt=0;
     }
-    if(derivative1_sep_psnrFlag){
+    if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
       *psnrDy=ody.PSNR(ldy);
       *psnrDz=odz.PSNR(ldz);
@@ -689,7 +689,7 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *psnrDz=0;
       *psnrDt=0;
     }
-    if(derivative1_sep_ssimFlag){
+    if(derivativeOrder1_sep_ssimFlag){
       *ssimDx=odx.SSIM_4d_windowed(ldx, ssimSize, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift, ssimShift);
       *ssimDy=ody.SSIM_4d_windowed(ldy, ssimSize, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift, ssimShift);
       *ssimDz=odz.SSIM_4d_windowed(ldz, ssimSize, ssimSize, ssimSize, ssimSize, ssimShift, ssimShift, ssimShift, ssimShift);

@@ -18,7 +18,7 @@ ZC_CompareData* ZC_constructOneVariable(char* varName, char* endian, char* type,
 	int dataType = ZC_FLOAT; //or ZC_DOUBLE
 	
 	ZC_CompareData* cData = ZC_constructCompareResult(varName, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	ZC_DataProperty* property = cData->property;
 	char* token;
 	char delim[2] = {'x', '\0'};

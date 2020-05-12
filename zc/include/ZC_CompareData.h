@@ -108,6 +108,8 @@ typedef struct ZC_CompareData
 	double derivativeOrder1_ssim;
 	double derivativeOrder2_ssim;
 	
+	double derivative1_sobolev;
+	
 } ZC_CompareData;
 
 typedef struct ZC_CompareData_Overall
@@ -192,7 +194,7 @@ double* autoCorrAbsErr, double* absErrPDF, int compressionMode,
 double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max, 
 double maxErrDx, double maxErrDy, double maxErrDz, double maxErrDt, double psnrDx, double psnrDy, double psnrDz, double psnrDt, 
 double ssimDx, double ssimDy, double ssimDz, double ssimDt, 
-double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim);
+double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim, double derivative1_sobolev);
 
 void ZC_compareData_float(ZC_CompareData* compareResult, float* data1, float* data2, 
 size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);

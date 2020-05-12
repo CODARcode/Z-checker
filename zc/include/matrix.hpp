@@ -191,6 +191,10 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
   double *ssimDx, double *ssimDy, double *ssimDz, double *ssimDt  //SSIM of dx, dy, dx, dt
   );  
 
+double zc_calc_metric_der_order1_sobolev_p2_float(float *data1, float *data2,
+  size_t dim, size_t r4, size_t r3, size_t r2, size_t r1, int *status);
+double zc_calc_metric_der_order1_sobolev_p2_double(double *data1, double *data2,
+  size_t dim, size_t r4, size_t r3, size_t r2, size_t r1, int *status);  
 
 #include "m_basic.hpp"  
 #include "m_der.hpp"  

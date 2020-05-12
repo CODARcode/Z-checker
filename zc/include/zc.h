@@ -189,14 +189,16 @@ extern int KS_testFlag;
 extern int SSIMFlag;
 extern int SSIMIMAGE2DFlag;
 
-extern int derivative1_sep_maxDiffFlag; //separate calculation for three matrices
-extern int derivative1_sep_psnrFlag; //separate calculation for three matrices
-extern int derivative1_sep_ssimFlag; //separate calculation for three matrices
+extern int derivativeOrder1_sep_maxDiffFlag; //separate calculation for three matrices
+extern int derivativeOrder1_sep_psnrFlag; //separate calculation for three matrices
+extern int derivativeOrder1_sep_ssimFlag; //separate calculation for three matrices
 
 extern int derivativeOrder1_psnrFlag; //aggregated calculation
 extern int derivativeOrder2_psnrFlag; //aggregated calculation
 extern int derivativeOrder1_ssimFlag; //aggregated calculation
 extern int derivativeOrder2_ssimFlag; //aggregated calculation
+
+extern int derivativeOrder1_sobolevFlag;
 
 extern int plotAutoCorrFlag;
 

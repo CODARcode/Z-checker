@@ -59,7 +59,7 @@ double* autoCorrAbsErr, double* absErrPDF, int compressionMode,
 double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max, 
 double maxErrDx, double maxErrDy, double maxErrDz, double maxErrDt, double psnrDx, double psnrDy, double psnrDz, double psnrDt, 
 double ssimDx, double ssimDy, double ssimDz, double ssimDt, 
-double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim)
+double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim, double derivative1_sobolev)
 {
 	ZC_CompareData* result = (ZC_CompareData*)malloc(sizeof(struct ZC_CompareData));
 	memset(result, 0, sizeof(struct ZC_CompareData));
@@ -113,6 +113,8 @@ double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrd
 	result->derivativeOrder2_psnr = derivativeOrder2_psnr;
 	result->derivativeOrder1_ssim = derivativeOrder1_ssim;
 	result->derivativeOrder2_ssim = derivativeOrder2_ssim;
+	
+	result->derivative1_sobolev = derivative1_sobolev;
 	return result;
 }
 
@@ -294,7 +296,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 {
-	char** s = (char**)malloc(50*sizeof(char*));
+	char** s = (char**)malloc(51*sizeof(char*)); //total of 51 lines at most
 	//memset(s, NULL, 50);
 	
 	s[0] = (char*)malloc(100*sizeof(char));
@@ -417,7 +419,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 		s[index] = (char*)malloc(100*sizeof(char));
 		sprintf(s[index++], "ssimImage2D_max = %.10G\n", compareResult->ssimImage2D_max);						
 	}
-	if(derivative1_sep_maxDiffFlag)
+	if(derivativeOrder1_sep_maxDiffFlag)
 	{
 		s[index] = (char*)malloc(100*sizeof(char));
 		sprintf(s[index], "maxErrDx = %.10G\n", compareResult->maxErrDx);	
@@ -432,7 +434,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 		sprintf(s[index], "maxErrDt = %.10G\n", compareResult->maxErrDt);	
 		index++;							
 	}
-	if(derivative1_sep_psnrFlag)
+	if(derivativeOrder1_sep_psnrFlag)
 	{
 		s[index] = (char*)malloc(100*sizeof(char));
 		sprintf(s[index], "psnrDx = %.10G\n", compareResult->psnrDx);	
@@ -447,7 +449,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 		sprintf(s[index], "psnrDt = %.10G\n", compareResult->psnrDt);	
 		index++;							
 	}
-	if(derivative1_sep_ssimFlag)
+	if(derivativeOrder1_sep_ssimFlag)
 	{
 		s[index] = (char*)malloc(100*sizeof(char));
 		sprintf(s[index], "ssimDx = %.10G\n", compareResult->ssimDx);	
@@ -489,6 +491,14 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 		sprintf(s[index], "derivativeOrder2_ssim = %.10G\n", compareResult->derivativeOrder2_ssim);	
 		index++;
 	}
+	
+	if(derivativeOrder1_sobolevFlag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "derivative1_sobolev = %.10G\n", compareResult->derivative1_sobolev);	
+		index++;		
+	}
+	
 	s[index] = (char*)malloc(100*sizeof(char));
 	sprintf(s[index], "compressionMode = %d\n", compareResult->compressionMode);
 	index++;
@@ -699,13 +709,15 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	double derivativeOrder1_ssim = (double)iniparser_getdouble(ini, "COMPARE:derivativeOrder1_ssim", -1);
 	double derivativeOrder2_ssim = (double)iniparser_getdouble(ini, "COMPARE:derivativeOrder2_ssim", -1);
 		
+	double derivative1_sobolev = (double)iniparser_getdouble(ini, "COMPARE:derivative1_sobolev", -1);	
+		
 	ZC_CompareData* compareResult = ZC_constructCompareResult(var, 
 	compressTime, compressRate, compressRatio, rate, 
 	compressSize, decompressTime, decompressRate, minAbsErr, avgAbsErr, maxAbsErr, minRelErr, avgRelErr, maxRelErr, 
 	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF, compressionMode, 
 	ssimImage2D_min, ssimImage2D_avg, ssimImage2D_max, 
 	maxErrDx, maxErrDy, maxErrDz, maxErrDt, psnrDx, psnrDy, psnrDz, psnrDt, ssimDx, ssimDy, ssimDz, ssimDt,
-	derivativeOrder1_psnr, derivativeOrder2_psnr, derivativeOrder1_ssim, derivativeOrder2_ssim);
+	derivativeOrder1_psnr, derivativeOrder2_psnr, derivativeOrder1_ssim, derivativeOrder2_ssim, derivative1_sobolev);
 	
 	iniparser_freedict(ini);
 	

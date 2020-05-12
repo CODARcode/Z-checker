@@ -331,7 +331,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	}
 
 
-	if(derivative1_sep_maxDiffFlag || derivative1_sep_psnrFlag || derivative1_sep_ssimFlag)
+	if(derivativeOrder1_sep_maxDiffFlag || derivativeOrder1_sep_psnrFlag || derivativeOrder1_sep_ssimFlag)
 	{	
 		int status = 0;
 		zc_analyze_der_order1_double(data1, data2, dim, r4, r3, r2, r1, &status, 
@@ -379,6 +379,14 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		compareResult->derivativeOrder2_ssim = zc_calc_metric_der_order2_ssim_double(data1, data2, dim, r4, r3, r2, r1, &status);
 		if(status!=0)
 			compareResult->derivativeOrder2_ssim = -1; //invalid dimension settings for this metric
+	}
+
+	if(derivativeOrder1_sobolevFlag)
+	{
+		int status = 0;
+		compareResult->derivative1_sobolev = zc_calc_metric_der_order1_sobolev_p2_double(data1, data2, dim, r4, r3, r2, r1, &status);
+		if(status!=0)
+			compareResult->derivative1_sobolev = -1;
 	}
 
 	free(diff);
