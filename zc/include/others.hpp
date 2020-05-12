@@ -46,5 +46,42 @@ double matrix<dT>::PSNR(matrix &other){
   
 }
 
+template <typename dT>
+dT matrix<dT>::maxDiff(matrix &other){  //The maximum difference between two matrices
+  
+  if(size0!=other.size0){
+    cout<<"matrix :: maxDiff : Size0's do not match."<<endl;
+    cout<<"  lhs.size0="<<size0<<"  rhs.size0="<<other.size0<<endl;
+    assert(0);
+  }
+  if(size1!=other.size1){
+    cout<<"matrix :: maxDiff : Size1's do not match."<<endl;
+    cout<<"  lhs.size1="<<size1<<"  rhs.size1="<<other.size1<<endl;
+    assert(0);
+  }
+  if(size2!=other.size2){
+    cout<<"matrix :: maxDiff : Size2's do not match."<<endl;
+    cout<<"  lhs.size2="<<size2<<"  rhs.size1="<<other.size2<<endl;
+    assert(0);
+  }
+  if(size3!=other.size3){
+    cout<<"matrix :: maxDiff : Size3's do not match."<<endl;
+    cout<<"  lhs.size3="<<size3<<"  rhs.size1="<<other.size3<<endl;
+    assert(0);
+  }
+  
+  int i0;
+  dT maxDiff_;
+  maxDiff_=fabs(data[0]-other.data[0]);
+
+  int n=size0*size1*size2*size3;
+  for(i0=0;i0<n;i0++){
+    if(maxDiff_<fabs(data[i0]-other.data[i0]))
+      maxDiff_=fabs(data[i0]-other.data[i0]);
+  }
+  
+  return maxDiff_;
+  
+}
 
 #endif
