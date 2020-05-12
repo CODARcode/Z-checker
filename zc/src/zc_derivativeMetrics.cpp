@@ -274,6 +274,7 @@ double zc_calc_metric_der_order1_psnr_double(double *data1, double *data2,
 
 void zc_analyze_der_order1_float(float *data1, float *data2,
   size_t dim, size_t r4, size_t r3, size_t r2, size_t r1, int *status,
+  double *maxDx, double *maxDy, double *maxDz, double *maxDt,  //Max of dx, dy, dx, dt
   double *maxErrDx, double *maxErrDy, double *maxErrDz, double *maxErrDt,  //Max error of dx, dy, dx, dt
   double *psnrDx, double *psnrDy, double *psnrDz, double *psnrDt,  //PSNR of dx, dy, dx, dt
   double *ssimDx, double *ssimDy, double *ssimDz, double *ssimDt  //SSIM of dx, dy, dx, dt
@@ -329,6 +330,9 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
   orig.data=data1;
   lossy.data=data2;
   
+  uint64_t i;
+  float temp;
+  
   if(dim==1){
     orig.m_der_1d_v2(odx);
     lossy.m_der_1d_v2(ldx);
@@ -337,11 +341,19 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -375,11 +387,19 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=0;
       *maxErrDt=0;
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      temp=0; for(i=0;i<ody.size0*ody.size1*ody.size2*ody.size3;i++){if(temp<fabs(ody.data[i])) temp=fabs(ody.data[i]);} *maxDy=temp;
+      *maxDz=0;
+      *maxDt=0;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -415,11 +435,19 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
       *maxErrDt=0;
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      temp=0; for(i=0;i<ody.size0*ody.size1*ody.size2*ody.size3;i++){if(temp<fabs(ody.data[i])) temp=fabs(ody.data[i]);} *maxDy=temp;
+      temp=0; for(i=0;i<odz.size0*odz.size1*odz.size2*odz.size3;i++){if(temp<fabs(odz.data[i])) temp=fabs(odz.data[i]);} *maxDz=temp;
+      *maxDt=0;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -457,11 +485,19 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
       *maxErrDt=odt.maxDiff(ldt);
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      temp=0; for(i=0;i<ody.size0*ody.size1*ody.size2*ody.size3;i++){if(temp<fabs(ody.data[i])) temp=fabs(ody.data[i]);} *maxDy=temp;
+      temp=0; for(i=0;i<odz.size0*odz.size1*odz.size2*odz.size3;i++){if(temp<fabs(odz.data[i])) temp=fabs(odz.data[i]);} *maxDz=temp;
+      temp=0; for(i=0;i<odt.size0*odt.size1*odt.size2*odt.size3;i++){if(temp<fabs(odt.data[i])) temp=fabs(odt.data[i]);} *maxDt=temp;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -495,6 +531,7 @@ void zc_analyze_der_order1_float(float *data1, float *data2,
 
 void zc_analyze_der_order1_double(double *data1, double *data2,
   size_t dim, size_t r4, size_t r3, size_t r2, size_t r1, int *status,
+  double *maxDx, double *maxDy, double *maxDz, double *maxDt,  //Max of dx, dy, dx, dt
   double *maxErrDx, double *maxErrDy, double *maxErrDz, double *maxErrDt,  //Max error of dx, dy, dx, dt
   double *psnrDx, double *psnrDy, double *psnrDz, double *psnrDt,  //PSNR of dx, dy, dx, dt
   double *ssimDx, double *ssimDy, double *ssimDz, double *ssimDt  //SSIM of dx, dy, dx, dt
@@ -502,28 +539,34 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
   
   *status=-1;
   
+  int minDim;
+  if(derivativeOrder1_sep_maxDiffFlag)
+    minDim=2+ssimSize;
+  else
+    minDim=3;
+    
   if(dim<1){
     cout<<"ERROR: Dimension less than 1!"<<endl;
     *status=1;
     return;
-  }else if(dim==1 && r1<5){
-    cout<<"ERROR: dim=1, but r1<5."<<endl;
-    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
+  }if(dim==1 && r1<minDim){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
-  }else if(dim==2 && (r1<5 || r2<5)){
-    cout<<"ERROR: dim=1, but { r1<5 or r2<5 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
+  }else if(dim==2 && (r1<minDim || r2<minDim)){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" or r2<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
-  }else if(dim==3 && (r1<5 || r2<5 || r3<5)){
-    cout<<"ERROR: dim=1, but { r1<5 or r2<5 or r3<5 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
+  }else if(dim==3 && (r1<minDim || r2<minDim || r3<minDim)){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" or r2<"<<minDim<<" or r3<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
-  }else if(dim==4 && (r1<5 || r2<5 || r3<5 || r4<5)){
-    cout<<"ERROR: dim=1, but { r1<5 or r2<5 or r3<5 or r4<5 }."<<endl;
-    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least 5."<<endl;
+  }else if(dim==4 && (r1<minDim || r2<minDim || r3<minDim || r4<minDim)){
+    cout<<"ERROR: dim=1, but { r1<"<<minDim<<" or r2<"<<minDim<<" or r3<"<<minDim<<" or r4<"<<minDim<<" }."<<endl;
+    cout<<"REMINDER: Derivative order 1 analysis require every valid dimension to be at least "<<minDim<<"."<<endl;
     *status=1;
     return;
   }else if(dim>4){
@@ -544,6 +587,9 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
   orig.data=data1;
   lossy.data=data2;
   
+  uint64_t i;
+  double temp;
+  
   if(dim==1){
     orig.m_der_1d_v2(odx);
     lossy.m_der_1d_v2(ldx);
@@ -552,11 +598,19 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -590,11 +644,19 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=0;
       *maxErrDt=0;
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      temp=0; for(i=0;i<ody.size0*ody.size1*ody.size2*ody.size3;i++){if(temp<fabs(ody.data[i])) temp=fabs(ody.data[i]);} *maxDy=temp;
+      *maxDz=0;
+      *maxDt=0;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -630,11 +692,19 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
       *maxErrDt=0;
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      temp=0; for(i=0;i<ody.size0*ody.size1*ody.size2*ody.size3;i++){if(temp<fabs(ody.data[i])) temp=fabs(ody.data[i]);} *maxDy=temp;
+      temp=0; for(i=0;i<odz.size0*odz.size1*odz.size2*odz.size3;i++){if(temp<fabs(odz.data[i])) temp=fabs(odz.data[i]);} *maxDz=temp;
+      *maxDt=0;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
@@ -672,11 +742,19 @@ void zc_analyze_der_order1_double(double *data1, double *data2,
       *maxErrDy=ody.maxDiff(ldy);
       *maxErrDz=odz.maxDiff(ldz);
       *maxErrDt=odt.maxDiff(ldt);
+      temp=0; for(i=0;i<odx.size0*odx.size1*odx.size2*odx.size3;i++){if(temp<fabs(odx.data[i])) temp=fabs(odx.data[i]);} *maxDx=temp;
+      temp=0; for(i=0;i<ody.size0*ody.size1*ody.size2*ody.size3;i++){if(temp<fabs(ody.data[i])) temp=fabs(ody.data[i]);} *maxDy=temp;
+      temp=0; for(i=0;i<odz.size0*odz.size1*odz.size2*odz.size3;i++){if(temp<fabs(odz.data[i])) temp=fabs(odz.data[i]);} *maxDz=temp;
+      temp=0; for(i=0;i<odt.size0*odt.size1*odt.size2*odt.size3;i++){if(temp<fabs(odt.data[i])) temp=fabs(odt.data[i]);} *maxDt=temp;
     }else{
       *maxErrDx=0;
       *maxErrDy=0;
       *maxErrDz=0;
       *maxErrDt=0;
+      *maxDx=0;
+      *maxDy=0;
+      *maxDz=0;
+      *maxDt=0;
     }
     if(derivativeOrder1_sep_psnrFlag){
       *psnrDx=odx.PSNR(ldx);
