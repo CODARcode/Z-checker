@@ -333,9 +333,11 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	if(derivativeOrder1_sep_maxDiffFlag || derivativeOrder1_sep_psnrFlag || derivativeOrder1_sep_ssimFlag)
 	{			
 		int status = 0;
+		double maxDx, maxDy, maxDz, maxDt;
+		 
 		zc_analyze_der_order1_float(data1, data2, dim, r4, r3, r2, r1, &status, 
-		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),  //AMG: This line needs fixing!
-		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),
+		&(compareResult->maxDx), &(compareResult->maxDy), &(compareResult->maxDz), &(compareResult->maxDt),
+		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt), 
 		&(compareResult->psnrDx), &(compareResult->psnrDy), &(compareResult->psnrDz), &(compareResult->psnrDt),
 		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));
 	}

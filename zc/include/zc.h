@@ -353,7 +353,11 @@ char** extractRateDistortion_Derivative1_psnr(int totalCount, char** cmpResList,
 char** extractRateDistortion_Derivative2_psnr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateDistortion_Derivative1_ssim(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateDistortion_Derivative2_ssim(int totalCount, char** cmpResList, int* validLineNum);
-char** extractRateDistortion_Derivative1_sobolev_ssim(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_sobolev(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_maxRelErr_dx(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_maxRelErr_dy(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_maxRelErr_dz(int totalCount, char** cmpResList, int* validLineNum);
+char** extractRateDistortion_Derivative1_maxRelErr_dt(int totalCount, char** cmpResList, int* validLineNum);
 
 void ZC_plotRateDistortion();
 
@@ -367,6 +371,7 @@ void ZC_plotSliceImage();
 void ZC_generateCompressionFactorReport();
 void ZC_generateRateDistortionReport();
 void ZC_generateRateDerivatives_aggregated_Report();
+void ZC_generateRateDerivatives_separated_Report();
 
 void ZC_generateRateCorrelationReport();
 void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCompressorCount);

@@ -89,6 +89,12 @@ typedef struct ZC_CompareData
 	complex *fftCoeff;	
 	
 	//separate analysis for all the derivative matrices along different dimensions
+	
+	double maxDx;
+	double maxDy;
+	double maxDz;
+	double maxDt;
+	
 	double maxErrDx;
 	double maxErrDy; 
 	double maxErrDz; 

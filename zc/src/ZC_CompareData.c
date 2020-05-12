@@ -37,6 +37,8 @@ int freeCompareResult(ZC_CompareData* compareData)
 	if(compareData==NULL)
 		return 0;
 	char* key = compareData->solution;
+	if(key==NULL)
+		return 0;
 	ZC_CompareData* found = NULL;
 	if(ecCompareDataTable!=NULL)
 		found = (ZC_CompareData*)ht_freePairEntry(ecCompareDataTable, key);
@@ -296,7 +298,7 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 
 char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 {
-	char** s = (char**)malloc(51*sizeof(char*)); //total of 51 lines at most
+	char** s = (char**)malloc(56*sizeof(char*)); //total of 51 lines at most
 	//memset(s, NULL, 50);
 	
 	s[0] = (char*)malloc(100*sizeof(char));
@@ -366,6 +368,7 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 	s[24] = (char*)malloc(100*sizeof(char));
 	sprintf(s[24], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
 
+
 	int index = 25;
 #ifdef HAVE_R
 	s[index] = (char*)malloc(100*sizeof(char));
@@ -419,8 +422,22 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 		s[index] = (char*)malloc(100*sizeof(char));
 		sprintf(s[index++], "ssimImage2D_max = %.10G\n", compareResult->ssimImage2D_max);						
 	}
+
 	if(derivativeOrder1_sep_maxDiffFlag)
 	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxDx = %.10G\n", compareResult->maxDx);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxDy = %.10G\n", compareResult->maxDy);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxDz = %.10G\n", compareResult->maxDz);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxDt = %.10G\n", compareResult->maxDt);	
+		index++;		
+		
 		s[index] = (char*)malloc(100*sizeof(char));
 		sprintf(s[index], "maxErrDx = %.10G\n", compareResult->maxErrDx);	
 		index++;	
@@ -498,7 +515,6 @@ char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 		sprintf(s[index], "derivative1_sobolev = %.10G\n", compareResult->derivative1_sobolev);	
 		index++;		
 	}
-	
 	s[index] = (char*)malloc(100*sizeof(char));
 	sprintf(s[index], "compressionMode = %d\n", compareResult->compressionMode);
 	index++;
@@ -523,10 +539,9 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
 	ZC_writeStrings(nbLines, s, tgtFilePath);
 	int i;
-	for(i=0;i<=nbLines;i++)
+	for(i=0;i<nbLines;i++)
 		free(s[i]);
 	free(s);
-	
 	//write the pdf
 	
 	if(absErrPDFFlag)

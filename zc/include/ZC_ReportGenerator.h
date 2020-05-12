@@ -49,8 +49,6 @@ StringLine* ZC_generateStaticAnalysisFigures(const char* metricType, CmprsorErrB
 
 StringLine* ZC_generateRateDistortionFigure();
 
-StringLine* ZC_generateRateDerivatives_aggregated_Report();
-
 #ifdef __cplusplus
 }
 #endif

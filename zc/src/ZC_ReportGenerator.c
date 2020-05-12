@@ -550,6 +550,69 @@ StringLine* ZC_generateRateDerivatives_aggregated_Figure()
 	return header;
 }
 
+StringLine* ZC_generateRateDerivatives_separated_Figure()
+{
+	size_t i; 
+	int varCount;
+	char* varFiles[ZC_BUFS];
+	char* fileName;
+	//char rateDisFile[ZC_BUFS];
+	
+	for(i=0;i<ZC_BUFS;i++)
+		varFiles[i] = (char*)malloc(sizeof(char)*500);
+	ZC_getFileNames("dataProperties", "prop", &varCount, varFiles);
+	for(i = 0;i<varCount;i++)
+	{
+		fileName = rmFileExtension(varFiles[i]);
+		strcpy(varFiles[i], fileName);
+		free(fileName);
+	}
+	
+	StringLine* header = NULL; 
+	StringLine* header2 = NULL; 
+	StringLine* header3 = NULL; 
+	StringLine* header4 = NULL;
+	
+	if(derivativeOrder1_sep_maxDiffFlag)
+	{
+		header = ZC_generateComparisonFigTexLines(varCount, varFiles, 
+			"compareCompressors", "rate-distortion_derv1_maxRelErr_dx", "Rate Distortion (Derivative1-MaxRelErr-dx vs. Bit-rate)");
+		header2 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
+			"compareCompressors", "rate-distortion_derv2_maxRelErr_dy", "Rate Distortion (Derivative1-MaxRelErr-dy vs. Bit-rate)");	
+		header3 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
+			"compareCompressors", "rate-distortion_derv1_maxRelErr_dz", "Rate Distortion (Derivative1-MaxRelErr-dz vs. Bit-rate)");	
+		header4 = ZC_generateComparisonFigTexLines(varCount, varFiles, 
+			"compareCompressors", "rate-distortion_derv2_maxRelErr_dt", "Rate Distortion (Derivative1-MaxRelErr-dt vs. Bit-rate)");	
+	}
+	
+	if(header != NULL)
+	{
+		ZC_appendLines(header, header2);
+		ZC_appendLines(header, header3);
+		ZC_appendLines(header, header4);
+	}
+	else if(header2 != NULL)
+	{
+		ZC_appendLines(header2, header3);
+		ZC_appendLines(header2, header4);
+		header = header2;
+	}
+	else if(header3 != NULL)
+	{
+		ZC_appendLines(header3, header4);		
+		header = header3;	
+	}
+	else if(header4 != NULL)
+	{
+		header = header4;	
+	}	
+		
+	for(i=0;i<ZC_BUFS;i++)
+		free(varFiles[i]);
+	
+	return header;
+}
+
 void ZC_generateRateDistortionReport()
 {
 	int lineCount;
@@ -575,6 +638,22 @@ void ZC_generateRateDerivatives_aggregated_Report()
 	
 	StringLine* figLines =  ZC_generateRateDerivatives_aggregated_Figure();
 	ZC_insertLines("%plot rate derivatives\n", texLines, figLines);		
+	
+	ZC_writeLines(texLines, rateDisTexFile);
+	ZC_freeLines(texLines);			
+}
+
+void ZC_generateRateDerivatives_separated_Report()
+{
+	int lineCount;
+	char rateDisTexFile[ZC_BUFS];
+	sprintf(rateDisTexFile, "report/tex/resultsTex/rateDerivativesSep.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", rateDisTexFile);
+	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
+	
+	StringLine* figLines =  ZC_generateRateDerivatives_separated_Figure();
+	ZC_insertLines("%plot rate derivatives for different directions\n", texLines, figLines);		
 	
 	ZC_writeLines(texLines, rateDisTexFile);
 	ZC_freeLines(texLines);			
@@ -636,7 +715,12 @@ void ZC_generateResultTexFile()
 	{
 		line = createLine("\\input{tex/resultsTex/rateDerivatives}\n"); 
 		p = appendOneLine(p, line);		
-	}	
+	}
+	if(derivativeOrder1_sep_maxDiffFlag || derivativeOrder1_sep_psnrFlag || derivativeOrder1_sep_ssimFlag)
+	{
+		line = createLine("\\input{tex/resultsTex/rateDerivativesSep}\n"); 
+		p = appendOneLine(p, line);		
+	}		
 	if(compressTimeFlag)
 	{
 		line = createLine("\\input{tex/resultsTex/compressionRate}\n"); 
@@ -1076,6 +1160,8 @@ void ZC_generateOverallReport(char* dataSetName)
 		ZC_generateRateCorrelationReport();
 	if(derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag || derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag || derivativeOrder1_sobolevFlag)
 		ZC_generateRateDerivatives_aggregated_Report();
+	if(derivativeOrder1_sep_maxDiffFlag || derivativeOrder1_sep_psnrFlag || derivativeOrder1_sep_ssimFlag)
+		ZC_generateRateDerivatives_separated_Report();
 	
 	int i, n = 0;
 	char* caseFiles[ZC_BUFS_LONG];

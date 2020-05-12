@@ -335,7 +335,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	{	
 		int status = 0;
 		zc_analyze_der_order1_double(data1, data2, dim, r4, r3, r2, r1, &status, 
-		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),  //AMG: This line needs fixing!
+		&(compareResult->maxDx), &(compareResult->maxDy), &(compareResult->maxDz), &(compareResult->maxDt),
 		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt),
 		&(compareResult->psnrDx), &(compareResult->psnrDy), &(compareResult->psnrDt), &(compareResult->psnrDz),
 		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));
