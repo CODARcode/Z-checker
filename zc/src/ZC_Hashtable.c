@@ -195,6 +195,9 @@ void ht_freeTable( hashtable_t *hashtable)
 void* ht_freePairEntry( hashtable_t *hashtable, char* key)
 {
 	int i, flag = 0;
+	if(key==NULL)
+	 return NULL;
+	 
 	void* found = NULL;
 	struct entry_t * pairEntry, * prePair;
 	for(i=0;i<HASHTABLE_SIZE;i++)

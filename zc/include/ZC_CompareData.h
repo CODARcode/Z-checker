@@ -205,7 +205,7 @@ void ZC_computeFFT_double_offline(ZC_CompareData* compareResult, double* data1, 
 void ZC_compareData_dec(ZC_CompareData* compareResult, void *decData);
 ZC_CompareData* ZC_compareData(char* varName, int dataType, void *oriData, void *decData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_printCompressionResult(ZC_CompareData* compareResult);
-char** constructCompareDataString(ZC_CompareData* compareResult);
+char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines);
 void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, char* varName, const char* tgtWorkspaceDir);
 ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile);
 

@@ -292,9 +292,11 @@ void ZC_printCompressionResult(ZC_CompareData* compareResult)
 	printf("maxAbsErr: %f\n", compareResult->maxAbsErr);
 }
 
-char** constructCompareDataString(ZC_CompareData* compareResult)
+char** constructCompareDataString(ZC_CompareData* compareResult, int* nbLines)
 {
-	char** s = (char**)malloc(38*sizeof(char*));
+	char** s = (char**)malloc(50*sizeof(char*));
+	//memset(s, NULL, 50);
+	
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[COMPARE]\n");	
 	
@@ -361,20 +363,26 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 
 	s[24] = (char*)malloc(100*sizeof(char));
 	sprintf(s[24], "pearsonCorr = %.10G\n", compareResult->pearsonCorr);
-	
+
+	int index = 25;
 #ifdef HAVE_R
-	s[25] = (char*)malloc(100*sizeof(char));
-	sprintf(s[25], "KS_test = %.10G\n", compareResult->ksValue);
-	s[26] = (char*)malloc(100*sizeof(char));
-	sprintf(s[26], "lum = %.10G\n", compareResult->lum);
-	s[27] = (char*)malloc(100*sizeof(char));
-	sprintf(s[27], "cont = %.10G\n", compareResult->cont);
-	s[28] = (char*)malloc(100*sizeof(char));
-	sprintf(s[28], "struc = %.10G\n", compareResult->struc);
-	s[29] = (char*)malloc(100*sizeof(char));
-	sprintf(s[29], "ssim = %.10G\n", compareResult->ssim);					
+	s[index] = (char*)malloc(100*sizeof(char));
+	sprintf(s[index], "KS_test = %.10G\n", compareResult->ksValue);
+	index++;
+	s[index] = (char*)malloc(100*sizeof(char));
+	sprintf(s[index], "lum = %.10G\n", compareResult->lum);
+	index++;
+	s[index] = (char*)malloc(100*sizeof(char));
+	sprintf(s[index], "cont = %.10G\n", compareResult->cont);
+	index++;
+	s[index] = (char*)malloc(100*sizeof(char));
+	sprintf(s[index], "struc = %.10G\n", compareResult->struc);
+	index++;
+	s[index] = (char*)malloc(100*sizeof(char));
+	sprintf(s[index], "ssim = %.10G\n", compareResult->ssim);					
+	index++;
 #else
-	s[25] = (char*)malloc(100*sizeof(char));
+/*	s[25] = (char*)malloc(100*sizeof(char));
 	strcpy(s[25], "KS_test = -\n");
 	s[26] = (char*)malloc(100*sizeof(char));
 	strcpy(s[26], "lum = -\n");
@@ -383,57 +391,108 @@ char** constructCompareDataString(ZC_CompareData* compareResult)
 	s[28] = (char*)malloc(100*sizeof(char));
 	strcpy(s[28], "struc = -\n");
 	s[29] = (char*)malloc(100*sizeof(char));
-	strcpy(s[29], "ssim = -\n");
+	strcpy(s[29], "ssim = -\n");*/
 #endif
 
-	s[30] = (char*)malloc(100*sizeof(char));
-	s[31] = (char*)malloc(100*sizeof(char));
-	s[32] = (char*)malloc(100*sizeof(char));
 	if(compareResult->property->r2==0)
 	{
-		strcpy(s[30], "ssimImage2D_min = -\n");
+/*		strcpy(s[30], "ssimImage2D_min = -\n");
 		strcpy(s[31], "ssimImage2D_avg = -\n");
-		strcpy(s[32], "ssimImage2D_max = -\n");
+		strcpy(s[32], "ssimImage2D_max = -\n");*/
 	}
 	else if(compareResult->property->r3==0)
 	{
-		strcpy(s[30], "ssimImage2D_min = -\n");		
-		sprintf(s[31], "ssimImage2D_avg = %.10G\n", compareResult->ssimImage2D_avg);
-		strcpy(s[32], "ssimImage2D_max = -\n");
+		//strcpy(s[30], "ssimImage2D_min = -\n");		
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "ssimImage2D_avg = %.10G\n", compareResult->ssimImage2D_avg);
+		index++;
+		//strcpy(s[32], "ssimImage2D_max = -\n");
 	}
 	else
 	{
-		sprintf(s[30], "ssimImage2D_min = %.10G\n", compareResult->ssimImage2D_min);
-		sprintf(s[31], "ssimImage2D_avg = %.10G\n", compareResult->ssimImage2D_avg);
-		sprintf(s[32], "ssimImage2D_max = %.10G\n", compareResult->ssimImage2D_max);						
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index++], "ssimImage2D_min = %.10G\n", compareResult->ssimImage2D_min);
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index++], "ssimImage2D_avg = %.10G\n", compareResult->ssimImage2D_avg);
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index++], "ssimImage2D_max = %.10G\n", compareResult->ssimImage2D_max);						
+	}
+	if(derivative1_sep_maxDiffFlag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxErrDx = %.10G\n", compareResult->maxErrDx);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxErrDy = %.10G\n", compareResult->maxErrDy);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxErrDz = %.10G\n", compareResult->maxErrDz);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "maxErrDt = %.10G\n", compareResult->maxErrDt);	
+		index++;							
+	}
+	if(derivative1_sep_psnrFlag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "psnrDx = %.10G\n", compareResult->psnrDx);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "psnrDy = %.10G\n", compareResult->psnrDy);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "psnrDz = %.10G\n", compareResult->psnrDz);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "psnrDt = %.10G\n", compareResult->psnrDt);	
+		index++;							
+	}
+	if(derivative1_sep_ssimFlag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "ssimDx = %.10G\n", compareResult->ssimDx);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "ssimDy = %.10G\n", compareResult->ssimDy);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "ddimDz = %.10G\n", compareResult->ssimDz);	
+		index++;	
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "ssimDt = %.10G\n", compareResult->ssimDt);	
+		index++;							
+	}		
+	if(derivativeOrder1_psnrFlag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "derivativeOrder1_psnr = %.10G\n", compareResult->derivativeOrder1_psnr);
+		index++;
+	}
+	
+	if(derivativeOrder2_psnrFlag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));	
+		sprintf(s[index], "derivativeOrder2_psnr = %.10G\n", compareResult->derivativeOrder2_psnr);	
+		index++;
 	}
 
-	s[33] = (char*)malloc(100*sizeof(char));
-	if(derivativeOrder1_psnrFlag)
-		sprintf(s[33], "derivativeOrder1_psnr = %.10G\n", compareResult->derivativeOrder1_psnr);
-	else
-		sprintf(s[33], "derivativeOrder1_psnr = -\n", compareResult->derivativeOrder1_psnr);
-	
-	s[34] = (char*)malloc(100*sizeof(char));	
-	if(derivativeOrder2_psnrFlag)
-		sprintf(s[34], "derivativeOrder2_psnr = %.10G\n", compareResult->derivativeOrder2_psnr);	
-	else
-		sprintf(s[34], "derivativeOrder2_psnr = -\n", compareResult->derivativeOrder2_psnr);		
-
-	s[35] = (char*)malloc(100*sizeof(char));
 	if(derivativeOrder1_ssimFlag)
-		sprintf(s[35], "derivativeOrder1_ssim = %.10G\n", compareResult->derivativeOrder1_ssim);
-	else
-		sprintf(s[35], "derivativeOrder1_ssim = -\n", compareResult->derivativeOrder1_ssim);
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "derivativeOrder1_ssim = %.10G\n", compareResult->derivativeOrder1_ssim);
+		index++;
+	}
 	
-	s[36] = (char*)malloc(100*sizeof(char));
 	if(derivativeOrder2_ssimFlag)
-		sprintf(s[36], "derivativeOrder2_ssim = %.10G\n", compareResult->derivativeOrder2_ssim);	
-	else
-		sprintf(s[36], "derivativeOrder2_ssim = -\n", compareResult->derivativeOrder2_ssim);	
-
-	s[37] = (char*)malloc(100*sizeof(char));
-	sprintf(s[37], "compressionMode = %d\n", compareResult->compressionMode);
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "derivativeOrder2_ssim = %.10G\n", compareResult->derivativeOrder2_ssim);	
+		index++;
+	}
+	s[index] = (char*)malloc(100*sizeof(char));
+	sprintf(s[index], "compressionMode = %d\n", compareResult->compressionMode);
+	index++;
+	*nbLines = index;
 	return s;
 }
 
@@ -442,7 +501,8 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 #if HAVE_ONLINEVIS
   return;
 #endif
-	char** s = constructCompareDataString(compareResult);
+	int nbLines = 0;
+	char** s = constructCompareDataString(compareResult, &nbLines);
 	char varName_[ZC_BUFS];
 	strcpy(varName_, varName);
 	ZC_ReplaceStr2(varName_, "_", "\\\\_");
@@ -451,9 +511,9 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 		mkdir(tgtWorkspaceDir,0775);
 	char tgtFilePath[ZC_BUFS_LONG];
 	sprintf(tgtFilePath, "%s/%s:%s.cmp", tgtWorkspaceDir, solution, varName); 
-	ZC_writeStrings(38, s, tgtFilePath);
+	ZC_writeStrings(nbLines, s, tgtFilePath);
 	int i;
-	for(i=0;i<=37;i++)
+	for(i=0;i<=nbLines;i++)
 		free(s[i]);
 	free(s);
 	
