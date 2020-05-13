@@ -59,6 +59,7 @@ size_t compressSize, double decompressTime, double decompressRate, double minAbs
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF, int compressionMode, 
 double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max, 
+double maxDx, double maxDy, double maxDz, double maxDt,
 double maxErrDx, double maxErrDy, double maxErrDz, double maxErrDt, double psnrDx, double psnrDy, double psnrDz, double psnrDt, 
 double ssimDx, double ssimDy, double ssimDz, double ssimDt, 
 double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim, double derivative1_sobolev)
@@ -97,6 +98,11 @@ double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrd
 	result->ssimImage2D_min = ssimImage2D_min;
 	result->ssimImage2D_avg = ssimImage2D_avg;
 	result->ssimImage2D_max = ssimImage2D_max;
+	
+	result->maxDx = maxDx;
+	result->maxDy = maxDy;
+	result->maxDz = maxDz;
+	result->maxDt = maxDt;
 	
 	result->maxErrDx = maxErrDx;
 	result->maxErrDy= maxErrDy;
@@ -705,6 +711,11 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	double ssimImage2D_min = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_min", 0);	
 	double ssimImage2D_avg = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_avg", 0);	
 	double ssimImage2D_max = (double)iniparser_getdouble(ini, "COMPARE:ssimImage2D_max", 0);
+
+	double maxDx = (double)iniparser_getdouble(ini, "COMPARE:maxDx", -1);
+	double maxDy = (double)iniparser_getdouble(ini, "COMPARE:maxDy", -1);
+	double maxDz = (double)iniparser_getdouble(ini, "COMPARE:maxDz", -1);
+	double maxDt = (double)iniparser_getdouble(ini, "COMPARE:maxDt", -1);  
 	
 	double maxErrDx = (double)iniparser_getdouble(ini, "COMPARE:maxErrDx", -1);
 	double maxErrDy = (double)iniparser_getdouble(ini, "COMPARE:maxErrDy", -1);
@@ -730,7 +741,7 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile)
 	compressTime, compressRate, compressRatio, rate, 
 	compressSize, decompressTime, decompressRate, minAbsErr, avgAbsErr, maxAbsErr, minRelErr, avgRelErr, maxRelErr, 
 	rmse, nrmse, psnr, snr, valErrCorr, pearsonCorr, autoCorrAbsErr, absErrPDF, compressionMode, 
-	ssimImage2D_min, ssimImage2D_avg, ssimImage2D_max, 
+	ssimImage2D_min, ssimImage2D_avg, ssimImage2D_max, maxDx, maxDy, maxDz, maxDt,
 	maxErrDx, maxErrDy, maxErrDz, maxErrDt, psnrDx, psnrDy, psnrDz, psnrDt, ssimDx, ssimDy, ssimDz, ssimDt,
 	derivativeOrder1_psnr, derivativeOrder2_psnr, derivativeOrder1_ssim, derivativeOrder2_ssim, derivative1_sobolev);
 	

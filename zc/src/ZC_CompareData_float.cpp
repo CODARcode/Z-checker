@@ -340,6 +340,9 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		&(compareResult->maxErrDx), &(compareResult->maxErrDy), &(compareResult->maxErrDz), &(compareResult->maxErrDt), 
 		&(compareResult->psnrDx), &(compareResult->psnrDy), &(compareResult->psnrDz), &(compareResult->psnrDt),
 		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));
+		
+		printf("maxRelDx = %f, maxRelDy = %f , maxRelDz = %f , maxRelDt = %f \n", compareResult->maxErrDx/compareResult->maxDx,
+		compareResult->maxErrDy/compareResult->maxDy, compareResult->maxErrDz/compareResult->maxDz, compareResult->maxErrDt/compareResult->maxDt);
 	}
 
 	//dimensions: r5, r4, r3, r2, r1, data1, data2 --> compareResult->derivativeOrder1 and compareResult->derivativeOrder2

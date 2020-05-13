@@ -198,6 +198,7 @@ size_t compressSize, double decompressTime, double decompressRate, double minAbs
 double minRelErr, double avgRelErr, double maxRelErr, double rmse, double nrmse, double psnr, double snr, double valErrCorr, double pearsonCorr,
 double* autoCorrAbsErr, double* absErrPDF, int compressionMode, 
 double ssimImage2D_min, double ssimImage2D_avg, double ssimImage2D_max, 
+double maxDx, double maxDy, double maxDz, double maxDt,
 double maxErrDx, double maxErrDy, double maxErrDz, double maxErrDt, double psnrDx, double psnrDy, double psnrDz, double psnrDt, 
 double ssimDx, double ssimDy, double ssimDz, double ssimDt, 
 double derivativeOrder1_psnr, double derivativeOrder2_psnr, double derivativeOrder1_ssim, double derivativeOrder2_ssim, double derivative1_sobolev);

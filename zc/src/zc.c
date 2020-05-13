@@ -2381,7 +2381,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	if(zcv==NULL)
 	{
 		zcv = ZC_constructCompareResult(name, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);		
 		zcv->property = property;
 		zcv->dec_data = NULL;
 	}
