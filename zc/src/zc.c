@@ -1057,6 +1057,7 @@ void ZC_plotRateDistortion()
 					if(dataLines_derv1_maxRelErr_dx[j]!=NULL) free(dataLines_derv1_maxRelErr_dx[j]);						
 			}		
 			
+			
 			char** dataLines_derv1_maxRelErr_dy = extractRateDistortion_Derivative1_maxRelErr_dy(count, cmpResList, &validLineNum);
 			if(dataLines_derv1_maxRelErr_dy!=NULL&&validLineNum>0)
 			{
@@ -1788,6 +1789,13 @@ char** extractRateDistortion_Derivative1_maxRelErr_dx(int totalCount, char** cmp
 
 	if(totalCount==0)
 		return NULL;
+
+	//check maxAbsErr based on the first element
+	char* kk = cmpResList[0];
+	ZC_CompareData* first_compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, kk);
+	if( first_compareResult->maxAbsErr == 0)
+		return NULL;
+		
 	//construct the dataLines and the field line
 	char** dataLines = (char**)malloc((totalCount+1)*sizeof(char*)); //including field file
 	memset(dataLines, 0, (totalCount+1)*sizeof(char*));
@@ -1867,6 +1875,13 @@ char** extractRateDistortion_Derivative1_maxRelErr_dy(int totalCount, char** cmp
 
 	if(totalCount==0)
 		return NULL;
+		
+	//check maxAbsErr based on the first element
+	char* kk = cmpResList[0];
+	ZC_CompareData* first_compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, kk);
+	if( first_compareResult->maxAbsErr == 0)
+		return NULL;
+		
 	//construct the dataLines and the field line
 	char** dataLines = (char**)malloc((totalCount+1)*sizeof(char*)); //including field file
 	memset(dataLines, 0, (totalCount+1)*sizeof(char*));
@@ -1946,6 +1961,13 @@ char** extractRateDistortion_Derivative1_maxRelErr_dz(int totalCount, char** cmp
 
 	if(totalCount==0)
 		return NULL;
+
+	//check maxAbsErr based on the first element
+	char* kk = cmpResList[0];
+	ZC_CompareData* first_compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, kk);
+	if( first_compareResult->maxAbsErr == 0)
+		return NULL;
+
 	//construct the dataLines and the field line
 	char** dataLines = (char**)malloc((totalCount+1)*sizeof(char*)); //including field file
 	memset(dataLines, 0, (totalCount+1)*sizeof(char*));
@@ -2025,6 +2047,13 @@ char** extractRateDistortion_Derivative1_maxRelErr_dt(int totalCount, char** cmp
 
 	if(totalCount==0)
 		return NULL;
+
+	//check maxAbsErr based on the first element
+	char* kk = cmpResList[0];
+	ZC_CompareData* first_compareResult = (ZC_CompareData*)ht_get(ecCompareDataTable, kk);
+	if( first_compareResult->maxAbsErr == 0)
+		return NULL;
+		
 	//construct the dataLines and the field line
 	char** dataLines = (char**)malloc((totalCount+1)*sizeof(char*)); //including field file
 	memset(dataLines, 0, (totalCount+1)*sizeof(char*));
