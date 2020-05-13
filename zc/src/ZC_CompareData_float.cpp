@@ -341,7 +341,7 @@ size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 		&(compareResult->psnrDx), &(compareResult->psnrDy), &(compareResult->psnrDz), &(compareResult->psnrDt),
 		&(compareResult->ssimDx), &(compareResult->ssimDy), &(compareResult->ssimDz), &(compareResult->ssimDt));
 		
-		printf("maxRelDx = %f, maxRelDy = %f , maxRelDz = %f , maxRelDt = %f \n", compareResult->maxErrDx/compareResult->maxDx,
+		printf("maxRelDx = %f , maxRelDy = %f , maxRelDz = %f , maxRelDt = %f \n", compareResult->maxErrDx/compareResult->maxDx,
 		compareResult->maxErrDy/compareResult->maxDy, compareResult->maxErrDz/compareResult->maxDz, compareResult->maxErrDt/compareResult->maxDt);
 	}
 

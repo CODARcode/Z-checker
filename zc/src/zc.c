@@ -901,213 +901,231 @@ void ZC_plotRateDistortion()
 				if(dataLines_valErrCorr[j]!=NULL) free(dataLines_valErrCorr[j]);
 		}
 		
-		char** dataLines_derv1_psnr = extractRateDistortion_Derivative1_psnr(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_psnr!=NULL&&validLineNum>0)
+		if(derivativeOrder1_psnrFlag)
 		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_psnr_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_psnr, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_psnr_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-PSNR");
-			sprintf(fileName, "rate-distortion_derv1_psnr_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_psnr[j]!=NULL) free(dataLines_derv1_psnr[j]);						
-		}		
-
-		char** dataLines_derv2_psnr = extractRateDistortion_Derivative2_psnr(count, cmpResList, &validLineNum);
-		if(dataLines_derv2_psnr!=NULL&&validLineNum>0)
-		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv2_psnr_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv2_psnr, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv2_psnr_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative2-PSNR");
-			sprintf(fileName, "rate-distortion_derv2_psnr_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv2_psnr[j]!=NULL) free(dataLines_derv2_psnr[j]);						
+			char** dataLines_derv1_psnr = extractRateDistortion_Derivative1_psnr(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_psnr!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_psnr_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_psnr, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_psnr_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-PSNR");
+				sprintf(fileName, "rate-distortion_derv1_psnr_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_psnr[j]!=NULL) free(dataLines_derv1_psnr[j]);						
+			}					
 		}
 
-		char** dataLines_derv1_ssim = extractRateDistortion_Derivative1_ssim(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_ssim!=NULL&&validLineNum>0)
+
+		if(derivativeOrder2_psnrFlag)
 		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_ssim_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_ssim, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_ssim_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-SSIM");
-			sprintf(fileName, "rate-distortion_derv1_ssim_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_ssim[j]!=NULL) free(dataLines_derv1_ssim[j]);						
+			char** dataLines_derv2_psnr = extractRateDistortion_Derivative2_psnr(count, cmpResList, &validLineNum);
+			if(dataLines_derv2_psnr!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv2_psnr_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv2_psnr, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv2_psnr_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative2-PSNR");
+				sprintf(fileName, "rate-distortion_derv2_psnr_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv2_psnr[j]!=NULL) free(dataLines_derv2_psnr[j]);						
+			}			
 		}
 
-		char** dataLines_derv2_ssim = extractRateDistortion_Derivative2_ssim(count, cmpResList, &validLineNum);
-		if(dataLines_derv2_ssim!=NULL&&validLineNum>0)
+		if(derivativeOrder1_ssimFlag)
 		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv2_ssim_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv2_ssim, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv2_ssim_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative2-SSIM");
-			sprintf(fileName, "rate-distortion_derv2_ssim_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv2_ssim[j]!=NULL) free(dataLines_derv2_ssim[j]);						
+			char** dataLines_derv1_ssim = extractRateDistortion_Derivative1_ssim(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_ssim!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_ssim_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_ssim, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_ssim_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-SSIM");
+				sprintf(fileName, "rate-distortion_derv1_ssim_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_ssim[j]!=NULL) free(dataLines_derv1_ssim[j]);						
+			}			
 		}
 
-		char** dataLines_derv1_sobolev = extractRateDistortion_Derivative1_sobolev(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_sobolev!=NULL&&validLineNum>0)
+		if(derivativeOrder2_ssimFlag)
 		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_sobolev_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_sobolev, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_sobolev_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-Sobolev");
-			sprintf(fileName, "rate-distortion_derv1_sobolev_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_sobolev[j]!=NULL) free(dataLines_derv1_sobolev[j]);						
+			char** dataLines_derv2_ssim = extractRateDistortion_Derivative2_ssim(count, cmpResList, &validLineNum);
+			if(dataLines_derv2_ssim!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv2_ssim_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv2_ssim, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv2_ssim_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative2-SSIM");
+				sprintf(fileName, "rate-distortion_derv2_ssim_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv2_ssim[j]!=NULL) free(dataLines_derv2_ssim[j]);						
+			}			
+		}
+
+		if(derivativeOrder1_sobolevFlag)
+		{
+			char** dataLines_derv1_sobolev = extractRateDistortion_Derivative1_sobolev(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_sobolev!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_sobolev_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_sobolev, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_sobolev_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-Sobolev");
+				sprintf(fileName, "rate-distortion_derv1_sobolev_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_sobolev[j]!=NULL) free(dataLines_derv1_sobolev[j]);						
+			}			
 		}		
 
-		char** dataLines_derv1_maxRelErr_dx = extractRateDistortion_Derivative1_maxRelErr_dx(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_maxRelErr_dx!=NULL&&validLineNum>0)
+		if(derivativeOrder1_sep_maxDiffFlag)
 		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dx_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dx, fileName);		
+			char** dataLines_derv1_maxRelErr_dx = extractRateDistortion_Derivative1_maxRelErr_dx(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_maxRelErr_dx!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dx_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dx, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dx_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dx");
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dx_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_maxRelErr_dx[j]!=NULL) free(dataLines_derv1_maxRelErr_dx[j]);						
+			}		
 			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dx_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dx");
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dx_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
+			char** dataLines_derv1_maxRelErr_dy = extractRateDistortion_Derivative1_maxRelErr_dy(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_maxRelErr_dy!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dy_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dy, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dy_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dy");
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dy_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_maxRelErr_dy[j]!=NULL) free(dataLines_derv1_maxRelErr_dy[j]);						
+			}			
 			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_maxRelErr_dx[j]!=NULL) free(dataLines_derv1_maxRelErr_dx[j]);						
-		}		
-		
-		char** dataLines_derv1_maxRelErr_dy = extractRateDistortion_Derivative1_maxRelErr_dy(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_maxRelErr_dy!=NULL&&validLineNum>0)
-		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dy_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dy, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dy_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dy");
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dy_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_maxRelErr_dy[j]!=NULL) free(dataLines_derv1_maxRelErr_dy[j]);						
-		}			
-		
-		char** dataLines_derv1_maxRelErr_dz = extractRateDistortion_Derivative1_maxRelErr_dz(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_maxRelErr_dz!=NULL&&validLineNum>0)
-		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dz_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dz, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dz_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dz");
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dz_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_maxRelErr_dz[j]!=NULL) free(dataLines_derv1_maxRelErr_dz[j]);						
-		}					
+			char** dataLines_derv1_maxRelErr_dz = extractRateDistortion_Derivative1_maxRelErr_dz(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_maxRelErr_dz!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dz_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dz, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dz_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dz");
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dz_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_maxRelErr_dz[j]!=NULL) free(dataLines_derv1_maxRelErr_dz[j]);						
+			}					
 
-		char** dataLines_derv1_maxRelErr_dt = extractRateDistortion_Derivative1_maxRelErr_dt(count, cmpResList, &validLineNum);
-		if(dataLines_derv1_maxRelErr_dt!=NULL&&validLineNum>0)
-		{
-			char fileName[ZC_BUFS];
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dt_%s.txt", variables[i]);
-			ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dt, fileName);		
-			
-			//TODO: generate the GNUPLOT script.
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dt_%s", variables[i]);
-			char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dt");
-			sprintf(fileName, "rate-distortion_derv1_maxRelErr_dt_%s.p", variables[i]);
-			ZC_writeStrings(24, scriptLines, fileName);
-			char cmd[ZC_BUFS];
-			sprintf(cmd, "gnuplot %s", fileName);
-			system(cmd);
-			for(j=0;j<24;j++)
-				free(scriptLines[j]);
-			free(scriptLines);			
-			
-			for(j=0;j<count+1;j++)
-				if(dataLines_derv1_maxRelErr_dt[j]!=NULL) free(dataLines_derv1_maxRelErr_dt[j]);						
-		}					
-		
+			char** dataLines_derv1_maxRelErr_dt = extractRateDistortion_Derivative1_maxRelErr_dt(count, cmpResList, &validLineNum);
+			if(dataLines_derv1_maxRelErr_dt!=NULL&&validLineNum>0)
+			{
+				char fileName[ZC_BUFS];
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dt_%s.txt", variables[i]);
+				ZC_writeStrings(count+1, dataLines_derv1_maxRelErr_dt, fileName);		
+				
+				//TODO: generate the GNUPLOT script.
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dt_%s", variables[i]);
+				char** scriptLines = genGnuplotScript_linespoints(fileName, "txt", GNUPLOT_FONT, 1+compressors_count, "Rate", "Derivative1-maxRelErr-dt");
+				sprintf(fileName, "rate-distortion_derv1_maxRelErr_dt_%s.p", variables[i]);
+				ZC_writeStrings(24, scriptLines, fileName);
+				char cmd[ZC_BUFS];
+				sprintf(cmd, "gnuplot %s", fileName);
+				system(cmd);
+				for(j=0;j<24;j++)
+					free(scriptLines[j]);
+				free(scriptLines);			
+				
+				for(j=0;j<count+1;j++)
+					if(dataLines_derv1_maxRelErr_dt[j]!=NULL) free(dataLines_derv1_maxRelErr_dt[j]);						
+			}					
+		}
 		free(cmpResList);
 	}
 }
