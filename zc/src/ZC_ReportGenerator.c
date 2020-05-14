@@ -711,7 +711,7 @@ void ZC_generateResultTexFile()
 		line = createLine("\\input{tex/resultsTex/rateDistortion}\n"); 
 		p = appendOneLine(p, line);
 	}
-	if(derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag || derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag)
+	if(derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag || derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag || derivativeOrder1_sobolevFlag)
 	{
 		line = createLine("\\input{tex/resultsTex/rateDerivatives}\n"); 
 		p = appendOneLine(p, line);		
