@@ -636,6 +636,22 @@ void ZC_generateRateDerivatives_aggregated_Report()
 	printf("Processing %s\n", rateDisTexFile);
 	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
 	
+	if(derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag || derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag)
+	{
+		char *str = (char*)malloc(sizeof(char)*ZC_BUFS_SUPER_LONG);
+		strcpy(str, "We calculate PSNR and SSIM of the derivatives to assess the compression quality. Hence, there are totally four metrics, including PSNR over 1st-order derivative (called 1st-derivative-PSNR), PSNR over 2nd-order derivative (called 2nd-derivative-PSNR), SSIM over 1st-order derivative (called 1st-derivative-SSIM), SSIM over 2nd-order derivative (called 2nd-derivative-SSIM), respectively.\n");
+		StringLine* desc_derivativeOrder1_sobolev = createOneStringLine(str);
+		ZC_insertLines("%describe aggregated derivative - PSNR and SSIM\n", texLines, desc_derivativeOrder1_sobolev);
+	}
+	
+	if(derivativeOrder1_sobolevFlag)
+	{
+		char *str = (char*)malloc(sizeof(char)*ZC_BUFS_SUPER_LONG);
+		strcpy(str, "We calculated the sobolev derivatives metric to assess the overall quality of derivatives vs. the bit-rate for different compressors. The definition of sobolev derivatives can be found here (https://en.wikipedia.org/wiki/Sobolev\\_space).\n");
+		StringLine* desc_derivativeOrder_PSNRSSIM = createOneStringLine(str);
+		ZC_insertLines("%describe aggregated derivative - sobolev\n", texLines, desc_derivativeOrder_PSNRSSIM);		
+	}	
+	
 	StringLine* figLines =  ZC_generateRateDerivatives_aggregated_Figure();
 	ZC_insertLines("%plot rate derivatives\n", texLines, figLines);		
 	
@@ -651,22 +667,6 @@ void ZC_generateRateDerivatives_separated_Report()
 	//printf("%s\n", reportTemplateDir);
 	printf("Processing %s\n", rateDisTexFile);
 	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
-	
-	if(derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag || derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag)
-	{
-		char *str = (char*)malloc(sizeof(char)*ZC_BUFS_SUPER_LONG);
-		strcpy(str, "We calculate PSNR and SSIM of the derivatives to assess the compression quality. Hence, there are totally four metrics, including PSNR over 1st-order derivative (called 1st-derivative-PSNR), PSNR over 2nd-order derivative (called 2nd-derivative-PSNR), SSIM over 1st-order derivative (called 1st-derivative-SSIM), SSIM over 2nd-order derivative (called 2nd-derivative-SSIM), respectively.\n");
-		StringLine* desc_derivativeOrder1_sobolev = createOneStringLine(str);
-		ZC_insertLines("%describe aggregated derivative - PSNR and SSIM\n", texLines, desc_derivativeOrder1_sobolev);
-	}
-	
-	if(derivativeOrder1_sobolevFlag)
-	{
-		char *str = (char*)malloc(sizeof(char)*ZC_BUFS_SUPER_LONG);
-		strcpy(str, "We calculated the sobolev derivatives metric to assess the overall quality of derivatives vs. the bit-rate for different compressors. The definition of sobolev derivatives can be found here (https://en.wikipedia.org/wiki/Sobolev\\_space).\n");
-		StringLine* desc_derivativeOrder_PSNRSSIM = createOneStringLine(str);
-		ZC_insertLines("%describe aggregated derivative - sobolev\n", texLines, desc_derivativeOrder_PSNRSSIM);		
-	}
 	
 	StringLine* figLines =  ZC_generateRateDerivatives_separated_Figure();
 	ZC_insertLines("%plot rate derivatives for different directions\n", texLines, figLines);		
