@@ -24,7 +24,7 @@ hashtable_t *ecVisDecDataTables = NULL;
     return dup;
 }*/
 
-int checkStartsWith(char* str, char* key)
+int checkStartsWith(char* str, const char* key)
 {
 	int n = strlen(key);
 	int r = strncmp(str, key, n);
@@ -62,7 +62,7 @@ hashtable_t *ht_create( int capacity ) {
 }
 
 /* Hash a string for a particular hash table. */
-int ht_hash( hashtable_t *hashtable, char *key ) {
+int ht_hash( hashtable_t *hashtable, const char *key ) {
 
 	unsigned long int hashval = 0;
 	int i = 0;
@@ -79,7 +79,7 @@ int ht_hash( hashtable_t *hashtable, char *key ) {
 }
 
 /* Create a key-value pair. */
-entry_t *ht_newpair( char *key, void *value ) {
+entry_t *ht_newpair( const char *key, void *value ) {
 	entry_t *newpair;
 
 	if( ( newpair = (entry_t*)malloc( sizeof( entry_t ) ) ) == NULL ) {
@@ -98,7 +98,7 @@ entry_t *ht_newpair( char *key, void *value ) {
 }
 
 /* Insert a key-value pair into a hash table. */
-void ht_set( hashtable_t *hashtable, char *key, void *value ) {
+void ht_set( hashtable_t *hashtable, const char *key, void *value ) {
 	int bin = 0;
 	entry_t *newpair = NULL;
 	entry_t *next = NULL;
@@ -143,7 +143,7 @@ void ht_set( hashtable_t *hashtable, char *key, void *value ) {
 }
 
 /* Retrieve a key-value pair from a hash table. */
-void *ht_get( hashtable_t *hashtable, char *key ) {
+void *ht_get( hashtable_t *hashtable, const char *key ) {
 	int bin = 0;
 	entry_t *pair;
 
@@ -192,7 +192,7 @@ void ht_freeTable( hashtable_t *hashtable)
  * 
  * return: non-zero means found it and remove it; NULL means missing (didn't found the key)
  * */
-void* ht_freePairEntry( hashtable_t *hashtable, char* key)
+void* ht_freePairEntry( hashtable_t *hashtable, const char* key)
 {
 	int i, flag = 0;
 	if(key==NULL)

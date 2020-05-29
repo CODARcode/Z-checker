@@ -31,14 +31,14 @@ extern hashtable_t *ecCompareDataTable; //ecCompareDataTable contains all compar
 extern hashtable_t *ecVisDecDataTables; //ecVisDecDataTables contains the required error bound settings for visualization of decompressed data
 
 //char *strdup(const char *str);
-int checkStartsWith(char* str, char* key);
+int checkStartsWith(char* str, const char* key);
 hashtable_t *ht_create( int capacity );
-int ht_hash( hashtable_t *hashtable, char *key );
-entry_t *ht_newpair( char *key, void *value );
-void ht_set( hashtable_t *hashtable, char *key, void *value );
-void *ht_get( hashtable_t *hashtable, char *key );
+int ht_hash( hashtable_t *hashtable, const char *key );
+entry_t *ht_newpair( const char *key, void *value );
+void ht_set( hashtable_t *hashtable, const char *key, void *value );
+void *ht_get( hashtable_t *hashtable, const char *key );
 void ht_freeTable( hashtable_t *hashtable);
-void* ht_freePairEntry( hashtable_t *hashtable, char* key);
+void* ht_freePairEntry( hashtable_t *hashtable, const char* key);
 
 char** ht_getAllKeys(hashtable_t *hashtable);
 int ht_getElemCount(hashtable_t *hashtable);

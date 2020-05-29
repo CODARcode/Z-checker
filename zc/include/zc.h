@@ -333,9 +333,9 @@ int ZC_Init_NULL();
 int ZC_Init(char *configFilePath);
 long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-ZC_DataProperty* ZC_startCmpr_offline(char* varName, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution, long cmprSize);
+ZC_DataProperty* ZC_startCmpr_offline(const char* varName, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, const char* solution, long cmprSize);
 void ZC_startDec_offline();
 void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData);
 
@@ -345,7 +345,7 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases);
 int getComparisonCases(char* cases[]);
 void ZC_plotComparisonCases();
 
-char** getCompResKeyList(char* var, int* count);
+char** getCompResKeyList(const char* var, int* count);
 char** extractRateDistortion_psnr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateDistortion_snr(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateCorrelation(int totalCount, char** cmpResList, int* validLineNum);
@@ -378,16 +378,16 @@ void ZC_generateErrDistributionReport(CmprsorErrBound *allCompressors, int allCo
 void ZC_generateErrAutoCorrReport(CmprsorErrBound *allCompressors, int allCompressorCount);
 void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int allCompressorCount);
 
-void ZC_updateZCRootTexFile(char* dataSetName);
+void ZC_updateZCRootTexFile(const char* dataSetName);
 StringLine* ZC_generateDecSliceImageReport();
-void ZC_generateOverallReport(char* dataSetName);
+void ZC_generateOverallReport(const char* dataSetName);
 
-int ZC_analyze_and_generateReport(char* dataSetName);
+int ZC_analyze_and_generateReport(const char* dataSetName);
 int ZC_Finalize();
 
-ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_registerVar(const char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
-ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status);
+ZC_CompareData** loadMultiVars(const char* multivarFile, int* nbVars, int* status);
 
 //The following executeCmd_xxx interfaces are depreated. (Please see [ZC_package]/R/ for how to call R scripts from Z-checker instead. 
 int ZC_executeCmd_GfloatVector(const char* cmd, int* count, float** data);
@@ -399,15 +399,15 @@ int ZC_executeCmd_RdoubleMatrix(const char* cmd, int* m, int* n, double** data);
 
 //online interfaces
 long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution, long cmprSize);
+ZC_DataProperty* ZC_startCmpr_online(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, const char* solution, long cmprSize);
 void ZC_startDec_online();
 void ZC_endDec_online(ZC_CompareData* compareResult, void *decData);
 
 
 //overall interfaces for checkingStatus==PROBE_COMPRESSOR
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, char* solution, long cmprSize);
+ZC_DataProperty* ZC_startCmpr(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, const char* solution, long cmprSize);
 void ZC_startDec();
 void ZC_endDec(ZC_CompareData* compareResult, void *decData);
 

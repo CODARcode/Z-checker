@@ -308,9 +308,9 @@ complex* ZC_computeFFT(void* data, size_t n, int dataType)
 	return fftCoeff;
 }
 
-ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_genProperties(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
-	char* varN = varName;//rmFileExtension(varName);
+	const char* varN = varName;//rmFileExtension(varName);
 	ZC_DataProperty* property = NULL;
 	size_t numOfElem = ZC_computeDataLength(r5,r4,r3,r2,r1);
 	if(dataType==ZC_FLOAT)
@@ -501,7 +501,7 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	
 }
 
-void ZC_writeFFTResults(char* varName, complex* fftCoeff, const char* tgtWorkspaceDir)
+void ZC_writeFFTResults(const char* varName, complex* fftCoeff, const char* tgtWorkspaceDir)
 {
 	size_t i;
 	char tgtFilePath[ZC_BUFS] = {0};
@@ -612,7 +612,7 @@ void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir
 		closedir(dir);
 }
 
-ZC_DataProperty* ZC_loadDataProperty(char* propResultFile)
+ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile)
 {
 	/*TODO put the information into the hashtable, named ecPropertyTable*/
 	dictionary *ini;

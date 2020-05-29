@@ -76,24 +76,24 @@ size_t numOfElem, double minValue, double maxValue, double valueRange, double av
 double entropy, double* autocorr, complex* fftCoeff, char* filePath);
 
 complex* ZC_computeFFT(void* data, size_t n, int dataType);
-ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_DataProperty* ZC_genProperties_double(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_DataProperty* ZC_genProperties(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties_float(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties_double(const char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source);
 
 void ZC_printDataProperty(ZC_DataProperty* property);
 char** constructDataPropertyString(ZC_DataProperty* property);
 
-void ZC_writeFFTResults(char* varName, complex* fftCoeff, const char* tgtWorkspaceDir);
+void ZC_writeFFTResults(const char* varName, complex* fftCoeff, const char* tgtWorkspaceDir);
 void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir);
-ZC_DataProperty* ZC_loadDataProperty(char* propResultFile);
+ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile);
 
 //online interfaces
 void ZC_genBasicProperties_float_online(float* data, size_t numOfElem, ZC_DataProperty* property);
 void ZC_genBasicProperties_double_online(double* data, size_t numOfElem, ZC_DataProperty* property);
-ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
-ZC_DataProperty* ZC_genProperties_double_online(char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties_float_online(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+ZC_DataProperty* ZC_genProperties_double_online(const char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 #ifdef __cplusplus
 }

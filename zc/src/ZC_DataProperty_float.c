@@ -133,7 +133,7 @@ void ZC_genBasicProperties_float_online(float* data, size_t numOfElem, ZC_DataPr
 }
 
 
-ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_genProperties_float_online(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i = 0;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
@@ -265,7 +265,7 @@ ZC_DataProperty* ZC_genProperties_float_online(char* varName, float *data, size_
 }
 #endif
 
-ZC_DataProperty* ZC_genProperties_float(char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_genProperties_float(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i = 0;
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));

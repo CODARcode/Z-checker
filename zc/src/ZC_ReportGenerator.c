@@ -1015,7 +1015,7 @@ void ZC_generateSpectrumDistortionReport(CmprsorErrBound *allCompressors, int al
 	ZC_freeLines(texLines);		
 }
 
-void ZC_updateZCRootTexFile(char* dataSetName)
+void ZC_updateZCRootTexFile(const char* dataSetName)
 {
 	int lineCount;
 	char rootTexFile[ZC_BUFS], dsName[ZC_BUFS];
@@ -1142,7 +1142,7 @@ StringLine* ZC_generateDecSliceImageReport()
 	return resultHeader;
 }
 
-void ZC_generateOverallReport(char* dataSetName)
+void ZC_generateOverallReport(const char* dataSetName)
 {
 	if(reportTemplateDir==NULL)
 	{

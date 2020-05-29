@@ -298,7 +298,7 @@ long ZC_computeDataLength(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 	return dataLength;
 }
 
-ZC_DataProperty* ZC_startCmpr_offline(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_startCmpr_offline(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i;
 	double min,max,sum = 0;
@@ -363,7 +363,7 @@ ZC_DataProperty* ZC_startCmpr_offline(char* varName, int dataType, void *oriData
 	return property;
 }
 
-ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_DataProperty* property = ZC_genProperties(varName, dataType, oriData, r5, r4, r3, r2, r1);
 	char tgtWorkspaceDir[ZC_BUFS];
@@ -374,7 +374,7 @@ ZC_DataProperty* ZC_startCmpr_offline_withDataAnalysis(char* varName, int dataTy
 	return property;
 }
 
-ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
+ZC_CompareData* ZC_endCmpr_offline(ZC_DataProperty* dataProperty, const char* solution, long cmprSize)
 {
 	double cmprTime = 0;
 	if(compressTimeFlag)
@@ -1131,7 +1131,7 @@ void ZC_plotRateDistortion()
 	}
 }
 
-char** getCompResKeyList(char* var, int* count)
+char** getCompResKeyList(const char* var, int* count)
 {
 	size_t i, j = 0;
 	char** selected = (char**)malloc(ecCompareDataTable->count*sizeof(char*));
@@ -2270,7 +2270,7 @@ void ZC_plotDecSliceImage()
 }
 
 
-int ZC_analyze_and_generateReport(char* dataSetName)
+int ZC_analyze_and_generateReport(const char* dataSetName)
 {
 	if(generateReportFlag==0)
 	{
@@ -2411,7 +2411,7 @@ int ZC_Finalize()
 	return ZC_SCES;
 }
 
-ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_CompareData* ZC_registerVar(const char* name, int dataType, void* oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_CompareData* zcv = NULL;
 	if(ecPropertyTable==NULL)
@@ -2436,7 +2436,7 @@ ZC_CompareData* ZC_registerVar(char* name, int dataType, void* oriData, size_t r
 	return zcv;
 }
 
-ZC_CompareData** loadMultiVars(char* multivarFile, int* nbVars, int* status)
+ZC_CompareData** loadMultiVars(const char* multivarFile, int* nbVars, int* status)
 {
 	int lineCount, nbVars_ = 0;
 	StringLine* lines = ZC_readLines(multivarFile, &lineCount);
@@ -2540,7 +2540,7 @@ long ZC_computeDataLength_online(size_t r5, size_t r4, size_t r3, size_t r2, siz
 	return globalDataLength;
 }
 
-ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_startCmpr_online(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_DataProperty* property = (ZC_DataProperty*)malloc(sizeof(ZC_DataProperty));
 	memset(property, 0, sizeof(ZC_DataProperty));
@@ -2579,7 +2579,7 @@ ZC_DataProperty* ZC_startCmpr_online(char* varName, int dataType, void *oriData,
 	return property;
 }
 
-ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
+ZC_CompareData* ZC_endCmpr_online(ZC_DataProperty* dataProperty, const char* solution, long cmprSize)
 {
 	double cmprTime = 0;
 	if(compressTimeFlag)
@@ -2671,7 +2671,7 @@ void ZC_endDec_online(ZC_CompareData* compareResult, void *decData)
 
 //overall interfaces for checkingStatus==PROBE_COMPRESSOR
 
-ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+ZC_DataProperty* ZC_startCmpr(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	ZC_DataProperty* result = (ZC_DataProperty*)ht_get(ecPropertyTable, varName); //note that result->varName is the cleared string of varName.
 
@@ -2691,7 +2691,7 @@ ZC_DataProperty* ZC_startCmpr(char* varName, int dataType, void *oriData, size_t
 	return result;	
 }
 
-ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, char* solution, long cmprSize)
+ZC_CompareData* ZC_endCmpr(ZC_DataProperty* dataProperty, const char* solution, long cmprSize)
 {
 	ZC_CompareData* result = NULL;
 #ifdef HAVE_MPI
