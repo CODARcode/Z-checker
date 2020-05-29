@@ -199,7 +199,7 @@ int ZC_Init_NULL()
 	return 0;
 }
 
-int ZC_Init(char *configFilePath)
+int ZC_Init(const char *configFilePath)
 {
 #ifdef HAVE_R
 	rscriptPath = (char*)malloc(MAX_MSG_LENGTH);
