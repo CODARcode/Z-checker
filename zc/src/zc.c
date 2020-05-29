@@ -40,7 +40,7 @@ int executionMode = 0;
 
 int errorBoundMode; //ABS, REL, ABS_AND_REL, or ABS_OR_REL
 
-char *zc_cfgFile;
+char *zc_cfgFile = NULL;
 
 double absErrBound;
 double relBoundRatio;
@@ -189,7 +189,7 @@ double cost_endDec()
 
 int ZC_Init_NULL()
 {
-	initStatus = 1; 
+	initStatus = 1;
 	ecPropertyTable = ht_create( HASHTABLE_SIZE );			
 	ecCompareDataTable = ht_create(HASHTABLE_SIZE);	
 #ifdef HAVE_ONLINEVIS
@@ -207,7 +207,8 @@ int ZC_Init(const char *configFilePath)
 
 	initStatus = 1; 
 	
-	zc_cfgFile = configFilePath;
+	zc_cfgFile = (char*)malloc(strlen(configFilePath)+1);
+	strcpy(zc_cfgFile, configFilePath);
 	int loadFileResult = ZC_LoadConf();
 
 #ifdef HAVE_R
@@ -2308,10 +2309,13 @@ int ZC_Finalize()
 	size_t i =0, j=0;	
 	if(initStatus==0)
 	{
-		printf("Error: ZC_finalize: you cannot perform ZC_Finalize() before ZC_Init().\n");
+		printf("Error: ZC_finalize: you cannot perform ZC_Finalize() without executing ZC_Init() before.\n");
 		printf("Hint: ZC_Finalize() cannot be performed multiple times in a row without corresponding ZC_Init().\n");
 		return ZC_NSCS;
 	}
+	
+	if(zc_cfgFile!=NULL)
+		free(zc_cfgFile);
 	
 	//free ecVisDecDataTables; Note: ecVisDecDataTables has to be freed before freeing ecPropertyTable
 	if(plotDecImageFlag && ecVisDecDataTables!=NULL)
