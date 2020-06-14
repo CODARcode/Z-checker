@@ -562,9 +562,11 @@ void ZC_writeCompressionResult(ZC_CompareData* compareResult, char* solution, ch
 			char *ss[2];
 			ss[0] = (char*)malloc(sizeof(char)*ZC_BUFS);
 			sprintf(ss[0], "x %s:%s-PDF\n", solution, varName_);				
+			ss[1] = (char*)malloc(sizeof(char)*ZC_BUFS);
 			strcpy(ss[1],"0 1\n");
 			ZC_writeStrings(2, ss, tgtFilePath);
-			free(ss[0]);	
+			free(ss[0]);
+			free(ss[1]);
 		}
 		else
 		{
