@@ -634,8 +634,11 @@ void ZC_plotHistogramResults(int cmpCount, char** compressorCases)
 				strcpy(line3, stringBuffer);
 				double psnr = compressResult->psnr;
 				if(maxPSNR<psnr)
-					maxPSNR = psnr;
-				sprintf(stringBuffer, "%s %f", line4, psnr);
+					maxPSNR = psnr;	
+				if(psnr==INFINITY)
+					sprintf(stringBuffer, "%s -", line4);
+				else
+					sprintf(stringBuffer, "%s %f", line4, psnr);
 				strcpy(line4, stringBuffer);
 			}			
 		}
