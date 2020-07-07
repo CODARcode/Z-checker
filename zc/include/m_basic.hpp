@@ -66,6 +66,7 @@ template <typename dT>
 void matrix<dT>::deallocate(){
   if(data!=NULL)
     delete [] data;
+  data=NULL;
 }
 
 template <typename dT>
@@ -95,6 +96,11 @@ void matrix<dT>::initialize(int _nDim, int _size0, int _size1, int _size2, int _
     delete []data;
   //cout<<"Initialize Size: "<<size0*size1*size2*size3<<endl;//AMG
   data=new dT[size0*size1*size2*size3];
+  
+  if(data==NULL){
+    cout<<"Matrix initialization failed. Requested size was: "<<size0*size1*size2*size3<<" bytes"<<endl;
+    assert(0);
+  }
 }
   
 template <typename dT>
