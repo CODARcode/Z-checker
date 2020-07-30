@@ -501,4 +501,3 @@ int ZC_parseCompressionCase(char* compressionCase, char* compressorName, char* e
         }
         return 0;
 }
-

@@ -820,6 +820,175 @@ void ZC_plotCompressionRatio()
 	system("gnuplot compressionRatio.p");
 }
 
+/**
+ * result: cmprErrBoundTable(compressorName, hashtable_t*) 
+ * 					--> errBoundVarTable (errBound, hashtable_t*) 
+ * 									--> varResultMap (varName, ZC_CompareData*) 
+ * 															--> ZC_CompareData
+ * 
+ * */
+hashtable_t* createCmprsorErrBoundVarMap()
+{
+	char** keys = ht_getAllKeys(ecCompareDataTable);
+	int nbKeys = ecCompareDataTable->count;
+	
+	int i = 0, j = 0;
+	hashtable_t *cmprErrBoundTable = ht_create(HASHTABLE_SIZE);
+	for(i=0;i < compressors_count;i++)
+	{
+		char* compressor = compressors[i];
+		hashtable_t *errBoundVarTable = ht_create(HASHTABLE_SIZE); 
+		ht_set(cmprErrBoundTable, compressor, errBoundVarTable);
+		
+		for(j=0;j<nbKeys;j++)
+		{
+			char* key = keys[j];
+			char compressorName[32];
+			char errorBound[16];
+			char varName[32];
+			ZC_parseCompressionCase(key, compressorName, errorBound, varName);
+			if(strcmp(compressorName, compressor)==0)
+			{
+				hashtable_t* varResultMap = ht_get(errBoundVarTable, errorBound);
+				if(varResultMap==NULL)
+				{
+					varResultMap = ht_create(HASHTABLE_SIZE);
+					ht_set(errBoundVarTable, errorBound, varResultMap);
+				}
+				
+				ZC_CompareData* p = (ZC_CompareData*)ht_get(ecCompareDataTable, key);
+				ht_set(varResultMap, varName, p);
+			}			
+		}
+	}	
+	
+	return cmprErrBoundTable;
+}
+
+StringLine* ZC_generateOverallRateDistortion_one_compressor(hashtable_t* cmprorErrVarMap, char* compressor)
+{
+	int i = 0, j = 0, k = 0;
+	
+	StringLine* resultHeader = createStringLineHeader();
+	char buff[128];
+	char* title = (char*)malloc(128); 
+	sprintf(title, "bitrate %s\n", compressor);
+	
+	StringLine* tail = appendOneLine(resultHeader, title);	
+	
+	hashtable_t* errBoundVarTable = ht_get(cmprorErrVarMap, compressor);
+	
+	char** errBounds = ht_getAllKeys(errBoundVarTable);
+	for(j=0;j<errBoundVarTable->count;j++)
+	{
+		char* errBound = errBounds[j];
+		hashtable_t* varResultMap = ht_get(errBoundVarTable, errBound);
+		char** vars = ht_getAllKeys(varResultMap);
+
+		char* resultLine = (char*)malloc(128);
+
+		double sum2_nrmse = 0;
+		double sum_bitrate = 0;
+		int counter = 0;
+		for(k=0;k<varResultMap->count;k++)
+		{ //compute the overall PSNR
+			ZC_CompareData* compareData = ht_get(varResultMap, vars[k]);
+			double maxAbsErr = compareData->maxAbsErr;
+			if(maxAbsErr!=0)
+			{
+				double nrmse = compareData->nrmse;
+				sum2_nrmse += nrmse*nrmse;
+				double bitrate = compareData->rate;
+				sum_bitrate += bitrate;
+				counter ++;
+			}
+		}
+		
+		if(counter!=0)
+		{
+			double overallNRMSE = sqrt(sum2_nrmse/counter);
+			double overallPSNR = -20*(log10(overallNRMSE));
+			double overallBitrate = sum_bitrate/counter;	
+			sprintf(resultLine, "%f %f\n", overallBitrate, overallPSNR);
+			tail = appendOneLine(tail, resultLine);			
+		}
+
+		free(vars);
+	}
+	free(errBounds);
+	return resultHeader;
+}
+
+void freeCmprorErrVarMap(hashtable_t* cmprorErrVarMap)
+{
+	int i = 0, j = 0, k = 0;
+	for(i=0;i<compressors_count;i++)
+	{
+		char* compressor = compressors[i];
+		hashtable_t* errBoundVarTable = ht_get(cmprorErrVarMap, compressor);
+		
+		char** errBounds = ht_getAllKeys(errBoundVarTable);
+		for(j=0;j<errBoundVarTable->count;j++)
+		{
+			char* errBound = errBounds[j];
+			hashtable_t* varResultMap = ht_get(errBoundVarTable, errBound);
+			ht_freeTable(varResultMap);
+		}
+		free(errBounds);
+		free(errBoundVarTable);
+	}	
+	free(cmprorErrVarMap);
+}
+
+void ZC_plotOverallRateDistortion_one_compressor(StringLine* lines, char* compressor)
+{
+	char fileName[ZC_BUFS];
+	sprintf(fileName, "rate-distortion_psnr_overall_%s.txt", compressor);
+	ZC_writeLines(lines, fileName);
+}
+
+void ZC_plotOverallRateDistortion_all_compressors()
+{
+	int i = 0;
+
+	hashtable_t* cmprorErrVarMap = createCmprsorErrBoundVarMap();
+
+	for(i=0;i<compressors_count;i++)
+	{
+		char* compressor = compressors[i];
+		StringLine* lines = ZC_generateOverallRateDistortion_one_compressor(cmprorErrVarMap, compressor);
+		ZC_plotOverallRateDistortion_one_compressor(lines, compressor);		
+		ZC_freeLines(lines);
+	}
+	
+	freeCmprorErrVarMap(cmprorErrVarMap);
+	
+	//Plot the eps figure
+	char fileName[ZC_BUFS];
+	strcpy(fileName, "rate-distortion_psnr_overall");
+	
+	char** inputFileNames = (char**)malloc(sizeof(char*)*compressors_count);
+	for(i=0;i<compressors_count;i++)
+	{
+		inputFileNames[i] = (char*)malloc(ZC_BUFS_LONG);
+		sprintf(inputFileNames[i], "rate-distortion_psnr_overall_%s.txt", compressors[i]); 
+	}
+	
+	char** scriptLines = genGnuplotScript_linespoints_separate_datafiles(inputFileNames, compressors_count, "rate-distortion_psnr_overall", GNUPLOT_FONT, "Rate", "PSNR");
+	strcpy(fileName, "rate-distortion_psnr_overall.p");
+	ZC_writeStrings(24, scriptLines, fileName);
+	char cmd[ZC_BUFS];
+	sprintf(cmd, "gnuplot %s", fileName);
+	system(cmd);
+	for(i=0;i<24;i++)
+		free(scriptLines[i]);
+	free(scriptLines);	
+	
+	for(i=0;i<compressors_count;i++)
+		free(inputFileNames[i]);
+	free(inputFileNames);
+}
+
 void ZC_plotRateDistortion()
 {
 	if(compressors_count==0)
@@ -1133,6 +1302,7 @@ void ZC_plotRateDistortion()
 		}
 		free(cmpResList);
 	}
+	free(variables);
 }
 
 char** getCompResKeyList(const char* var, int* count)
@@ -1151,6 +1321,7 @@ char** getCompResKeyList(const char* var, int* count)
 		free(tmp);
 	}
 	*count = j;
+	free(cmpResKeys);
 	return selected;
 }
 
@@ -2149,6 +2320,7 @@ void ZC_plotAutoCorr_CompressError()
 			free(scriptLines[j]);
 		free(scriptLines);	
 	}	
+	free(allCampCaseNames);
 }
 
 void ZC_plotAutoCorr_DataProperty()
@@ -2169,6 +2341,7 @@ void ZC_plotAutoCorr_DataProperty()
 			free(scriptLines[j]);
 		free(scriptLines);		
 	}
+	free(allVarNames);
 }
 
 void ZC_plotFFTAmplitude_OriginalData()
@@ -2189,6 +2362,7 @@ void ZC_plotFFTAmplitude_OriginalData()
 			free(scriptLines[j]);
 		free(scriptLines);
 	}
+	free(allVarNames);
 }
 
 void ZC_plotFFTAmplitude_DecompressData()
@@ -2209,6 +2383,7 @@ void ZC_plotFFTAmplitude_DecompressData()
 			free(scriptLines[j]);
 		free(scriptLines);
 	}
+	free(allVarNames);
 }
 
 void ZC_plotErrDistribtion()
@@ -2250,6 +2425,7 @@ void ZC_plotErrDistribtion()
 			free(scriptLines);	
 		}		
 	}	
+	free(allVarNames);
 }
 
 void ZC_plotSliceImage()
@@ -2266,6 +2442,7 @@ void ZC_plotSliceImage()
 		sprintf(acCmd, "cd dataProperties;gnuplot %s-logimg.p;if [ -f %s.logimg.png ];then mv %s.logimg.png %s-logimg.png;fi;if [ -f %s.logimg.png.eps ];then mv %s.logimg.png.eps %s-logimg.png.eps;fi;", acFileName, acFileName, acFileName, acFileName, acFileName, acFileName, acFileName);
 		system(acCmd);		
 	}
+	free(allVarNames);
 }
 
 void ZC_plotDecSliceImage()

@@ -23,6 +23,7 @@ extern "C" {
 #endif
 
 char** genGnuplotScript_linespoints(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel);
+char** genGnuplotScript_linespoints_separate_datafiles(char** inputDataFileNames, int inputDataFileCount, const char* outputDataFileName, int fontSize, const char* xlabel, const char* ylabel);
 char** genGnuplotScript_linespoints2(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel);
 char** genGnuplotScript_histogram(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel, long maxYValue);
 char** genGnuplotScript_lines(const char* dataFileName, const char* extension, int fontSize, int columns, const char* xlabel, const char* ylabel);

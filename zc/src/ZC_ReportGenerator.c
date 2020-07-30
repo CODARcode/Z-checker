@@ -475,6 +475,14 @@ StringLine* ZC_generateRateDistortionFigure()
 	return header;
 }
 
+StringLine* ZC_generateOverallRateDistortionFigure()
+{
+	StringLine* header = NULL;
+	//TODO: ZC_generateSingleFigTexLines()
+		
+	return header;
+}
+
 StringLine* ZC_generateRateDerivatives_aggregated_Figure()
 {
 	size_t i; 
@@ -622,6 +630,20 @@ void ZC_generateRateDistortionReport()
 	printf("Processing %s\n", rateDisTexFile);
 	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateRateDistortionFigure();
+	ZC_insertLines("%plot rate distortion\n", texLines, figLines);
+	ZC_writeLines(texLines, rateDisTexFile);
+	ZC_freeLines(texLines);	
+}
+
+void ZC_generateOverallRateDistortionReport()
+{
+	int lineCount;
+	char rateDisTexFile[ZC_BUFS];
+	sprintf(rateDisTexFile, "report/tex/resultsTex/overallRateDistortion.tex");
+	//printf("%s\n", reportTemplateDir);
+	printf("Processing %s\n", rateDisTexFile);
+	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
+	StringLine* figLines =  ZC_generateOverallRateDistortionFigure();
 	ZC_insertLines("%plot rate distortion\n", texLines, figLines);
 	ZC_writeLines(texLines, rateDisTexFile);
 	ZC_freeLines(texLines);	
@@ -1171,7 +1193,10 @@ void ZC_generateOverallReport(const char* dataSetName)
 	if(psnrFlag || snrFlag)
 		ZC_generatePSNRReport();
 	if(psnrFlag && compressSizeFlag)
-		ZC_generateRateDistortionReport();	
+	{
+		ZC_generateRateDistortionReport();		
+//		ZC_generateOverallRateDistortionReport();
+	}	
 	if(compressSizeFlag)
 		ZC_generateRateCorrelationReport();
 	if(derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag || derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag || derivativeOrder1_sobolevFlag)

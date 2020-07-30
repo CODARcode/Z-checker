@@ -340,6 +340,9 @@ void ZC_startDec_offline();
 void ZC_endDec_offline(ZC_CompareData* compareResult, void *decData);
 
 void ZC_plotCompressionRatio();
+
+hashtable_t* createCmprsorErrBoundVarMap();
+
 void ZC_plotHistogramResults(int cmpCount, char** compressorCases);
 
 int getComparisonCases(char* cases[]);
@@ -359,6 +362,11 @@ char** extractRateDistortion_Derivative1_maxRelErr_dy(int totalCount, char** cmp
 char** extractRateDistortion_Derivative1_maxRelErr_dz(int totalCount, char** cmpResList, int* validLineNum);
 char** extractRateDistortion_Derivative1_maxRelErr_dt(int totalCount, char** cmpResList, int* validLineNum);
 
+StringLine* ZC_generateOverallRateDistortion_one_compressor(hashtable_t* cmprorErrVarMap, char* compressor);
+void freeCmprorErrVarMap(hashtable_t* cmprorErrVarMap);
+void ZC_plotOverallRateDistortion_one_compressor(StringLine* lines, char* compressor);
+void ZC_plotOverallRateDistortion_all_compressors();
+
 void ZC_plotRateDistortion();
 
 void ZC_plotAutoCorr_CompressError();
@@ -370,6 +378,7 @@ void ZC_plotSliceImage();
 
 void ZC_generateCompressionFactorReport();
 void ZC_generateRateDistortionReport();
+void ZC_generateOverallRateDistortionReport();
 void ZC_generateRateDerivatives_aggregated_Report();
 void ZC_generateRateDerivatives_separated_Report();
 
