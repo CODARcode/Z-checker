@@ -481,10 +481,10 @@ StringLine* ZC_generateOverallRateDistortionFigure()
 	StringLine* header = createStringLineHeader();
 	StringLine* p = header; //p always points to the tail
 	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
-	line = createLine("\includegraphics[scale=0.6]{figs/compareCompressors/rate-distortion_psnr_overall.eps}\n"); p = appendOneLine(p, line);
-	line = createLine("\caption{Overall Rate Distortion by Integrating All Variables}\n"); p = appendOneLine(p, line);
-	line = createLine("\label{fig:overall-rate-distortion_psnr}\n"); p = appendOneLine(p, line);		
-	line = createLine("\end{figure}\n"); p = appendOneLine(p, line);	
+	line = createLine("\\includegraphics[scale=0.6]{figs/compareCompressors/rate-distortion_psnr_overall.eps}\n"); p = appendOneLine(p, line);
+	line = createLine("\\caption{Overall Rate Distortion by Integrating All Variables}\n"); p = appendOneLine(p, line);
+	line = createLine("\\label{fig:overall-rate-distortion_psnr}\n"); p = appendOneLine(p, line);		
+	line = createLine("\\end{figure}\n"); p = appendOneLine(p, line);	
 	return header;
 }
 
