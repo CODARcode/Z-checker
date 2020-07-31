@@ -477,9 +477,14 @@ StringLine* ZC_generateRateDistortionFigure()
 
 StringLine* ZC_generateOverallRateDistortionFigure()
 {
-	StringLine* header = NULL;
-	//TODO: ZC_generateSingleFigTexLines()
-		
+	//char tmpLine[MAX_MSG_LENGTH];
+	StringLine* header = createStringLineHeader();
+	StringLine* p = header; //p always points to the tail
+	char* line = createLine("\\begin{figure}[ht] \\centering\n"); p = appendOneLine(p, line);
+	line = createLine("\includegraphics[scale=0.6]{figs/compareCompressors/rate-distortion_psnr_overall.eps}\n"); p = appendOneLine(p, line);
+	line = createLine("\caption{Overall Rate Distortion by Integrating All Variables}\n"); p = appendOneLine(p, line);
+	line = createLine("\label{fig:overall-rate-distortion_psnr}\n"); p = appendOneLine(p, line);		
+	line = createLine("\end{figure}\n"); p = appendOneLine(p, line);	
 	return header;
 }
 
@@ -644,7 +649,7 @@ void ZC_generateOverallRateDistortionReport()
 	printf("Processing %s\n", rateDisTexFile);
 	StringLine* texLines = ZC_readLines(rateDisTexFile, &lineCount);
 	StringLine* figLines =  ZC_generateOverallRateDistortionFigure();
-	ZC_insertLines("%plot rate distortion\n", texLines, figLines);
+	ZC_insertLines("%plot overall rate distortion\n", texLines, figLines);
 	ZC_writeLines(texLines, rateDisTexFile);
 	ZC_freeLines(texLines);	
 }
@@ -747,6 +752,8 @@ void ZC_generateResultTexFile()
 	if(compressSizeFlag && psnrFlag)
 	{
 		line = createLine("\\input{tex/resultsTex/rateDistortion}\n"); 
+		p = appendOneLine(p, line);
+		line = createLine("\\input{tex/resultsTex/overallRateDistortion}\n");
 		p = appendOneLine(p, line);
 	}
 	if(derivativeOrder1_psnrFlag || derivativeOrder2_psnrFlag || derivativeOrder1_ssimFlag || derivativeOrder2_ssimFlag || derivativeOrder1_sobolevFlag)
@@ -1195,7 +1202,7 @@ void ZC_generateOverallReport(const char* dataSetName)
 	if(psnrFlag && compressSizeFlag)
 	{
 		ZC_generateRateDistortionReport();		
-//		ZC_generateOverallRateDistortionReport();
+		ZC_generateOverallRateDistortionReport();
 	}	
 	if(compressSizeFlag)
 		ZC_generateRateCorrelationReport();
