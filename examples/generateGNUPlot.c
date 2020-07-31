@@ -47,6 +47,9 @@ int main(int argc, char * argv[])
 		ZC_plotErrDistribtion();
     if(plotImageFlag)
 		ZC_plotSliceImage();
+	
+    ZC_plotOverallRateDistortion_all_compressors();	
+		
     ZC_Finalize();
     return 0;
 }
