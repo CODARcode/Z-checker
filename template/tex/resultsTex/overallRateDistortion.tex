@@ -1,7 +1,24 @@
 %overall rate distortion analysis
 
-Overall rate distortion is calculated for each compressor based on all related variables.
+Overall rate distortion is calculated for each compressor based on all related variables, based on Formula (\ref{eq:overall-psnr}).
 
-The overall rate distortion results are presented in Figure \ref{fig:overa-rate-distortion_psnr}.
+\def\formulaOverallPSNR{
+	overall\_PSNR = -20 \log_{10}(overall\_NRMSE)
+}
+\begin{equation}
+\label{eq:overallPSNR}
+  \formulaOverallPSNR
+\end{equation}
+
+\def\formulaOverallNRMSE{
+	overall\_NRMSE = \sqrt{\frac{\sum_{var_i} NRMSE^2(var_i)}{N}}
+}
+\begin{equation}
+\label{eq:overallNRMSE}
+  \formulaOverallNRMSE
+\end{equation}
+where \emph{var}$_i$ refers to a variable (a.k.a., field), and $N$ is the number of variables.
+
+The overall rate distortion results are presented in Figure \ref{fig:overall-rate-distortion_psnr}.
 
 %plot overall rate distortion
