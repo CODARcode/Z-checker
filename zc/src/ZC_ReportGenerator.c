@@ -51,7 +51,7 @@ StringLine* ZC_generatePropertyAnalysisTable(char** varCases, int varCaseCount)
 			printf("[ZC] Iniparser failed to parse the dataProperties/%s file.\n", varCases[i]);
 			exit(0);
 		}
-		dataType = iniparser_getini(ini, "PROPERTY:dataType", 0);
+		dataType = iniparser_getint(ini, "PROPERTY:dataType", 0);
 		numOfElem = iniparser_getint(ini, "PROPERTY:numOfElem", 0);
 		if(dataType == ZC_FLOAT)
 			size_inMB = ((float)numOfElem)*4/1024/1024;
