@@ -7,6 +7,7 @@
  *      See COPYRIGHT in top-level directory.
  */
  
+#include <limits.h> /*PATH_MAX*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -521,8 +522,8 @@ int ZC_writeStrings(int string_size, char **string, const char *tgtFilePath)
 #ifdef HAVE_ONLINEVIS
 	if(visMode) //ZC_writeStrings() is always called by rank 0 actually, so no need to add myRank==0
 	{
-		char actualpath[256];
-        realpath(tgtFilePath, actualpath);
+		char actualpath[PATH_MAX+1] = {0};
+        	realpath(tgtFilePath, actualpath);
 		char* key = getFileName(actualpath);
 		//printf("writing pair: %s, %s\n", key, actualpath);
 		// zserver_commit_file(key, actualpath);		
