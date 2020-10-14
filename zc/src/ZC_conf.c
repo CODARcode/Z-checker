@@ -652,7 +652,7 @@ int modifyZCConfig(StringLine* confLinesHeader, const char* targetAttribute, con
 		trim(attr);
 		if(strcmp(attr, targetAttribute)==0)
 		{
-			sprintf(p->next->str, "%s = %s\n", targetAttribute, newStringValue);
+			sprintf(p->next->str, "%s=%s\n", targetAttribute, newStringValue);
 			return ZC_SCES;
 		}
 		p=p->next;
