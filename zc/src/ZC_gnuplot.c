@@ -19,8 +19,8 @@ char** genGnuplotScript_linespoints(const char* dataFileName, const char* extens
 	int i = 0;
 	for(i=0;i<24;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", dataFileName); //the file name is without extension here
@@ -76,8 +76,8 @@ char** genGnuplotScript_linespoints_separate_datafiles(char** inputDataFileNames
 	int i = 0;
 	for(i=0;i<24;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", outputDataFileName); 
@@ -138,8 +138,8 @@ char** genGnuplotScript_linespoints2(const char* dataFileName, const char* exten
 	int i = 0;
 	for(i=0;i<24;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.png.eps\"\n", dataFileName); //the file name is without extension here
@@ -194,8 +194,8 @@ char** genGnuplotScript_histogram(const char* dataFileName, const char* extensio
 	int i = 0;
 	for(i=0;i<18;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", dataFileName); //the file name is without extension here
@@ -245,8 +245,8 @@ char** genGnuplotScript_lines(const char* dataFileName, const char* extension, i
 	int i = 0;
 	for(i=0;i<24;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.eps\"\n", dataFileName); //the file name is without extension here
@@ -300,8 +300,8 @@ char** genGnuplotScript_fillsteps(const char* dataFileName, const char* extensio
 	int i = 0;
 	for(i=0;i<19;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "set term post eps enh \"Arial\" 22 color\n");
 	sprintf(lines[1], "set output \"%s.%s.eps\"\n", dataFileName, extension); //the file name is without extension here
@@ -340,8 +340,8 @@ char** genGnuplotScript_sliceImage(const char* dataFileName, size_t r2, size_t r
 	int i = 0;
 	for(i=0;i<10;i++)
 	{
-		lines[i] = (char*)malloc(250);
-		memset(lines[i], 0, 250);
+		lines[i] = (char*)malloc(ZC_BUFS_LONG);
+		memset(lines[i], 0, ZC_BUFS_LONG);
 	}
 	sprintf(lines[0], "#!/usr/bin/gnuplot\n");
 	sprintf(lines[1], "set term png size 900, 900 enhanced font \"Arial,16\"\n");
