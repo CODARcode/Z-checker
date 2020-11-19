@@ -23,3 +23,8 @@ Then, you'll find all the executables in [INSTALL_DIR]/bin and .a and .so librar
 
 Examples can be found in the [ZC_PACKAGE]/examples
 
+
+
+======================================
+We also highly suggest you to use z-checker-installer to run Z-checker. With z-checker-installer, you can simply install all dependencies such as different lossy compressors, image plotting libraries.
+Z-checker-installer can be found here: http://github.com/CODARcode/z-checker-installer
