@@ -1084,8 +1084,8 @@ void ZC_itentifyErrorSettingBasedOnCR(CompressorCRVisElement* cmprVisE)
 		size_t r2 = dataProperty->r2;
 		size_t r1 = dataProperty->r1;
 		
-#ifdef HAVE_LIBPRESSIOOPT
 		double targetErrorSetting = 0;
+#ifdef HAVE_LIBPRESSIOOPT
 		if(plotDecSliceMode == DECVIS_ERROR_LIBPRESSIO_OPT)
 		{
 			if(dataType == ZC_FLOAT)
