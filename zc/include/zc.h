@@ -62,7 +62,7 @@ extern "C" {
 
 #define ZC_VERNUM 0x0040
 #define ZC_VER_MAJOR 0
-#define ZC_VER_MINOR 5
+#define ZC_VER_MINOR 6
 #define ZC_VER_BUILD 0
 #define ZC_VER_REVISION 0
 
@@ -116,6 +116,13 @@ extern "C" {
 #define ZC_OFFLINE 0
 #define ZC_ONLINE 1
 
+#define COMPRESSOR_SZ 101
+#define COMPRESSOR_ZFP 102
+#define COMPRESSOR_MGARD 103
+#define COMPRESSOR_FPZIP 104
+#define COMPRESSOR_BITGROOMING 105
+#define COMPRESSOR_DIGITROUNDING 106
+
 #define CMD_SZ_ZC_VIS_ABS_1D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -1 R1 -v VARNAME -k \"SOLUTION\" -C zc.config -M ABS -A ERRORBOUND"
 #define CMD_SZ_ZC_VIS_ABS_2D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -2 R1 R2 -v VARNAME -k \"SOLUTION\" -C zc.config -M ABS -A ERRORBOUND"
 #define CMD_SZ_ZC_VIS_ABS_3D "./sz-zc-vis DATATYPE -i INPUTDATAPATH -3 R1 R2 R3 -v VARNAME -k \"SOLUTION\" -C zc.config -M ABS -A ERRORBOUND"
@@ -162,9 +169,12 @@ extern int lapFlag;
 extern int plotImageFlag;
 extern int plotDecImageFlag;
 
+extern int plotDecSliceMode;
 extern int nbPlotCRs;
 extern char *plotCRs_str[MAX_VIS_DEC_CRS];
 extern float plotCRs[MAX_VIS_DEC_CRS]; //at most 32 compression ratios specified by users.
+extern int nbPlotCompressors;
+extern int plotCompressors[MAX_NB_CMPR_CASES];
 
 extern int minAbsErrFlag;
 extern int avgAbsErrFlag;
@@ -227,6 +237,7 @@ extern double endTime;
 extern long globalCmprSize;
 
 extern int compressors_count; //this compressors_count is the number of compressors to be compared, set by zc.config
+extern int compressorIDs[CMPR_MAX_LEN];
 extern char* compressors[CMPR_MAX_LEN];
 extern char* compressors_dir[CMPR_MAX_LEN];
 extern char* compareData_dir[CMPR_MAX_LEN];

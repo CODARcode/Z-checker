@@ -169,6 +169,36 @@ int load_ecVisDecDataTables()
 	return varCount;
 }
 
+int getCompressorID(const char* compressorName)
+{
+	if(strcmp(compressorName,"sz_d")==0 || strcmp(compressorName, "sz")==0)
+		return COMPRESSOR_SZ;
+	else if(strcmp(compressorName, "zfp")==0)
+		return COMPRESSOR_ZFP;
+	else if(strcmp(compressorName, "fpzip")==0)
+		return COMPRESSOR_FPZIP;
+	else if(strcmp(compressorName, "mgard")==0)
+		return COMPRESSOR_MGARD;
+	else if(strcmp(compressorName, "bitgrooming")==0)
+		return COMPRESSOR_BITGROOMING;
+	else if(strcmp(compressorName, "digitrounding")==0)
+		return COMPRESSOR_DIGITROUNDING;
+		
+	return -1;
+} 
+
+int isInPlotDecCompressors(const char* compressorName)
+{
+	int compressorID = getCompressorID(compressorName);
+	int i = 0;
+	for(i=0;i<nbPlotCompressors;i++)
+	{
+		if(plotCompressors[i]==compressorID)
+			return 1;
+	}
+	return 0;
+}
+ 
  
 /*-------------------------------------------------------------------------*/
 int ZC_ReadConf() {
@@ -306,12 +336,42 @@ int ZC_ReadConf() {
 	plotImageFlag = (int)iniparser_getint(ini, "PLOT:plotSliceImage", 0);
 	
 	memset(plotCRs_str, 0, MAX_VIS_DEC_CRS);
+	memset(plotCompressors, 0, sizeof(int)*MAX_NB_CMPR_CASES);
 	
 	plotDecImageFlag = (int)iniparser_getint(ini, "PLOT:plotDecSliceImage", 0);
 	if(plotDecImageFlag==1 && checkingStatus == COMPARE_COMPRESSOR)
 	{
 		int i = 0;
 		char* p = NULL;
+
+		char buffer[100];		
+		plotDecSliceMode = iniparser_getint(ini, "PLOT:plotDecSliceMode", DECVIS_ERROR_LINEAR_APPROX);
+		
+		char* CmprString = iniparser_getstring(ini, "PLOT:plotDecCompressors", NULL);
+		
+		p = strtok(CmprString, " \r\n");
+		strcpy(buffer, p);
+		
+		plotCompressors[0] = getCompressorID(buffer);
+		i++;
+		
+		while(p)
+		{	
+			p = strtok(NULL, " \r\n");
+			if(p!=NULL)
+			{
+				strcpy(buffer, p);
+				plotCompressors[i] = getCompressorID(buffer);
+				i++;
+			}
+		}
+		
+		nbPlotCompressors = i;
+
+		printf("There are %d compressors specified by users for plotting: %s\n", nbPlotCompressors, CmprString);			
+		
+		i = 0;
+		p = NULL;
 		char* CRString = iniparser_getstring(ini, "PLOT:plotDecSliceCR", NULL);
 		
 		plotCRs_str[i] = (char*)malloc(MAX_VIS_DEC_CRS);//support the length of the string for the error bound is at most MAX_VIS_DEC_CRS chars
@@ -393,6 +453,8 @@ int ZC_ReadConf() {
 			cmprsorBuf = strtok(compressorsBuf[i], ":");
 			compressors[i] = (char*)malloc(strlen(cmprsorBuf)+1);
 			sprintf(compressors[i], "%s", cmprsorBuf);
+			compressorIDs[i] = getCompressorID(compressors[i]);
+			
 			cmprsorDir = strtok(NULL, ":");
 			compressors_dir[i] = (char*)malloc(strlen(cmprsorDir)+1);
 			sprintf(compressors_dir[i], "%s", cmprsorDir);
@@ -428,9 +490,20 @@ int ZC_ReadConf() {
 					ht_set(ecVisDecDataTables, prop->varName, varComprMap);
 								
 					//traverse all the CRs required by users
-					for(k=0;k<compressors_count;k++)
+					for(k=0;k<nbPlotCompressors;k++)
 					{
-						char* compressorName = compressors[k];
+						int compressorID = plotCompressors[k];
+						
+						char* compressorName = NULL;
+						int w = 0;
+						for(w=0;w<compressors_count;w++)
+						{
+							if(compressorIDs[w]==compressorID)
+							{
+								compressorName = compressors[w]; //compressorName will be used to query in the varComprMap to get the entry.
+								break;
+							}	
+						}
 						
 						CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)malloc(sizeof(struct CompressorCRVisElement));
 						memset(cmprVisE, 0, sizeof(struct CompressorCRVisElement));
@@ -446,7 +519,7 @@ int ZC_ReadConf() {
 							visEle->varName = prop->varName;
 							visEle->dataProperty = prop;
 							visEle->compressorName = compressorName;
-												
+							visEle->compressorID = compressorID;					
 							ht_set(cmprVisE->CRVisDataMap, plotCRs_str[i], visEle);
 						}
 					}					
@@ -515,10 +588,16 @@ int ZC_ReadConf() {
 						char varName[128];
 						ZC_parseCompressionCase(compResultCaseName, compressorName, errorBound, varName);
 						
-						hashtable_t* varCmprMap = (hashtable_t*)ht_get(ecVisDecDataTables, varName);
-						CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varCmprMap, compressorName);
-						compare->errorBound = atof(errorBound);						
-						cmprVisE->compressionResults[cmprVisE->resultCount++] = compare;
+						int isin = isInPlotDecCompressors(compressorName);
+						
+						if(isin)
+						{
+							hashtable_t* varCmprMap = (hashtable_t*)ht_get(ecVisDecDataTables, varName);
+							CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varCmprMap, compressorName);
+							compare->errorBound = atof(errorBound);						
+							cmprVisE->compressionResults[cmprVisE->resultCount++] = compare;							
+						}
+
 					}
 
 					

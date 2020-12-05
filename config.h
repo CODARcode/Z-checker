@@ -69,7 +69,8 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #define LT_OBJDIR ".libs/"
 
 /* Name of package */
@@ -82,7 +83,7 @@
 #define PACKAGE_NAME "Z-CHECKER"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Z-CHECKER 0.2"
+#define PACKAGE_STRING "Z-CHECKER 0.5"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "z-checker"
@@ -91,13 +92,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.2"
+#define PACKAGE_VERSION "0.5"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.2"
+#define VERSION "0.5"
 
 /* Define to rpl_malloc if the replacement function should be used. */
 /* #undef malloc */
