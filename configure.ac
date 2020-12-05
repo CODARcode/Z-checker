@@ -101,6 +101,55 @@ else
   	AC_MSG_WARN([NETCDF disabled])
 fi
 
+# Check LIBPRESSIOOPT library
+AC_ARG_ENABLE(libpressioopt, [  --enable-libpressioopt            use LIBPRESSIOOPT], libpressioopt_ok=$enableval, libpressioopt_ok=no)
+AM_CONDITIONAL([LIBPRESSIOOPT], [test "x$enable_libpressioopt" = "xyes"])
+
+if test "$libpressioopt_ok" = "yes"; then
+#       LIBPRESSIOOPT_CFLAGS="-DHAVE_LIBPRESSIOOPT"
+        AC_ARG_WITH([libpressioopt-prefix], [AS_HELP_STRING([--with-libpressioopt-prefix=DIR],
+            [installation prefix for libpressioopt])],
+            [with_libpressioopt_include_path=$with_libpressioopt_prefix/include;
+             with_libpressioopt_lib_path=$with_libpressioopt_prefix/lib64])
+
+        AC_ARG_WITH([libpressioopt-include-path], [AS_HELP_STRING([--with-libpressioopt-include-path=DIR],
+            [path to the libpressioopt directory, defaults to /usr/include])], [])
+
+        if test "x$with_libpressioopt_include_path" = x ; then
+                with_libpressioopt_include_path="/usr/include"
+        fi
+
+        AC_CHECK_FILE([${with_libpressioopt_include_path}/libpressio_opt/pressio_search.h], [],
+              AC_MSG_ERROR([Invalid path to pressio_search.h]))
+        LIBPRESSIOOPT_HDR="-I$with_libpressioopt_include_path -I$with_libpressioopt_include_path/sz -I$with_libpressioopt_include_path/zfp -I$with_libpressioopt_include_path/libpressio -I$with_libpressioopt_include_path/libpressio_opt -I$with_libpressioopt_include_path/std_compat -I$with_libpressioopt_include_path/boost -I$with_libpressioopt_include_path/libdistributed"
+
+        AC_ARG_WITH([libpressioopt-lib-path], [AS_HELP_STRING([--with-libpressioopt-lib-path],
+            [path to the  libpressioopt libraries, defaults to /usr/lib])], [])
+        if test "x$with_libpressioopt_lib_path" = x ; then
+                with_libpressioopt_lib_path="/usr/lib"
+        fi
+
+        LIBPRESSIOOPT_LIB="-L$with_libpressioopt_lib_path"
+        LIBS="$LIBPRESSIOOPT_LIB"
+
+        if test "x$BUILD_STATIC" = xyes ; then
+                LIBPRESSIOOPTSTATIC="${with_libpressioopt_lib_path}/liblibpressio_opt.a"
+                LIBPRESSIOOPT_LIB=
+        else
+                LIBPRESSIOOPT_STATIC="-llibpressio_opt -lSZ -lzfp -ldlib -llibpressio -lstd_compat -llibdistributed"
+        fi
+
+#       AC_SUBST(LIBPRESSIOOPT_CFLAGS)
+        AC_SUBST(LIBPRESSIOOPT_HDR)
+        AC_SUBST(LIBPRESSIOOPT_LIB)
+        AC_SUBST(LIBPRESSIOOPT_STATIC)
+
+else
+        AC_MSG_WARN([LIBPRESSIOOPT disabled])
+fi
+
+
+
 # Check FFTW3 library
 AC_ARG_ENABLE(fftw3, [  --enable-fftw3            use FFTW3], fftw_ok=$enableval, fftw_ok=no)
 AM_CONDITIONAL([FFTW3], [test "x$enable_fftw3" = "xyes"])

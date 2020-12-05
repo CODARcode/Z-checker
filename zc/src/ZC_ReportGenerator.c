@@ -942,11 +942,13 @@ void ZC_generateDecVisData()
 		printf("%s\n", tmpLine);
 		
 		hashtable_t *varComprMap = (hashtable_t*)ht_get(ecVisDecDataTables, var);
-		for(j=0;j<compressors_count;j++)
+		for(j=0;j<nbPlotCompressors;j++)
 		{
 			char* compressorName = compressors[j];
 			CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varComprMap, compressorName);
+			
 			ZC_itentifyErrorSettingBasedOnCR(cmprVisE);
+			
 			print_cmprVisE(cmprVisE);
 			StringLine* sl = write_cmprVisE(cmprVisE);
 			p = ZC_appendLines(p, sl);

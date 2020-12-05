@@ -63,6 +63,7 @@ double* ZC_compute_autocorrelation1D_double(double* data, size_t numOfElem, doub
 
 int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, char* output);
+int ZC_constructDimArray(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *dims);
 void fft(complex *v, size_t n, complex *tmp);
 void ifft(complex *v, size_t n, complex *tmp);
 

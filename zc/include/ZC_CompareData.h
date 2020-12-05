@@ -21,8 +21,9 @@ extern "C" {
 #define MAX_NB_CMPR_CASES 64
 #define MAX_VIS_DEC_CRS 64
 
-#define DECVIS_ERROR_SELECT_CLOSET 0
+#define DECVIS_ERROR_SELECT_NEAREST 0
 #define DECVIS_ERROR_LINEAR_APPROX 1
+#define DECVIS_ERROR_LIBPRESSIO_OPT 2
 
 #define ZC_ABS 0
 #define ZC_REL 1
@@ -169,6 +170,7 @@ typedef struct ZCVisDecDataElement
 {
 	char* varName; //filled when initialized
 	char* compressorName; //filled when initialized
+	int compressorID;
 	ZC_DataProperty* dataProperty; //filled when initialized
 	
 	double errorSetting; //to be filled after analysis
@@ -220,7 +222,11 @@ ZC_CompareData* ZC_loadCompressionResult(char* cmpResultFile);
 
 ZC_CompareData_Overall* ZC_compareData_overall();
 
-double computeErrorSetting(double targetCR, int nbPoints, double* compressionRatios, double* errorSettings);
+double computeErrorSetting(const int compressorID, 
+const double targetCR, const int nbPoints, double* sortedCompressionRatios, double* errorSettings,
+void* data, const int dataType, const size_t r5, const size_t r4, const size_t r3, const size_t r2, const size_t r1, 
+const float lower_bound, const float upper_bound);
+
 void print_cmprVisE(CompressorCRVisElement* cmprVisE);
 StringLine* write_cmprVisE(CompressorCRVisElement* cmprVisE);
 void ZC_itentifyErrorSettingBasedOnCR(CompressorCRVisElement* cmprVisE);

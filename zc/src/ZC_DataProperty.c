@@ -109,6 +109,17 @@ void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1
 	}
 }
 
+int ZC_constructDimArray(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *dims)
+{
+	int dim = ZC_computeDimension(r5, r4, r3, r2, r1);
+	dims[0] = r1;
+	dims[1] = r2;
+	dims[2] = r3;
+	dims[3] = r4;
+	dims[4] = r5;
+	return dim;
+}
+
 /* For FFT and iFFT calculation */
 void fft(complex *v, size_t n, complex *tmp)
 {

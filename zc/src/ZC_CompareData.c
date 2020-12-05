@@ -11,6 +11,9 @@
 #ifdef HAVE_ONLINEVIS
 #include "zserver.h"
 #endif
+#ifdef HAVE_LIBPRESSIOOPT
+#include "ZC_LibpressioOpt.h"
+#endif
 
 void freeCompareResult_internal(ZC_CompareData* compareData)
 {
@@ -900,11 +903,14 @@ ZC_CompareData_Overall* ZC_compareData_overall()
 }
 
 
-double computeErrorSetting(double targetCR, int nbPoints, double* sortedCompressionRatios, double* errorSettings)
+double computeErrorSetting(const int compressorID, 
+const double targetCR, const int nbPoints, double* sortedCompressionRatios, double* errorSettings,
+void* data, const int dataType, const size_t r5, const size_t r4, const size_t r3, const size_t r2, const size_t r1, 
+const float lower_bound, const float upper_bound)
 {
 	double result = 0;
-	int mode = DECVIS_ERROR_LINEAR_APPROX;
-	if(mode == DECVIS_ERROR_SELECT_CLOSET)
+	//plotDecSliceMode = DECVIS_ERROR_LINEAR_APPROX;
+	if(plotDecSliceMode == DECVIS_ERROR_SELECT_NEAREST)
 	{
 		int i = 0;
 		int targetIndex = 0;
@@ -920,7 +926,7 @@ double computeErrorSetting(double targetCR, int nbPoints, double* sortedCompress
 		
 		result = errorSettings[targetIndex];
 	}
-	else if(mode == DECVIS_ERROR_LINEAR_APPROX)
+	else if(plotDecSliceMode == DECVIS_ERROR_LINEAR_APPROX)
 	{
 		int i = 0;
 		int lower = 0, upper = 0;
@@ -956,6 +962,20 @@ double computeErrorSetting(double targetCR, int nbPoints, double* sortedCompress
 		if(result<0)
 			result = errorSettings[lower];
 	}
+#ifdef HAVE_LIBPRESSIOOPT	
+	else if(plotDecSliceMode == DECVIS_ERROR_LIBPRESSIO_OPT)
+	{	
+		ZC_evaluation_result* eresult = search_cmpr_setting_with_CR(compressorID, data, dataType, r5, r4, r3, r2, r1, targetCR, lower_bound, upper_bound);	
+		printf("error_setting: %f, compression ratio: %f\n", eresult->error_bound, eresult->metric);
+		result = eresult->error_bound;
+	}
+#endif
+	else
+	{
+		printf("Error: Unrecognized plotDecSliceMode: %d\n", DECVIS_ERROR_LIBPRESSIO_OPT);
+		printf("You may need to enable libpressio_opt when compiling your code, if you are trying to use Libpressio_opt\n");
+	}
+	
 	return result;
 }
 
@@ -1054,7 +1074,49 @@ void ZC_itentifyErrorSettingBasedOnCR(CompressorCRVisElement* cmprVisE)
 		char* targetCR = cr_str[i];
 		ZCVisDecDataElement* visEle = (ZCVisDecDataElement*)ht_get(crVisDataMap, targetCR);
 		double targetCR_ = atof(targetCR);
-		double targetErrorSetting = computeErrorSetting(targetCR_, cmprVisE->resultCount, compressionRatios, errorSettings);
+		
+		int compressorID = visEle->compressorID;
+		ZC_DataProperty* dataProperty = visEle->dataProperty;
+		int dataType = dataProperty->dataType;
+		size_t r5 = dataProperty->r5;
+		size_t r4 = dataProperty->r4;
+		size_t r3 = dataProperty->r3;
+		size_t r2 = dataProperty->r2;
+		size_t r1 = dataProperty->r1;
+		
+#ifdef HAVE_LIBPRESSIOOPT
+		double targetErrorSetting = 0;
+		if(plotDecSliceMode == DECVIS_ERROR_LIBPRESSIO_OPT)
+		{
+			if(dataType == ZC_FLOAT)
+			{
+				size_t nbEle = 0;	
+				float* data = ZC_readFloatData(dataProperty->filePath, &nbEle);
+				targetErrorSetting = computeErrorSetting(compressorID, targetCR_, cmprVisE->resultCount, compressionRatios, errorSettings, 
+				data, dataType, r5, r4, r3, r2, r1, 1E-6, 1E-1);
+			}
+			else if(dataType == ZC_DOUBLE)
+			{
+				size_t nbEle = 0;			
+				double* data = ZC_readDoubleData(dataProperty->filePath, &nbEle);
+				targetErrorSetting = computeErrorSetting(compressorID, targetCR_, cmprVisE->resultCount, compressionRatios, errorSettings, 
+				data, dataType, r5, r4, r3, r2, r1, 1E-6, 1E-1);				
+			}
+			else
+			{
+				printf("Error: unrecognized data type %d \n", dataType);
+				exit(0);
+			}			
+		}
+		else
+		{
+#endif			
+			targetErrorSetting = computeErrorSetting(compressorID, targetCR_, cmprVisE->resultCount, compressionRatios, errorSettings, 
+			NULL, dataType, r5, r4, r3, r2, r1, 1E-6, 1E-1);
+#ifdef HAVE_LIBPRESSIOOPT			
+		}
+#endif
+		
 		visEle->errorSetting_str = (char*)malloc(sizeof(char)*32);
 		sprintf(visEle->errorSetting_str, "%.2G", targetErrorSetting);
 		visEle->errorSetting = atof(visEle->errorSetting_str);

@@ -45,6 +45,7 @@ unsigned char *ZC_readByteData(const char *srcFilePath, size_t *byteLength);
 double *ZC_readDoubleData_systemEndian(const char *srcFilePath, size_t *nbEle);
 float *ZC_readFloatData_systemEndian(const char *srcFilePath, size_t *nbEle);
 double *ZC_readDoubleData(const char *srcFilePath, size_t *nbEle);
+
 float *ZC_readFloatData(const char *srcFilePath, size_t *nbEle);
 void ZC_writeByteData(unsigned char *bytes, size_t byteLength, const char *tgtFilePath);
 void ZC_writeDoubleData(double *data, size_t nbEle, const char *tgtFilePath);

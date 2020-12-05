@@ -57,9 +57,12 @@ int lapFlag = 0;
 int plotImageFlag = 0;
 int plotDecImageFlag = 0;
 
+int plotDecSliceMode = DECVIS_ERROR_LINEAR_APPROX;
 int nbPlotCRs = 0;
 char *plotCRs_str[MAX_VIS_DEC_CRS];
 float plotCRs[MAX_VIS_DEC_CRS]; //store the compression ratios to align between compressors
+int nbPlotCompressors = 0;
+int plotCompressors[MAX_NB_CMPR_CASES];
 
 int compressTimeFlag = 1;
 int decompressTimeFlag = 1;
@@ -125,10 +128,11 @@ double endTime = 0;
 long globalCmprSize = 0;
 
 int compressors_count = 0;
-char* compressors[20];
-char* compressors_dir[20];
-char* compareData_dir[20];
-char* properties_dir[20];
+int compressorIDs[CMPR_MAX_LEN];
+char* compressors[CMPR_MAX_LEN];
+char* compressors_dir[CMPR_MAX_LEN];
+char* compareData_dir[CMPR_MAX_LEN];
+char* properties_dir[CMPR_MAX_LEN];
 
 char* comparisonCases;
 
@@ -2444,12 +2448,6 @@ void ZC_plotSliceImage()
 	}
 	free(allVarNames);
 }
-
-void ZC_plotDecSliceImage()
-{
-	//TODO
-}
-
 
 int ZC_analyze_and_generateReport(const char* dataSetName)
 {
