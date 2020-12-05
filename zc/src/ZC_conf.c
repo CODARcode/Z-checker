@@ -186,6 +186,18 @@ int getCompressorID(const char* compressorName)
 		
 	return -1;
 } 
+
+int isInPlotDecCompressors(const char* compressorName)
+{
+	int compressorID = getCompressorID(compressorName);
+	int i = 0;
+	for(i=0;i<nbPlotCompressors;i++)
+	{
+		if(plotCompressors[i]==compressorID)
+			return 1;
+	}
+	return 0;
+}
  
  
 /*-------------------------------------------------------------------------*/
@@ -339,7 +351,8 @@ int ZC_ReadConf() {
 		
 		p = strtok(CmprString, " \r\n");
 		strcpy(buffer, p);
-		plotCompressors[0] = atoi(buffer);
+		
+		plotCompressors[0] = getCompressorID(buffer);
 		i++;
 		
 		while(p)
@@ -347,16 +360,9 @@ int ZC_ReadConf() {
 			p = strtok(NULL, " \r\n");
 			if(p!=NULL)
 			{
-				if(strcmp(buffer, "sz")==0 || strcmp(buffer, "sz_d")==0)
-					plotCompressors[i] = COMPRESSOR_SZ;
-				else if(strcmp(buffer, "zfp")==0)
-					plotCompressors[i] = COMPRESSOR_ZFP;
-				else
-				{
-					printf("Error: unrecognized compressor %s\n", buffer);
-					printf("Please check the plotDecCompressors in zc.config\n");
-					exit(0);
-				}
+				strcpy(buffer, p);
+				plotCompressors[i] = getCompressorID(buffer);
+				i++;
 			}
 		}
 		
@@ -582,10 +588,16 @@ int ZC_ReadConf() {
 						char varName[128];
 						ZC_parseCompressionCase(compResultCaseName, compressorName, errorBound, varName);
 						
-						hashtable_t* varCmprMap = (hashtable_t*)ht_get(ecVisDecDataTables, varName);
-						CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varCmprMap, compressorName);
-						compare->errorBound = atof(errorBound);						
-						cmprVisE->compressionResults[cmprVisE->resultCount++] = compare;
+						int isin = isInPlotDecCompressors(compressorName);
+						
+						if(isin)
+						{
+							hashtable_t* varCmprMap = (hashtable_t*)ht_get(ecVisDecDataTables, varName);
+							CompressorCRVisElement* cmprVisE = (CompressorCRVisElement*)ht_get(varCmprMap, compressorName);
+							compare->errorBound = atof(errorBound);						
+							cmprVisE->compressionResults[cmprVisE->resultCount++] = compare;							
+						}
+
 					}
 
 					

@@ -26,6 +26,7 @@ extern "C" {
 ZC_DataProperty* loadProperty(const char* property_dir, const char* fileName);
 int load_ecVisDecDataTables();
 int getCompressorID(const char* compressorName);
+int isInPlotDecCompressors(const char* compressorName);
 int ZC_ReadConf();
 int ZC_LoadConf();
 int modifyZCConfig(StringLine* confLinesHeader, const char* targetAttribute, const char* newStringValue);
