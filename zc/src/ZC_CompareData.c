@@ -912,6 +912,7 @@ const float lower_bound, const float upper_bound)
 	//plotDecSliceMode = DECVIS_ERROR_LINEAR_APPROX;
 	if(plotDecSliceMode == DECVIS_ERROR_SELECT_NEAREST)
 	{
+		printf("Using DECVIS_ERROR_SELECT_NEAREST\n");
 		int i = 0;
 		int targetIndex = 0;
 		
@@ -928,6 +929,7 @@ const float lower_bound, const float upper_bound)
 	}
 	else if(plotDecSliceMode == DECVIS_ERROR_LINEAR_APPROX)
 	{
+		printf("Using DECVIS_ERROR_LINEAR_APPROX\n");
 		int i = 0;
 		int lower = 0, upper = 0;
 		for(i=0;i<nbPoints;i++)
@@ -965,6 +967,7 @@ const float lower_bound, const float upper_bound)
 #ifdef HAVE_LIBPRESSIOOPT	
 	else if(plotDecSliceMode == DECVIS_ERROR_LIBPRESSIO_OPT)
 	{	
+		printf("Using DECVIS_ERROR_LIBPRESSIO_OPT\n");
 		ZC_evaluation_result* eresult = search_cmpr_setting_with_CR(compressorID, data, dataType, r5, r4, r3, r2, r1, targetCR, lower_bound, upper_bound);	
 		printf("error_setting: %f, compression ratio: %f\n", eresult->error_bound, eresult->metric);
 		result = eresult->error_bound;
