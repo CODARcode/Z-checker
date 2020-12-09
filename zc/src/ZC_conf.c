@@ -345,7 +345,18 @@ int ZC_ReadConf() {
 		char* p = NULL;
 
 		char buffer[100];		
-		plotDecSliceMode = iniparser_getint(ini, "PLOT:plotDecSliceMode", DECVIS_ERROR_LINEAR_APPROX);
+		char* sliceMode = iniparser_getstring(ini, "PLOT:plotDecSliceMode", "DECVIS_ERROR_LINEAR_APPROX");
+		
+		if(strcmp(sliceMode, "DECVIS_ERROR_SELECT_NEAREST")==0)
+			plotDecSliceMode = DECVIS_ERROR_SELECT_NEAREST;
+		else if(strcmp(sliceMode, "DECVIS_ERROR_LINEAR_APPROX")==0)
+			plotDecSliceMode = DECVIS_ERROR_LINEAR_APPROX;
+		else if(strcmp(sliceMode, "DECVIS_ERROR_LIBPRESSIO_OPT")==0)
+			plotDecSliceMode = DECVIS_ERROR_LIBPRESSIO_OPT;
+		else
+		{
+			plotDecSliceMode = DECVIS_ERROR_LINEAR_APPROX;
+		}
 		
 		char* CmprString = iniparser_getstring(ini, "PLOT:plotDecCompressors", NULL);
 		
