@@ -6,7 +6,7 @@ Dingwen Tao
 Franck Cappello
 Argonne National Laboratory
 
-OPEN SOURCE LICENSE (license number: SF-xx-xxx)
+OPEN SOURCE LICENSE (license number: SF-20-157)
  
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  
