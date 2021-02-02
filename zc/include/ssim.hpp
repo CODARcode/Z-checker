@@ -47,10 +47,11 @@ template <typename dT>
 double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int offset3,int windowSize0, int windowSize1, int windowSize2, int windowSize3){
   int i0,i1,i2,i3,index;
   int np=0; //Number of points
-  dT xMin=data[0];
-  dT xMax=data[0];
-  dT yMin=data[0];
-  dT yMax=data[0];
+  index=offset0+size0*(offset1+size1*(offset2+size2*offset3));
+  dT xMin=data[index];
+  dT xMax=xMin;
+  dT yMin=other.data[index];
+  dT yMax=yMin;
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -142,10 +143,11 @@ template <typename dT>
 double matrix<dT>::SSIM_3d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int windowSize0, int windowSize1, int windowSize2){
   int i0,i1,i2,index;
   int np=0; //Number of points
-  dT xMin=data[0];
-  dT xMax=data[0];
-  dT yMin=data[0];
-  dT yMax=data[0];
+  index=offset0+size0*(offset1+size1*offset2);
+  dT xMin=data[index];
+  dT xMax=xMin;
+  dT yMin=other.data[index];
+  dT yMax=yMin;
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -239,10 +241,11 @@ template <typename dT>
 double matrix<dT>::SSIM_2d_calcWindow(matrix &other, int offset0, int offset1, int windowSize0, int windowSize1){
   int i0,i1,index;
   int np=0; //Number of points
-  dT xMin=data[0];
-  dT xMax=data[0];
-  dT yMin=data[0];
-  dT yMax=data[0];
+  index=offset0+size0*offset1;
+  dT xMin=data[index];
+  dT xMax=xMin;
+  dT yMin=other.data[index];
+  dT yMax=yMin;  
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -319,10 +322,10 @@ template <typename dT>
 double matrix<dT>::SSIM_1d_calcWindow(matrix &other, int offset0, int windowSize0){
   int i0;
   int np=0; //Number of points
-  dT xMin=data[0];
-  dT xMax=data[0];
-  dT yMin=data[0];
-  dT yMax=data[0];
+  dT xMin=data[offset0];
+  dT xMax=xMin;
+  dT yMin=other.data[offset0];
+  dT yMax=yMin;
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
