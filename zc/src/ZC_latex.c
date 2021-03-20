@@ -13,9 +13,9 @@ char* gen_includegraphicsLine(char* comparisonCase, const char* subDir, const ch
 	char stringBuffer[ZC_BUFS_LONG];
 	
 	if(subDir==NULL)
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.5]{figs/{%s", prefix);
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.5]{figs/%s", prefix);
 	else
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.5]{figs/%s/{%s", subDir, prefix);	
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.5]{figs/%s/%s", subDir, prefix);	
  
 	char* case_ = strtok(comparisonCase, ",");
 	for(i=0;case_!=NULL;i++)
@@ -24,7 +24,7 @@ char* gen_includegraphicsLine(char* comparisonCase, const char* subDir, const ch
 		strcpy(tmpLine, stringBuffer);
 		case_ = strtok(NULL, ",");
 	}
-	strcat(tmpLine, "}.eps}}");
+	strcat(tmpLine, ".eps}}");
 	return tmpLine;
 }
 
@@ -34,9 +34,9 @@ char* gen_includegraphicsLine2(const char* epsFileName, const char* subDir)
 	//char stringBuffer[ZC_BUFS_LONG];
 	
 	if(subDir==NULL)
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.3,bb = 0 0 1127 293]{figs/{%s}.eps}}", epsFileName);
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.3,bb = 0 0 1127 293]{figs/%s.eps}}", epsFileName);
 	else
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.3,bb = 0 0 1127 293]{figs/%s/{%s}.eps}}", subDir, epsFileName);	
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[scale=.3,bb = 0 0 1127 293]{figs/%s/%s.eps}}", subDir, epsFileName);	
 
 	return tmpLine;
 }
@@ -47,9 +47,9 @@ char* gen_includegraphicsLine3(const char* epsFileName, const char* subDir)
 	//char stringBuffer[ZC_BUFS_LONG];
 	
 	if(subDir==NULL)
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[width=.4\\textwidth]{figs/{%s.png}.eps}}", epsFileName);
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[width=.4\\textwidth]{figs/%s.png.eps}}", epsFileName);
 	else
-		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[width=.4\\textwidth]{figs/%s/{%s.png}.eps}}", subDir, epsFileName);	
+		sprintf(tmpLine, "\\raisebox{-1cm}{\\includegraphics[width=.4\\textwidth]{figs/%s/%s.png.eps}}", subDir, epsFileName);	
 
 	return tmpLine;
 }
