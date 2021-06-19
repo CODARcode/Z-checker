@@ -47,11 +47,10 @@ template <typename dT>
 double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int offset3,int windowSize0, int windowSize1, int windowSize2, int windowSize3){
   int i0,i1,i2,i3,index;
   int np=0; //Number of points
-  index=offset0+size0*(offset1+size1*(offset2+size2*offset3));
-  dT xMin=data[index];
-  dT xMax=xMin;
-  dT yMin=other.data[index];
-  dT yMax=yMin;
+  dT xMin=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
+  dT xMax=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
+  dT yMin=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
+  dT yMax=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -81,11 +80,15 @@ double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, i
     }
   }
 
-  double xMean=xSum/np;
-  double yMean=ySum/np;
-  double xSigma=sqrt((x2Sum/np)-(xMean*xMean));
-  double ySigma=sqrt((y2Sum/np)-(yMean*yMean));
-  double xyCov=(xySum/np)-(xMean*yMean);
+	double xMean=xSum/np;
+	double yMean=ySum/np;
+	double a = (x2Sum/np)-(xMean*xMean);
+	if(a<0) a = 0;
+	double xSigma=sqrt(a);
+	a = (y2Sum/np)-(yMean*yMean);
+	if(a<0) a = 0;
+	double ySigma=sqrt(a);
+	double xyCov=(xySum/np)-(xMean*yMean);
   
   double c1,c2;
   if(xMax-xMin==0){
@@ -143,11 +146,10 @@ template <typename dT>
 double matrix<dT>::SSIM_3d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int windowSize0, int windowSize1, int windowSize2){
   int i0,i1,i2,index;
   int np=0; //Number of points
-  index=offset0+size0*(offset1+size1*offset2);
-  dT xMin=data[index];
-  dT xMax=xMin;
-  dT yMin=other.data[index];
-  dT yMax=yMin;
+  dT xMin=data[offset0+size0*(offset1+size1*offset2)];
+  dT xMax=data[offset0+size0*(offset1+size1*offset2)];
+  dT yMin=data[offset0+size0*(offset1+size1*offset2)];
+  dT yMax=data[offset0+size0*(offset1+size1*offset2)];
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -177,11 +179,15 @@ double matrix<dT>::SSIM_3d_calcWindow(matrix &other, int offset0, int offset1, i
   }
 
 
-  double xMean=xSum/np;
-  double yMean=ySum/np;
-  double xSigma=sqrt(fabs((x2Sum/np)-(xMean*xMean)));
-  double ySigma=sqrt(fabs((y2Sum/np)-(yMean*yMean)));
-  double xyCov=(xySum/np)-(xMean*yMean);
+	double xMean=xSum/np;
+	double yMean=ySum/np;
+	double a = (x2Sum/np)-(xMean*xMean);
+	if(a<0) a = 0;
+	double xSigma=sqrt(a);
+	a = (y2Sum/np)-(yMean*yMean);
+	if(a<0) a = 0;
+	double ySigma=sqrt(a);
+	double xyCov=(xySum/np)-(xMean*yMean);
   
   
   double c1,c2;
@@ -241,11 +247,10 @@ template <typename dT>
 double matrix<dT>::SSIM_2d_calcWindow(matrix &other, int offset0, int offset1, int windowSize0, int windowSize1){
   int i0,i1,index;
   int np=0; //Number of points
-  index=offset0+size0*offset1;
-  dT xMin=data[index];
-  dT xMax=xMin;
-  dT yMin=other.data[index];
-  dT yMax=yMin;  
+  dT xMin=data[offset0+size0*offset1];
+  dT xMax=data[offset0+size0*offset1];
+  dT yMin=data[offset0+size0*offset1];
+  dT yMax=data[offset0+size0*offset1];
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -272,11 +277,15 @@ double matrix<dT>::SSIM_2d_calcWindow(matrix &other, int offset0, int offset1, i
     }
   }
 
-  double xMean=xSum/np;
-  double yMean=ySum/np;
-  double xSigma=sqrt((x2Sum/np)-(xMean*xMean));
-  double ySigma=sqrt((y2Sum/np)-(yMean*yMean));
-  double xyCov=(xySum/np)-(xMean*yMean);
+	double xMean=xSum/np;
+	double yMean=ySum/np;
+	double a = (x2Sum/np)-(xMean*xMean);
+	if(a<0) a = 0;
+	double xSigma=sqrt(a);
+	a = (y2Sum/np)-(yMean*yMean);
+	if(a<0) a = 0;
+	double ySigma=sqrt(a);
+	double xyCov=(xySum/np)-(xMean*yMean);
   
   double c1,c2;
   if(xMax-xMin==0){
@@ -323,9 +332,9 @@ double matrix<dT>::SSIM_1d_calcWindow(matrix &other, int offset0, int windowSize
   int i0;
   int np=0; //Number of points
   dT xMin=data[offset0];
-  dT xMax=xMin;
-  dT yMin=other.data[offset0];
-  dT yMax=yMin;
+  dT xMax=data[offset0];
+  dT yMin=data[offset0];
+  dT yMax=data[offset0];
   double xSum=0;
   double x2Sum=0;
   double ySum=0;
@@ -350,11 +359,15 @@ double matrix<dT>::SSIM_1d_calcWindow(matrix &other, int offset0, int windowSize
   }
 
 
-  double xMean=xSum/np;
-  double yMean=ySum/np;
-  double xSigma=sqrt((x2Sum/np)-(xMean*xMean));
-  double ySigma=sqrt((y2Sum/np)-(yMean*yMean));
-  double xyCov=(xySum/np)-(xMean*yMean);
+	double xMean=xSum/np;
+	double yMean=ySum/np;
+	double a = (x2Sum/np)-(xMean*xMean);
+	if(a<0) a = 0;
+	double xSigma=sqrt(a);
+	a = (y2Sum/np)-(yMean*yMean);
+	if(a<0) a = 0;
+	double ySigma=sqrt(a);
+	double xyCov=(xySum/np)-(xMean*yMean);
   
   double c1,c2;
   if(xMax-xMin==0){
