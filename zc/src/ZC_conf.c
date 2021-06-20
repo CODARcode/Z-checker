@@ -753,6 +753,7 @@ int modifyZCConfig(StringLine* confLinesHeader, const char* targetAttribute, con
 int delCompressorZCConfig(StringLine* confLinesHeader, const char* compressor)
 {
 	char* delim = " ";
+	char* delim2 = "=";
 	char* delim3 = ":";
 	
 	char* zname;
@@ -764,18 +765,22 @@ int delCompressorZCConfig(StringLine* confLinesHeader, const char* compressor)
 	StringLine* preLine = confLinesHeader;
 	while(preLine->next!=NULL) //go to the modifyZCConfig line
 	{
-			curLine = preLine->next;
-			if(ZC_startsWithLines(curLine, "compressors")==1)
-			{
-					break;
-			}
-			preLine = preLine->next;
+		curLine = preLine->next;
+		if(ZC_startsWithLines(curLine, "compressors")==1)
+		{
+				break;
+		}
+		preLine = preLine->next;
 	}
 	StringLine* modifyLine = curLine;	
 	
 	sprintf(p2, modifyLine->str);
+	
+	strtok(modifyLine->str, delim2); //split by "="
+	char* pp = strtok(NULL, delim2);
+	
 	char cmprs[20][100]; //at most 20 compressors
-	p = strtok(p2, delim);
+	p = strtok(pp, delim);
 	for(counter = 0;p!=NULL;counter++)
 	{
 		strcpy(cmprs[counter],p);
@@ -796,7 +801,7 @@ int delCompressorZCConfig(StringLine* confLinesHeader, const char* compressor)
 		}
 	}
 	trim(p2_);
-	printf("%s\n", p2_);
+	printf("compressors=%s\n", p2_);
 	modifyZCConfig(confLinesHeader, "compressors", p2_);
 	
 	return ZC_SCES;
