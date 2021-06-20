@@ -17,7 +17,7 @@ if LIBPRESSIOOPT
 AM_CPPFLAGS += $(LIBPRESSIOOPT_HDR) $(LIBPRESSIOOPT_STATIC) $(LIBPRESSIOOPT_LIBS) $(LIBPRESSIOOPT_LIB) -DHAVE_LIBPRESSIOOPT
 endif
 
-bin_PROGRAMS=modifyZCConfig analyzeDataProperty compareDataSets generateGNUPlot generateReport runOfflineCase derAnalyzer
+bin_PROGRAMS=modifyZCConfig delCompressorZCConfig analyzeDataProperty compareDataSets generateGNUPlot generateReport runOfflineCase derAnalyzer
 
 if MPI
 bin_PROGRAMS+=analyzeDataProperty_online compareDataSets_online
@@ -50,7 +50,8 @@ endif
 #testRscript_double_LDADD=../zc/.libs/libzc.a -lm
 modifyZCConfig_SOURCES=modifyZCConfig.c
 modifyZCConfig_LDADD= -lzc -L../zc/.libs -lm $(LIBPRESSIOOPT_HDR) $(LIBPRESSIOOPT_STATIC) $(LIBPRESSIOOPT_LIBS) $(LIBPRESSIOOPT_LIB)
-
+delCompressorZCConfig_SOURCES=delCompressorZCConfig.c
+delCompressorZCConfig_LDADD= -lzc -L../zc/.libs -lm $(LIBPRESSIOOPT_HDR) $(LIBPRESSIOOPT_STATIC) $(LIBPRESSIOOPT_LIBS) $(LIBPRESSIOOPT_LIB)
 if R
 modifyZCConfig_LDADD+=../R/.libs/libzccallr.a
 endif

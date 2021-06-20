@@ -30,6 +30,7 @@ int isInPlotDecCompressors(const char* compressorName);
 int ZC_ReadConf();
 int ZC_LoadConf();
 int modifyZCConfig(StringLine* confLinesHeader, const char* targetAttribute, const char* newStringValue);
+int delCompressorZCConfig(StringLine* confLinesHeader, const char* compressor);
 
 #ifdef __cplusplus
 }
