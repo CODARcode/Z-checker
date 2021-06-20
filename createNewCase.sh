@@ -36,7 +36,7 @@ ln -s ../examples/generateReport generateReport
 ln -s ../examples/testRscript_double testRscript_double
 ln -s ../examples/testRscript_float testRscript_float
 ln -s ../examples/testRscript_readBinFloat testRscript_readBinFloat
-ln -s ../examples/zc.config zc.config
+cp ../examples/zc.config zc.config
 ln -s ../examples/README README
 
 cd -
