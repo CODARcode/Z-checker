@@ -774,7 +774,7 @@ int delCompressorZCConfig(StringLine* confLinesHeader, const char* compressor)
 	}
 	StringLine* modifyLine = curLine;	
 	
-	sprintf(p2, modifyLine->str);
+	strcpy(p2, modifyLine->str);
 	
 	strtok(modifyLine->str, delim2); //split by "="
 	char* pp = strtok(NULL, delim2);
