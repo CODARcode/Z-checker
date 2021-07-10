@@ -126,36 +126,8 @@ double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, i
     double structure=(xyCov+c3)/(xSigma*ySigma+c3);
     double ssim=luminance*contrast*structure;
     return ssim;
-=======
-  }
-
-	double xMean=xSum/np;
-	double yMean=ySum/np;
-	double a = (x2Sum/np)-(xMean*xMean);
-	if(a<0) a = 0;
-	double xSigma=sqrt(a);
-	a = (y2Sum/np)-(yMean*yMean);
-	if(a<0) a = 0;
-	double ySigma=sqrt(a);
-	double xyCov=(xySum/np)-(xMean*yMean);
-  
-  double c1,c2;
-  if(xMax-xMin==0){
-    c1=K1*K1;
-    c2=K2*K2;
-  }else{
-    c1=K1*K1*(xMax-xMin)*(xMax-xMin);
-    c2=K2*K2*(xMax-xMin)*(xMax-xMin);
-  }
-  double c3=c2/2;
-    
-  double luminance=(2*xMean*yMean+c1)/(xMean*xMean+yMean*yMean+c1);
-  double contrast=(2*xSigma*ySigma+c2)/(xSigma*xSigma+ySigma*ySigma+c2);
-  double structure=(xyCov+c3)/(xSigma*ySigma+c3);
-  double ssim=luminance*contrast*structure;
-  return ssim;
->>>>>>> 98afffa2a4d6c9be79336473225df404e64559c5
 }
+
 
 template <typename dT>
 double matrix<dT>::SSIM_3d_windowed(matrix &other, int windowSize0, int windowSize1, int windowSize2, int windowShift0, int windowShift1, int windowShift2) {
