@@ -56,7 +56,6 @@ double matrix<dT>::SSIM_4d_windowed(matrix &other, int windowSize0, int windowSi
 }
 
 template <typename dT>
-<<<<<<< HEAD
 double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int offset3,int windowSize0, int windowSize1, int windowSize2, int windowSize3) {
     int i0,i1,i2,i3,index;
     int np=0; //Number of points
@@ -84,42 +83,8 @@ double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, i
                     ySum+=other.data[index];
                 }
             }
-=======
-double matrix<dT>::SSIM_4d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int offset3,int windowSize0, int windowSize1, int windowSize2, int windowSize3){
-  int i0,i1,i2,i3,index;
-  int np=0; //Number of points
-  dT xMin=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
-  dT xMax=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
-  dT yMin=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
-  dT yMax=data[offset0+size0*(offset1+size1*(offset2+size2*offset3))];
-  double xSum=0;
-  double x2Sum=0;
-  double ySum=0;
-  double y2Sum=0;
-  double xySum=0;
-  for(i3=offset3;i3<offset3+windowSize3;i3++){
-    for(i2=offset2;i2<offset2+windowSize2;i2++){
-      for(i1=offset1;i1<offset1+windowSize1;i1++){
-        for(i0=offset0;i0<offset0+windowSize0;i0++){
-          np++;
-          index=i0+size0*(i1+size1*(i2+size2*i3));
-          if(xMin>data[index])
-            xMin=data[index];
-          if(xMax<data[index])
-            xMax=data[index];
-          if(yMin>other.data[index])
-            yMin=other.data[index];
-          if(yMax<other.data[index])
-            yMax=other.data[index];
-          xSum+=data[index];
-          x2Sum+=(data[index]*data[index]);
-          ySum+=other.data[index];
-          y2Sum+=(other.data[index]*other.data[index]);
-          xySum+=(data[index]*other.data[index]);
->>>>>>> 98afffa2a4d6c9be79336473225df404e64559c5
         }
     }
-<<<<<<< HEAD
 
     double xMean=xSum/np;
     double yMean=ySum/np;
@@ -237,7 +202,6 @@ double matrix<dT>::SSIM_3d_windowed(matrix &other, int windowSize0, int windowSi
 }
 
 template <typename dT>
-<<<<<<< HEAD
 double matrix<dT>::SSIM_3d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int windowSize0, int windowSize1, int windowSize2) {
     int i0,i1,i2,index;
     int np=0; //Number of points
@@ -313,78 +277,6 @@ double matrix<dT>::SSIM_3d_calcWindow(matrix &other, int offset0, int offset1, i
 
     //if(isnan(ssim)) assert(0);
     return ssim;
-=======
-double matrix<dT>::SSIM_3d_calcWindow(matrix &other, int offset0, int offset1, int offset2, int windowSize0, int windowSize1, int windowSize2){
-  int i0,i1,i2,index;
-  int np=0; //Number of points
-  dT xMin=data[offset0+size0*(offset1+size1*offset2)];
-  dT xMax=data[offset0+size0*(offset1+size1*offset2)];
-  dT yMin=data[offset0+size0*(offset1+size1*offset2)];
-  dT yMax=data[offset0+size0*(offset1+size1*offset2)];
-  double xSum=0;
-  double x2Sum=0;
-  double ySum=0;
-  double y2Sum=0;
-  double xySum=0;
-
-  for(i2=offset2;i2<offset2+windowSize2;i2++){
-    for(i1=offset1;i1<offset1+windowSize1;i1++){
-      for(i0=offset0;i0<offset0+windowSize0;i0++){
-        np++;
-        index=i0+size0*(i1+size1*i2);
-        if(xMin>data[index])
-          xMin=data[index];
-        if(xMax<data[index])
-          xMax=data[index];
-        if(yMin>other.data[index])
-          yMin=other.data[index];
-        if(yMax<other.data[index])
-          yMax=other.data[index];
-        xSum+=data[index];
-        x2Sum+=(data[index]*data[index]);
-        ySum+=other.data[index];
-        y2Sum+=(other.data[index]*other.data[index]);
-        xySum+=(data[index]*other.data[index]);
-      }
-    }
-  }
-
-
-	double xMean=xSum/np;
-	double yMean=ySum/np;
-	double a = (x2Sum/np)-(xMean*xMean);
-	if(a<0) a = 0;
-	double xSigma=sqrt(a);
-	a = (y2Sum/np)-(yMean*yMean);
-	if(a<0) a = 0;
-	double ySigma=sqrt(a);
-	double xyCov=(xySum/np)-(xMean*yMean);
-  
-  
-  double c1,c2;
-  if(xMax-xMin==0){
-    c1=K1*K1;
-    c2=K2*K2;
-  }else{
-    c1=K1*K1*(xMax-xMin)*(xMax-xMin);
-    c2=K2*K2*(xMax-xMin)*(xMax-xMin);
-  }
-  double c3=c2/2;
-  
-  double luminance=(2*xMean*yMean+c1)/(xMean*xMean+yMean*yMean+c1);
-  double contrast=(2*xSigma*ySigma+c2)/(xSigma*xSigma+ySigma*ySigma+c2);
-  double structure=(xyCov+c3)/(xSigma*ySigma+c3);
-  double ssim=luminance*contrast*structure;
-
-  //double ssim=luminance*luminance*luminance*luminance;
-  //ssim=ssim*contrast*contrast*contrast*contrast;
-  //ssim=ssim*structure*structure*structure*structure;
-  //cout<<"xMean : yMean : xSigma : ySigma : xyCov = "<<xMean<<" : "<<yMean<<" : "<<xSigma<<" : "<<ySigma<<" : "<<xyCov<<endl;
-  //cout<<"l : c : s = "<<luminance<<" : "<<contrast<<" : "<<structure<<endl; //AMG
-  
-  //if(isnan(ssim)) assert(0);
-  return ssim;
->>>>>>> 98afffa2a4d6c9be79336473225df404e64559c5
 }
 
 template <typename dT>
@@ -422,7 +314,6 @@ double matrix<dT>::SSIM_2d_windowed(matrix &other, int windowSize0, int windowSi
 }
 
 template <typename dT>
-<<<<<<< HEAD
 double matrix<dT>::SSIM_2d_calcWindow(matrix &other, int offset0, int offset1, int windowSize0, int windowSize1) {
     int i0,i1,index;
     int np=0; //Number of points
@@ -488,66 +379,6 @@ double matrix<dT>::SSIM_2d_calcWindow(matrix &other, int offset0, int offset1, i
     double structure=(xyCov+c3)/(xSigma*ySigma+c3);
     double ssim=luminance*contrast*structure;
     return ssim;
-=======
-double matrix<dT>::SSIM_2d_calcWindow(matrix &other, int offset0, int offset1, int windowSize0, int windowSize1){
-  int i0,i1,index;
-  int np=0; //Number of points
-  dT xMin=data[offset0+size0*offset1];
-  dT xMax=data[offset0+size0*offset1];
-  dT yMin=data[offset0+size0*offset1];
-  dT yMax=data[offset0+size0*offset1];
-  double xSum=0;
-  double x2Sum=0;
-  double ySum=0;
-  double y2Sum=0;
-  double xySum=0;
-
-  for(i1=offset1;i1<offset1+windowSize1;i1++){
-    for(i0=offset0;i0<offset0+windowSize0;i0++){
-      np++;
-      index=i0+size0*i1;
-      if(xMin>data[index])
-        xMin=data[index];
-      if(xMax<data[index])
-        xMax=data[index];
-      if(yMin>other.data[index])
-        yMin=other.data[index];
-      if(yMax<other.data[index])
-        yMax=other.data[index];
-      xSum+=data[index];
-      x2Sum+=(data[index]*data[index]);
-      ySum+=other.data[index];
-      y2Sum+=(other.data[index]*other.data[index]);
-      xySum+=(data[index]*other.data[index]);
-    }
-  }
-
-	double xMean=xSum/np;
-	double yMean=ySum/np;
-	double a = (x2Sum/np)-(xMean*xMean);
-	if(a<0) a = 0;
-	double xSigma=sqrt(a);
-	a = (y2Sum/np)-(yMean*yMean);
-	if(a<0) a = 0;
-	double ySigma=sqrt(a);
-	double xyCov=(xySum/np)-(xMean*yMean);
-  
-  double c1,c2;
-  if(xMax-xMin==0){
-    c1=K1*K1;
-    c2=K2*K2;
-  }else{
-    c1=K1*K1*(xMax-xMin)*(xMax-xMin);
-    c2=K2*K2*(xMax-xMin)*(xMax-xMin);
-  }
-  double c3=c2/2;
-    
-  double luminance=(2*xMean*yMean+c1)/(xMean*xMean+yMean*yMean+c1);
-  double contrast=(2*xSigma*ySigma+c2)/(xSigma*xSigma+ySigma*ySigma+c2);
-  double structure=(xyCov+c3)/(xSigma*ySigma+c3);
-  double ssim=luminance*contrast*structure;
-  return ssim;
->>>>>>> 98afffa2a4d6c9be79336473225df404e64559c5
 }
 
 template <typename dT>
@@ -577,7 +408,6 @@ double matrix<dT>::SSIM_1d_windowed(matrix &other, int windowSize0, int windowSh
 }
 
 template <typename dT>
-<<<<<<< HEAD
 double matrix<dT>::SSIM_1d_calcWindow(matrix &other, int offset0, int windowSize0) {
     int i0;
     int np=0; //Number of points
@@ -636,64 +466,6 @@ double matrix<dT>::SSIM_1d_calcWindow(matrix &other, int offset0, int windowSize
     double structure=(xyCov+c3)/(xSigma*ySigma+c3);
     double ssim=luminance*contrast*structure;
     return ssim;
-=======
-double matrix<dT>::SSIM_1d_calcWindow(matrix &other, int offset0, int windowSize0){
-  int i0;
-  int np=0; //Number of points
-  dT xMin=data[offset0];
-  dT xMax=data[offset0];
-  dT yMin=data[offset0];
-  dT yMax=data[offset0];
-  double xSum=0;
-  double x2Sum=0;
-  double ySum=0;
-  double y2Sum=0;
-  double xySum=0;
-
-  for(i0=offset0;i0<offset0+windowSize0;i0++){
-    np++;
-    if(xMin>data[i0])
-      xMin=data[i0];
-    if(xMax<data[i0])
-      xMax=data[i0];
-    if(yMin>other.data[i0])
-      yMin=other.data[i0];
-    if(yMax<other.data[i0])
-      yMax=other.data[i0];
-    xSum+=data[i0];
-    x2Sum+=(data[i0]*data[i0]);
-    ySum+=other.data[i0];
-    y2Sum+=(other.data[i0]*other.data[i0]);
-    xySum+=(data[i0]*other.data[i0]);
-  }
-
-
-	double xMean=xSum/np;
-	double yMean=ySum/np;
-	double a = (x2Sum/np)-(xMean*xMean);
-	if(a<0) a = 0;
-	double xSigma=sqrt(a);
-	a = (y2Sum/np)-(yMean*yMean);
-	if(a<0) a = 0;
-	double ySigma=sqrt(a);
-	double xyCov=(xySum/np)-(xMean*yMean);
-  
-  double c1,c2;
-  if(xMax-xMin==0){
-    c1=K1*K1;
-    c2=K2*K2;
-  }else{
-    c1=K1*K1*(xMax-xMin)*(xMax-xMin);
-    c2=K2*K2*(xMax-xMin)*(xMax-xMin);
-  }
-  double c3=c2/2;
-    
-  double luminance=(2*xMean*yMean+c1)/(xMean*xMean+yMean*yMean+c1);
-  double contrast=(2*xSigma*ySigma+c2)/(xSigma*xSigma+ySigma*ySigma+c2);
-  double structure=(xyCov+c3)/(xSigma*ySigma+c3);
-  double ssim=luminance*contrast*structure;
-  return ssim;
->>>>>>> 98afffa2a4d6c9be79336473225df404e64559c5
 }
 
 
