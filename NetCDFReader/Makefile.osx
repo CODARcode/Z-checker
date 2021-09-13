@@ -9,7 +9,7 @@ FLAGS		= -lnetcdfreader
 
 OBJS = src/NetCDFReader.o
 
-all:	libnetcdfreader.a libnetcdfreader.dylib test/test_NetCDFReader
+all:	libnetcdfreader.a libnetcdfreader.dylib test/extractNetCDFData
 
 src/%.o:	src/%.c
 	$(CC) $(NETCDFINC) $(INC) -fPIC -c $<
@@ -21,8 +21,8 @@ libnetcdfreader.a:		$(OBJS)
 libnetcdfreader.dylib:	$(OBJS)
 	$(CC) $(DYLIB_FLAGS) -o $@ $^ $(NETCDFFLAGS)
 
-test/test_NetCDFReader: test/test_NetCDFReader.c
-	$(CC) -o test/test_NetCDFReader test/test_NetCDFReader.c $(INC) -L. $(FLAGS)
+test/extractNetCDFData: test/extractNetCDFData.c
+	$(CC) -o test/extractNetCDFData test/extractNetCDFData.c $(INC) -L. $(FLAGS)
 	
 clean: 
-	rm -rf src/*.o *.a *.dylib test/test_NetCDFReader
+	rm -rf src/*.o *.a *.dylib test/extractNetCDFData

@@ -2,7 +2,7 @@
 CC	= gcc
 
 #Please modify NETCDFPATH based on your own installation of netcdf
-NETCDFPATH	=/home/sdi/Install/netcdf-4.5.0-install
+NETCDFPATH	=/home/sdi/Install/netcdf-c-4.8.1-install
 
 NETCDFINC	= -I$(NETCDFPATH)/include
 NETCDFFLAGS = -L$(NETCDFPATH)/lib -lnetcdf
@@ -12,7 +12,7 @@ FLAGS		= -lnetcdfreader
 
 OBJS = src/NetCDFReader.o
 
-all:	libnetcdfreader.a libnetcdfreader.so test/test_NetCDFReader
+all:	libnetcdfreader.a libnetcdfreader.so test/extractNetCDFData
 
 src/%.o:	src/%.c
 	$(CC) $(NETCDFINC) $(INC) -fPIC -c $<
@@ -24,8 +24,8 @@ libnetcdfreader.a:		$(OBJS)
 libnetcdfreader.so:	$(OBJS)
 	$(CC) $(SO_FLAGS) -Wl,-soname,libnetcdfreader.so -o $@ $^ -lc $(NETCDFFLAGS)
 
-test/test_NetCDFReader: test/test_NetCDFReader.c
-	$(CC) -o test/test_NetCDFReader test/test_NetCDFReader.c $(INC) -L. $(FLAGS) $(NETCDFINC) $(NETCDFFLAGS)
+test/extractNetCDFData: test/extractNetCDFData.c
+	$(CC) -o test/extractNetCDFData test/extractNetCDFData.c $(INC) -L. $(FLAGS) $(NETCDFINC) $(NETCDFFLAGS)
 	
 clean: 
-	rm -rf src/*.o *.a *.so test/test_NetCDFReader
+	rm -rf src/*.o *.a *.so test/extractNetCDFData
