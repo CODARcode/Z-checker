@@ -162,6 +162,7 @@ extern int maxValueFlag;
 extern int valueRangeFlag;
 extern int avgValueFlag;
 extern int entropyFlag;
+extern int entropyFloatpointFlag;
 extern int autocorrFlag;
 extern int autocorr3DFlag;
 extern int fftFlag;
