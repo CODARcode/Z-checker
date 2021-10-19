@@ -25,6 +25,12 @@ typedef struct HashEntry_s HashEntry;
 typedef double real;
 typedef struct{real Re; real Im; real Amp;} complex;
 
+typedef struct ZC_ELEMENT
+{
+	double value;
+	unsigned int counter;
+} ZC_ELEMENT;
+
 typedef struct ZC_DataProperty
 {
 	char* varName;
@@ -46,6 +52,7 @@ typedef struct ZC_DataProperty
 	double valueRange;
 	double avgValue;
 	double entropy;
+	double entropyFloatpoint;
 	double zeromean_variance;
 	double* autocorr; /*array of autocorrelation coefficients*/
 	void* autocorr3D; //double* or float*, depending on the floating type of the data
@@ -77,7 +84,10 @@ size_t numOfElem, double minValue, double maxValue, double valueRange, double av
 double entropy, double* autocorr, complex* fftCoeff, char* filePath);
 
 complex* ZC_computeFFT(void* data, size_t n, int dataType);
+double computeLosslessEntropy_32bits(void* data, size_t nbEle);
 ZC_DataProperty* ZC_genProperties_float(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+double computeLosslessEntropy_64bits(void* data, size_t nbEle);
 ZC_DataProperty* ZC_genProperties_double(const char* varName, double *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 ZC_DataProperty* ZC_genProperties(const char* varName, int dataType, void *oriData, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
