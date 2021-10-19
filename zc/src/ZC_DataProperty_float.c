@@ -265,6 +265,51 @@ ZC_DataProperty* ZC_genProperties_float_online(const char* varName, float *data,
 }
 #endif
 
+double computeLosslessEntropy_32bits(void* data, size_t nbEle)
+{
+	size_t i = 0;
+	char vs[256];	
+	
+	hashtable_t* entropy_table = ht_create(nbEle);
+	float* value = (float*)data;
+	for(i=0;i<nbEle;i++)
+	{
+        eclfloat buf;
+        buf.value = value[i];
+        unsigned int v = buf.ivalue;
+		
+		sprintf(vs, "%d", v);	
+		ZC_ELEMENT* qe = ht_get(entropy_table, vs);
+		if(qe==NULL)
+		{
+			qe = (ZC_ELEMENT*) malloc(sizeof(ZC_ELEMENT));
+			memset(qe, 0, sizeof(ZC_ELEMENT));
+			qe->value = value[i];
+			ht_set(entropy_table, vs, qe);
+		}
+		qe->counter ++;
+	}		
+	
+	size_t sum = nbEle;
+	size_t j = 0;
+	double entVal = 0;
+	for(i=0;i<entropy_table->capacity&&j<entropy_table->count;i++)
+	{
+		entry_t* t = entropy_table->table[i];
+		while(t!=NULL)
+		{
+			ZC_ELEMENT* qe = (ZC_ELEMENT*)t->value;
+			double prob = ((double)qe->counter)/sum;
+			entVal -= prob*log(prob)/log(2);
+			free(qe);
+			t = t->next;
+		}
+	}	
+	
+	ht_freeTable(entropy_table);
+	return entVal;
+}
+
 ZC_DataProperty* ZC_genProperties_float(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
 {
 	size_t i = 0;
@@ -337,6 +382,11 @@ ZC_DataProperty* ZC_genProperties_float(const char* varName, float *data, size_t
 
 		property->entropy = entVal;
 		free(table);
+	}
+	
+	if(entropyFloatpointFlag)
+	{
+		property->entropyFloatpoint = computeLosslessEntropy_32bits(data, numOfElem);
 	}
 
 	if(autocorrFlag)

@@ -480,6 +480,8 @@ void ZC_printDataProperty(ZC_DataProperty* property)
 	printf("max value: %f\n", property->maxValue);
 	printf("value range: %f\n", property->valueRange);
 	printf("entropy: %f\n", property->entropy);
+	if(property->entropyFloatpoint!=0)
+		printf("entropyFloatpoint=%f\n", property->entropyFloatpoint);
 	//printf("(property->autocorr)[1]=%f\n", (property->autocorr)[1]);
 	//printf("(property->autocorr)[20]=%f\n", (property->autocorr)[20]);
 	//printf("(property->autocorr)[90]=%f\n", (property->autocorr)[90]);

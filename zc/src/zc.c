@@ -50,6 +50,7 @@ int maxValueFlag = 1;
 int valueRangeFlag = 1;
 int avgValueFlag = 1;
 int entropyFlag = 1;
+int entropyFloatpointFlag = 0;
 int autocorrFlag = 1;
 int autocorr3DFlag = 1;
 int fftFlag = 1;

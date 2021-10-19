@@ -283,40 +283,41 @@ int ZC_ReadConf() {
 	//if(opendir(ZC_workspaceDir)==NULL)
 	//	mkdir(ZC_workspaceDir,0775);
 	
-	minValueFlag= (int)iniparser_getint(ini, "DATA:minValue", 0);
-	maxValueFlag= (int)iniparser_getint(ini, "DATA:maxValue", 0);
-	valueRangeFlag= (int)iniparser_getint(ini, "DATA:valueRange", 0);
-	avgValueFlag= (int)iniparser_getint(ini, "DATA:avgValue", 0);
-	entropyFlag= (int)iniparser_getint(ini, "DATA:entropy", 0);
+	minValueFlag= (int)iniparser_getint(ini, "DATA:minValue", 1);
+	maxValueFlag= (int)iniparser_getint(ini, "DATA:maxValue", 1);
+	valueRangeFlag= (int)iniparser_getint(ini, "DATA:valueRange", 1);
+	avgValueFlag= (int)iniparser_getint(ini, "DATA:avgValue", 1);
+	entropyFlag= (int)iniparser_getint(ini, "DATA:entropy", 1);
+	entropyFloatpointFlag = (int)iniparser_getint(ini, "DATA:entropyFloatpoint", 0);
 	autocorrFlag= (int)iniparser_getint(ini, "DATA:autocorr", 0);
 	autocorr3DFlag = (int)iniparser_getint(ini, "DATA:autocorr3D", 0);
 	fftFlag= (int)iniparser_getint(ini, "DATA:fft", 0);
 	lapFlag= (int)iniparser_getint(ini, "DATA:lap", 0);
 	
-	compressTimeFlag = (int)iniparser_getint(ini, "COMPARE:compressTime", 0);
-	decompressTimeFlag = (int)iniparser_getint(ini, "COMPARE:decompressTime", 0);
-	compressSizeFlag = (int)iniparser_getint(ini, "COMPARE:compressSize", 0);
+	compressTimeFlag = (int)iniparser_getint(ini, "COMPARE:compressTime", 1);
+	decompressTimeFlag = (int)iniparser_getint(ini, "COMPARE:decompressTime", 1);
+	compressSizeFlag = (int)iniparser_getint(ini, "COMPARE:compressSize", 1);
 	
-	minAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:minAbsErr", 0);
-	avgAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:avgAbsErr", 0);
-	maxAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:maxAbsErr", 0);
+	minAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:minAbsErr", 1);
+	avgAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:avgAbsErr", 1);
+	maxAbsErrFlag = (int)iniparser_getint(ini, "COMPARE:maxAbsErr", 1);
 	errAutoCorrFlag = (int)iniparser_getint(ini, "COMPARE:errAutoCorr", 0);
 	errAutoCorr3DFlag = (int)iniparser_getint(ini, "COMPARE:errAutoCorr3D", 0);
 	absErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:absErrPDF", 0);
 	pwrErrPDFFlag = (int)iniparser_getint(ini, "COMPARE:pwrErrPDF", 0);
 	
-	minRelErrFlag = (int)iniparser_getint(ini, "COMPARE:minRelErr", 0);
-	avgRelErrFlag = (int)iniparser_getint(ini, "COMPARE:avgRelErr", 0);
-	maxRelErrFlag = (int)iniparser_getint(ini, "COMPARE:maxRelErr", 0);
+	minRelErrFlag = (int)iniparser_getint(ini, "COMPARE:minRelErr", 1);
+	avgRelErrFlag = (int)iniparser_getint(ini, "COMPARE:avgRelErr", 1);
+	maxRelErrFlag = (int)iniparser_getint(ini, "COMPARE:maxRelErr", 1);
 
-	rmseFlag = (int)iniparser_getint(ini, "COMPARE:rmse", 0);
-	nrmseFlag = (int)iniparser_getint(ini, "COMPARE:nrmse", 0);
-	snrFlag = (int)iniparser_getint(ini, "COMPARE:snr", 0);
-	psnrFlag = (int)iniparser_getint(ini, "COMPARE:psnr", 0);
+	rmseFlag = (int)iniparser_getint(ini, "COMPARE:rmse", 1);
+	nrmseFlag = (int)iniparser_getint(ini, "COMPARE:nrmse", 1);
+	snrFlag = (int)iniparser_getint(ini, "COMPARE:snr", 1);
+	psnrFlag = (int)iniparser_getint(ini, "COMPARE:psnr", 1);
 
 	valErrCorrFlag = (int)iniparser_getint(ini, "COMPARE:valErrCorr", 0);
 
-	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 0);
+	pearsonCorrFlag = (int)iniparser_getint(ini, "COMPARE:pearsonCorr", 1);
 	
 	KS_testFlag = (int)iniparser_getint(ini, "COMPARE:KS_test", 0);
 	SSIMFlag = (int)iniparser_getint(ini, "COMPARE:ssim", 0);
