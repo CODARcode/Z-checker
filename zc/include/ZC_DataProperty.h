@@ -23,7 +23,7 @@ struct HashEntry_s{
 typedef struct HashEntry_s HashEntry;
 
 typedef double real;
-typedef struct{real Re; real Im; real Amp;} complex;
+typedef struct{real Re; real Im; real Amp;} ZC_Complex;
 
 typedef struct ZC_ELEMENT
 {
@@ -56,7 +56,7 @@ typedef struct ZC_DataProperty
 	double zeromean_variance;
 	double* autocorr; /*array of autocorrelation coefficients*/
 	void* autocorr3D; //double* or float*, depending on the floating type of the data
-	complex* fftCoeff; /*array of fft coefficients*/
+	ZC_Complex* fftCoeff; /*array of fft coefficients*/
 	double* lap;
 	
 } ZC_DataProperty;
@@ -71,8 +71,8 @@ double* ZC_compute_autocorrelation1D_double(double* data, size_t numOfElem, doub
 int ZC_computeDimension(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 void ZC_constructDimString(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, char* output);
 int ZC_constructDimArray(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, size_t *dims);
-void fft(complex *v, size_t n, complex *tmp);
-void ifft(complex *v, size_t n, complex *tmp);
+void fft(ZC_Complex *v, size_t n, ZC_Complex *tmp);
+void ifft(ZC_Complex *v, size_t n, ZC_Complex *tmp);
 
 void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
@@ -81,9 +81,9 @@ int freeDataProperty(ZC_DataProperty* dataProperty);
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
-double entropy, double* autocorr, complex* fftCoeff, char* filePath);
+double entropy, double* autocorr, ZC_Complex* fftCoeff, char* filePath);
 
-complex* ZC_computeFFT(void* data, size_t n, int dataType);
+ZC_Complex* ZC_computeFFT(void* data, size_t n, int dataType);
 double computeLosslessEntropy_32bits(void* data, size_t nbEle);
 ZC_DataProperty* ZC_genProperties_float(const char* varName, float *data, size_t numOfElem, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
@@ -96,7 +96,7 @@ int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source);
 void ZC_printDataProperty(ZC_DataProperty* property);
 char** constructDataPropertyString(ZC_DataProperty* property);
 
-void ZC_writeFFTResults(const char* varName, complex* fftCoeff, const char* tgtWorkspaceDir);
+void ZC_writeFFTResults(const char* varName, ZC_Complex* fftCoeff, const char* tgtWorkspaceDir);
 void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir);
 ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile);
 

@@ -121,11 +121,11 @@ int ZC_constructDimArray(size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 }
 
 /* For FFT and iFFT calculation */
-void fft(complex *v, size_t n, complex *tmp)
+void fft(ZC_Complex *v, size_t n, ZC_Complex *tmp)
 {
 	if(n>1) {			/* otherwise, do nothing and return */
 		size_t k,m;
-		complex z, w, *vo, *ve;
+		ZC_Complex z, w, *vo, *ve;
 		ve = tmp;
 		vo = tmp+n/2;
 		for(k=0; k<n/2; k++) {
@@ -148,11 +148,11 @@ void fft(complex *v, size_t n, complex *tmp)
 	return;
 }
 
-void ifft(complex *v, size_t n, complex *tmp)
+void ifft(ZC_Complex *v, size_t n, ZC_Complex *tmp)
 {
 	if(n>1) {			/* otherwise, do nothing and return */
 		size_t k,m;
-		complex z, w, *vo, *ve;
+		ZC_Complex z, w, *vo, *ve;
 		ve = tmp;
 		vo = tmp+n/2;
 		for(k = 0; k < n/2; k++) {
@@ -274,7 +274,7 @@ int freeDataProperty(ZC_DataProperty* dataProperty)
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
-double entropy, double* autocorr, complex* fftCoeff, char* filePath)
+double entropy, double* autocorr, ZC_Complex* fftCoeff, char* filePath)
 {
 	ZC_DataProperty* self = (ZC_DataProperty*)malloc(sizeof(struct ZC_DataProperty));
 	memset(self, 0, sizeof(struct ZC_DataProperty));
@@ -298,11 +298,11 @@ double entropy, double* autocorr, complex* fftCoeff, char* filePath)
 	return self;
 }
 
-complex* ZC_computeFFT(void* data, size_t n, int dataType)
+ZC_Complex* ZC_computeFFT(void* data, size_t n, int dataType)
 {
 	size_t i;
-	complex *fftCoeff = (complex*)malloc(n*sizeof(complex));
-    complex *scratch  = (complex*)malloc(n*sizeof(complex));
+	ZC_Complex *fftCoeff = (ZC_Complex*)malloc(n*sizeof(ZC_Complex));
+    ZC_Complex *scratch  = (ZC_Complex*)malloc(n*sizeof(ZC_Complex));
 
 	if(dataType==ZC_FLOAT)
 	{
@@ -449,8 +449,8 @@ int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source)
 		if(target->fftCoeff==NULL && source->fftCoeff!=NULL)
 		{
 			size_t fft_size = pow(2, (int)log2(source->numOfElem));
-			target->fftCoeff = (complex*)malloc(sizeof(complex)*fft_size);
-			memcpy(target->fftCoeff, source->fftCoeff, sizeof(complex)*fft_size);
+			target->fftCoeff = (ZC_Complex*)malloc(sizeof(ZC_Complex)*fft_size);
+			memcpy(target->fftCoeff, source->fftCoeff, sizeof(ZC_Complex)*fft_size);
 		}		
 	}
 #else
@@ -462,8 +462,8 @@ int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source)
 	if(target->fftCoeff==NULL && source->fftCoeff!=NULL)
 	{
 		size_t fft_size = pow(2, (int)log2(source->numOfElem));
-		target->fftCoeff = (complex*)malloc(sizeof(complex)*fft_size);
-		memcpy(target->fftCoeff, source->fftCoeff, sizeof(complex)*fft_size);
+		target->fftCoeff = (ZC_Complex*)malloc(sizeof(ZC_Complex)*fft_size);
+		memcpy(target->fftCoeff, source->fftCoeff, sizeof(ZC_Complex)*fft_size);
 	}
 #endif	
 	//TODO: to copy double* lap, which actually is not plotted yet.
@@ -534,7 +534,7 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	
 }
 
-void ZC_writeFFTResults(const char* varName, complex* fftCoeff, const char* tgtWorkspaceDir)
+void ZC_writeFFTResults(const char* varName, ZC_Complex* fftCoeff, const char* tgtWorkspaceDir)
 {
 	size_t i;
 	char tgtFilePath[ZC_BUFS] = {0};
@@ -684,7 +684,7 @@ ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile)
 	double* autocorr_array = NULL;
 	
 	/*TODO: Read fft coefficients... (Read file)*/
-	complex* fftCoeff = NULL;
+	ZC_Complex* fftCoeff = NULL;
 	
 	char* filePath = iniparser_getstring(ini, "PROPERTY:filePath", NULL);
 	char* filePathStr = createLine(filePath);

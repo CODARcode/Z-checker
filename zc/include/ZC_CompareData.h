@@ -87,7 +87,7 @@ typedef struct ZC_CompareData
 	double ssimImage2D_avg;
 	double ssimImage2D_max;
 	
-	complex *fftCoeff;	
+	ZC_Complex *fftCoeff;	
 	
 	//separate analysis for all the derivative matrices along different dimensions
 	
