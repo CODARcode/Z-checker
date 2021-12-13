@@ -155,7 +155,7 @@ double matrix<dT>::sobolevNorm_s1_p2(matrix &rhs){  //The sobolevNorm between tw
     rhs.m_der_3d_dim0_v2(rdx);
     rhs.m_der_3d_dim1_v2(rdy);
     rhs.m_der_3d_dim2_v2(rdz);
-    for(i2=0;i1<n2-2;i2++){
+    for(i2=0;i2<n2-2;i2++){
       for(i1=0;i1<n1-2;i1++){
         for(i0=0;i0<n0-2;i0++){
           result+= (data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)]-rhs.data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)])*(data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)]-rhs.data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)]);
