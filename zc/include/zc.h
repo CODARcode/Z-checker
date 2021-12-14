@@ -62,7 +62,7 @@ extern "C" {
 
 #define ZC_VERNUM 0x0040
 #define ZC_VER_MAJOR 0
-#define ZC_VER_MINOR 6
+#define ZC_VER_MINOR 8
 #define ZC_VER_BUILD 0
 #define ZC_VER_REVISION 0
 
