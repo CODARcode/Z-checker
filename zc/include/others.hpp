@@ -127,7 +127,7 @@ double matrix<dT>::sobolevNorm_s1_p2(matrix &rhs){  //The sobolevNorm between tw
     rhs.m_der_1d_v2(rdx);
     for(i0=0;i0<n0-2;i0++){
       result+= (data[i0+1]-rhs.data[i0+1])*(data[i0+1]-rhs.data[i0+1]);
-      result+= (ldx.data[i0]-ldx.data[i0])*(ldx.data[i0]-ldx.data[i0]);
+      result+= (rdx.data[i0]-ldx.data[i0])*(rdx.data[i0]-ldx.data[i0]);
     }
   }else if(nDim==2){
     n0=size0;
@@ -140,8 +140,8 @@ double matrix<dT>::sobolevNorm_s1_p2(matrix &rhs){  //The sobolevNorm between tw
     for(i1=0;i1<n1-2;i1++){
       for(i0=0;i0<n0-2;i0++){
         result+= (data[cIdx2D(i1+1,i0+1,n0)]-rhs.data[cIdx2D(i1+1,i0+1,n0)])*(data[cIdx2D(i1+1,i0+1,n0)]-rhs.data[cIdx2D(i1+1,i0+1,n0)]);
-        result+= (ldx.data[cIdx2D(i1+1,i0,n0-2)]-ldx.data[cIdx2D(i1+1,i0,n0-2)])*(ldx.data[cIdx2D(i1+1,i0,n0-2)]-ldx.data[cIdx2D(i1+1,i0,n0-2)]);
-        result+= (ldy.data[cIdx2D(i1,i0+1,n0)]-ldy.data[cIdx2D(i1,i0+1,n0)])*(ldy.data[cIdx2D(i1,i0+1,n0)]-ldy.data[cIdx2D(i1,i0+1,n0)]);
+        result+= (rdx.data[cIdx2D(i1+1,i0,n0-2)]-ldx.data[cIdx2D(i1+1,i0,n0-2)])*(rdx.data[cIdx2D(i1+1,i0,n0-2)]-ldx.data[cIdx2D(i1+1,i0,n0-2)]);
+        result+= (rdy.data[cIdx2D(i1,i0+1,n0)]-ldy.data[cIdx2D(i1,i0+1,n0)])*(rdy.data[cIdx2D(i1,i0+1,n0)]-ldy.data[cIdx2D(i1,i0+1,n0)]);
       }
     }
   }else if(nDim==3){
@@ -159,9 +159,9 @@ double matrix<dT>::sobolevNorm_s1_p2(matrix &rhs){  //The sobolevNorm between tw
       for(i1=0;i1<n1-2;i1++){
         for(i0=0;i0<n0-2;i0++){
           result+= (data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)]-rhs.data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)])*(data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)]-rhs.data[cIdx3D(i2+1,i1+1,i0+1,n1,n0)]);
-          result+= (ldx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)]-ldx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)])*(ldx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)]-ldx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)]);
-          result+= (ldy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)]-ldy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)])*(ldy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)]-ldy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)]);
-          result+= (ldz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)]-ldz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)])*(ldz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)]-ldz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)]);
+          result+= (rdx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)]-ldx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)])*(rdx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)]-ldx.data[cIdx3D(i2+1,i1+1,i0,n1,n0-2)]);
+          result+= (rdy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)]-ldy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)])*(rdy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)]-ldy.data[cIdx3D(i2+1,i1,i0+1,n1-2,n0)]);
+          result+= (rdz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)]-ldz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)])*(rdz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)]-ldz.data[cIdx3D(i2,i1+1,i0+1,n1,n0)]);
         }
       }
     }
@@ -184,10 +184,10 @@ double matrix<dT>::sobolevNorm_s1_p2(matrix &rhs){  //The sobolevNorm between tw
         for(i1=0;i1<n1-2;i1++){
           for(i0=0;i0<n0-2;i0++){
             result+= (data[cIdx4D(i3+1,i2+1,i1+1,i0+1,n2,n1,n0)]-rhs.data[cIdx4D(i3+1,i2+1,i1+1,i0+1,n2,n1,n0)])*(data[cIdx4D(i3+1,i2+1,i1+1,i0+1,n2,n1,n0)]-rhs.data[cIdx4D(i3+1,i2+1,i1+1,i0+1,n2,n1,n0)]);
-            result+= (ldx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)]-ldx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)])*(ldx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)]-ldx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)]);
-            result+= (ldy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)]-ldy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)])*(ldy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)]-ldy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)]);
-            result+= (ldz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)]-ldz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)])*(ldz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)]-ldz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)]);
-            result+= (ldt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)]-ldt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)])*(ldt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)]-ldt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)]);
+            result+= (rdx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)]-ldx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)])*(rdx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)]-ldx.data[cIdx4D(i3+1,i2+1,i1+1,i0,n2,n1,n0-2)]);
+            result+= (rdy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)]-ldy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)])*(rdy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)]-ldy.data[cIdx4D(i3+1,i2+1,i1,i0+1,n2,n1-2,n0)]);
+            result+= (rdz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)]-ldz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)])*(rdz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)]-ldz.data[cIdx4D(i3+1,i2,i1+1,i0+1,n2-2,n1,n0)]);
+            result+= (rdt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)]-ldt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)])*(rdt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)]-ldt.data[cIdx4D(i3,i2+1,i1+1,i0+1,n2,n1,n0)]);
           }
         }
       }
