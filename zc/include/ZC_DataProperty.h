@@ -57,8 +57,14 @@ typedef struct ZC_DataProperty
 	double* autocorr; /*array of autocorrelation coefficients*/
 	void* autocorr3D; //double* or float*, depending on the floating type of the data
 	ZC_Complex* fftCoeff; /*array of fft coefficients*/
+	
 	double* lap;
 	
+	void* gradLen;
+	
+	double sobolevNorm_s0_p2;
+	double sobolevNorm_s1_p2;
+	double sobolevNorm_s2_p2;
 } ZC_DataProperty;
 
 void hash_init(HashEntry *table, size_t table_size);
@@ -81,7 +87,7 @@ int freeDataProperty(ZC_DataProperty* dataProperty);
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
-double entropy, double* autocorr, ZC_Complex* fftCoeff, char* filePath);
+double entropy, double sobolevNorm_s0_p2, double sobolevNorm_s1_p2, double sobolevNorm_s2_p2, double* autocorr, ZC_Complex* fftCoeff, char* filePath);
 
 ZC_Complex* ZC_computeFFT(void* data, size_t n, int dataType);
 double computeLosslessEntropy_32bits(void* data, size_t nbEle);
@@ -94,11 +100,24 @@ ZC_DataProperty* ZC_genProperties(const char* varName, int dataType, void *oriDa
 int ZC_moveDataProperty(ZC_DataProperty* target, ZC_DataProperty* source);
 
 void ZC_printDataProperty(ZC_DataProperty* property);
-char** constructDataPropertyString(ZC_DataProperty* property);
+char** constructDataPropertyString(ZC_DataProperty* property, int *lineCount);
 
 void ZC_writeFFTResults(const char* varName, ZC_Complex* fftCoeff, const char* tgtWorkspaceDir);
 void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir);
 ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile);
+
+int computeGradientLength(void* data, void*gradMag, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+void computeGradientLength_float(float* data, float*gradMag, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+void computeGradientLength_double(double* data, double*gradMag, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+double calculateSobolevNorm_p2(void *data, int dataType, int order, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+double calculateSobolevNorm_s0_p2_float(float *data, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+double calculateSobolevNorm_s1_p2_float(float *data, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+double calculateSobolevNorm_s2_p2_float(float *data, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+
+double calculateSobolevNorm_s0_p2_double(double *data, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+double calculateSobolevNorm_s1_p2_double(double *data, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
+double calculateSobolevNorm_s2_p2_double(double *data, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1);
 
 //online interfaces
 void ZC_genBasicProperties_float_online(float* data, size_t numOfElem, ZC_DataProperty* property);

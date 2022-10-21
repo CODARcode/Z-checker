@@ -62,7 +62,7 @@ extern "C" {
 
 #define ZC_VERNUM 0x0040
 #define ZC_VER_MAJOR 0
-#define ZC_VER_MINOR 8
+#define ZC_VER_MINOR 7
 #define ZC_VER_BUILD 0
 #define ZC_VER_REVISION 0
 
@@ -169,6 +169,11 @@ extern int fftFlag;
 extern int lapFlag;
 extern int plotImageFlag;
 extern int plotDecImageFlag;
+
+extern int gradLenFlag;
+extern int sobolevNorm_s0_p2Flag;
+extern int sobolevNorm_s1_p2Flag;
+extern int sobolevNorm_s2_p2Flag;
 
 extern int plotDecSliceMode;
 extern int nbPlotCRs;

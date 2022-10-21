@@ -55,8 +55,14 @@ int autocorrFlag = 1;
 int autocorr3DFlag = 1;
 int fftFlag = 1;
 int lapFlag = 0;
+
 int plotImageFlag = 0;
 int plotDecImageFlag = 0;
+
+int gradLenFlag = 0;
+int sobolevNorm_s0_p2Flag = 0;
+int sobolevNorm_s1_p2Flag = 0;
+int sobolevNorm_s2_p2Flag = 0;
 
 int plotDecSliceMode = DECVIS_ERROR_LINEAR_APPROX;
 int nbPlotCRs = 0;

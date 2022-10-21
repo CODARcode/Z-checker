@@ -234,6 +234,65 @@ void computeLap(double *data, double *lap, size_t r5, size_t r4, size_t r3, size
 	return;
 }
 
+int computeGradientLength(void* data, void*gradMag, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	if(dataType==ZC_FLOAT)
+		computeGradientLength_float(data, gradMag, r5, r4, r3, r2, r1);
+	else if(dataType==ZC_DOUBLE)
+		computeGradientLength_double(data, gradMag, r5, r4, r3, r2, r1);
+	else
+	{
+		printf("Error: support only float or double.\n");
+		return -1;	
+	}
+	return 0;
+}
+
+double calculateSobolevNorm_p2(void *data, int dataType, int order, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1)
+{
+	double result = 0;
+	if(dataType==ZC_FLOAT)
+	{
+		float* d = (float*) data;
+		switch(order)
+		{
+			case 0: 
+				result = calculateSobolevNorm_s0_p2_float(d, 0, r4, r3, r2, r1);
+				break;
+			case 1:
+				result = calculateSobolevNorm_s1_p2_float(d, 0, r4, r3, r2, r1);
+				break;
+			case 2:
+				result = calculateSobolevNorm_s2_p2_float(d, 0, r4, r3, r2, r1);
+				break;				
+			default:
+				printf("Error: wrong order: %d\n", order);
+		}
+	}
+	else if(dataType==ZC_DOUBLE)
+	{
+		double* d = (double*) data;
+		switch(order)
+		{
+			case 0: 
+				result = calculateSobolevNorm_s0_p2_double(d, 0, r4, r3, r2, r1);
+				break;
+			case 1:
+				result = calculateSobolevNorm_s1_p2_double(d, 0, r4, r3, r2, r1);
+				break;
+			case 2:
+				result = calculateSobolevNorm_s2_p2_double(d, 0, r4, r3, r2, r1);
+				break;				
+			default:
+				printf("Error: wrong order: %d\n", order);
+		}	
+	}
+	else
+		return -1; //wrong data type
+	
+	return result;
+}
+
 void freeDataProperty_internal(ZC_DataProperty* dataProperty)
 {
 	if(dataProperty->varName!=NULL)
@@ -274,7 +333,7 @@ int freeDataProperty(ZC_DataProperty* dataProperty)
 
 ZC_DataProperty* ZC_constructDataProperty(char* varName, int dataType, size_t r5, size_t r4, size_t r3, size_t r2, size_t r1, 
 size_t numOfElem, double minValue, double maxValue, double valueRange, double avgValue, 
-double entropy, double* autocorr, ZC_Complex* fftCoeff, char* filePath)
+double entropy, double sobolevNorm_s0_p2, double sobolevNorm_s1_p2, double sobolevNorm_s2_p2, double* autocorr, ZC_Complex* fftCoeff, char* filePath)
 {
 	ZC_DataProperty* self = (ZC_DataProperty*)malloc(sizeof(struct ZC_DataProperty));
 	memset(self, 0, sizeof(struct ZC_DataProperty));
@@ -295,6 +354,9 @@ double entropy, double* autocorr, ZC_Complex* fftCoeff, char* filePath)
 	self->autocorr = autocorr;
 	self->fftCoeff = fftCoeff;
 	self->filePath = filePath;
+	self->sobolevNorm_s0_p2 = sobolevNorm_s0_p2;
+	self->sobolevNorm_s1_p2 = sobolevNorm_s1_p2;
+	self->sobolevNorm_s2_p2 = sobolevNorm_s2_p2;	
 	return self;
 }
 
@@ -487,9 +549,9 @@ void ZC_printDataProperty(ZC_DataProperty* property)
 	//printf("(property->autocorr)[90]=%f\n", (property->autocorr)[90]);
 }
 
-char** constructDataPropertyString(ZC_DataProperty* property)
+char** constructDataPropertyString(ZC_DataProperty* property, int *lineCount)
 {
-	char** s = (char**)malloc(16*sizeof(char*));
+	char** s = (char**)malloc(19*sizeof(char*));
 	s[0] = (char*)malloc(100*sizeof(char));
 	sprintf(s[0], "[PROPERTY]\n");
 	s[1] = (char*)malloc(100*sizeof(char));
@@ -518,18 +580,40 @@ char** constructDataPropertyString(ZC_DataProperty* property)
 	sprintf(s[12], "avgValue = %.10G\n", property->avgValue);
 	s[13] = (char*)malloc(100*sizeof(char));
 	sprintf(s[13], "entropy = %.10G\n", property->entropy);
-	s[14] = (char*)malloc(100*sizeof(char));
+	int index = 14;
+	if(sobolevNorm_s0_p2Flag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "sobolevNorm_s0_p2 = %.10G\n", property->sobolevNorm_s0_p2);
+		index++;
+	}
+	if(sobolevNorm_s1_p2Flag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "sobolevNorm_s1_p2 = %.10G\n", property->sobolevNorm_s1_p2);		
+		index++;
+	}
+	if(sobolevNorm_s2_p2Flag)
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "sobolevNorm_s2_p2 = %.10G\n", property->sobolevNorm_s2_p2);					
+		index++;
+	}
+
 	if(property->autocorr!=NULL)
-		sprintf(s[14], "autocorr = %.10G\n", (property->autocorr)[1]);
-	else 
-		strcpy(s[14], "autocorr = -\n");
-	
-	s[15] = (char*)malloc(256*sizeof(char));
+	{
+		s[index] = (char*)malloc(100*sizeof(char));
+		sprintf(s[index], "autocorr = %.10G\n", (property->autocorr)[1]);
+		index++;
+	}	
+
 	if(property->filePath!=NULL)
-		sprintf(s[15], "filePath = %s\n", property->filePath);
-	else
-		strcpy(s[15], "filePath = NULL\n");	
-	
+	{
+		s[index] = (char*)malloc(256*sizeof(char));
+		sprintf(s[index], "filePath = %s\n", property->filePath);
+		index++;
+	}	
+	*lineCount = index;
 	return s;
 	
 }
@@ -574,7 +658,8 @@ void ZC_writeFFTResults(const char* varName, ZC_Complex* fftCoeff, const char* t
 
 void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir)
 {
-	char** s = constructDataPropertyString(property);
+	int lineCount = 0;
+	char** s = constructDataPropertyString(property, &lineCount);
 	
 	DIR *dir = opendir(tgtWorkspaceDir);
 	if(dir==NULL)
@@ -582,9 +667,9 @@ void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir
 
 	char tgtFilePath[ZC_BUFS];
 	sprintf(tgtFilePath, "%s/%s.prop", tgtWorkspaceDir, property->varName); 
-	ZC_writeStrings(16, s, tgtFilePath);
+	ZC_writeStrings(lineCount, s, tgtFilePath);
 	size_t i;
-	for(i=0;i<16;i++)
+	for(i=0;i<lineCount;i++)
 		free(s[i]);
 	free(s);
 	/*write the fft coefficients and amplitudes*/
@@ -635,6 +720,16 @@ void ZC_writeDataProperty(ZC_DataProperty* property, const char* tgtWorkspaceDir
 		free(lap);
 	}
 	
+	if(property->gradLen!=NULL)
+	{
+		memset(tgtFilePath, 0, ZC_BUFS);
+		sprintf(tgtFilePath, "%s/%s.gradLen", tgtWorkspaceDir, property->varName);
+		if(property->dataType==ZC_FLOAT)
+			ZC_writeFloatData_inBytes((float*)(property->gradLen), property->numOfElem, tgtFilePath);
+		else
+			ZC_writeDoubleData_inBytes((double*)(property->gradLen), property->numOfElem, tgtFilePath);	
+	}
+	
 	/*write slice image*/
 	if(property->sliceImage_ori!=NULL)
 	{	
@@ -679,6 +774,11 @@ ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile)
 	double valueRange = (double)iniparser_getdouble(ini, "PROPERTY:valueRange", 0);
 	double avgValue = (double)iniparser_getdouble(ini, "PROPERTY:avgValue", 0);
 	double entropy = (double)iniparser_getdouble(ini, "PROPERTY:entropy", 0);
+	
+	double sobolevNorm_s0_p2 = (double)iniparser_getdouble(ini, "PROPERTY:sobolevNorm_s0_p2", 0);
+	double sobolevNorm_s1_p2 = (double)iniparser_getdouble(ini, "PROPERTY:sobolevNorm_s1_p2", 0);
+	double sobolevNorm_s2_p2 = (double)iniparser_getdouble(ini, "PROPERTY:sobolevNorm_s2_p2", 0);
+	
 	/*double autocorr = (double)iniparser_getdouble(ini, "PROPERTY:autocorr", 0); //1-step*/
 	/*TODO: Read more autocorr. coefficients (Read file) and put them in autocorr_array*/
 	double* autocorr_array = NULL;
@@ -690,7 +790,7 @@ ZC_DataProperty* ZC_loadDataProperty(const char* propResultFile)
 	char* filePathStr = createLine(filePath);
 	
 	ZC_DataProperty* property = ZC_constructDataProperty(var, dataType, r5, r4, r3, r2, r1, numOfElem, minValue, maxValue, 
-	valueRange, avgValue, entropy, autocorr_array, fftCoeff, filePathStr);
+	valueRange, avgValue, entropy, sobolevNorm_s0_p2, sobolevNorm_s1_p2, sobolevNorm_s2_p2, autocorr_array, fftCoeff, filePathStr);
 	
 	free(var);
 	iniparser_freedict(ini);
