@@ -1,5 +1,7 @@
 # Z-checker
-a library to characterize the data and check the compression results of lossy compressors
+a library to characterize the data and check the compression results of lossy compressors.
+
+**We strongly recommend QCAT (https://github.com/szcompressor/qcat), a lightweight variant of Z-checker. Each metric is implemented as both a standalone executable and an API call.**
 
 Z-checker-intaller can help you install everything (including compressors SZ and ZFP and other third-party libraries for plotting the figures). Z-checker-installer can be downloaded from http://github.com/CODARcode/z-checker-installer. Please read the user-guide of Z-checker for details.
 
